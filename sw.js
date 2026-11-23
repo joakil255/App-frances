@@ -34,6 +34,8 @@ const PRECACHE_URLS = [
   'js/lib/queue.js',
   'js/lib/study-storage.js',
   'js/screens/vocabulary.js',
+  'js/screens/voice.js',
+  'js/screens/study.js',
   'js/data/initial-words.js',
   'js/update.js',
   'fonts/barlow-semi-condensed-500.woff2',

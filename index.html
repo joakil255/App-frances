@@ -77,7 +77,68 @@
 
       <section id="screen-study" class="screen line-study" hidden>
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Estudiar</h1>
-        <p class="empty">Aquí estudiarás cada palabra: leerla, escucharla y entender su significado.</p>
+
+        <div id="study-notice" class="notice" role="alert" hidden></div>
+
+        <!-- Resumen del día -->
+        <div id="study-summary" class="study-summary">
+          <p id="study-empty" class="empty" hidden>Añade palabras en Vocabulario para empezar.</p>
+          <div id="study-today" class="study-today">
+            <p class="study-count"><span id="study-due" class="study-number">0</span> <span class="study-label">para repasar</span></p>
+            <p class="study-count"><span id="study-new" class="study-number">0</span> <span class="study-label">nuevas</span></p>
+          </div>
+          <p id="study-mode" class="study-mode"></p>
+          <div class="study-actions">
+            <button type="button" class="button button-primary" id="study-start">Empezar</button>
+            <button type="button" class="button button-secondary" id="study-settings-open">Ajustes del estudio</button>
+          </div>
+        </div>
+
+        <!-- Sesión: una tarjeta cada vez (se rellena con textContent) -->
+        <div id="study-session" class="study-session" hidden>
+          <p id="study-progress" class="study-progress"></p>
+          <div class="study-bar" aria-hidden="true"><span id="study-bar-fill" class="study-bar-fill"></span></div>
+
+          <article id="study-card" class="study-card">
+            <div id="study-front" class="study-face" tabindex="-1">
+              <p class="study-lang"></p>
+              <div class="study-word-line">
+                <p class="study-word"></p>
+                <button type="button" class="listen-button" data-listen aria-label="Oír en francés" aria-keyshortcuts="O"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+              </div>
+            </div>
+            <div id="study-back" class="study-face" tabindex="-1" hidden>
+              <p class="study-lang">Respuesta</p>
+              <div class="study-word-line">
+                <p class="study-word study-fr" lang="fr"></p>
+                <button type="button" class="listen-button" data-listen aria-label="Oír en francés" aria-keyshortcuts="O"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+              </div>
+              <p class="study-es"></p>
+              <div class="study-example" hidden>
+                <p class="study-example-fr" lang="fr"></p>
+                <p class="study-example-es"></p>
+              </div>
+            </div>
+          </article>
+
+          <button type="button" class="button button-primary study-reveal" id="study-reveal" aria-keyshortcuts="Space Enter">
+            Mostrar respuesta <kbd aria-hidden="true">Espacio</kbd>
+          </button>
+
+          <div id="study-answers" class="study-answers" hidden>
+            <button type="button" class="button button-secondary study-answer" data-answer="again" aria-keyshortcuts="1"><span class="answer-name">Otra vez</span><span class="answer-when"></span><kbd aria-hidden="true">1</kbd></button>
+            <button type="button" class="button button-secondary study-answer" data-answer="hard" aria-keyshortcuts="2"><span class="answer-name">Difícil</span><span class="answer-when"></span><kbd aria-hidden="true">2</kbd></button>
+            <button type="button" class="button button-primary study-answer" data-answer="good" aria-keyshortcuts="3"><span class="answer-name">Bien</span><span class="answer-when"></span><kbd aria-hidden="true">3</kbd></button>
+            <button type="button" class="button button-secondary study-answer" data-answer="easy" aria-keyshortcuts="4"><span class="answer-name">Fácil</span><span class="answer-when"></span><kbd aria-hidden="true">4</kbd></button>
+          </div>
+        </div>
+
+        <!-- Fin de la sesión -->
+        <div id="study-done" class="study-done" hidden>
+          <h2 class="study-done-title" tabindex="-1">Terminaste por hoy</h2>
+          <p id="study-done-text"></p>
+          <button type="button" class="button button-secondary" id="study-back-to-summary">Volver al resumen</button>
+        </div>
       </section>
 
       <section id="screen-quiz" class="screen line-quiz" hidden>
@@ -208,6 +269,44 @@
       <button type="button" class="button button-secondary" data-format="json">Exportar JSON</button>
       <button type="button" class="button button-primary" data-format="csv">Exportar CSV</button>
     </div>
+  </dialog>
+
+  <!-- Ventana de la pantalla Estudiar -->
+  <dialog id="study-settings" class="dialog" aria-labelledby="settings-title">
+    <form method="dialog" novalidate>
+      <h2 id="settings-title" class="dialog-title">Ajustes del estudio</h2>
+      <fieldset class="field">
+        <legend>Dirección</legend>
+        <div class="segmented">
+          <input type="radio" name="direction" value="fr-es" id="settings-direction-fr-es"><label for="settings-direction-fr-es">Francés → español</label>
+          <input type="radio" name="direction" value="es-fr" id="settings-direction-es-fr"><label for="settings-direction-es-fr">Español → francés</label>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Algoritmo</legend>
+        <div class="choice">
+          <input type="radio" name="algorithm" value="sm2" id="settings-algorithm-sm2" aria-describedby="settings-sm2-help">
+          <label for="settings-algorithm-sm2">SM-2 simplificado</label>
+          <p class="hint" id="settings-sm2-help">Calcula los días según lo fácil que te resulta cada palabra: cuanto mejor la sabes, más tarda en volver.</p>
+        </div>
+        <div class="choice">
+          <input type="radio" name="algorithm" value="leitner" id="settings-algorithm-leitner" aria-describedby="settings-leitner-help">
+          <label for="settings-algorithm-leitner">Leitner</label>
+          <p class="hint" id="settings-leitner-help">Cinco cajas: cada acierto sube la palabra de caja y vuelve más tarde (1, 2, 4, 8 o 16 días).</p>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label for="settings-new-per-day">Palabras nuevas por día (de 0 a 100)</label>
+        <input type="number" id="settings-new-per-day" name="newPerDay" min="0" max="100" step="1" inputmode="numeric" aria-describedby="settings-error-new-per-day">
+        <p class="field-error" id="settings-error-new-per-day" hidden></p>
+      </div>
+      <p class="hint">Cambiar de algoritmo no borra tu progreso: cada repaso se guarda con los dos.</p>
+      <p class="field-error form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+        <button type="submit" class="button button-primary">Guardar</button>
+      </div>
+    </form>
   </dialog>
 
   <div class="update" role="status">

@@ -87,3 +87,54 @@ test('el formulario tiene campos con etiqueta y el género como tres opciones', 
   for (const value of ['m', 'f', '']) assert.match(form, new RegExp(`type="radio" name="gender" value="${value}"`));
   assert.match(form, /<datalist id="category-options">/);
 });
+
+// --- Pantalla Estudiar (Etapa 3) ---
+const study = html.match(/<section id="screen-study"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+// Contenido de un elemento con ese id (hasta su etiqueta de cierre del mismo tipo, sin anidar el mismo tipo)
+const elementById = (source, tag, id) => source.match(new RegExp(`<${tag} [^>]*id="${id}"[^>]*>([\\s\\S]*?)</${tag}>`))?.[1];
+
+test('Estudiar tiene el resumen del día con sus botones', () => {
+  assert.match(study, /id="study-due"/);
+  assert.match(study, /id="study-new"/);
+  assert.match(study, /<button type="button"[^>]*id="study-start"[^>]*>Empezar<\/button>/);
+  assert.match(study, /<button type="button"[^>]*id="study-settings-open"[^>]*>Ajustes del estudio<\/button>/);
+});
+
+test('Estudiar tiene la tarjeta con anverso, reverso y botón de altavoz', () => {
+  const card = study.match(/<article [^>]*id="study-card"[^>]*>([\s\S]*?)<\/article>/)?.[1];
+  assert.ok(card, 'falta <article id="study-card">');
+  assert.match(card, /id="study-front"/);
+  assert.match(card, /id="study-back"/);
+  assert.match(card, /<button type="button" class="listen-button"[^>]*aria-label="Oír en francés"/);
+});
+
+test('Estudiar tiene «Mostrar respuesta» y los cuatro botones de respuesta', () => {
+  assert.match(study, /<button type="button"[^>]*id="study-reveal"[^>]*>\s*Mostrar respuesta/);
+  const names = { again: 'Otra vez', hard: 'Difícil', good: 'Bien', easy: 'Fácil' };
+  for (const [answer, name] of Object.entries(names)) {
+    assert.match(study, new RegExp(`<button type="button"[^>]*data-answer="${answer}"[^>]*>[\\s\\S]*?${name}`), `falta ${answer}`);
+  }
+  assert.match(study, /<button type="button" class="button button-primary study-answer" data-answer="good"/);
+});
+
+test('Estudiar tiene el fin de sesión y un aviso anunciable', () => {
+  assert.match(study, /id="study-done"/);
+  assert.match(study, /Terminaste por hoy/);
+  assert.match(study, /id="study-notice"[^>]*role="alert"/);
+  assert.match(study, /Añade palabras en Vocabulario para empezar\./);
+});
+
+test('la ventana de ajustes del estudio tiene dirección, algoritmo y nuevas por día', () => {
+  const dialog = dialogOf('study-settings');
+  assert.ok(dialog !== undefined, 'falta <dialog id="study-settings">');
+  assert.match(dialog, /<fieldset[\s\S]*?<legend>Dirección<\/legend>/);
+  assert.match(dialog, /<fieldset[\s\S]*?<legend>Algoritmo<\/legend>/);
+  for (const value of ['fr-es', 'es-fr']) assert.match(dialog, new RegExp(`type="radio" name="direction" value="${value}"`));
+  for (const value of ['sm2', 'leitner']) assert.match(dialog, new RegExp(`type="radio" name="algorithm" value="${value}"`));
+  assert.match(dialog, /<input type="number" id="settings-new-per-day"[^>]*min="0" max="100"/);
+  assert.ok(hasLabelFor('settings-new-per-day'), 'falta label de settings-new-per-day');
+  for (const id of ['settings-direction-fr-es', 'settings-direction-es-fr', 'settings-algorithm-sm2', 'settings-algorithm-leitner']) {
+    assert.ok(hasLabelFor(id), `falta label de ${id}`);
+  }
+  assert.ok(elementById(html, 'p', 'settings-error-new-per-day') !== undefined, 'falta el error de nuevas por día');
+});
