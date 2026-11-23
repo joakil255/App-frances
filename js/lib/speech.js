@@ -15,18 +15,23 @@ export function pickFrenchVoice(voices) {
   return other ? { voice: other, exact: false } : null;
 }
 
-// Las voces pueden tardar en cargar: si la lista llega vacía, espera a «voiceschanged»
+// Las voces pueden tardar en cargar: si la lista llega vacía, espera a «voiceschanged».
+// Chrome en Android a veces lanza un primer «voiceschanged» todavía con 0 voces:
+// se sigue esperando hasta que haya voces o se acabe el tiempo.
 export function loadVoices(synth, timeoutMs = 2000) {
   const voices = synth.getVoices();
   if (voices.length > 0) return Promise.resolve(voices);
   return new Promise((resolve) => {
-    const done = () => {
+    const finish = () => {
       clearTimeout(timer);
-      synth.removeEventListener('voiceschanged', done);
+      synth.removeEventListener('voiceschanged', onChange);
       resolve(synth.getVoices());
     };
-    const timer = setTimeout(done, timeoutMs);
-    synth.addEventListener('voiceschanged', done);
+    const onChange = () => {
+      if (synth.getVoices().length > 0) finish();
+    };
+    const timer = setTimeout(finish, timeoutMs);
+    synth.addEventListener('voiceschanged', onChange);
   });
 }
 

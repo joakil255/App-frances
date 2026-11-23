@@ -64,6 +64,15 @@ test('loadVoices espera a voiceschanged si la lista llega vacía', async () => {
   assert.equal((await pending).length, 1);
 });
 
+test('loadVoices ignora un voiceschanged con la lista todavía vacía (Chrome en Android)', async () => {
+  const synth = new FakeSynth([]);
+  const pending = loadVoices(synth, 1000);
+  synth.dispatchEvent(new Event('voiceschanged')); // primer aviso: 0 voces
+  synth.voices = [voice('A', 'fr-FR')];
+  synth.dispatchEvent(new Event('voiceschanged')); // segundo aviso: ya hay voces
+  assert.equal((await pending).length, 1);
+});
+
 test('loadVoices se rinde tras el tiempo de espera con la lista vacía', async () => {
   assert.deepEqual(await loadVoices(new FakeSynth([]), 20), []);
 });
