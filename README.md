@@ -74,6 +74,14 @@ La primera vez que abres la app se cargan **60 palabras A1** (saludos, familia, 
 - **Si no suena:** en Ajustes de Android busca «Salida de texto a voz», elige el motor «Servicios de voz de Google», instala la voz Francés (Francia) y comprueba que «Escuchar un ejemplo» suena. Después **fuerza la detención de Chrome** (Ajustes → Aplicaciones → Chrome → Forzar detención): Chrome sigue usando el motor anterior hasta que se reinicia.
 - **Reglas al guardar:** francés y español son obligatorios; el ejemplo es opcional, pero si escribes una frase hace falta su traducción; si eliges género, el francés lleva artículo y debe coincidir (*la* = femenino, *le* = masculino).
 
+### Mazo de 100 palabras A1 (opcional)
+
+El botón **Añadir 100 palabras A1** amplía las 60 iniciales con 100 palabras nuevas, **sin repetir ninguna**, cada una con una frase de ejemplo corta: 12 saludos, los números del 0 al 20, 12 de familia, 20 de comida, 20 verbos y 15 lugares. Las traducciones están en **español de Chile**.
+
+Al pulsarlo se abre la misma ventana que al importar un archivo («100 palabras nuevas para importar…») y nada cambia hasta que confirmas. Si ya lo añadiste, la ventana dice que las 100 ya existen. Funciona sin conexión después de la primera carga. El archivo es `data/a1-deck.json` y también se puede importar a mano con **Importar**.
+
+**Contenido pendiente de tu revisión.** Las entradas con la etiqueta **Revisar** tienen una duda concreta; la lista con el motivo de cada una y la tabla completa están en [`docs/contenido/a1-deck.md`](docs/contenido/a1-deck.md). **Ojo:** después de corregir palabras del mazo, si vuelves a abrir **Añadir 100 palabras A1**, no pulses **Reemplazar**: volvería a poner el texto original y la marca **Revisar** en todas.
+
 ### Tus datos y la copia de seguridad
 
 Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras los datos del navegador o desinstalas la app, se pierden. **Exporta de vez en cuando** (botón *Exportar*) y guarda el archivo: es tu copia de seguridad.
@@ -217,6 +225,10 @@ Con la app instalada en el teléfono, marca cada punto:
 - [ ] Importar un CSV con una fila sin español: el resumen muestra la fila y el motivo.
 - [ ] Con **modo avión**, la lista, la búsqueda y la edición siguen funcionando.
 - [ ] Al cerrar y volver a abrir la app, los cambios siguen ahí.
+- [ ] **Añadir 100 palabras A1**: la ventana dice «100 palabras nuevas para importar», «0 ya existen» y «0 filas con errores»; al importar, el contador pasa a «160 de 160 palabras» y el filtro de categoría muestra **Números** y **Lugares**.
+- [ ] Vuelve a pulsarlo: la ventana dice que las 100 ya existen y no ofrece importar.
+- [ ] Con **modo avión** (tras abrir la app una vez con conexión), el botón sigue funcionando.
+- [ ] Después de añadirlo, Estudiar sigue mostrando como mucho tus «nuevas por día» (10 por defecto).
 
 ### 7. Estudiar en el celular y en el computador
 
@@ -314,9 +326,12 @@ js/lib/answer-check.js  comprobar respuestas escritas (mayúsculas, espacios, ac
 js/lib/quiz.js          modos del quiz, elección de palabras y opciones
 js/lib/stats.js         estadísticas de Progreso (racha, días, acierto y estado de las palabras)
 js/data/initial-words.js lista inicial de 60 palabras
+js/lib/deck.js          carga del mazo A1 opcional
+data/a1-deck.json       mazo de 100 palabras A1 (formato de exportación de la app)
 fonts/                  fuentes .woff2 y sus licencias (SIL OFL)
 icons/                  iconos de la app
 tests/                  pruebas automáticas (*.test.js)
 docs/superpowers/       diseños y planes de cada etapa
+docs/contenido/         revisión del contenido (mazo A1: tabla completa y lista REVISAR)
 DESIGN.md               guía visual
 ```

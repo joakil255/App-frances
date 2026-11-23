@@ -2,6 +2,7 @@
 // Todo texto del usuario se escribe con textContent o value, nunca como HTML.
 import { filterWords, categoriesOf } from '../lib/words.js';
 import { exportJson, exportCsv, exportFileName, readImport, planImport, MAX_IMPORT_BYTES } from '../lib/transfer.js';
+import { loadDeck, A1_DECK_NAME } from '../lib/deck.js';
 import { StorageError } from '../lib/storage.js';
 import { RATES } from '../lib/speech.js';
 import { playFrench } from './voice.js';
@@ -322,10 +323,32 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       return;
     }
     pendingPlan = planImport(read.rows, store.getWords());
-    showImportSummary(file.name, read.ignoredColumns, pendingPlan);
+    showImportSummary(file.name, read.ignoredColumns, pendingPlan, $('#vocab-import'));
   });
 
-  function showImportSummary(fileName, ignoredColumns, plan) {
+  // Mazo A1: el mismo resumen que al importar un archivo (no cambia nada hasta confirmar)
+  const deckButton = $('#vocab-deck');
+  deckButton.addEventListener('click', async () => {
+    if (deckButton.disabled) return;
+    deckButton.disabled = true; // evita abrir dos veces la ventana con un doble toque
+    clearNotice();
+    try {
+      const read = await loadDeck(window.fetch.bind(window));
+      if (read.fatal) {
+        showNotice(read.fatal);
+        return;
+      }
+      pendingPlan = planImport(read.rows, store.getWords());
+      showImportSummary(A1_DECK_NAME, read.ignoredColumns, pendingPlan, deckButton);
+    } finally {
+      deckButton.disabled = false;
+    }
+  });
+
+  // «source» es el botón que abrió la ventana: el foco vuelve a él al cerrarla
+  let importSource = null;
+  function showImportSummary(fileName, ignoredColumns, plan, source) {
+    importSource = source;
     const { newWords, duplicates, invalid } = plan;
     $('#import-title').textContent = `Revisión de «${fileName}»`;
     $('.import-counts', importDialog).replaceChildren(
@@ -344,7 +367,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     importButton.hidden = newWords.length === 0;
     importButton.textContent = `Importar ${plural(newWords.length, 'nueva', 'nuevas')}`;
     $('[data-action="replace"]', importDialog).hidden = duplicates.length === 0;
-    openDialog(importDialog, $('#vocab-import'));
+    openDialog(importDialog, source);
   }
 
   async function runImport(replaceDuplicates, dialog) {
@@ -353,7 +376,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       say(replaced > 0
         ? `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')} y se reemplazaron ${replaced}.`
         : `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')}.`);
-      returnFocusTo = $('#vocab-import');
+      returnFocusTo = importSource;
       dialog.close();
       renderCategories();
       render();
@@ -373,7 +396,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       $('.replace-text', replaceDialog).textContent = `Se sobrescribirán ${n === 1 ? 'la palabra' : `las ${n} palabras`} de tu lista `
         + `con los datos del archivo, y se añadirán ${plural(pendingPlan.newWords.length, 'nueva', 'nuevas')}. No se puede deshacer.`;
       importDialog.close();
-      openDialog(replaceDialog, $('#vocab-import'));
+      openDialog(replaceDialog, importSource);
     }
   });
   $('[data-action="confirm"]', replaceDialog).addEventListener('click', () => runImport(true, replaceDialog));
