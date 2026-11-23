@@ -31,6 +31,7 @@ const PRECACHE_URLS = [
   'js/lib/speech.js',
   'js/lib/dates.js',
   'js/lib/scheduler.js',
+  'js/lib/queue.js',
   'js/screens/vocabulary.js',
   'js/data/initial-words.js',
   'js/update.js',
