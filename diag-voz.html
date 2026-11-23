@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico de voz (temporal)</title>
+  <style>
+    body { font: 17px/1.5 system-ui, sans-serif; margin: 16px; color: #1C2433; background: #FAFBFC; }
+    button { font: inherit; min-height: 48px; margin: 4px 0; width: 100%; border: 2px solid #233A7A; border-radius: 8px; background: #fff; color: #233A7A; font-weight: 700; }
+    pre { white-space: pre-wrap; background: #fff; border: 1px solid #C7CFDA; border-radius: 8px; padding: 8px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico de voz</h1>
+  <p>Página temporal para encontrar por qué no suena «Oír». Pulsa cada botón, espera unos segundos y después copia todo el texto del recuadro de abajo.</p>
+  <button type="button" id="voices">1. Ver voces</button>
+  <button type="button" data-variant="app">2. Hablar como la app (cancelar + voz elegida)</button>
+  <button type="button" data-variant="no-cancel">3. Hablar sin cancelar antes</button>
+  <button type="button" data-variant="lang-only">4. Hablar solo con idioma fr-FR (sin elegir voz)</button>
+  <button type="button" data-variant="default">5. Hablar con la voz por defecto</button>
+  <pre id="log"></pre>
+  <script>
+    // Registro visible: todo con textContent
+    const log = document.getElementById('log');
+    const write = (text) => { log.textContent += text + '\n'; };
+    const synth = window.speechSynthesis;
+    write('speechSynthesis disponible: ' + Boolean(synth));
+    write('Navegador: ' + navigator.userAgent);
+    write('Controlada por service worker: ' + Boolean(navigator.serviceWorker && navigator.serviceWorker.controller));
+
+    function frVoices() {
+      return synth.getVoices().filter((v) => String(v.lang).replace('_', '-').toLowerCase().startsWith('fr'));
+    }
+
+    document.getElementById('voices').addEventListener('click', () => {
+      const all = synth.getVoices();
+      write('--- Voces: ' + all.length + ' en total');
+      for (const v of frVoices()) {
+        write('  FR: ' + v.name + ' | lang=' + v.lang + ' | local=' + v.localService + ' | default=' + v.default);
+      }
+      const def = all.find((v) => v.default);
+      write('  Voz por defecto: ' + (def ? def.name + ' (' + def.lang + ')' : 'ninguna'));
+    });
+    synth && synth.addEventListener('voiceschanged', () => write('(evento voiceschanged: ' + synth.getVoices().length + ' voces)'));
+
+    for (const button of document.querySelectorAll('[data-variant]')) {
+      button.addEventListener('click', () => {
+        const variant = button.dataset.variant;
+        const u = new SpeechSynthesisUtterance('Bonjour, la fenêtre.');
+        const fr = frVoices();
+        const voice = fr.find((v) => /fr.FR/i.test(v.lang) && v.localService) || fr.find((v) => /fr.FR/i.test(v.lang)) || fr[0];
+        if (variant === 'app' || variant === 'no-cancel') { u.voice = voice || null; u.lang = voice ? voice.lang.replace('_', '-') : 'fr-FR'; }
+        if (variant === 'lang-only') u.lang = 'fr-FR';
+        u.rate = 1;
+        write('--- Prueba «' + variant + '» con voz: ' + (u.voice ? u.voice.name : '(sin elegir)') + ', lang=' + (u.lang || '(vacío)'));
+        u.onstart = () => write('  start (está sonando)');
+        u.onend = () => write('  end');
+        u.onerror = (e) => write('  ERROR: ' + e.error);
+        window.lastUtterance = u; // evita que Chrome la descarte antes de tiempo
+        if (variant === 'app') synth.cancel();
+        synth.speak(u);
+        setTimeout(() => write('  1 s después: speaking=' + synth.speaking + ' pending=' + synth.pending), 1000);
+      });
+    }
+  </script>
+</body>
+</html>
