@@ -8,6 +8,11 @@ export default [
     files: ['js/**/*.js'],
     languageOptions: { globals: globals.browser },
   },
+  // Service worker: script clásico (sin import) con sus propias variables globales
+  {
+    files: ['sw.js'],
+    languageOptions: { sourceType: 'script', globals: globals.serviceworker },
+  },
   // Pruebas y configuración: corren en Node
   {
     files: ['tests/**/*.js', 'eslint.config.js'],
