@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -24,6 +24,7 @@ const PRECACHE_URLS = [
   'css/styles.css',
   'js/app.js',
   'js/lib/router.js',
+  'js/lib/words.js',
   'js/update.js',
   'fonts/barlow-semi-condensed-500.woff2',
   'fonts/barlow-semi-condensed-700.woff2',
