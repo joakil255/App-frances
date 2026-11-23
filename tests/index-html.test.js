@@ -45,3 +45,45 @@ test('declara theme-color para tema claro y oscuro', () => {
   assert.ok(html.includes('<meta name="theme-color" content="#233A7A" media="(prefers-color-scheme: light)">'));
   assert.ok(html.includes('<meta name="theme-color" content="#1A2B5C" media="(prefers-color-scheme: dark)">'));
 });
+
+// --- Pantalla Vocabulario (Etapa 2) ---
+const vocab = html.match(/<section id="screen-vocabulary"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const dialogOf = (id) => html.match(new RegExp(`<dialog id="${id}"[^>]*>([\\s\\S]*?)</dialog>`))?.[1];
+const hasLabelFor = (id) => new RegExp(`<label for="${id}"[^>]*>[^<]+</label>`).test(html);
+
+test('Vocabulario tiene buscador y filtros con etiqueta', () => {
+  assert.match(vocab, /<input type="search" id="vocab-search"/);
+  for (const id of ['vocab-search', 'vocab-category', 'vocab-gender']) assert.ok(hasLabelFor(id), `falta label de ${id}`);
+  assert.match(vocab, /<select id="vocab-category"/);
+  assert.match(vocab, /<select id="vocab-gender"[\s\S]*value="m"[\s\S]*value="f"[\s\S]*value="none"/);
+});
+
+test('Vocabulario tiene los botones de añadir, importar y exportar', () => {
+  assert.match(vocab, /<button type="button"[^>]*id="vocab-add"[^>]*>Añadir palabra<\/button>/);
+  assert.match(vocab, /<button type="button"[^>]*id="vocab-import"[^>]*>Importar<\/button>/);
+  assert.match(vocab, /<button type="button"[^>]*id="vocab-export"[^>]*>Exportar<\/button>/);
+  assert.match(vocab, /<input type="file" id="vocab-file" accept="\.json,\.csv"/);
+});
+
+test('Vocabulario anuncia el contador y tiene la lista', () => {
+  assert.match(vocab, /<p id="vocab-count"[^>]*role="status"/);
+  assert.match(vocab, /<ul id="vocab-list"/);
+  assert.match(vocab, /id="vocab-notice"[^>]*role="alert"/);
+});
+
+test('existen las ventanas de la pantalla Vocabulario', () => {
+  for (const id of ['word-detail', 'word-form', 'confirm-delete', 'import-summary', 'confirm-replace', 'export-choice']) {
+    assert.ok(dialogOf(id) !== undefined, `falta <dialog id="${id}">`);
+  }
+});
+
+test('el formulario tiene campos con etiqueta y el género como tres opciones', () => {
+  const form = dialogOf('word-form');
+  for (const id of ['form-fr', 'form-es', 'form-category', 'form-example-fr', 'form-example-es']) {
+    assert.match(form, new RegExp(`id="${id}"`), `falta ${id}`);
+    assert.ok(hasLabelFor(id), `falta label de ${id}`);
+  }
+  assert.match(form, /<fieldset[\s\S]*<legend>Género<\/legend>/);
+  for (const value of ['m', 'f', '']) assert.match(form, new RegExp(`type="radio" name="gender" value="${value}"`));
+  assert.match(form, /<datalist id="category-options">/);
+});

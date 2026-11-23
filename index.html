@@ -36,7 +36,43 @@
 
       <section id="screen-vocabulary" class="screen line-vocabulary" hidden>
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Vocabulario</h1>
-        <p class="empty">Todavía no hay palabras. Aquí aparecerá la lista para explorar.</p>
+
+        <div id="vocab-notice" class="notice" role="alert" hidden></div>
+
+        <div class="vocab-tools">
+          <div class="field">
+            <label for="vocab-search">Buscar en francés o español</label>
+            <input type="search" id="vocab-search" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="vocab-filters">
+            <div class="field">
+              <label for="vocab-category">Categoría</label>
+              <select id="vocab-category">
+                <option value="all">Todas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="vocab-gender">Género</label>
+              <select id="vocab-gender">
+                <option value="all">Todos</option>
+                <option value="m">Masculino</option>
+                <option value="f">Femenino</option>
+                <option value="none">Sin género</option>
+              </select>
+            </div>
+          </div>
+          <div class="vocab-actions">
+            <button type="button" class="button button-primary" id="vocab-add">Añadir palabra</button>
+            <button type="button" class="button button-secondary" id="vocab-import">Importar</button>
+            <button type="button" class="button button-secondary" id="vocab-export">Exportar</button>
+            <input type="file" id="vocab-file" accept=".json,.csv" hidden>
+          </div>
+        </div>
+
+        <p id="vocab-message" class="vocab-message" role="status"></p>
+        <p id="vocab-count" class="vocab-count" role="status"></p>
+        <ul id="vocab-list" class="vocab-list"></ul>
+        <p id="vocab-empty" class="empty" hidden></p>
       </section>
 
       <section id="screen-study" class="screen line-study" hidden>
@@ -55,6 +91,124 @@
       </section>
     </main>
   </div>
+
+  <!-- Ventanas de la pantalla Vocabulario (se rellenan con textContent) -->
+  <dialog id="word-detail" class="dialog" aria-labelledby="detail-fr">
+    <h2 id="detail-fr" class="detail-fr" lang="fr"></h2>
+    <p class="detail-es"></p>
+    <p class="detail-meta"></p>
+    <div class="detail-voice">
+      <button type="button" class="button button-secondary" data-rate="normal">Oír</button>
+      <button type="button" class="button button-secondary" data-rate="slow">Oír lento</button>
+    </div>
+    <div class="notice voice-notice" role="alert" hidden></div>
+    <div class="detail-example" hidden>
+      <p class="example-fr" lang="fr"></p>
+      <p class="example-es"></p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cerrar</button>
+      <button type="button" class="button button-secondary" data-action="delete">Borrar</button>
+      <button type="button" class="button button-primary" data-action="edit">Editar</button>
+    </div>
+  </dialog>
+
+  <dialog id="word-form" class="dialog" aria-labelledby="form-title">
+    <form method="dialog" novalidate>
+      <h2 id="form-title" class="dialog-title">Añadir palabra</h2>
+      <div class="field">
+        <label for="form-fr">Francés (con artículo si es sustantivo)</label>
+        <input type="text" id="form-fr" name="fr" lang="fr" autocomplete="off" aria-describedby="error-fr">
+        <p class="field-error" id="error-fr" hidden></p>
+      </div>
+      <div class="field">
+        <label for="form-es">Español</label>
+        <input type="text" id="form-es" name="es" autocomplete="off" aria-describedby="error-es">
+        <p class="field-error" id="error-es" hidden></p>
+      </div>
+      <fieldset class="field gender-field" aria-describedby="error-gender">
+        <legend>Género</legend>
+        <div class="segmented">
+          <input type="radio" name="gender" value="m" id="form-gender-m"><label for="form-gender-m">Masculino</label>
+          <input type="radio" name="gender" value="f" id="form-gender-f"><label for="form-gender-f">Femenino</label>
+          <input type="radio" name="gender" value="" id="form-gender-none"><label for="form-gender-none">Sin género</label>
+        </div>
+        <p class="field-error" id="error-gender" hidden></p>
+      </fieldset>
+      <div class="field">
+        <label for="form-category">Categoría (opcional)</label>
+        <input type="text" id="form-category" name="category" list="category-options" autocomplete="off" aria-describedby="error-category">
+        <datalist id="category-options"></datalist>
+        <p class="field-error" id="error-category" hidden></p>
+      </div>
+      <div class="field">
+        <label for="form-example-fr">Ejemplo en francés (opcional)</label>
+        <input type="text" id="form-example-fr" name="exampleFr" lang="fr" autocomplete="off" aria-describedby="error-exampleFr">
+        <p class="field-error" id="error-exampleFr" hidden></p>
+      </div>
+      <div class="field">
+        <label for="form-example-es">Ejemplo en español</label>
+        <input type="text" id="form-example-es" name="exampleEs" autocomplete="off" aria-describedby="error-exampleEs">
+        <p class="field-error" id="error-exampleEs" hidden></p>
+      </div>
+      <div class="field checkbox-field">
+        <input type="checkbox" id="form-review" name="needsReview">
+        <label for="form-review">Pendiente de revisar</label>
+      </div>
+      <p class="field-error form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+        <button type="submit" class="button button-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-delete" class="dialog" aria-labelledby="delete-title">
+    <h2 id="delete-title" class="dialog-title"></h2>
+    <p>Se borrará de tu lista. No se puede deshacer.</p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Borrar</button>
+    </div>
+  </dialog>
+
+  <dialog id="import-summary" class="dialog" aria-labelledby="import-title">
+    <h2 id="import-title" class="dialog-title"></h2>
+    <ul class="import-counts"></ul>
+    <p class="import-ignored hint" hidden></p>
+    <div class="import-invalid" hidden>
+      <h3 class="import-subtitle">Filas con errores</h3>
+      <ul class="import-reasons"></ul>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-secondary" data-action="replace">Reemplazar duplicadas…</button>
+      <button type="button" class="button button-primary" data-action="import"></button>
+    </div>
+  </dialog>
+
+  <dialog id="confirm-replace" class="dialog" aria-labelledby="replace-title">
+    <h2 id="replace-title" class="dialog-title"></h2>
+    <p class="replace-text"></p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Reemplazar</button>
+    </div>
+  </dialog>
+
+  <dialog id="export-choice" class="dialog" aria-labelledby="export-title">
+    <h2 id="export-title" class="dialog-title">Exportar tus palabras</h2>
+    <p>Guarda una copia de todas tus palabras. Sirve como copia de seguridad y para volver a importarlas.</p>
+    <ul class="hint export-help">
+      <li><strong>CSV</strong>: para abrirlo en una hoja de cálculo.</li>
+      <li><strong>JSON</strong>: copia exacta para esta app.</li>
+    </ul>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-secondary" data-format="json">Exportar JSON</button>
+      <button type="button" class="button button-primary" data-format="csv">Exportar CSV</button>
+    </div>
+  </dialog>
 
   <div class="update" role="status">
     <div class="update-banner" hidden>
