@@ -3,11 +3,16 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": "^20.19.0 || ^22.13.0 || >=24"
   },
   "scripts": {
     "start": "python3 -m http.server 8000",
     "test": "node --test",
     "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.15.0",
+    "globals": "17.14.0"
   }
 }
