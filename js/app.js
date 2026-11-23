@@ -7,6 +7,7 @@ import { INITIAL_WORDS } from './data/initial-words.js';
 import { initVocabulary } from './screens/vocabulary.js';
 import { createStudyStore } from './lib/study-storage.js';
 import { initStudy } from './screens/study.js';
+import { initQuiz } from './screens/quiz.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -61,9 +62,13 @@ function localStorageOrBlocked() {
 const wordStore = createWordStore(localStorageOrBlocked(), { initialWords: INITIAL_WORDS });
 const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
-// Estudiar necesita las palabras ya cargadas: empieza cuando Vocabulario termina de cargarlas
+const studyStore = createStudyStore(localStorageOrBlocked());
+
+// Estudiar necesita las palabras ya cargadas y Quiz, además, el estudio cargado
+// (comparten el mismo almacén e historial)
 initVocabulary({ store: wordStore, synth })
-  .then(() => initStudy({ wordStore, studyStore: createStudyStore(localStorageOrBlocked()), synth }));
+  .then(() => initStudy({ wordStore, studyStore, synth }))
+  .then(() => initQuiz({ wordStore, studyStore, synth }));
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

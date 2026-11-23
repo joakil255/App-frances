@@ -138,3 +138,52 @@ test('la ventana de ajustes del estudio tiene dirección, algoritmo y nuevas por
   }
   assert.ok(elementById(html, 'p', 'settings-error-new-per-day') !== undefined, 'falta el error de nuevas por día');
 });
+
+// --- Pantalla Quiz (Etapa 4) ---
+const quiz = html.match(/<section id="screen-quiz"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const tagWithId = (source, id) => source.match(new RegExp(`<[a-z][a-z0-9]* [^>]*id="${id}"[^>]*>`))?.[0];
+
+test('Quiz tiene un aviso anunciable y el inicio con los tres modos', () => {
+  assert.match(quiz, /id="quiz-notice"[^>]*role="alert"/);
+  assert.match(quiz, /id="quiz-start"/);
+  const names = { choice: 'Opción múltiple', write: 'Escribir en francés', dictation: 'Dictado' };
+  for (const [mode, name] of Object.entries(names)) {
+    const button = quiz.match(new RegExp(`<button type="button"[^>]*data-mode="${mode}"[^>]*>[\\s\\S]*?</button>`))?.[0];
+    assert.ok(button, `falta el botón ${mode}`);
+    assert.ok(button.includes(name), `falta el nombre ${name}`);
+    const reasonId = button.match(/aria-describedby="([^"]+)"/)?.[1];
+    assert.ok(reasonId, `${mode} sin aria-describedby`);
+    assert.ok(tagWithId(quiz, reasonId), `falta el motivo ${reasonId}`);
+  }
+  assert.match(quiz, /<input type="checkbox" id="quiz-require-accents"/);
+  assert.ok(hasLabelFor('quiz-require-accents'), 'falta label de quiz-require-accents');
+});
+
+test('Quiz tiene la pregunta con progreso, tarjeta, opciones y campo de respuesta', () => {
+  for (const id of ['quiz-question', 'quiz-progress', 'quiz-card', 'quiz-options', 'quiz-answer-form']) {
+    assert.ok(tagWithId(quiz, id), `falta #${id}`);
+  }
+  const card = quiz.match(/<article [^>]*id="quiz-card"[^>]*>([\s\S]*?)<\/article>/)?.[1] ?? '';
+  assert.match(card, /<button type="button" class="listen-button"[^>]*aria-label="Oír en francés"/);
+  assert.match(card, />Oír<\/button>/);
+  assert.match(card, />Oír lento<\/button>/);
+  const input = tagWithId(quiz, 'quiz-answer');
+  assert.ok(input, 'falta #quiz-answer');
+  for (const attr of ['type="text"', 'lang="fr"', 'autocapitalize="none"', 'autocorrect="off"', 'spellcheck="false"',
+    'autocomplete="off"', 'enterkeyhint="done"']) {
+    assert.ok(input.includes(attr), `#quiz-answer sin ${attr}`);
+  }
+  assert.ok(hasLabelFor('quiz-answer'), 'falta label de quiz-answer');
+  assert.match(quiz, /<button type="submit" class="button button-primary"[^>]*>Comprobar<\/button>/);
+  assert.match(quiz, /<button type="button"[^>]*id="quiz-skip"[^>]*>No lo sé<\/button>/);
+});
+
+test('Quiz tiene la respuesta inmediata y el resumen', () => {
+  assert.ok(tagWithId(quiz, 'quiz-feedback'), 'falta #quiz-feedback');
+  assert.match(tagWithId(quiz, 'quiz-feedback-title') ?? '', /tabindex="-1"/);
+  assert.match(quiz, /<button type="button"[^>]*id="quiz-next"[^>]*>Siguiente<\/button>/);
+  assert.ok(tagWithId(quiz, 'quiz-summary'), 'falta #quiz-summary');
+  assert.match(tagWithId(quiz, 'quiz-summary-title') ?? '', /tabindex="-1"/);
+  assert.match(quiz, /<ul [^>]*id="quiz-failed"/);
+  assert.match(quiz, /<button type="button"[^>]*id="quiz-again"[^>]*>Otro quiz<\/button>/);
+});

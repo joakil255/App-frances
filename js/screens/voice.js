@@ -18,6 +18,12 @@ function show(notice, ...children) {
   notice.hidden = false;
 }
 
+// ¿Hay alguna voz francesa? (puede tardar hasta 2 s mientras el navegador carga las voces)
+export async function hasFrenchVoice(synth) {
+  if (!synth) return false;
+  return pickFrenchVoice(await loadVoices(synth)) !== null;
+}
+
 // Lee «text» con la mejor voz francesa. Si no se puede, explica por qué en «notice».
 // showAccent: avisar también si la voz es francesa pero no de Francia.
 export async function playFrench({ synth, text: phrase, rate, notice, showAccent = false }) {

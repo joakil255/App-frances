@@ -4,11 +4,12 @@ import { toStorageError } from './storage.js';
 
 export const STUDY_KEY = 'app-frances-study';
 const SCHEMA_VERSION = 1;
-export const DEFAULT_SETTINGS = Object.freeze({ algorithm: 'sm2', direction: 'fr-es', newPerDay: 10 });
+export const DEFAULT_SETTINGS = Object.freeze({ algorithm: 'sm2', direction: 'fr-es', newPerDay: 10, requireAccents: false });
 const ALGORITHMS = ['sm2', 'leitner'];
 const DIRECTIONS = ['fr-es', 'es-fr'];
 
-// Devuelve { ok, errors, settings }; newPerDay puede llegar como texto del formulario
+// Devuelve { ok, errors, settings }; newPerDay puede llegar como texto del formulario.
+// requireAccents (del quiz) falta en los datos guardados antes de la Etapa 4: vale false.
 export function validateSettings(input) {
   const errors = {};
   if (!ALGORITHMS.includes(input.algorithm)) errors.algorithm = 'Elige un algoritmo.';
@@ -16,8 +17,12 @@ export function validateSettings(input) {
   const text = String(input.newPerDay ?? '').trim();
   const newPerDay = Number(text);
   if (!/^\d+$/.test(text) || newPerDay > 100) errors.newPerDay = 'Escribe un número entero entre 0 y 100.';
+  const requireAccents = input.requireAccents ?? false;
+  if (typeof requireAccents !== 'boolean') errors.requireAccents = 'Elige si se exigen acentos.';
   const ok = Object.keys(errors).length === 0;
-  return { ok, errors, settings: ok ? { algorithm: input.algorithm, direction: input.direction, newPerDay } : null };
+  return {
+    ok, errors, settings: ok ? { algorithm: input.algorithm, direction: input.direction, newPerDay, requireAccents } : null,
+  };
 }
 
 function isValidDoc(doc) {
@@ -91,9 +96,15 @@ export function createStudyStore(backend, { now = () => new Date() } = {}) {
       });
     },
 
-    // Devuelve { ok: true } o { ok: false, errors }
+    // Respuesta del quiz: solo se añade al historial (no cambia las tarjetas)
+    async recordQuizAnswer(entry) {
+      persist({ ...state, history: [...state.history, entry] });
+    },
+
+    // Guarda los ajustes que lleguen mezclados con los actuales (Estudiar y Quiz guardan
+    // cada uno los suyos). Devuelve { ok: true } o { ok: false, errors }
     async saveSettings(input) {
-      const { ok, errors, settings } = validateSettings(input);
+      const { ok, errors, settings } = validateSettings({ ...state.settings, ...input });
       if (!ok) return { ok: false, errors };
       persist({ ...state, settings });
       return { ok: true };

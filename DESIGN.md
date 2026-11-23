@@ -108,6 +108,23 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 - **Pistas de teclado:** `<kbd>` con borde 1 px `--field-border` (2 px abajo), radio 4 px, texto `--text-muted` sobre `--surface`. Solo con ratón: `@media (hover: hover) and (pointer: fine)`.
 - **Fin de sesión:** título «Terminaste por hoy» en Barlow 700 de 1,3 rem y un párrafo con las respuestas de la sesión y cuántas tarjetas vencen mañana.
 
+## Pantalla Quiz (Etapa 4)
+
+**Color nuevo** (contraste comprobado; claro / oscuro):
+
+| Token | Claro | Oscuro | Uso | Contraste |
+|---|---|---|---|---|
+| `--success-text` | `#1D6B3F` | `#7FD3A3` | Título «✓ Correcto» y marca de la opción correcta | 6,3–6,5 / 8,7–9,9 |
+
+El fallo usa `--error-text` (7,1–7,4 / 7,6–8,7). El color nunca va solo: siempre acompaña a «✓» o «✗» y a un texto.
+
+- **Inicio del quiz:** tres botones de modo a lo ancho (`--surface`, borde 2 px `--plaque`, radio 8 px, 64 px de alto como mínimo), con el nombre en Barlow 700 y debajo una línea en Source Serif `--text-muted` que dice qué harás. Desactivado: borde `--divider`, texto `--text-muted` y el motivo debajo del botón, enlazado con `aria-describedby`. Debajo, la casilla «Exigir acentos» (como «Pendiente de revisar») con una frase de ayuda.
+- **Progreso y tarjeta:** iguales que en Estudiar («Pregunta 3 de 10», barra de 6 px, tarjeta con borde izquierdo de 8 px), con el color de línea del Quiz.
+- **Opciones (modo a):** cuatro botones secundarios uno debajo de otro, a lo ancho, 56 px de alto, texto en Source Serif 400 alineado a la izquierda. Tras responder: la correcta con borde `--success-text` y «✓ Correcta»; la elegida mal con borde `--error-text` y «✗ Tu respuesta»; las cuatro quedan desactivadas.
+- **Campo de respuesta (modos b y c):** como los campos de la Etapa 2, de 1,1 rem para que se lea al escribir. Botones **Comprobar** (primario) y **No lo sé** (secundario) en una fila; en el móvil, a lo ancho de la pantalla. **Oír** y **Oír lento** como en la ficha de Vocabulario.
+- **Respuesta:** caja `--surface` con borde izquierdo de 4 px del color del resultado; título en Barlow 700 de 1,25 rem en `--success-text` o `--error-text` con «✓» o «✗»; «Respuesta correcta», «Escribiste» y el ejemplo en Source Serif, la traducción en cursiva `--text-muted`. **Siguiente** primario, a lo ancho en el móvil.
+- **Resumen:** «Acertaste 7 de 10» en Barlow 700 de 1,3 rem; lista de falladas con separador `--divider`: la pregunta en Source Serif 600, la respuesta correcta debajo y, si la hay, «Escribiste: …» en `--text-muted`. **Otro quiz** primario.
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.
