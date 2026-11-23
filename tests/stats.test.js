@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import {
   PROGRESS_DAYS, ACCURACY_DAYS, MASTERED_DAYS,
   studiedDates, anchorDate, streak, dailyCounts, accuracy, dayLabel, chartSummary,
+  isCardMastered, wordStates,
 } from '../js/lib/stats.js';
 import { addDays } from '../js/lib/dates.js';
+import { newCard, review } from '../js/lib/scheduler.js';
 
 // Historiales simulados: hoy = lunes 2026-11-23 salvo que se diga otra cosa
 const TODAY = '2026-11-23';
@@ -179,4 +181,89 @@ test('chartSummary: resumen del gráfico con singular y plural', () => {
     'Respuestas por día en los últimos 14 días: estudiaste 1 de 14 días, 1 respuesta en total.');
   assert.equal(chartSummary(dailyCounts([], TODAY)),
     'Respuestas por día en los últimos 14 días: estudiaste 0 de 14 días, 0 respuestas en total.');
+});
+
+// ---- Estado de las palabras ----
+
+// Tarjeta estudiada con un intervalo de SM-2 y una caja de Leitner dados
+function card(wordId, direction, { interval = 0, box = 1, introducedOn = '2026-11-01' } = {}) {
+  const base = newCard(wordId, direction);
+  return {
+    ...base, introducedOn,
+    sm2: { ...base.sm2, reps: 3, interval, due: addDays('2026-11-01', interval) },
+    leitner: { box, due: '2026-11-02' },
+  };
+}
+const cardsOf = (...list) => Object.fromEntries(list.map((c) => [c.id, c]));
+const word = (id, fr, es = 'x') => ({ id, fr, es });
+
+test('M1–M2: SM-2 dominada desde 14 días de intervalo', () => {
+  assert.equal(isCardMastered(card('w1', 'fr-es', { interval: 13 }), 'sm2'), false);
+  assert.equal(isCardMastered(card('w1', 'fr-es', { interval: 14 }), 'sm2'), true);
+});
+
+test('M3: «Otra vez» quita la tarjeta de dominadas (SM-2 y Leitner)', () => {
+  const mastered = card('w1', 'fr-es', { interval: 20, box: 5 });
+  const failed = review(mastered, 'again', TODAY, `${TODAY}T10:00:00.000Z`);
+  assert.equal(isCardMastered(failed, 'sm2'), false);
+  assert.equal(isCardMastered(failed, 'leitner'), false);
+});
+
+test('M4–M5: Leitner dominada solo en la caja 5 (16 días)', () => {
+  assert.equal(isCardMastered(card('w1', 'fr-es', { box: 4 }), 'leitner'), false);
+  assert.equal(isCardMastered(card('w1', 'fr-es', { box: 5 }), 'leitner'), true);
+});
+
+test('M6: algoritmo desconocido lanza error', () => {
+  assert.throws(() => isCardMastered(card('w1', 'fr-es'), 'x'));
+});
+
+test('W1: sin palabras', () => {
+  assert.deepEqual(wordStates({ words: [], cards: {}, algorithm: 'sm2' }),
+    { new: 0, learning: 0, mastered: 0, masteredWords: [] });
+});
+
+test('W2: palabra sin tarjetas o con tarjeta sin introducir es nueva', () => {
+  const words = [word('w1', 'le chat'), word('w2', 'la maison')];
+  const cards = cardsOf(card('w2', 'fr-es', { interval: 20, introducedOn: null }));
+  const states = wordStates({ words, cards, algorithm: 'sm2' });
+  assert.deepEqual([states.new, states.learning, states.mastered], [2, 0, 0]);
+});
+
+test('W3: una dirección dominada y la otra sin estudiar → dominada', () => {
+  const words = [word('w1', 'le chat')];
+  const states = wordStates({ words, cards: cardsOf(card('w1', 'fr-es', { interval: 20 })), algorithm: 'sm2' });
+  assert.deepEqual([states.new, states.learning, states.mastered], [0, 0, 1]);
+  assert.deepEqual(states.masteredWords, words);
+});
+
+test('W4: una dirección dominada y la otra no → en aprendizaje', () => {
+  const cards = cardsOf(card('w1', 'fr-es', { interval: 20 }), card('w1', 'es-fr', { interval: 3 }));
+  const states = wordStates({ words: [word('w1', 'le chat')], cards, algorithm: 'sm2' });
+  assert.deepEqual([states.new, states.learning, states.mastered], [0, 1, 0]);
+  assert.deepEqual(states.masteredWords, []);
+});
+
+test('W5: las tarjetas de palabras borradas no cuentan y la suma es el total', () => {
+  const words = [word('w1', 'le chat'), word('w2', 'la maison'), word('w3', "l'ami")];
+  const cards = cardsOf(card('w1', 'fr-es', { interval: 20 }), card('w2', 'fr-es', { interval: 2 }),
+    card('borrada', 'fr-es', { interval: 30 }));
+  const states = wordStates({ words, cards, algorithm: 'sm2' });
+  assert.deepEqual([states.new, states.learning, states.mastered], [1, 1, 1]);
+  assert.equal(states.new + states.learning + states.mastered, words.length);
+  assert.deepEqual(states.masteredWords.map((w) => w.id), ['w1']);
+});
+
+const FIVE = ['le père', "l'élève", 'la maison', "l'école", "l'enfant"].map((fr, i) => word(`w${i}`, fr));
+
+test('W6: la lista de dominadas sigue el orden de Vocabulario (sin artículo, con acentos)', () => {
+  const cards = cardsOf(...FIVE.map((w) => card(w.id, 'fr-es', { interval: 20, box: 4 })));
+  const states = wordStates({ words: FIVE, cards, algorithm: 'sm2' });
+  assert.deepEqual(states.masteredWords.map((w) => w.fr), ["l'école", "l'élève", "l'enfant", 'la maison', 'le père']);
+});
+
+test('W7: con Leitner la misma lista en caja 4 no tiene dominadas', () => {
+  const cards = cardsOf(...FIVE.map((w) => card(w.id, 'fr-es', { interval: 20, box: 4 })));
+  const states = wordStates({ words: FIVE, cards, algorithm: 'leitner' });
+  assert.deepEqual([states.new, states.learning, states.mastered], [0, 5, 0]);
 });

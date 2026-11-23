@@ -2,6 +2,8 @@
 // Usan la fecha guardada en cada respuesta («date»), nunca la recalculan desde «at»,
 // para que un cambio de zona horaria no borre ni duplique días. «today» llega como parámetro.
 import { addDays } from './dates.js';
+import { LEITNER_DAYS, cardIdOf } from './scheduler.js';
+import { sortWords } from './words.js';
 
 export const PROGRESS_DAYS = 14;
 export const ACCURACY_DAYS = 30;
@@ -80,4 +82,35 @@ export function chartSummary(counts) {
   const total = counts.reduce((sum, d) => sum + d.count, 0);
   return `Respuestas por día en los últimos ${counts.length} días: estudiaste ${studied} de ${counts.length} días, `
     + `${plural(total, 'respuesta', 'respuestas')} en total.`;
+}
+
+// ---- Estado de las palabras ----
+
+const DIRECTIONS = ['fr-es', 'es-fr'];
+
+// Dominada: su próximo repaso queda a 14 días o más del último, con el algoritmo elegido
+export function isCardMastered(card, algorithm) {
+  if (algorithm === 'sm2') return card.sm2.interval >= MASTERED_DAYS;
+  if (algorithm === 'leitner') return card.leitner.box >= 1 && LEITNER_DAYS[card.leitner.box - 1] >= MASTERED_DAYS;
+  throw new Error(`Algoritmo desconocido: ${algorithm}`);
+}
+
+// Nueva: ninguna tarjeta estudiada. Dominada: todas sus tarjetas estudiadas dominadas.
+// En aprendizaje: el resto. Solo cuentan las palabras que siguen en la lista.
+export function wordStates({ words, cards, algorithm }) {
+  const states = { new: 0, learning: 0, mastered: 0, masteredWords: [] };
+  for (const word of words) {
+    const studied = DIRECTIONS.map((direction) => cards[cardIdOf(word.id, direction)])
+      .filter((card) => card && card.introducedOn !== null);
+    if (studied.length === 0) {
+      states.new += 1;
+    } else if (studied.every((card) => isCardMastered(card, algorithm))) {
+      states.mastered += 1;
+      states.masteredWords.push(word);
+    } else {
+      states.learning += 1;
+    }
+  }
+  states.masteredWords = sortWords(states.masteredWords);
+  return states;
 }
