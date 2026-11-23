@@ -24,6 +24,7 @@ const PRECACHE_URLS = [
   'css/styles.css',
   'js/app.js',
   'js/lib/router.js',
+  'js/update.js',
   'fonts/barlow-semi-condensed-500.woff2',
   'fonts/barlow-semi-condensed-700.woff2',
   'fonts/source-serif-4.woff2',

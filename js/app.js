@@ -1,5 +1,7 @@
 // Arranque de la app: navegación entre pantallas sin recargar la página
+// y registro del service worker (funcionamiento sin conexión)
 import { SCREENS, resolveRoute } from './lib/router.js';
+import { watchForUpdates, applyUpdate } from './update.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -37,3 +39,21 @@ function handleRoute(isFirstLoad) {
 
 window.addEventListener('hashchange', () => handleRoute(false));
 handleRoute(true);
+
+// Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
+function showUpdateBanner(worker) {
+  const banner = document.querySelector('.update-banner');
+  const button = banner.querySelector('.update-button');
+  button.onclick = () => {
+    button.disabled = true;
+    applyUpdate(worker, navigator.serviceWorker, () => location.reload());
+  };
+  banner.hidden = false;
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('./sw.js')
+    .then((registration) => watchForUpdates(registration, navigator.serviceWorker, showUpdateBanner))
+    .catch((error) => console.warn('No se pudo registrar el service worker:', error));
+}

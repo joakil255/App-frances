@@ -214,6 +214,38 @@ main {
 
 .empty { margin: var(--space-5) 0 0; }
 
+/* --- Aviso de versión nueva (encima de la barra en el móvil) --- */
+.update-banner {
+  position: fixed;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: calc(var(--nav-height) + var(--space-3) + env(safe-area-inset-bottom));
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: #1C2433;
+  color: #FFFFFF;
+  border-radius: var(--radius);
+  font-family: var(--font-sign);
+  font-weight: 500;
+}
+.update-banner p { margin: 0; }
+
+.update-button {
+  margin-left: auto;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: var(--radius);
+  background: #F2C230;
+  color: #1C2433;
+  font: 700 var(--size-base) var(--font-sign);
+  cursor: pointer;
+}
+.update-button:focus-visible { outline-color: #F2C230; outline-offset: 3px; }
+
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {
   .layout {
@@ -257,4 +289,11 @@ main {
   }
 
   main { padding: var(--space-6) var(--space-7); }
+
+  .update-banner {
+    left: calc(200px + var(--space-7));
+    right: auto;
+    bottom: var(--space-5);
+    max-width: 65ch;
+  }
 }

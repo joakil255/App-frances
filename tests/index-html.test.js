@@ -33,6 +33,14 @@ test('carga la app como módulo y enlaza el icono', () => {
   assert.ok(html.includes('<link rel="icon" href="icons/icon.svg" type="image/svg+xml">'));
 });
 
+test('tiene el aviso de versión nueva, oculto y anunciable', () => {
+  const region = html.match(/<div class="update" role="status">([\s\S]*?)<\/div>\s*<\/div>/);
+  assert.ok(region, 'falta <div class="update" role="status">');
+  assert.match(region[1], /<div class="update-banner" hidden>/);
+  assert.match(region[1], /Hay una versión nueva de la app\./);
+  assert.match(region[1], /<button type="button" class="update-button">Actualizar<\/button>/);
+});
+
 test('declara theme-color para tema claro y oscuro', () => {
   assert.ok(html.includes('<meta name="theme-color" content="#233A7A" media="(prefers-color-scheme: light)">'));
   assert.ok(html.includes('<meta name="theme-color" content="#1A2B5C" media="(prefers-color-scheme: dark)">'));
