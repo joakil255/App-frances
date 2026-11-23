@@ -1,0 +1,907 @@
+{
+  "format": "app-frances-vocabulario",
+  "version": 1,
+  "exportedAt": "2026-11-23T22:02:38.000Z",
+  "words": [
+    {
+      "fr": "oui",
+      "es": "sí",
+      "exampleFr": "Oui, j'aime le café.",
+      "exampleEs": "Sí, me gusta el café.",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "non",
+      "es": "no",
+      "exampleFr": "Non, merci, ça va.",
+      "exampleEs": "No, gracias, estoy bien.",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "pardon",
+      "es": "perdón",
+      "exampleFr": "Pardon, je suis en retard.",
+      "exampleEs": "Perdón, llego tarde.",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "désolé",
+      "es": "lo siento",
+      "exampleFr": "Désolé, je ne comprends pas.",
+      "exampleEs": "Lo siento, no entiendo.",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": true
+    },
+    {
+      "fr": "de rien",
+      "es": "de nada",
+      "exampleFr": "De rien, bonne journée !",
+      "exampleEs": "De nada, ¡que tengas un buen día!",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "s'il te plaît",
+      "es": "por favor (informal)",
+      "exampleFr": "Un verre d'eau, s'il te plaît.",
+      "exampleEs": "Un vaso de agua, por favor.",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "enchanté",
+      "es": "mucho gusto, encantado",
+      "exampleFr": "Enchanté, je m'appelle Lucas.",
+      "exampleEs": "Mucho gusto, me llamo Lucas.",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": true
+    },
+    {
+      "fr": "je m'appelle",
+      "es": "me llamo",
+      "exampleFr": "Je m'appelle Sofia, et toi ?",
+      "exampleEs": "Me llamo Sofía, ¿y tú?",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "à demain",
+      "es": "hasta mañana",
+      "exampleFr": "Bonne nuit et à demain !",
+      "exampleEs": "¡Buenas noches y hasta mañana!",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "à plus tard",
+      "es": "hasta luego",
+      "exampleFr": "À plus tard, Marie !",
+      "exampleEs": "¡Hasta luego, Marie!",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "bonne journée",
+      "es": "que tengas un buen día",
+      "exampleFr": "Merci et bonne journée !",
+      "exampleEs": "¡Gracias y que tengas un buen día!",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "bon appétit",
+      "es": "buen provecho",
+      "exampleFr": "Bon appétit, les enfants !",
+      "exampleEs": "¡Buen provecho, niños!",
+      "category": "Saludos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "zéro",
+      "es": "cero",
+      "exampleFr": "Il fait zéro degré.",
+      "exampleEs": "Hace cero grados.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "un",
+      "es": "uno (en femenino: une)",
+      "exampleFr": "J'ai un chien.",
+      "exampleEs": "Tengo un perro.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "deux",
+      "es": "dos",
+      "exampleFr": "J'ai deux sœurs.",
+      "exampleEs": "Tengo dos hermanas.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "trois",
+      "es": "tres",
+      "exampleFr": "Nous avons trois enfants.",
+      "exampleEs": "Tenemos tres hijos.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "quatre",
+      "es": "cuatro",
+      "exampleFr": "Il y a quatre chaises.",
+      "exampleEs": "Hay cuatro sillas.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "cinq",
+      "es": "cinco",
+      "exampleFr": "Il est cinq heures.",
+      "exampleEs": "Son las cinco.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "six",
+      "es": "seis",
+      "exampleFr": "Mon fils a six ans.",
+      "exampleEs": "Mi hijo tiene seis años.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "sept",
+      "es": "siete",
+      "exampleFr": "La semaine a sept jours.",
+      "exampleEs": "La semana tiene siete días.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "huit",
+      "es": "ocho",
+      "exampleFr": "Le cours commence à huit heures.",
+      "exampleEs": "La clase empieza a las ocho.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "neuf",
+      "es": "nueve",
+      "exampleFr": "J'habite au numéro neuf.",
+      "exampleEs": "Vivo en el número nueve.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "dix",
+      "es": "diez",
+      "exampleFr": "Ce livre coûte dix euros.",
+      "exampleEs": "Este libro cuesta diez euros.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "onze",
+      "es": "once",
+      "exampleFr": "Il est onze heures du soir.",
+      "exampleEs": "Son las once de la noche.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "douze",
+      "es": "doce",
+      "exampleFr": "L'année a douze mois.",
+      "exampleEs": "El año tiene doce meses.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "treize",
+      "es": "trece",
+      "exampleFr": "Nous sommes le treize mai.",
+      "exampleEs": "Hoy es trece de mayo.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "quatorze",
+      "es": "catorce",
+      "exampleFr": "Le quatorze juillet est un jour férié.",
+      "exampleEs": "El catorce de julio es feriado.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "quinze",
+      "es": "quince",
+      "exampleFr": "Le train part dans quinze minutes.",
+      "exampleEs": "El tren sale en quince minutos.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "seize",
+      "es": "dieciséis",
+      "exampleFr": "Ma cousine a seize ans.",
+      "exampleEs": "Mi prima tiene dieciséis años.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "dix-sept",
+      "es": "diecisiete",
+      "exampleFr": "Il y a dix-sept élèves.",
+      "exampleEs": "Hay diecisiete alumnos.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "dix-huit",
+      "es": "dieciocho",
+      "exampleFr": "Je finis à dix-huit heures.",
+      "exampleEs": "Termino a las seis de la tarde.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "dix-neuf",
+      "es": "diecinueve",
+      "exampleFr": "L'hôtel a dix-neuf chambres.",
+      "exampleEs": "El hotel tiene diecinueve habitaciones.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "vingt",
+      "es": "veinte",
+      "exampleFr": "Ça fait vingt euros.",
+      "exampleEs": "Son veinte euros.",
+      "category": "Números",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "la femme",
+      "es": "la mujer, la esposa",
+      "exampleFr": "Sa femme est médecin.",
+      "exampleEs": "Su esposa es doctora.",
+      "category": "Familia",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "l'enfant",
+      "es": "el niño, la niña",
+      "exampleFr": "L'enfant joue dans le jardin.",
+      "exampleEs": "El niño juega en el jardín.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": true
+    },
+    {
+      "fr": "le bébé",
+      "es": "el bebé, la guagua",
+      "exampleFr": "Le bébé pleure.",
+      "exampleEs": "La guagua llora.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le garçon",
+      "es": "el niño, el muchacho",
+      "exampleFr": "Le garçon a dix ans.",
+      "exampleEs": "El niño tiene diez años.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la famille",
+      "es": "la familia",
+      "exampleFr": "Ma famille est grande.",
+      "exampleEs": "Mi familia es grande.",
+      "category": "Familia",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "les grands-parents",
+      "es": "los abuelos",
+      "exampleFr": "Mes grands-parents habitent à la campagne.",
+      "exampleEs": "Mis abuelos viven en el campo.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "l'oncle",
+      "es": "el tío",
+      "exampleFr": "Mon oncle habite à Santiago.",
+      "exampleEs": "Mi tío vive en Santiago.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la tante",
+      "es": "la tía",
+      "exampleFr": "Ma tante a deux chats.",
+      "exampleEs": "Mi tía tiene dos gatos.",
+      "category": "Familia",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "le cousin",
+      "es": "el primo",
+      "exampleFr": "Mon cousin parle espagnol.",
+      "exampleEs": "Mi primo habla español.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la cousine",
+      "es": "la prima",
+      "exampleFr": "Ma cousine est très gentille.",
+      "exampleEs": "Mi prima es muy simpática.",
+      "category": "Familia",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "le neveu",
+      "es": "el sobrino",
+      "exampleFr": "Mon neveu est très drôle.",
+      "exampleEs": "Mi sobrino es muy divertido.",
+      "category": "Familia",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la nièce",
+      "es": "la sobrina",
+      "exampleFr": "Ma nièce va à l'école.",
+      "exampleEs": "Mi sobrina va al colegio.",
+      "category": "Familia",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "le riz",
+      "es": "el arroz",
+      "exampleFr": "Je mange du riz.",
+      "exampleEs": "Como arroz.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la soupe",
+      "es": "la sopa",
+      "exampleFr": "La soupe est très chaude.",
+      "exampleEs": "La sopa está muy caliente.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "le sucre",
+      "es": "el azúcar",
+      "exampleFr": "Tu prends du sucre ?",
+      "exampleEs": "¿Quieres azúcar?",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le sel",
+      "es": "la sal",
+      "exampleFr": "Passe-moi le sel, s'il te plaît.",
+      "exampleEs": "Pásame la sal, por favor.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le beurre",
+      "es": "la mantequilla",
+      "exampleFr": "Je mets du beurre sur le pain.",
+      "exampleEs": "Le pongo mantequilla al pan.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la pomme de terre",
+      "es": "la papa",
+      "exampleFr": "Les pommes de terre sont prêtes.",
+      "exampleEs": "Las papas están listas.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "la tomate",
+      "es": "el tomate",
+      "exampleFr": "La tomate est rouge.",
+      "exampleEs": "El tomate es rojo.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "la carotte",
+      "es": "la zanahoria",
+      "exampleFr": "Le lapin mange une carotte.",
+      "exampleEs": "El conejo come una zanahoria.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "la salade",
+      "es": "la ensalada, la lechuga",
+      "exampleFr": "Je prends une salade verte.",
+      "exampleEs": "Pido una ensalada verde.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "les légumes",
+      "es": "las verduras",
+      "exampleFr": "Les légumes sont bons pour la santé.",
+      "exampleEs": "Las verduras son buenas para la salud.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le poulet",
+      "es": "el pollo",
+      "exampleFr": "Le poulet est délicieux.",
+      "exampleEs": "El pollo está muy rico.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la banane",
+      "es": "el plátano",
+      "exampleFr": "J'aime les bananes.",
+      "exampleEs": "Me gustan los plátanos.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "l'orange",
+      "es": "la naranja",
+      "exampleFr": "Je bois un jus d'orange.",
+      "exampleEs": "Tomo un jugo de naranja.",
+      "category": "Comida",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "les fruits",
+      "es": "las frutas, la fruta",
+      "exampleFr": "J'achète des fruits au marché.",
+      "exampleEs": "Compro fruta en la feria.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le jus",
+      "es": "el jugo",
+      "exampleFr": "Le jus est dans le frigo.",
+      "exampleEs": "El jugo está en el refrigerador.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le thé",
+      "es": "el té",
+      "exampleFr": "Je bois du thé le matin.",
+      "exampleEs": "Tomo té en la mañana.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le gâteau",
+      "es": "la torta, el queque",
+      "exampleFr": "Le gâteau est pour Marie.",
+      "exampleEs": "La torta es para Marie.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": true
+    },
+    {
+      "fr": "le petit déjeuner",
+      "es": "el desayuno",
+      "exampleFr": "Le petit déjeuner est prêt.",
+      "exampleEs": "El desayuno está listo.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": true
+    },
+    {
+      "fr": "le déjeuner",
+      "es": "el almuerzo",
+      "exampleFr": "Le déjeuner est à midi.",
+      "exampleEs": "El almuerzo es a las doce.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le dîner",
+      "es": "la cena, la comida",
+      "exampleFr": "Le dîner est à vingt heures.",
+      "exampleEs": "La cena es a las ocho de la noche.",
+      "category": "Comida",
+      "gender": "m",
+      "needsReview": true
+    },
+    {
+      "fr": "venir",
+      "es": "venir",
+      "exampleFr": "Tu viens avec moi ?",
+      "exampleEs": "¿Vienes conmigo?",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "prendre",
+      "es": "tomar",
+      "exampleFr": "Je prends le bus.",
+      "exampleEs": "Tomo la micro.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "voir",
+      "es": "ver",
+      "exampleFr": "Je vois la mer.",
+      "exampleEs": "Veo el mar.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "savoir",
+      "es": "saber",
+      "exampleFr": "Je ne sais pas.",
+      "exampleEs": "No sé.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "pouvoir",
+      "es": "poder",
+      "exampleFr": "Tu peux m'aider ?",
+      "exampleEs": "¿Me puedes ayudar?",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "dire",
+      "es": "decir",
+      "exampleFr": "Je dis bonjour au voisin.",
+      "exampleEs": "Le digo buenos días al vecino.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "mettre",
+      "es": "poner",
+      "exampleFr": "Je mets mon manteau.",
+      "exampleEs": "Me pongo el abrigo.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "partir",
+      "es": "irse, partir",
+      "exampleFr": "Je pars demain.",
+      "exampleEs": "Me voy mañana.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "sortir",
+      "es": "salir",
+      "exampleFr": "Nous sortons ce soir.",
+      "exampleEs": "Salimos esta noche.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "dormir",
+      "es": "dormir",
+      "exampleFr": "Je dors huit heures.",
+      "exampleEs": "Duermo ocho horas.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "écrire",
+      "es": "escribir",
+      "exampleFr": "J'écris une lettre.",
+      "exampleEs": "Escribo una carta.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "lire",
+      "es": "leer",
+      "exampleFr": "Je lis le journal.",
+      "exampleEs": "Leo el diario.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "acheter",
+      "es": "comprar",
+      "exampleFr": "J'achète du pain.",
+      "exampleEs": "Compro pan.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "travailler",
+      "es": "trabajar",
+      "exampleFr": "Je travaille dans un bureau.",
+      "exampleEs": "Trabajo en una oficina.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "regarder",
+      "es": "mirar, ver",
+      "exampleFr": "Nous regardons un film.",
+      "exampleEs": "Vemos una película.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "écouter",
+      "es": "escuchar",
+      "exampleFr": "J'écoute de la musique.",
+      "exampleEs": "Escucho música.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "comprendre",
+      "es": "entender, comprender",
+      "exampleFr": "Tu comprends le français ?",
+      "exampleEs": "¿Entiendes francés?",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "chercher",
+      "es": "buscar",
+      "exampleFr": "Je cherche la gare.",
+      "exampleEs": "Busco la estación.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "donner",
+      "es": "dar",
+      "exampleFr": "Je donne un livre à Paul.",
+      "exampleEs": "Le doy un libro a Paul.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "jouer",
+      "es": "jugar",
+      "exampleFr": "Les enfants jouent au football.",
+      "exampleEs": "Los niños juegan fútbol.",
+      "category": "Verbos",
+      "gender": null,
+      "needsReview": false
+    },
+    {
+      "fr": "la ville",
+      "es": "la ciudad",
+      "exampleFr": "La ville est très belle.",
+      "exampleEs": "La ciudad es muy bonita.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "la rue",
+      "es": "la calle",
+      "exampleFr": "J'habite dans cette rue.",
+      "exampleEs": "Vivo en esta calle.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "la gare",
+      "es": "la estación de trenes",
+      "exampleFr": "La gare est près d'ici.",
+      "exampleEs": "La estación está cerca de aquí.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "l'aéroport",
+      "es": "el aeropuerto",
+      "exampleFr": "L'aéroport est loin de la ville.",
+      "exampleEs": "El aeropuerto está lejos de la ciudad.",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "l'école",
+      "es": "el colegio, la escuela",
+      "exampleFr": "L'école est près de chez moi.",
+      "exampleEs": "El colegio está cerca de mi casa.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "l'hôpital",
+      "es": "el hospital",
+      "exampleFr": "L'hôpital est en face.",
+      "exampleEs": "El hospital está enfrente.",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la pharmacie",
+      "es": "la farmacia",
+      "exampleFr": "Où est la pharmacie ?",
+      "exampleEs": "¿Dónde está la farmacia?",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "la banque",
+      "es": "el banco",
+      "exampleFr": "La banque est fermée aujourd'hui.",
+      "exampleEs": "El banco está cerrado hoy.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "le magasin",
+      "es": "la tienda",
+      "exampleFr": "Le magasin ouvre à neuf heures.",
+      "exampleEs": "La tienda abre a las nueve.",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le supermarché",
+      "es": "el supermercado",
+      "exampleFr": "Le supermarché est ouvert le dimanche.",
+      "exampleEs": "El supermercado abre los domingos.",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le marché",
+      "es": "el mercado, la feria",
+      "exampleFr": "Il y a un marché le dimanche.",
+      "exampleEs": "Hay feria los domingos.",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la boulangerie",
+      "es": "la panadería",
+      "exampleFr": "La boulangerie ouvre à sept heures.",
+      "exampleEs": "La panadería abre a las siete.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    },
+    {
+      "fr": "le restaurant",
+      "es": "el restaurante",
+      "exampleFr": "On mange au restaurant ce soir ?",
+      "exampleEs": "¿Comemos en un restaurante esta noche?",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "le parc",
+      "es": "el parque",
+      "exampleFr": "Je cours dans le parc.",
+      "exampleEs": "Corro en el parque.",
+      "category": "Lugares",
+      "gender": "m",
+      "needsReview": false
+    },
+    {
+      "fr": "la plage",
+      "es": "la playa",
+      "exampleFr": "Nous allons à la plage.",
+      "exampleEs": "Vamos a la playa.",
+      "category": "Lugares",
+      "gender": "f",
+      "needsReview": false
+    }
+  ]
+}
