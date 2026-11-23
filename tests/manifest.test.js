@@ -20,6 +20,16 @@ test('manifest es JSON válido con los campos de una PWA', () => {
   assert.equal(manifest.lang, 'es');
 });
 
+test('manifest tiene identidad, alcance y colores de DESIGN.md', () => {
+  const manifest = JSON.parse(readRootFile('manifest.webmanifest'));
+  assert.equal(manifest.id, './');
+  assert.equal(manifest.scope, './');
+  assert.equal(manifest.theme_color, '#233A7A');
+  assert.equal(manifest.background_color, '#FAFBFC');
+  assert.equal(typeof manifest.description, 'string');
+  assert.ok(manifest.description.trim().length > 0, 'description no puede estar vacía');
+});
+
 test('index.html enlaza el manifiesto con ruta relativa', () => {
   const html = readRootFile('index.html');
   assert.ok(html.includes('<link rel="manifest" href="manifest.webmanifest">'));

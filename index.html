@@ -2,11 +2,67 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>App de francés</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Estudia vocabulario francés de nivel A1, también sin conexión.">
+  <meta name="theme-color" content="#233A7A" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1A2B5C" media="(prefers-color-scheme: dark)">
+  <title>Inicio · App de francés</title>
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/barlow-semi-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <h1>App de francés — en construcción</h1>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <div class="layout">
+    <nav aria-label="Principal" class="nav">
+      <p class="nav-brand" lang="fr">Français</p>
+      <ul class="nav-list">
+        <li><a class="nav-link line-home" href="#/" aria-current="page"><span class="line-dot" aria-hidden="true"></span>Inicio</a></li>
+        <li><a class="nav-link line-vocabulary" href="#/vocabulario"><span class="line-dot" aria-hidden="true"></span>Vocabulario</a></li>
+        <li><a class="nav-link line-study" href="#/estudiar"><span class="line-dot" aria-hidden="true"></span>Estudiar</a></li>
+        <li><a class="nav-link line-quiz" href="#/quiz"><span class="line-dot" aria-hidden="true"></span>Quiz</a></li>
+        <li><a class="nav-link line-progress" href="#/progreso"><span class="line-dot" aria-hidden="true"></span>Progreso</a></li>
+      </ul>
+    </nav>
+
+    <main id="main" tabindex="-1">
+      <section id="screen-home" class="screen line-home">
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Inicio</h1>
+        <p class="empty"><span lang="fr">Bonjour.</span> Aquí verás cada día lo que te toca repasar.</p>
+      </section>
+
+      <section id="screen-vocabulary" class="screen line-vocabulary" hidden>
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Vocabulario</h1>
+        <p class="empty">Todavía no hay palabras. Aquí aparecerá la lista para explorar.</p>
+      </section>
+
+      <section id="screen-study" class="screen line-study" hidden>
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Estudiar</h1>
+        <p class="empty">Aquí estudiarás cada palabra: leerla, escucharla y entender su significado.</p>
+      </section>
+
+      <section id="screen-quiz" class="screen line-quiz" hidden>
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Quiz</h1>
+        <p class="empty">Aquí pondrás a prueba lo que has aprendido.</p>
+      </section>
+
+      <section id="screen-progress" class="screen line-progress" hidden>
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Progreso</h1>
+        <p class="empty">Aquí verás cuánto has avanzado.</p>
+      </section>
+    </main>
+  </div>
+
+  <div class="update" role="status">
+    <div class="update-banner" hidden>
+      <p>Hay una versión nueva de la app.</p>
+      <button type="button" class="update-button">Actualizar</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
