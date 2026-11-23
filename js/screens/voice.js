@@ -1,9 +1,7 @@
 // Oír en francés desde cualquier pantalla, con los mismos avisos en todas.
 // Los avisos se escriben con textContent, nunca como HTML.
 import { pickFrenchVoice, loadVoices, speak } from '../lib/speech.js';
-
-const VOICE_SETTINGS = 'En Ajustes de Android busca «Salida de texto a voz»: elige el motor «Servicios de voz de Google», '
-  + 'instala los datos de voz en Francés (Francia) y prueba «Escuchar un ejemplo».';
+import { MESSAGES } from '../lib/messages.js';
 
 let voicesPromise = null;
 
@@ -28,14 +26,14 @@ export async function hasFrenchVoice(synth) {
 // showAccent: avisar también si la voz es francesa pero no de Francia.
 export async function playFrench({ synth, text: phrase, rate, notice, showAccent = false }) {
   if (!synth) {
-    show(notice, text('strong', 'Este navegador no puede leer en voz alta.'));
+    show(notice, text('strong', MESSAGES.noSpeech.title), text('span', ` ${MESSAGES.noSpeech.text}`));
     return;
   }
   voicesPromise ||= loadVoices(synth);
   const choice = pickFrenchVoice(await voicesPromise);
   if (!choice) {
     voicesPromise = null; // quizá se instale una voz; se vuelve a buscar la próxima vez
-    show(notice, text('strong', 'No hay voz francesa en este dispositivo.'), text('span', ` ${VOICE_SETTINGS}`));
+    show(notice, text('strong', MESSAGES.noFrenchVoice.title), text('span', ` ${MESSAGES.noFrenchVoice.text}`));
     return;
   }
   if (!choice.exact && showAccent) {
@@ -44,7 +42,7 @@ export async function playFrench({ synth, text: phrase, rate, notice, showAccent
   speak(synth, choice.voice, phrase, rate, {
     // El motor de voz del teléfono falló: se avisa en vez de quedarse en silencio
     onError: (code) => show(notice,
-      text('strong', 'El teléfono no pudo leer en voz alta.'),
-      text('span', ` ${VOICE_SETTINGS} (Error: ${code}.)`)),
+      text('strong', MESSAGES.voiceFailed.title),
+      text('span', ` ${MESSAGES.voiceFailed.text} (Error: ${code}.)`)),
   });
 }

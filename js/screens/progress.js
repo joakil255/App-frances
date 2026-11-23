@@ -3,6 +3,7 @@
 // Todo texto va con textContent.
 import { resolveRoute } from '../lib/router.js';
 import { StorageError } from '../lib/storage.js';
+import { storageMessage } from '../lib/messages.js';
 import { localDate } from '../lib/dates.js';
 import { studiedDates, streak, dailyCounts, accuracy, dayLabel, chartSummary, wordStates } from '../lib/stats.js';
 
@@ -91,11 +92,8 @@ export function initProgress({ wordStore, studyStore, now = () => new Date() }) 
   }
   function storageProblem(error) {
     if (!(error instanceof StorageError)) throw error;
-    if (error.code === 'quota') {
-      showNotice('No hay espacio para guardar tu progreso.', 'Exporta tus palabras como copia y borra las que no necesites.');
-    } else {
-      showNotice('El navegador no deja leer tus datos.', 'Comprueba que no estás en modo privado.');
-    }
+    const { title, text } = storageMessage(error);
+    showNotice(title, text);
   }
 
   function renderStreak(history, today) {

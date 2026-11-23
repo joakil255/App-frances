@@ -4,6 +4,7 @@ import { filterWords, categoriesOf } from '../lib/words.js';
 import { exportJson, exportCsv, exportFileName, readImport, planImport, MAX_IMPORT_BYTES } from '../lib/transfer.js';
 import { loadDeck, A1_DECK_NAME } from '../lib/deck.js';
 import { StorageError } from '../lib/storage.js';
+import { MESSAGES, storageMessage, joined, importFailed, fileTooLarge } from '../lib/messages.js';
 import { RATES } from '../lib/speech.js';
 import { playFrench } from './voice.js';
 
@@ -82,11 +83,8 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   }
   function storageProblem(error) {
     if (!(error instanceof StorageError)) throw error;
-    if (error.code === 'quota') {
-      showNotice('No hay espacio para guardar.', 'Exporta tus palabras como copia y borra las que no necesites.');
-    } else {
-      showNotice('El navegador no deja guardar datos.', 'Comprueba que no estás en modo privado.');
-    }
+    const { title, text } = storageMessage(error);
+    showNotice(title, text);
   }
 
   // --- Ventanas ---
@@ -279,9 +277,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     } catch (error) {
       if (!(error instanceof StorageError)) throw error;
       const formError = $('.form-error', form);
-      formError.textContent = error.code === 'quota'
-        ? 'No hay espacio para guardar. Exporta tus palabras y borra las que no necesites.'
-        : 'El navegador no deja guardar datos. Comprueba que no estás en modo privado.';
+      formError.textContent = joined(storageMessage(error));
       formError.hidden = false;
     }
   });
@@ -314,12 +310,14 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     if (!file) return;
     clearNotice();
     if (file.size > MAX_IMPORT_BYTES) {
-      showNotice('El archivo pasa de 2 MB.');
+      const { title, text } = fileTooLarge(2);
+      showNotice(title, text);
       return;
     }
     const read = readImport(await file.text(), file.name);
     if (read.fatal) {
-      showNotice(`No se pudo importar «${file.name}».`, read.fatal);
+      const { title, text } = importFailed(file.name, read.fatal);
+      showNotice(title, text);
       return;
     }
     pendingPlan = planImport(read.rows, store.getWords());
@@ -406,8 +404,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     try {
       const { corruptBackupKey } = await store.load();
       if (corruptBackupKey) {
-        showNotice('Tus datos guardados estaban dañados.',
-          'Se guardó una copia sin tocar y la lista empezó vacía. Si tienes una exportación, impórtala.');
+        showNotice(MESSAGES.corruptWords.title, MESSAGES.corruptWords.text);
       }
     } catch (error) {
       storageProblem(error);
