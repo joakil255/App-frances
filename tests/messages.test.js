@@ -5,7 +5,7 @@ import { MESSAGES, storageMessage, importFailed, fileTooLarge } from '../js/lib/
 import { StorageError } from '../js/lib/storage.js';
 
 const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'restoreFailed',
-  'noSpeech', 'noFrenchVoice', 'voiceFailed'];
+  'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -42,6 +42,10 @@ test('los textos exactos de almacenamiento y datos dañados nombran Inicio', () 
     text: 'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
   });
   assert.equal(MESSAGES.restoreFailed.title, 'No se pudo restaurar la copia.');
+  assert.deepEqual(MESSAGES.backupUnverified, {
+    title: 'No se guardó la copia.',
+    text: 'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Vocabulario mientras tanto.',
+  });
   assert.equal(MESSAGES.noSpeech.title, 'Este navegador no puede leer en voz alta.');
   assert.equal(MESSAGES.noFrenchVoice.title, 'No hay voz francesa en este dispositivo.');
   assert.equal(MESSAGES.voiceFailed.title, 'El teléfono no pudo leer en voz alta.');

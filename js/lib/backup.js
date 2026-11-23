@@ -1,9 +1,10 @@
 // Copia de seguridad completa: palabras, tarjetas (estado de repaso), historial y ajustes.
 // readBackup lo valida todo antes de devolver nada; restoreBackup nunca deja datos a medias.
+// El historial solo tiene que ser una lista: Progreso ya ignora las respuestas raras, y exigir
+// más podría dejar sin restaurar una copia hecha por la propia app.
 import { validateWord, duplicateKey } from './words.js';
 import { STORAGE_KEY, toStorageError } from './storage.js';
 import { STUDY_KEY, validateSettings } from './study-storage.js';
-import { ANSWERS } from './scheduler.js';
 
 export const BACKUP_FORMAT = 'app-frances-copia';
 export const BACKUP_VERSION = 1;
@@ -12,8 +13,6 @@ const WORDS_FORMAT = 'app-frances-vocabulario';
 const SCHEMA_VERSION = 1;
 
 const DIRECTIONS = ['fr-es', 'es-fr'];
-const ALGORITHMS = ['sm2', 'leitner'];
-const QUIZ_MODES = ['choice', 'write', 'dictation'];
 
 export const BACKUP_ERRORS = Object.freeze({
   notUtf8: 'El archivo no está en UTF-8.',
@@ -66,20 +65,10 @@ function validCard(card, key) {
   return isObject(leitner) && Number.isInteger(leitner.box) && leitner.box >= 0 && leitner.box <= 5 && isDateOrNull(leitner.due);
 }
 
-function validEntry(entry) {
-  if (!isObject(entry) || typeof entry.at !== 'string' || !isDate(entry.date) || !isText(entry.wordId)) return false;
-  if (entry.kind === 'quiz') {
-    return QUIZ_MODES.includes(entry.mode) && typeof entry.correct === 'boolean' && typeof entry.accentOnly === 'boolean';
-  }
-  if (entry.kind !== undefined) return false;
-  return isText(entry.cardId) && DIRECTIONS.includes(entry.direction) && ANSWERS.includes(entry.answer)
-    && ALGORITHMS.includes(entry.algorithm);
-}
-
 function validStudy(study) {
   if (!isObject(study) || !isObject(study.cards) || !Array.isArray(study.history)) return false;
   if (!isObject(study.settings) || !validateSettings(study.settings).ok) return false;
-  return Object.entries(study.cards).every(([key, card]) => validCard(card, key)) && study.history.every(validEntry);
+  return Object.entries(study.cards).every(([key, card]) => validCard(card, key));
 }
 
 const failed = (fatal) => ({ fatal, backup: null, summary: null });

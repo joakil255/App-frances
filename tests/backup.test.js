@@ -125,14 +125,12 @@ test('archivos que no son una copia válida se rechazan con su motivo', async ()
 test('una copia con datos rotos por dentro se rechaza', async () => {
   const cases = {
     'tarjeta vacía': (d) => { d.study.cards['w1:fr-es'] = {}; },
-    'respuesta desconocida': (d) => { d.study.history[0].answer = 'maybe'; },
     'caja de Leitner 7': (d) => { d.study.cards['w1:fr-es'].leitner.box = 7; },
     'cards como array': (d) => { d.study.cards = []; },
     'palabra sin id': (d) => { delete d.words[0].id; },
     'dos palabras con el mismo id': (d) => { d.words[1].id = d.words[0].id; },
     'dos palabras con el mismo francés': (d) => { d.words[1].fr = d.words[0].fr; },
     'id de tarjeta distinto de su clave': (d) => { d.study.cards['w1:fr-es'].id = 'otra'; },
-    'quiz con correct de texto': (d) => { d.study.history.at(-1).correct = 'sí'; },
     'ajustes inválidos': (d) => { d.study.settings.newPerDay = 500; },
     'sin historial': (d) => { delete d.study.history; },
     'palabra sin español': (d) => { d.words[0].es = ''; },
@@ -140,6 +138,25 @@ test('una copia con datos rotos por dentro se rechaza', async () => {
   for (const [name, change] of Object.entries(cases)) {
     assert.equal((await mutate(change)).fatal, DAMAGED, name);
   }
+});
+
+test('una copia hecha por la app se restaura aunque el historial tenga respuestas que la app ignora', async () => {
+  const original = await sampleStores();
+  // Progreso ignora estas respuestas; la app las guarda y las carga sin problema
+  const odd = [
+    { at: AT, date: '', cardId: 'w1:fr-es', wordId: 'w1', direction: 'fr-es', answer: 'good', algorithm: 'sm2' },
+    { at: AT, date: TODAY, cardId: 'w1:fr-es', wordId: 'w1', direction: 'fr-es', answer: 'maybe', algorithm: 'sm2' },
+    { kind: 'quiz', at: AT, date: TODAY, wordId: 'w4', mode: 'write', correct: 'sí', accentOnly: false },
+    {},
+  ];
+  for (const entry of odd) await original.studyStore.recordQuizAnswer(entry);
+  const read = readBackup(backupOf(original));
+  assert.equal(read.fatal, null);
+  const backend = new MemoryStorage();
+  restoreBackup(backend, read.backup);
+  const studyStore = createStudyStore(backend, { now: () => NOW });
+  await studyStore.load();
+  assert.deepEqual(studyStore.getState(), original.studyStore.getState());
 });
 
 test('una copia vacía (sin palabras ni historial) es válida', () => {
