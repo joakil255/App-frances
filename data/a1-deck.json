@@ -1,7 +1,7 @@
 {
   "format": "app-frances-vocabulario",
   "version": 1,
-  "exportedAt": "2026-11-23T22:02:38.000Z",
+  "exportedAt": "2026-11-23T22:11:15.000Z",
   "words": [
     {
       "fr": "oui",
@@ -123,8 +123,8 @@
     {
       "fr": "un",
       "es": "uno (en femenino: une)",
-      "exampleFr": "J'ai un chien.",
-      "exampleEs": "Tengo un perro.",
+      "exampleFr": "J'ai un frère et deux sœurs.",
+      "exampleEs": "Tengo un hermano y dos hermanas.",
       "category": "Números",
       "gender": null,
       "needsReview": false
@@ -240,8 +240,8 @@
     {
       "fr": "quatorze",
       "es": "catorce",
-      "exampleFr": "Le quatorze juillet est un jour férié.",
-      "exampleEs": "El catorce de julio es feriado.",
+      "exampleFr": "Nous sommes quatorze à table.",
+      "exampleEs": "Somos catorce en la mesa.",
       "category": "Números",
       "gender": null,
       "needsReview": false
@@ -276,8 +276,8 @@
     {
       "fr": "dix-huit",
       "es": "dieciocho",
-      "exampleFr": "Je finis à dix-huit heures.",
-      "exampleEs": "Termino a las seis de la tarde.",
+      "exampleFr": "Mon frère a dix-huit ans.",
+      "exampleEs": "Mi hermano tiene dieciocho años.",
       "category": "Números",
       "gender": null,
       "needsReview": false
@@ -394,7 +394,7 @@
       "fr": "le neveu",
       "es": "el sobrino",
       "exampleFr": "Mon neveu est très drôle.",
-      "exampleEs": "Mi sobrino es muy divertido.",
+      "exampleEs": "Mi sobrino es muy chistoso.",
       "category": "Familia",
       "gender": "m",
       "needsReview": false
@@ -438,8 +438,8 @@
     {
       "fr": "le sel",
       "es": "la sal",
-      "exampleFr": "Passe-moi le sel, s'il te plaît.",
-      "exampleEs": "Pásame la sal, por favor.",
+      "exampleFr": "Tu me passes le sel ?",
+      "exampleEs": "¿Me pasas la sal?",
       "category": "Comida",
       "gender": "m",
       "needsReview": false
@@ -817,7 +817,7 @@
       "fr": "l'hôpital",
       "es": "el hospital",
       "exampleFr": "L'hôpital est en face.",
-      "exampleEs": "El hospital está enfrente.",
+      "exampleEs": "El hospital está al frente.",
       "category": "Lugares",
       "gender": "m",
       "needsReview": false

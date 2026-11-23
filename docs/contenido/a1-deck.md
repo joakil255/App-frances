@@ -40,7 +40,7 @@ Este documento muestra el contenido de `data/a1-deck.json`, el mazo opcional que
 | Francés | Español | Género | Ejemplo | Traducción | REVISAR |
 |---|---|---|---|---|---|
 | zéro | cero | — | Il fait zéro degré. | Hace cero grados. |  |
-| un | uno (en femenino: une) | — | J'ai un chien. | Tengo un perro. |  |
+| un | uno (en femenino: une) | — | J'ai un frère et deux sœurs. | Tengo un hermano y dos hermanas. |  |
 | deux | dos | — | J'ai deux sœurs. | Tengo dos hermanas. |  |
 | trois | tres | — | Nous avons trois enfants. | Tenemos tres hijos. |  |
 | quatre | cuatro | — | Il y a quatre chaises. | Hay cuatro sillas. |  |
@@ -53,11 +53,11 @@ Este documento muestra el contenido de `data/a1-deck.json`, el mazo opcional que
 | onze | once | — | Il est onze heures du soir. | Son las once de la noche. |  |
 | douze | doce | — | L'année a douze mois. | El año tiene doce meses. |  |
 | treize | trece | — | Nous sommes le treize mai. | Hoy es trece de mayo. |  |
-| quatorze | catorce | — | Le quatorze juillet est un jour férié. | El catorce de julio es feriado. |  |
+| quatorze | catorce | — | Nous sommes quatorze à table. | Somos catorce en la mesa. |  |
 | quinze | quince | — | Le train part dans quinze minutes. | El tren sale en quince minutos. |  |
 | seize | dieciséis | — | Ma cousine a seize ans. | Mi prima tiene dieciséis años. |  |
 | dix-sept | diecisiete | — | Il y a dix-sept élèves. | Hay diecisiete alumnos. |  |
-| dix-huit | dieciocho | — | Je finis à dix-huit heures. | Termino a las seis de la tarde. |  |
+| dix-huit | dieciocho | — | Mon frère a dix-huit ans. | Mi hermano tiene dieciocho años. |  |
 | dix-neuf | diecinueve | — | L'hôtel a dix-neuf chambres. | El hotel tiene diecinueve habitaciones. |  |
 | vingt | veinte | — | Ça fait vingt euros. | Son veinte euros. |  |
 
@@ -75,7 +75,7 @@ Este documento muestra el contenido de `data/a1-deck.json`, el mazo opcional que
 | la tante | la tía | f | Ma tante a deux chats. | Mi tía tiene dos gatos. |  |
 | le cousin | el primo | m | Mon cousin parle espagnol. | Mi primo habla español. |  |
 | la cousine | la prima | f | Ma cousine est très gentille. | Mi prima es muy simpática. |  |
-| le neveu | el sobrino | m | Mon neveu est très drôle. | Mi sobrino es muy divertido. |  |
+| le neveu | el sobrino | m | Mon neveu est très drôle. | Mi sobrino es muy chistoso. |  |
 | la nièce | la sobrina | f | Ma nièce va à l'école. | Mi sobrina va al colegio. |  |
 
 ### Comida
@@ -85,7 +85,7 @@ Este documento muestra el contenido de `data/a1-deck.json`, el mazo opcional que
 | le riz | el arroz | m | Je mange du riz. | Como arroz. |  |
 | la soupe | la sopa | f | La soupe est très chaude. | La sopa está muy caliente. |  |
 | le sucre | el azúcar | m | Tu prends du sucre ? | ¿Quieres azúcar? |  |
-| le sel | la sal | m | Passe-moi le sel, s'il te plaît. | Pásame la sal, por favor. |  |
+| le sel | la sal | m | Tu me passes le sel ? | ¿Me pasas la sal? |  |
 | le beurre | la mantequilla | m | Je mets du beurre sur le pain. | Le pongo mantequilla al pan. |  |
 | la pomme de terre | la papa | f | Les pommes de terre sont prêtes. | Las papas están listas. |  |
 | la tomate | el tomate | f | La tomate est rouge. | El tomate es rojo. |  |
@@ -137,7 +137,7 @@ Este documento muestra el contenido de `data/a1-deck.json`, el mazo opcional que
 | la gare | la estación de trenes | f | La gare est près d'ici. | La estación está cerca de aquí. |  |
 | l'aéroport | el aeropuerto | m | L'aéroport est loin de la ville. | El aeropuerto está lejos de la ciudad. |  |
 | l'école | el colegio, la escuela | f | L'école est près de chez moi. | El colegio está cerca de mi casa. |  |
-| l'hôpital | el hospital | m | L'hôpital est en face. | El hospital está enfrente. |  |
+| l'hôpital | el hospital | m | L'hôpital est en face. | El hospital está al frente. |  |
 | la pharmacie | la farmacia | f | Où est la pharmacie ? | ¿Dónde está la farmacia? |  |
 | la banque | el banco | f | La banque est fermée aujourd'hui. | El banco está cerrado hoy. |  |
 | le magasin | la tienda | m | Le magasin ouvre à neuf heures. | La tienda abre a las nueve. |  |
@@ -150,7 +150,7 @@ Este documento muestra el contenido de `data/a1-deck.json`, el mazo opcional que
 
 ## Lista REVISAR
 
-Entradas de las que no hay total seguridad, con el motivo de la duda. Cuando las revises, cambia el contenido si hace falta y quita la marca «Revisar» al editarlas en la app.
+Entradas de las que no hay total seguridad, con el motivo de la duda. Cuando las revises, cambia el contenido si hace falta y quita la marca «Revisar» al editarlas en la app. Después de corregir palabras del mazo, no pulses «Reemplazar» si vuelves a abrir «Añadir 100 palabras A1»: volvería a poner el texto original y la marca «Revisar».
 
 | Francés | Motivo |
 |---|---|

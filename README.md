@@ -80,7 +80,7 @@ El botón **Añadir 100 palabras A1** amplía las 60 iniciales con 100 palabras 
 
 Al pulsarlo se abre la misma ventana que al importar un archivo («100 palabras nuevas para importar…») y nada cambia hasta que confirmas. Si ya lo añadiste, la ventana dice que las 100 ya existen. Funciona sin conexión después de la primera carga. El archivo es `data/a1-deck.json` y también se puede importar a mano con **Importar**.
 
-**Contenido pendiente de tu revisión.** Las entradas con la etiqueta **Revisar** tienen una duda concreta; la lista con el motivo de cada una y la tabla completa están en [`docs/contenido/a1-deck.md`](docs/contenido/a1-deck.md).
+**Contenido pendiente de tu revisión.** Las entradas con la etiqueta **Revisar** tienen una duda concreta; la lista con el motivo de cada una y la tabla completa están en [`docs/contenido/a1-deck.md`](docs/contenido/a1-deck.md). **Ojo:** después de corregir palabras del mazo, si vuelves a abrir **Añadir 100 palabras A1**, no pulses **Reemplazar**: volvería a poner el texto original y la marca **Revisar** en todas.
 
 ### Tus datos y la copia de seguridad
 
