@@ -214,7 +214,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
 
     if (event.key === ' ' || event.key === 'Enter') {
-      if (target.closest('button') || !back.hidden) return; // un botón enfocado responde por sí mismo
+      if (target.closest('button, a[href]') || !back.hidden) return; // un botón o enlace enfocado responde por sí mismo
       event.preventDefault();
       revealAnswer();
     } else if (['1', '2', '3', '4'].includes(event.key)) {
