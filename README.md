@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Por ahora funcionan **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar) y **Estudiar** (tarjetas con repetición espaciada). Quiz y Progreso llegarán en las próximas etapas.
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Por ahora funcionan **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada) y **Quiz** (practicar con la app comprobando tus respuestas). Progreso llegará en la próxima etapa.
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -118,6 +118,23 @@ Cada respuesta se guarda con **los dos** algoritmos a la vez: cambiar de uno a o
 
 **Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usará la pantalla Progreso. **La exportación de Vocabulario no incluye el progreso del estudio.**
 
+## Quiz
+
+El Quiz sirve para **practicar**: la app comprueba tu respuesta y te dice al momento si acertaste, cuál era la correcta y la frase de ejemplo. **No cambia** cuándo te toca repasar en Estudiar; cada respuesta se guarda en el historial que usará la pantalla Progreso.
+
+Elige un modo; cada quiz tiene hasta **10 preguntas**, primero de palabras que ya estudiaste y, si faltan, del resto de tu lista (sin repetir):
+
+- **Opción múltiple:** ves una palabra en francés y eliges su traducción entre 4. Las otras 3 salen de tus palabras y nunca repiten la correcta. Necesitas al menos 4 palabras con traducciones distintas.
+- **Escribir en francés:** ves la palabra en español y la escribes en francés **con su artículo** («la maison», no «maison»).
+- **Dictado:** oyes la **frase de ejemplo** de una palabra y la escribes. Solo salen palabras con ejemplo, y hace falta la voz francesa del teléfono (con **Oír** y **Oír lento** puedes repetirla).
+
+**Cómo se comprueba lo que escribes:** no importan las mayúsculas, los espacios de más, la puntuación (comas, puntos, «?», «!») ni el tipo de apóstrofo (`’` o `'`). El guion sí cuenta («grand-père»). Con los acentos tú decides con la casilla **Exigir acentos**:
+
+- **Sin marcar** (al principio): «ete» por «été» cuenta como acierto, con el aviso «Correcto, pero ojo con el acento».
+- **Marcada:** cuenta como fallo, con el aviso «Solo te falló el acento».
+
+Escribir «oe» en lugar de «œ» cuenta como error de acento. Si no sabes la respuesta, pulsa **No lo sé**: cuenta como fallada y ves la correcta. Al final ves cuántas acertaste y la lista de las falladas.
+
 ## Iconos
 
 Están en `icons/`. Los dibujos fuente son `icon.svg` (también es el icono de la pestaña) e `icon-maskable.svg` (versión que Android puede recortar en círculo). La «ç» ya está convertida en trazos, así que no depende de ninguna fuente. Si cambias un SVG, regenera los PNG con:
@@ -211,7 +228,26 @@ En el computador:
 - [ ] Con la ventana de ajustes abierta, o escribiendo en el campo de nuevas por día, las teclas no responden tarjetas.
 - [ ] A 1280 px, las cuatro respuestas están en una fila.
 
-### 8. Aviso «Actualizar»
+### 8. Quiz en el celular y en el computador
+
+En el teléfono (app instalada), marca cada punto:
+
+- [ ] Quiz muestra los tres modos. Si el teléfono no tiene voz francesa, **Dictado** está desactivado y dice por qué.
+- [ ] **Opción múltiple:** 4 opciones distintas; al tocar una, se marca «✓ Correcta» y, si fallaste, «✗ Tu respuesta». Debajo, la respuesta correcta y el ejemplo.
+- [ ] **Escribir en francés:** al aparecer la pregunta se abre el teclado y **el campo no queda tapado**; la primera letra **no** sale en mayúscula; las letras con acento se escriben manteniendo pulsada la letra (é, è, ç…).
+- [ ] Pulsa **Comprobar** con el campo vacío: aparece «Escribe tu respuesta o pulsa «No lo sé».» y no cuenta.
+- [ ] Escribe una palabra con acento sin el acento («l'ecole»): «Correcto, pero ojo con el acento». Marca **Exigir acentos**, empieza otro quiz y repítelo: «Solo te falló el acento».
+- [ ] **Dictado:** la frase suena sola al aparecer; **Oír** y **Oír lento** la repiten. Escribirla sin comas ni signos cuenta como acierto.
+- [ ] Al final: «Acertaste N de M» y la lista de falladas con lo que escribiste. **Otro quiz** vuelve al inicio.
+- [ ] Haz un quiz y después mira Estudiar: los números «para repasar» y «nuevas» **no** cambian por el quiz.
+- [ ] Con **modo avión**, el quiz funciona (el dictado, si la voz francesa está descargada en el teléfono).
+
+En el computador:
+
+- [ ] Escribe la respuesta y pulsa `Intro` para comprobar; `Tab` hasta **Siguiente** e `Intro` para seguir.
+- [ ] A 1280 px, **Comprobar** y **No lo sé** están en una fila y todo se lee bien en tema claro y oscuro.
+
+### 9. Aviso «Actualizar»
 
 1. Con la app ya abierta alguna vez en el teléfono, publica una versión nueva (sube `CACHE_VERSION`, commit y push) y espera a que GitHub Pages la publique (unos minutos).
 2. Abre la app con conexión. A los pocos segundos aparece «Hay una versión nueva de la app.» con **Actualizar**.
@@ -232,6 +268,7 @@ js/update.js            aviso «Actualizar» para versiones nuevas
 js/screens/vocabulary.js pantalla Vocabulario (lista, ficha, formulario, importar/exportar)
 js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
 js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
+js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV
@@ -240,7 +277,9 @@ js/lib/speech.js        voz francesa
 js/lib/dates.js         fechas locales «AAAA-MM-DD» (qué día es hoy)
 js/lib/scheduler.js     algoritmos de repaso SM-2 simplificado y Leitner
 js/lib/queue.js         cola diaria: vencidas y nuevas hasta el límite
-js/lib/study-storage.js progreso del estudio, historial y ajustes (localStorage)
+js/lib/study-storage.js progreso del estudio, historial (Estudiar y Quiz) y ajustes (localStorage)
+js/lib/answer-check.js  comprobar respuestas escritas (mayúsculas, espacios, acentos…)
+js/lib/quiz.js          modos del quiz, elección de palabras y opciones
 js/data/initial-words.js lista inicial de 60 palabras
 fonts/                  fuentes .woff2 y sus licencias (SIL OFL)
 icons/                  iconos de la app
