@@ -28,6 +28,7 @@ const PRECACHE_URLS = [
   'js/lib/csv.js',
   'js/lib/transfer.js',
   'js/lib/storage.js',
+  'js/lib/speech.js',
   'js/data/initial-words.js',
   'js/update.js',
   'fonts/barlow-semi-condensed-500.woff2',
