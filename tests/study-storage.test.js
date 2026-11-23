@@ -46,7 +46,7 @@ function reviewed(wordId, answer) {
 test('la clave y los ajustes por defecto', () => {
   assert.equal(STUDY_KEY, 'app-frances-study');
   assert.notEqual(STUDY_KEY, STORAGE_KEY);
-  assert.deepEqual(DEFAULT_SETTINGS, { algorithm: 'sm2', direction: 'fr-es', newPerDay: 10 });
+  assert.deepEqual(DEFAULT_SETTINGS, { algorithm: 'sm2', direction: 'fr-es', newPerDay: 10, requireAccents: false });
 });
 
 test('la primera carga da un estado vacío con los ajustes por defecto y lo guarda', async () => {
@@ -74,7 +74,7 @@ test('recordReview guarda la tarjeta y la entrada del historial en una sola escr
 
 test('validateSettings acepta valores correctos y convierte el número', () => {
   assert.deepEqual(validateSettings({ algorithm: 'leitner', direction: 'es-fr', newPerDay: '5' }),
-    { ok: true, errors: {}, settings: { algorithm: 'leitner', direction: 'es-fr', newPerDay: 5 } });
+    { ok: true, errors: {}, settings: { algorithm: 'leitner', direction: 'es-fr', newPerDay: 5, requireAccents: false } });
   assert.equal(validateSettings({ ...DEFAULT_SETTINGS, newPerDay: 0 }).ok, true);
   assert.equal(validateSettings({ ...DEFAULT_SETTINGS, newPerDay: '100' }).ok, true);
 });
@@ -98,7 +98,7 @@ test('saveSettings guarda ajustes válidos', async () => {
   await store.load();
   const result = await store.saveSettings({ algorithm: 'leitner', direction: 'es-fr', newPerDay: '20' });
   assert.deepEqual(result, { ok: true });
-  const expected = { algorithm: 'leitner', direction: 'es-fr', newPerDay: 20 };
+  const expected = { algorithm: 'leitner', direction: 'es-fr', newPerDay: 20, requireAccents: false };
   assert.deepEqual(store.getState().settings, expected);
   assert.deepEqual(saved(backend).settings, expected);
 });
@@ -234,4 +234,68 @@ test('cerrar y reabrir a mitad de la sesión: mismo progreso y misma cola, sin n
   const queueAfter = buildQueue({ words, cards: loaded.cards, settings: loaded.settings, today: TODAY });
   assert.deepEqual(queueAfter, queueBefore);
   assert.deepEqual(queueAfter.map((item) => item.wordId), ['w4', 'w5', 'w1']);
+});
+
+// --- Quiz (Etapa 4) ---
+const quizEntry = (fields = {}) => ({
+  kind: 'quiz', at: NOW.toISOString(), date: TODAY, wordId: 'w1', mode: 'write', correct: true, accentOnly: false, ...fields,
+});
+
+test('recordQuizAnswer guarda la entrada en una sola escritura y no toca las tarjetas', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  await store.load();
+  const { card, entry } = reviewed('w1', 'good');
+  await store.recordReview(card, entry);
+  const writesBefore = backend.writes;
+  const quiz = quizEntry({ mode: 'dictation', correct: false, accentOnly: true });
+  await store.recordQuizAnswer(quiz);
+  assert.equal(backend.writes - writesBefore, 1);
+  assert.deepEqual(saved(backend).history, [entry, quiz]);
+  assert.deepEqual(saved(backend).cards, { 'w1:fr-es': card });
+  assert.deepEqual(store.getState().history, [entry, quiz]);
+  assert.deepEqual(store.getState().cards, { 'w1:fr-es': card });
+});
+
+test('recordQuizAnswer sin espacio: StorageError «quota» y nada cambia', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  await store.load();
+  const before = backend.getItem(STUDY_KEY);
+  backend.failWith = quotaError();
+  await assert.rejects(store.recordQuizAnswer(quizEntry()),
+    (error) => error instanceof StorageError && error.code === 'quota');
+  assert.deepEqual(store.getState().history, []);
+  assert.equal(backend.getItem(STUDY_KEY), before);
+});
+
+test('un documento guardado sin requireAccents carga con false y no se trata como dañado', async () => {
+  const old = { schemaVersion: 1, cards: {}, history: [], settings: { algorithm: 'leitner', direction: 'es-fr', newPerDay: 7 } };
+  const backend = new MemoryStorage({ [STUDY_KEY]: JSON.stringify(old) });
+  const loaded = await makeStore(backend).load();
+  assert.equal(loaded.corruptBackupKey, null);
+  assert.deepEqual(loaded.settings, { algorithm: 'leitner', direction: 'es-fr', newPerDay: 7, requireAccents: false });
+});
+
+test('saveSettings mezcla: «Exigir acentos» y los ajustes de Estudiar no se borran entre sí', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  await store.load();
+  assert.deepEqual(await store.saveSettings({ requireAccents: true }), { ok: true });
+  assert.deepEqual(store.getState().settings, { ...DEFAULT_SETTINGS, requireAccents: true });
+  // Lo que envía la ventana de ajustes de Estudiar (sin requireAccents)
+  assert.deepEqual(await store.saveSettings({ algorithm: 'leitner', direction: 'es-fr', newPerDay: '3' }), { ok: true });
+  const expected = { algorithm: 'leitner', direction: 'es-fr', newPerDay: 3, requireAccents: true };
+  assert.deepEqual(store.getState().settings, expected);
+  assert.deepEqual(saved(backend).settings, expected);
+});
+
+test('requireAccents tiene que ser verdadero o falso', async () => {
+  assert.deepEqual(validateSettings({ ...DEFAULT_SETTINGS, requireAccents: 'sí' }).errors,
+    { requireAccents: 'Elige si se exigen acentos.' });
+  const store = makeStore();
+  await store.load();
+  assert.deepEqual(await store.saveSettings({ requireAccents: 'sí' }),
+    { ok: false, errors: { requireAccents: 'Elige si se exigen acentos.' } });
+  assert.deepEqual(store.getState().settings, DEFAULT_SETTINGS);
 });
