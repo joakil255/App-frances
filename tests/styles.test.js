@@ -72,3 +72,29 @@ test('las barras y la línea del gráfico de Progreso se ven sobre el fondo y la
     }
   }
 });
+
+// --- Auditoría de accesibilidad (Etapa 7): todos los pares texto/fondo de DESIGN.md ---
+const TEXT_PAIRS = [
+  ['--text', '--bg'], ['--text', '--surface'], ['--text-muted', '--bg'], ['--text-muted', '--surface'],
+  ['--secondary-text', '--bg'], ['--secondary-text', '--surface'], ['--emphasis', '--bg'], ['--emphasis', '--surface'],
+  ['--review', '--bg'], ['--review', '--surface'], ['--error-text', '--bg'], ['--error-text', '--surface'],
+  ['--success-text', '--bg'], ['--success-text', '--surface'], ['--notice-text', '--notice-bg'],
+  ['--dialog-title', '--bg'], ['--plaque-text', '--plaque'], ['--nav-text', '--nav-bg'], ['--nav-active', '--nav-bg'],
+];
+const GRAPHIC_PAIRS = [['--field-border', '--surface'], ['--field-border', '--bg'], ['--focus', '--bg'], ['--focus', '--surface']];
+
+for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+  const value = (name) => token(block, name) ?? token(lightTokens, name);
+  test(`contraste de todo el texto en tema ${theme} (≥ 4,5:1)`, () => {
+    for (const [fg, bg] of TEXT_PAIRS) {
+      assert.ok(value(fg) && value(bg), `${theme}: falta ${fg} o ${bg}`);
+      assert.ok(contrast(value(fg), value(bg)) >= 4.5, `${theme}: ${fg} ${value(fg)} sobre ${bg} ${value(bg)}`);
+    }
+    assert.ok(contrast('#FFFFFF', value('--danger')) >= 4.5, `${theme}: blanco sobre --danger`);
+  });
+  test(`contraste de bordes de campos y foco en tema ${theme} (≥ 3:1)`, () => {
+    for (const [fg, bg] of GRAPHIC_PAIRS) {
+      assert.ok(contrast(value(fg), value(bg)) >= 3, `${theme}: ${fg} ${value(fg)} sobre ${bg} ${value(bg)}`);
+    }
+  });
+}
