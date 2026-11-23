@@ -8,6 +8,7 @@ import { initVocabulary } from './screens/vocabulary.js';
 import { createStudyStore } from './lib/study-storage.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
+import { initProgress } from './screens/progress.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -64,11 +65,11 @@ const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
 const studyStore = createStudyStore(localStorageOrBlocked());
 
-// Estudiar necesita las palabras ya cargadas y Quiz, además, el estudio cargado
-// (comparten el mismo almacén e historial)
+// Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
+// (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
 initVocabulary({ store: wordStore, synth })
   .then(() => initStudy({ wordStore, studyStore, synth }))
-  .then(() => initQuiz({ wordStore, studyStore, synth }));
+  .then(() => Promise.all([initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore })]));
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

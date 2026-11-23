@@ -187,3 +187,45 @@ test('Quiz tiene la respuesta inmediata y el resumen', () => {
   assert.match(quiz, /<ul [^>]*id="quiz-failed"/);
   assert.match(quiz, /<button type="button"[^>]*id="quiz-again"[^>]*>Otro quiz<\/button>/);
 });
+
+// --- Pantalla Progreso (Etapa 5) ---
+const progress = html.match(/<section id="screen-progress"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+test('Progreso tiene aviso, estado vacío y ya no el texto de relleno', () => {
+  assert.match(progress, /<div id="progress-notice" class="notice" role="alert" hidden><\/div>/);
+  assert.match(progress, new RegExp('<p id="progress-empty"[^>]*hidden>Aquí verás tu racha y tus respuestas de cada día '
+    + 'cuando respondas tu primera tarjeta en Estudiar o en el Quiz\\.</p>'));
+  assert.ok(!progress.includes('Aquí verás cuánto has avanzado.'));
+});
+
+test('Progreso tiene la racha y el gráfico con su tabla de datos', () => {
+  for (const id of ['progress-activity', 'progress-streak', 'progress-streak-number', 'progress-streak-label',
+    'progress-today', 'progress-chart', 'progress-table-body', 'progress-accuracy']) {
+    assert.ok(tagWithId(progress, id), `falta #${id}`);
+  }
+  assert.match(progress, /<h2[^>]*>Respuestas de los últimos 14 días<\/h2>/);
+  const details = progress.match(/<details class="progress-details">\s*<summary>Ver los datos día por día<\/summary>([\s\S]*?)<\/details>/);
+  assert.ok(details, 'falta el desplegable de datos');
+  assert.match(details[1], /<th scope="col">Día<\/th>/);
+  assert.match(details[1], /<th scope="col">Respuestas<\/th>/);
+});
+
+test('Progreso tiene el acierto de Estudiar y Quiz', () => {
+  assert.match(progress, /<h2[^>]*>Acierto en los últimos 30 días<\/h2>/);
+  for (const kind of ['study', 'quiz']) {
+    assert.ok(tagWithId(progress, `progress-${kind}-percent`), `falta #progress-${kind}-percent`);
+    assert.ok(tagWithId(progress, `progress-${kind}-detail`), `falta #progress-${kind}-detail`);
+  }
+  assert.match(progress, /<dt[^>]*>Estudiar<\/dt>/);
+  assert.match(progress, /<dt[^>]*>Quiz<\/dt>/);
+});
+
+test('Progreso tiene «Tus palabras» con los tres estados y la lista de dominadas', () => {
+  assert.match(progress, /<h2[^>]*>Tus palabras<\/h2>/);
+  for (const id of ['progress-words', 'progress-words-empty', 'progress-new', 'progress-learning', 'progress-mastered-count',
+    'progress-mastered', 'progress-mastered-summary', 'progress-mastered-list', 'progress-mastered-none']) {
+    assert.ok(tagWithId(progress, id), `falta #${id}`);
+  }
+  assert.match(progress, /<details id="progress-mastered" class="progress-details"/);
+  assert.match(progress, /<div class="progress-states-bar" aria-hidden="true">/);
+});
