@@ -34,6 +34,7 @@ const PRECACHE_URLS = [
   'js/lib/queue.js',
   'js/lib/study-storage.js',
   'js/lib/answer-check.js',
+  'js/lib/quiz.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
