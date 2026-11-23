@@ -3,12 +3,11 @@
 import { filterWords, categoriesOf } from '../lib/words.js';
 import { exportJson, exportCsv, exportFileName, readImport, planImport, MAX_IMPORT_BYTES } from '../lib/transfer.js';
 import { StorageError } from '../lib/storage.js';
-import { RATES, pickFrenchVoice, loadVoices, speak } from '../lib/speech.js';
+import { RATES } from '../lib/speech.js';
+import { playFrench } from './voice.js';
 
 const GENDER_NAMES = { m: 'masculino', f: 'femenino' };
 const FORM_FIELDS = ['fr', 'es', 'gender', 'category', 'exampleFr', 'exampleEs'];
-const VOICE_SETTINGS = 'En Ajustes de Android busca «Salida de texto a voz»: elige el motor «Servicios de voz de Google», '
-  + 'instala los datos de voz en Francés (Francia) y prueba «Escuchar un ejemplo».';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 
@@ -67,7 +66,6 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   let editingId = null; // null = añadiendo
   let pendingPlan = null; // plan de importación esperando decisión
   let returnFocusTo = null;
-  let voicesPromise = null;
 
   // --- Avisos y mensajes ---
   function showNotice(title, text = '') {
@@ -160,39 +158,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   categorySelect.addEventListener('change', render);
   genderSelect.addEventListener('change', render);
 
-  // --- Voz ---
-  function voiceNoticeFor(target) {
-    return target === 'detail' ? $('.voice-notice', detail) : notice;
-  }
-  async function listenTo(text, rate, target = 'list') {
-    const box = voiceNoticeFor(target);
-    if (!synth) {
-      box.replaceChildren(el('strong', { text: 'Este navegador no puede leer en voz alta.' }));
-      box.hidden = false;
-      return;
-    }
-    voicesPromise ||= loadVoices(synth);
-    const choice = pickFrenchVoice(await voicesPromise);
-    if (!choice) {
-      voicesPromise = null; // quizá se instale una voz; se vuelve a buscar la próxima vez
-      box.replaceChildren(el('strong', { text: 'No hay voz francesa en este dispositivo.' }), el('span', { text: ` ${VOICE_SETTINGS}` }));
-      box.hidden = false;
-      return;
-    }
-    if (!choice.exact && target === 'detail') {
-      box.replaceChildren(el('span', { text: `Voz francesa con otro acento (${choice.voice.lang}).` }));
-      box.hidden = false;
-    }
-    speak(synth, choice.voice, text, rate, {
-      // El motor de voz del teléfono falló: se avisa en vez de quedarse en silencio
-      onError: (code) => {
-        box.replaceChildren(
-          el('strong', { text: 'El teléfono no pudo leer en voz alta.' }),
-          el('span', { text: ` ${VOICE_SETTINGS} (Error: ${code}.)` }),
-        );
-        box.hidden = false;
-      },
-    });
+  // --- Voz: en la ficha el aviso va dentro de la ventana; en la lista, arriba ---
+  function listenTo(text, rate, target = 'list') {
+    const inDetail = target === 'detail';
+    return playFrench({ synth, text, rate, notice: inDetail ? $('.voice-notice', detail) : notice, showAccent: inDetail });
   }
 
   // --- Ficha ---

@@ -16,7 +16,7 @@ export class StorageError extends Error {
   }
 }
 
-function toStorageError(error) {
+export function toStorageError(error) {
   const isQuota = error && (error.name === 'QuotaExceededError' || error.code === 22);
   return new StorageError(isQuota ? 'quota' : 'unavailable', error);
 }

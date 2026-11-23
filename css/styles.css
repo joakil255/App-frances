@@ -76,6 +76,8 @@
   --notice-border: #8A6600;
   --secondary-text: #233A7A;
   --dialog-title: #233A7A;
+  /* Estudiar (DESIGN.md, Etapa 3) */
+  --emphasis: #233A7A;
 }
 
 /* --- Tokens: tema oscuro («andén de noche») --- */
@@ -100,6 +102,7 @@
     --notice-border: #E0B23A;
     --secondary-text: #C9D3EE;
     --dialog-title: #FFFFFF;
+    --emphasis: #FFFFFF;
   }
 }
 
@@ -270,6 +273,7 @@ main {
 }
 .field input[type="text"],
 .field input[type="search"],
+.field input[type="number"],
 .field select {
   width: 100%;
   min-height: 44px;
@@ -482,6 +486,83 @@ main {
   cursor: pointer;
 }
 .update-button:focus-visible { outline-color: #F2C230; outline-offset: 3px; }
+/* --- Estudiar (DESIGN.md, Etapa 3) --- */
+.study-summary,
+.study-session,
+.study-done { margin-top: var(--space-5); }
+.study-summary > .empty { margin-top: 0; }
+.study-today { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.study-count {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 2px solid var(--divider);
+  border-radius: var(--radius);
+}
+.study-number { color: var(--emphasis); font: 700 30px/1.1 var(--font-sign); }
+.study-label { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.study-mode { margin: var(--space-3) 0 0; color: var(--text-muted); }
+.study-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+
+.study-progress { margin: 0 0 var(--space-1); color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.study-bar { height: 6px; background: var(--divider); overflow: hidden; }
+.study-bar-fill { display: block; width: 0; height: 100%; background: var(--line); }
+
+.study-card {
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: 2px solid var(--plaque);
+  border-left: 8px solid var(--line);
+  border-radius: 10px;
+  text-align: center;
+}
+.study-face:focus { outline: none; } /* recibe el foco para que se lea la tarjeta; no es interactiva */
+.study-lang { margin: 0 0 var(--space-3); text-align: left; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.study-word-line { display: flex; align-items: center; justify-content: center; gap: var(--space-3); }
+.study-word { margin: 0; min-width: 0; font: 600 1.95rem/1.15 var(--font-text); overflow-wrap: anywhere; }
+.study-es { margin: var(--space-2) 0 0; font-size: 1.25rem; font-style: italic; overflow-wrap: anywhere; }
+.study-example { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--divider); font-size: 0.9rem; }
+.study-example p { margin: 0; overflow-wrap: anywhere; }
+.study-example-es { font-style: italic; color: var(--text-muted); }
+
+.study-reveal { width: 100%; min-height: 56px; margin-top: var(--space-4); }
+.study-answers { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-top: var(--space-4); }
+.study-answer {
+  position: relative;
+  flex-direction: column;
+  gap: 0;
+  min-height: 56px;
+  padding: var(--space-1) var(--space-2);
+  line-height: 1.2;
+}
+.answer-when { font: 500 0.8rem var(--font-sign); }
+.study-done-title { margin: 0 0 var(--space-2); font: 700 1.3rem/1.2 var(--font-sign); }
+.study-done p { margin: 0 0 var(--space-4); }
+
+/* Pistas de teclado: solo con ratón */
+.button kbd { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .button kbd {
+    display: inline-block;
+    padding: 0 var(--space-1);
+    border: 1px solid var(--field-border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text-muted);
+    font: 500 0.75rem/1.4 var(--font-sign);
+  }
+  .study-answer kbd { position: absolute; top: var(--space-1); right: var(--space-1); }
+}
+
+/* Ajustes: algoritmo con botón de opción y una frase de explicación */
+.choice { display: grid; grid-template-columns: 24px 1fr; column-gap: var(--space-2); align-items: center; margin-bottom: var(--space-2); }
+.choice input { width: 24px; height: 24px; margin: 0; accent-color: var(--plaque); }
+.choice label { display: flex; align-items: center; min-height: 44px; font: 500 var(--size-base) var(--font-sign); cursor: pointer; }
+.choice .hint { grid-column: 2; margin: 0; }
 
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {
@@ -526,6 +607,8 @@ main {
   }
 
   main { padding: var(--space-6) var(--space-7); }
+
+  .study-answers { grid-template-columns: repeat(4, 1fr); }
 
   .update-banner {
     left: calc(200px + var(--space-7));
