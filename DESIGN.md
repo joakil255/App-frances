@@ -67,6 +67,38 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 - **Pantalla vacía:** una frase que dice qué aparecerá ahí, desde el punto de vista del usuario.
 - **Foco de teclado:** anillo de 3 px siempre visible (`:focus-visible`), con color `--focus` según el fondo.
 
+## Componentes de formularios y listas (Etapa 2)
+
+**Colores nuevos** (contraste comprobado; claro / oscuro):
+
+| Token | Claro | Oscuro | Uso | Contraste |
+|---|---|---|---|---|
+| `--surface` | `#FFFFFF` | `#1A2438` | Fondo de campos y ventanas | texto 15,6 / 13,1 |
+| `--text-muted` | `#4A5368` | `#B8C0D2` | Traducción, categoría, ayudas | 7,4 / 9,7 |
+| `--field-border` | `#5F6880` | `#8F9BB8` | Borde de campos y selectores | 5,4 / 5,6 |
+| `--divider` | `#C7CFDA` | `#2E3A55` | Separador entre filas (decoración) | — |
+| `--danger` | `#A3261A` | `#B3362A` | Botón «Borrar» (texto blanco) | 7,4 / 6,0 |
+| `--error-text` | `#A3261A` | `#FF9A8F` | Mensajes de error de un campo | 7,1 / 8,7 |
+| `--review` | `#8A3416` | `#F2A07B` | Etiqueta «Revisar» (texto y borde) | 7,9 / 8,5 |
+| `--notice-bg` / `--notice-text` / `--notice-border` | `#FFF4D6` / `#1C2433` / `#8A6600` | `#3A2F10` / `#F5E6B8` / `#E0B23A` | Avisos (falta la voz, archivo no válido) | 14,2 / 10,6 (borde 4,8 / 6,7) |
+
+**Botones** (Barlow 700, 44 px de alto como mínimo, radio 8 px):
+- *Primario*: fondo `--plaque`, texto blanco. Una acción principal por vista («Añadir palabra», «Guardar», «Importar N nuevas»).
+- *Secundario*: fondo `--surface`, borde de 2 px y texto `--plaque` (oscuro: `--nav-text`).
+- *Peligro*: fondo `--danger`, texto blanco. Solo para confirmar un borrado o un reemplazo.
+
+**Campos:** etiqueta visible encima (Barlow 500, 13,6 px), caja `--surface` con borde de 2 px `--field-border`, 44 px de alto. El error va debajo del campo en `--error-text`, enlazado con `aria-describedby`, y el campo lleva `aria-invalid="true"`. Al fallar el guardado, el foco va al primer campo con error.
+
+**Selector de género:** tres opciones en una fila (Masculino · Femenino · Sin género), hechas con botones de opción reales (`radio`) dentro de un `fieldset`.
+
+**Ventanas:** elemento `<dialog>` abierto como modal, fondo `--bg`, contorno de 2 px `--plaque`, radio 12 px, título en Barlow 700 color `--plaque` (oscuro: `--plaque-text` sobre `--bg`). Los botones van abajo a la derecha: primero «Cancelar» y después la acción. `Esc` y el gesto «atrás» cierran sin guardar.
+
+**Fila de palabra:** botón **Oír** (44 × 44 px, icono de altavoz en SVG) a la izquierda; francés en Source Serif 600; traducción en cursiva `--text-muted`; categoría y etiqueta «Revisar» en Barlow 500 debajo; flecha `›` a la derecha. Toda la fila abre la ficha; el botón **Oír** solo habla. Separador `--divider`.
+
+**Etiqueta «Revisar»:** Barlow 700, texto y borde de 1,5 px `--review`, radio 4 px. Marca las palabras de la lista inicial que hay que comprobar.
+
+**Aviso:** caja `--notice-bg` con borde de 2 px `--notice-border` y texto `--notice-text`, título en Barlow 700. Explica qué pasa y qué hacer.
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.
