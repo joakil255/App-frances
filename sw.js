@@ -38,6 +38,7 @@ const PRECACHE_URLS = [
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
+  'js/screens/quiz.js',
   'js/data/initial-words.js',
   'js/update.js',
   'fonts/barlow-semi-condensed-500.woff2',

@@ -41,3 +41,21 @@ test('el foco de teclado se ve sobre la opción de género elegida (≥ 3:1)', (
     assert.ok(contrast(color, background) >= 3, `${theme}: ${color} sobre ${background}`);
   }
 });
+
+// Colores de un bloque de variables (#RRGGBB)
+const lightTokens = css.match(/:root\s*\{([^}]*)\}/)[1];
+const darkTokens = css.match(/prefers-color-scheme: dark\)\s*\{\s*:root\s*\{([^}]*)\}/)[1];
+const token = (block, name) => block.match(new RegExp(`${name}:\\s*(#[0-9A-Fa-f]{6})`))?.[1];
+
+test('el verde de acierto y el rojo de fallo se leen sobre la tarjeta y el fondo (≥ 4,5:1)', () => {
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    for (const name of ['--success-text', '--error-text']) {
+      const color = token(block, name);
+      assert.ok(color, `${theme}: falta ${name}`);
+      for (const background of ['--surface', '--bg']) {
+        const bg = token(block, background);
+        assert.ok(contrast(color, bg) >= 4.5, `${theme}: ${name} ${color} sobre ${background} ${bg}`);
+      }
+    }
+  }
+});

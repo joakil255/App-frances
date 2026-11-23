@@ -143,7 +143,93 @@
 
       <section id="screen-quiz" class="screen line-quiz" hidden>
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Quiz</h1>
-        <p class="empty">Aquí pondrás a prueba lo que has aprendido.</p>
+
+        <div id="quiz-notice" class="notice" role="alert" hidden></div>
+
+        <!-- Inicio: elegir el modo -->
+        <div id="quiz-start" class="quiz-start">
+          <p class="quiz-intro">Elige cómo quieres practicar. Cada quiz tiene hasta 10 preguntas.</p>
+          <ul class="quiz-modes">
+            <li>
+              <button type="button" class="quiz-mode" data-mode="choice" aria-describedby="quiz-mode-choice-reason"><span class="quiz-mode-name">Opción múltiple</span><span class="quiz-mode-text">Ves una palabra en francés y eliges su traducción.</span></button>
+              <p class="quiz-mode-reason" id="quiz-mode-choice-reason" hidden></p>
+            </li>
+            <li>
+              <button type="button" class="quiz-mode" data-mode="write" aria-describedby="quiz-mode-write-reason"><span class="quiz-mode-name">Escribir en francés</span><span class="quiz-mode-text">Ves la palabra en español y la escribes en francés, con su artículo.</span></button>
+              <p class="quiz-mode-reason" id="quiz-mode-write-reason" hidden></p>
+            </li>
+            <li>
+              <button type="button" class="quiz-mode" data-mode="dictation" aria-describedby="quiz-mode-dictation-reason"><span class="quiz-mode-name">Dictado</span><span class="quiz-mode-text">Oyes una frase en francés y la escribes.</span></button>
+              <p class="quiz-mode-reason" id="quiz-mode-dictation-reason" hidden></p>
+            </li>
+          </ul>
+          <div class="field checkbox-field">
+            <input type="checkbox" id="quiz-require-accents" aria-describedby="quiz-accents-help">
+            <label for="quiz-require-accents">Exigir acentos</label>
+          </div>
+          <p class="hint" id="quiz-accents-help">Si no los exiges, «ete» por «été» cuenta como acierto, con un aviso.</p>
+        </div>
+
+        <!-- Pregunta y respuesta (se rellenan con textContent) -->
+        <div id="quiz-question" class="quiz-question" hidden>
+          <p id="quiz-progress" class="study-progress"></p>
+          <div class="study-bar" aria-hidden="true"><span id="quiz-bar-fill" class="study-bar-fill"></span></div>
+
+          <article id="quiz-card" class="study-card quiz-card" tabindex="-1">
+            <p class="study-lang" id="quiz-prompt-label"></p>
+            <div class="study-word-line">
+              <p id="quiz-prompt" class="study-word"></p>
+              <button type="button" class="listen-button" id="quiz-prompt-listen" aria-label="Oír en francés"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            </div>
+            <div id="quiz-voice" class="quiz-voice" hidden>
+              <button type="button" class="button button-secondary" data-rate="normal">Oír</button>
+              <button type="button" class="button button-secondary" data-rate="slow">Oír lento</button>
+            </div>
+          </article>
+
+          <div id="quiz-options" class="quiz-options" hidden>
+            <button type="button" class="button button-secondary quiz-option" data-index="0"><span class="quiz-option-text"></span><span class="quiz-option-mark"></span></button>
+            <button type="button" class="button button-secondary quiz-option" data-index="1"><span class="quiz-option-text"></span><span class="quiz-option-mark"></span></button>
+            <button type="button" class="button button-secondary quiz-option" data-index="2"><span class="quiz-option-text"></span><span class="quiz-option-mark"></span></button>
+            <button type="button" class="button button-secondary quiz-option" data-index="3"><span class="quiz-option-text"></span><span class="quiz-option-mark"></span></button>
+          </div>
+
+          <form id="quiz-answer-form" class="quiz-answer-form" novalidate hidden>
+            <div class="field">
+              <label for="quiz-answer" id="quiz-answer-label">Escribe en francés (con artículo)</label>
+              <input type="text" id="quiz-answer" lang="fr" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="done" aria-describedby="quiz-answer-error">
+              <p class="field-error" id="quiz-answer-error" hidden></p>
+            </div>
+            <div class="quiz-answer-actions">
+              <button type="submit" class="button button-primary">Comprobar</button>
+              <button type="button" class="button button-secondary" id="quiz-skip">No lo sé</button>
+            </div>
+          </form>
+
+          <div id="quiz-feedback" class="quiz-feedback" hidden>
+            <h2 id="quiz-feedback-title" class="quiz-feedback-title" tabindex="-1"></h2>
+            <div class="quiz-correct">
+              <p class="quiz-correct-text"><span class="quiz-label">Respuesta correcta:</span> <span id="quiz-correct-answer"></span></p>
+              <button type="button" class="listen-button" id="quiz-feedback-listen" aria-label="Oír en francés"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            </div>
+            <p id="quiz-correct-translation" class="quiz-translation" hidden></p>
+            <p id="quiz-typed" class="quiz-typed" hidden><span class="quiz-label">Escribiste:</span> <span id="quiz-typed-text" lang="fr"></span></p>
+            <div id="quiz-example" class="quiz-example" hidden>
+              <p id="quiz-example-fr" lang="fr"></p>
+              <p id="quiz-example-es" class="quiz-translation"></p>
+            </div>
+            <button type="button" class="button button-primary quiz-next" id="quiz-next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- Resumen -->
+        <div id="quiz-summary" class="quiz-summary" hidden>
+          <h2 id="quiz-summary-title" class="quiz-summary-title" tabindex="-1"></h2>
+          <p id="quiz-summary-none" hidden>No fallaste ninguna.</p>
+          <h3 id="quiz-failed-title" class="quiz-failed-title">Falladas</h3>
+          <ul id="quiz-failed" class="quiz-failed"></ul>
+          <button type="button" class="button button-primary" id="quiz-again">Otro quiz</button>
+        </div>
       </section>
 
       <section id="screen-progress" class="screen line-progress" hidden>
