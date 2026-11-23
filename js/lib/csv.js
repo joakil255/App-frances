@@ -2,7 +2,7 @@
 // Acepta el separador «,» o «;» (Excel en español), comillas, saltos de línea
 // dentro de un campo, finales de línea \r\n o \n y la marca BOM de UTF-8.
 
-const BOM = '﻿';
+const BOM = '\uFEFF';
 
 export class CsvError extends Error {
   constructor(message, line) {

@@ -24,11 +24,11 @@ test('acepta finales de línea \\r\\n y archivos sin salto final', () => {
 });
 
 test('quita la marca BOM del principio', () => {
-  assert.deepEqual(fieldsOf('﻿frances,espanol\n'), [['frances', 'espanol']]);
+  assert.deepEqual(fieldsOf('\uFEFFfrances,espanol\n'), [['frances', 'espanol']]);
 });
 
 test('detecta el punto y coma de Excel en español', () => {
-  const result = parseCsv('﻿frances;espanol\r\n"le chat, noir";el gato negro\r\n');
+  const result = parseCsv('\uFEFFfrances;espanol\r\n"le chat, noir";el gato negro\r\n');
   assert.equal(result.delimiter, ';');
   assert.deepEqual(result.records[1].fields, ['le chat, noir', 'el gato negro']);
 });
@@ -51,7 +51,7 @@ test('acentos, signos franceses y emoji quedan intactos', () => {
 
 test('toCsv escribe BOM, \\r\\n y comillas solo cuando hace falta', () => {
   const text = toCsv([['a', 'b'], ['ser, estar', 'di "sí"'], ['x;y', 'dos\nlíneas']]);
-  assert.equal(text, '﻿a,b\r\n"ser, estar","di ""sí"""\r\n"x;y","dos\nlíneas"\r\n');
+  assert.equal(text, '\uFEFFa,b\r\n"ser, estar","di ""sí"""\r\n"x;y","dos\nlíneas"\r\n');
 });
 
 test('ida y vuelta: leer lo escrito devuelve lo mismo', () => {
