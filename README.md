@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Por ahora tiene las cinco pantallas vacías (Inicio, Vocabulario, Estudiar, Quiz y Progreso); el estudio llegará en las próximas etapas.
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Por ahora funciona **Vocabulario**: tu lista de palabras con búsqueda, pronunciación e importar/exportar. El estudio llegará en las próximas etapas.
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -65,6 +65,31 @@ Cada vez que cambies **cualquier** archivo de la app:
 
 Si no subes `CACHE_VERSION`, los teléfonos que ya tienen la app **no se enteran del cambio**. Las pruebas no pueden detectar este olvido.
 
+## Vocabulario
+
+La primera vez que abres la app se cargan **60 palabras A1** (saludos, familia, casa, comida, tiempo y verbos). Desde ese momento son tuyas: puedes editarlas o borrarlas. Las que llevan la etiqueta **Revisar** tienen una traducción que puede cambiar según el país; compruébalas y quita la marca al editarlas.
+
+- **Buscar:** en francés o en español, sin importar mayúsculas ni acentos («etre» encuentra *être*).
+- **Oír:** el botón del altavoz usa la voz francesa del teléfono. En la ficha de cada palabra está también **Oír lento**. Si no hay voz francesa, la app explica cómo instalarla.
+- **Si no suena:** en Ajustes de Android busca «Salida de texto a voz», elige el motor «Servicios de voz de Google», instala la voz Francés (Francia) y comprueba que «Escuchar un ejemplo» suena. Después **fuerza la detención de Chrome** (Ajustes → Aplicaciones → Chrome → Forzar detención): Chrome sigue usando el motor anterior hasta que se reinicia.
+- **Reglas al guardar:** francés y español son obligatorios; el ejemplo es opcional, pero si escribes una frase hace falta su traducción; si eliges género, el francés lleva artículo y debe coincidir (*la* = femenino, *le* = masculino).
+
+### Tus datos y la copia de seguridad
+
+Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras los datos del navegador o desinstalas la app, se pierden. **Exporta de vez en cuando** (botón *Exportar*) y guarda el archivo: es tu copia de seguridad.
+
+### Formatos para importar y exportar
+
+- **JSON**: copia exacta para esta app (`"format": "app-frances-vocabulario"`).
+- **CSV**: para hojas de cálculo. Columnas: `frances, espanol, ejemplo_frances, ejemplo_espanol, categoria, genero, revisar`. Solo `frances` y `espanol` son obligatorias; el orden da igual y se aceptan acentos y mayúsculas en los nombres. `genero`: `m`, `f`, `masculino`, `femenino` o vacío. `revisar`: `sí`/`no` o vacío.
+- El CSV exportado usa comas y UTF-8. Se aceptan también archivos con `;` (Excel en español).
+- Una celda que empieza por `=`, `+`, `-` o `@` se exporta con `'` delante para que la hoja de cálculo no la ejecute como fórmula; al importar se quita.
+- **Importar nunca cambia nada sin preguntar:** primero muestra un resumen (nuevas, ya existentes y filas con errores con su motivo). Las que ya existen solo se sobrescriben si eliges *Reemplazar duplicadas…* y lo confirmas.
+
+### Abrir el CSV en Excel en español
+
+Si al hacer doble clic todo aparece en una sola columna: en Excel ve a **Datos → Desde texto/CSV**, elige el archivo, pon **Origen del archivo: 65001 (UTF-8)** y **Delimitador: Coma**, y pulsa **Cargar**. Para volver a importarlo, guárdalo como **CSV UTF-8 (delimitado por comas)**. LibreOffice y Google Sheets lo abren directamente.
+
 ## Iconos
 
 Están en `icons/`. Los dibujos fuente son `icon.svg` (también es el icono de la pestaña) e `icon-maskable.svg` (versión que Android puede recortar en círculo). La «ç» ya está convertida en trazos, así que no depende de ninguna fuente. Si cambias un SVG, regenera los PNG con:
@@ -113,7 +138,29 @@ Cambia el sistema (o el navegador) a tema oscuro. La app pasa a fondo azul noche
 
 En el computador puedes comprobar lo mismo: en Chrome, `F12` → **Application** → **Service workers** → marca **Offline** y recarga; en Firefox, menú **≡** → **Más herramientas** → **Trabajar sin conexión**.
 
-### 6. Aviso «Actualizar»
+### 6. Vocabulario en el celular
+
+Con la app instalada en el teléfono, marca cada punto:
+
+- [ ] La primera vez aparecen las 60 palabras iniciales; el contador dice «60 de 60 palabras».
+- [ ] Buscar `etre` muestra *être* y *la fenêtre*; buscar `casa` encuentra *la maison*.
+- [ ] Los filtros de categoría y género cambian la lista y el contador.
+- [ ] El botón del altavoz de una fila pronuncia la palabra en francés.
+- [ ] Al tocar una palabra se abre su ficha; **Oír** y **Oír lento** suenan a distinta velocidad.
+- [ ] Si el teléfono no tiene voz francesa, aparece el aviso con los pasos para instalarla.
+- [ ] Si el motor de voz del teléfono falla, aparece «El teléfono no pudo leer en voz alta.» con los pasos (no se queda en silencio).
+- [ ] **Añadir palabra**: guardar vacío muestra los errores junto a cada campo; con `chat` + femenino pide el artículo; con `la chat` + masculino avisa que «la» es femenino.
+- [ ] Añadir `le chat` / `el gato` la muestra en la lista; volver a añadirla dice que ya está en tu lista.
+- [ ] **Editar** una palabra cambia el texto en la lista y la lista **no salta arriba** (el foco vuelve a esa palabra); **Borrar** pide confirmación y, al confirmar, desaparece.
+- [ ] Con un error de género (`la chat` + masculino), la opción elegida se sigue leyendo (blanco sobre azul) y el selector tiene borde rojo.
+- [ ] El gesto **atrás** de Android con una ventana abierta la cierra sin guardar.
+- [ ] **Exportar CSV** y **Exportar JSON** descargan `vocabulario-AAAA-MM-DD`; el CSV se abre con los acentos bien.
+- [ ] **Importar** ese mismo archivo: el resumen dice que todas ya existen y no hay botón para importar nuevas.
+- [ ] Importar un CSV con una fila sin español: el resumen muestra la fila y el motivo.
+- [ ] Con **modo avión**, la lista, la búsqueda y la edición siguen funcionando.
+- [ ] Al cerrar y volver a abrir la app, los cambios siguen ahí.
+
+### 7. Aviso «Actualizar»
 
 1. Con la app ya abierta alguna vez en el teléfono, publica una versión nueva (sube `CACHE_VERSION`, commit y push) y espera a que GitHub Pages la publique (unos minutos).
 2. Abre la app con conexión. A los pocos segundos aparece «Hay una versión nueva de la app.» con **Actualizar**.
@@ -131,6 +178,13 @@ css/styles.css          estilos (valores de DESIGN.md)
 js/app.js               arranque: navegación y registro del service worker
 js/lib/router.js        qué pantalla corresponde a cada dirección (#/…)
 js/update.js            aviso «Actualizar» para versiones nuevas
+js/screens/vocabulary.js pantalla Vocabulario (lista, ficha, formulario, importar/exportar)
+js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
+js/lib/csv.js           lector y escritor de CSV
+js/lib/transfer.js      importar y exportar en JSON y CSV
+js/lib/storage.js       capa de datos (localStorage, intercambiable)
+js/lib/speech.js        voz francesa
+js/data/initial-words.js lista inicial de 60 palabras
 fonts/                  fuentes .woff2 y sus licencias (SIL OFL)
 icons/                  iconos de la app
 tests/                  pruebas automáticas (*.test.js)

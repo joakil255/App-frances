@@ -2,6 +2,9 @@
 // y registro del service worker (funcionamiento sin conexión)
 import { SCREENS, resolveRoute } from './lib/router.js';
 import { watchForUpdates, applyUpdate } from './update.js';
+import { createWordStore } from './lib/storage.js';
+import { INITIAL_WORDS } from './data/initial-words.js';
+import { initVocabulary } from './screens/vocabulary.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -39,6 +42,24 @@ function handleRoute(isFirstLoad) {
 
 window.addEventListener('hashchange', () => handleRoute(false));
 handleRoute(true);
+
+// localStorage puede no existir o estar bloqueado (p. ej. algunos modos privados):
+// en ese caso cada lectura o escritura falla y la pantalla lo avisa.
+function localStorageOrBlocked() {
+  try {
+    return window.localStorage;
+  } catch {
+    const blocked = () => {
+      throw new Error('localStorage bloqueado');
+    };
+    return { getItem: blocked, setItem: blocked };
+  }
+}
+
+initVocabulary({
+  store: createWordStore(localStorageOrBlocked(), { initialWords: INITIAL_WORDS }),
+  synth: 'speechSynthesis' in window ? window.speechSynthesis : null,
+});
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

@@ -62,6 +62,20 @@
 
   --radius: 8px;
   --nav-height: 64px;
+
+  /* Formularios y listas (DESIGN.md, Etapa 2) */
+  --surface: #FFFFFF;
+  --text-muted: #4A5368;
+  --field-border: #5F6880;
+  --divider: #C7CFDA;
+  --danger: #A3261A;
+  --error-text: #A3261A;
+  --review: #8A3416;
+  --notice-bg: #FFF4D6;
+  --notice-text: #1C2433;
+  --notice-border: #8A6600;
+  --secondary-text: #233A7A;
+  --dialog-title: #233A7A;
 }
 
 /* --- Tokens: tema oscuro («andén de noche») --- */
@@ -73,6 +87,19 @@
     --plaque-border: #E8ECF3;
     --nav-bg: #1A2B5C;
     --focus: #F2C230;
+
+    --surface: #1A2438;
+    --text-muted: #B8C0D2;
+    --field-border: #8F9BB8;
+    --divider: #2E3A55;
+    --danger: #B3362A;
+    --error-text: #FF9A8F;
+    --review: #F2A07B;
+    --notice-bg: #3A2F10;
+    --notice-text: #F5E6B8;
+    --notice-border: #E0B23A;
+    --secondary-text: #C9D3EE;
+    --dialog-title: #FFFFFF;
   }
 }
 
@@ -213,6 +240,216 @@ main {
 .plaque:focus-visible { outline-offset: 6px; }
 
 .empty { margin: var(--space-5) 0 0; }
+
+/* --- Botones --- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  font: 700 var(--size-base) var(--font-sign);
+  cursor: pointer;
+}
+.button-primary { background: var(--plaque); color: #FFFFFF; }
+.button-secondary { background: var(--surface); color: var(--secondary-text); border-color: currentColor; }
+.button-danger { background: var(--danger); color: #FFFFFF; }
+.button[hidden] { display: none; }
+
+/* --- Campos --- */
+.field { margin: 0 0 var(--space-3); padding: 0; border: 0; min-width: 0; }
+.field > label,
+.field > legend {
+  display: block;
+  margin-bottom: var(--space-1);
+  padding: 0;
+  font: 500 var(--size-sm) var(--font-sign);
+}
+.field input[type="text"],
+.field input[type="search"],
+.field select {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--field-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.field [aria-invalid="true"] { border-color: var(--error-text); }
+.field-error {
+  margin: var(--space-1) 0 0;
+  color: var(--error-text);
+  font-size: var(--size-sm);
+  font-weight: 600;
+}
+
+/* Género: tres opciones en una fila, con botones de opción reales */
+.segmented {
+  position: relative; /* referencia para los radios ocultos: evita saltos al enfocarlos */
+  display: flex;
+  border: 2px solid var(--plaque);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.segmented label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--space-1);
+  background: var(--surface);
+  color: var(--secondary-text);
+  font: 500 var(--size-sm) var(--font-sign);
+  cursor: pointer;
+}
+.segmented label + input + label { border-left: 2px solid var(--plaque); }
+.segmented input:checked + label { background: var(--plaque); color: #FFFFFF; font-weight: 700; }
+.segmented input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: -5px; }
+.segmented input[aria-invalid="true"] + label { color: var(--error-text); }
+/* La opción elegida siempre en blanco sobre azul; el error lo marca el borde y el mensaje */
+.segmented input:checked[aria-invalid="true"] + label { color: #FFFFFF; }
+.segmented:has(input[aria-invalid="true"]) { border-color: var(--error-text); }
+/* Sobre la opción elegida (fondo azul) el foco va en amarillo para que se vea */
+.segmented input:checked:focus-visible + label { outline-color: var(--focus-on-blue); }
+
+.checkbox-field { display: flex; align-items: center; gap: var(--space-2); }
+.checkbox-field input { width: 24px; height: 24px; margin: 0; accent-color: var(--plaque); }
+.checkbox-field label { font: 500 var(--size-base) var(--font-sign); }
+
+/* --- Avisos --- */
+.notice {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--notice-bg);
+  color: var(--notice-text);
+  border: 2px solid var(--notice-border);
+  border-radius: var(--radius);
+  font-size: var(--size-sm);
+}
+.notice strong { font-family: var(--font-sign); font-size: var(--size-base); }
+
+.tag-review {
+  display: inline-block;
+  padding: 0 var(--space-1);
+  border: 1.5px solid var(--review);
+  border-radius: 4px;
+  color: var(--review);
+  font: 700 var(--size-sm) var(--font-sign);
+}
+
+.hint { color: var(--text-muted); font-size: var(--size-sm); }
+
+/* --- Pantalla Vocabulario --- */
+.vocab-tools { margin-top: var(--space-5); }
+.vocab-filters { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.vocab-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.vocab-message:empty { display: none; }
+.vocab-message { margin: var(--space-3) 0 0; font-family: var(--font-sign); font-weight: 500; }
+.vocab-count {
+  margin: var(--space-4) 0 var(--space-1);
+  color: var(--text-muted);
+  font: 500 var(--size-sm) var(--font-sign);
+}
+
+.vocab-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--plaque);
+}
+.word-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--divider);
+  background: var(--bg);
+}
+.listen-button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--secondary-text);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--secondary-text);
+  cursor: pointer;
+}
+.listen-button svg { width: 24px; height: 24px; }
+.word-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.word-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.word-fr { font-weight: 600; font-size: 1.1rem; line-height: 1.25; overflow-wrap: anywhere; }
+.word-es { font-style: italic; color: var(--text-muted); overflow-wrap: anywhere; }
+.word-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.word-meta:empty { display: none; }
+.word-chevron { flex: none; color: var(--text-muted); font-size: 1.5rem; padding-right: var(--space-1); }
+
+/* --- Ventanas --- */
+.dialog {
+  width: min(32rem, calc(100vw - 2 * var(--space-4)));
+  max-height: calc(100dvh - 2 * var(--space-4));
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  border: 0;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 0 0 2px var(--plaque);
+}
+.dialog::backdrop { background: rgba(16, 24, 39, 0.6); }
+.dialog form { margin: 0; }
+.dialog-title {
+  margin: 0 0 var(--space-4);
+  color: var(--dialog-title);
+  font: 700 1.25rem/1.2 var(--font-sign);
+  overflow-wrap: anywhere;
+}
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.detail-fr { margin: 0; font: 600 1.95rem/1.15 var(--font-text); overflow-wrap: anywhere; }
+.detail-es { margin: var(--space-1) 0 0; font-size: 1.1rem; font-style: italic; }
+.detail-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-1) 0 0; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.detail-voice { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.detail-example { margin-top: var(--space-4); padding-left: var(--space-3); border-left: 4px solid var(--line, #2F7FD0); }
+.detail-example p { margin: 0; }
+.example-es { font-style: italic; color: var(--text-muted); }
+
+.import-counts { margin: 0; padding-left: var(--space-5); }
+.import-subtitle { margin: var(--space-4) 0 var(--space-1); font: 700 var(--size-base) var(--font-sign); }
+.import-reasons { margin: 0; padding-left: var(--space-5); max-height: 12rem; overflow-y: auto; font-size: var(--size-sm); }
+.export-help { padding-left: var(--space-5); }
 
 /* --- Aviso de versión nueva (encima de la barra en el móvil) --- */
 .update-banner {
