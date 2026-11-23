@@ -7,8 +7,8 @@ import { RATES, pickFrenchVoice, loadVoices, speak } from '../lib/speech.js';
 
 const GENDER_NAMES = { m: 'masculino', f: 'femenino' };
 const FORM_FIELDS = ['fr', 'es', 'gender', 'category', 'exampleFr', 'exampleEs'];
-const NO_VOICE_STEPS = 'Para instalarla en Android: Ajustes → Sistema → Idiomas → Salida de texto a voz → '
-  + 'Motor preferido (⚙) → Instalar datos de voz → Francés (Francia). El camino puede cambiar según el teléfono.';
+const VOICE_SETTINGS = 'En Ajustes de Android busca «Salida de texto a voz»: elige el motor «Servicios de voz de Google», '
+  + 'instala los datos de voz en Francés (Francia) y prueba «Escuchar un ejemplo».';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 
@@ -175,7 +175,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     const choice = pickFrenchVoice(await voicesPromise);
     if (!choice) {
       voicesPromise = null; // quizá se instale una voz; se vuelve a buscar la próxima vez
-      box.replaceChildren(el('strong', { text: 'No hay voz francesa en este dispositivo.' }), el('span', { text: ` ${NO_VOICE_STEPS}` }));
+      box.replaceChildren(el('strong', { text: 'No hay voz francesa en este dispositivo.' }), el('span', { text: ` ${VOICE_SETTINGS}` }));
       box.hidden = false;
       return;
     }
@@ -183,7 +183,16 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       box.replaceChildren(el('span', { text: `Voz francesa con otro acento (${choice.voice.lang}).` }));
       box.hidden = false;
     }
-    speak(synth, choice.voice, text, rate);
+    speak(synth, choice.voice, text, rate, {
+      // El motor de voz del teléfono falló: se avisa en vez de quedarse en silencio
+      onError: (code) => {
+        box.replaceChildren(
+          el('strong', { text: 'El teléfono no pudo leer en voz alta.' }),
+          el('span', { text: ` ${VOICE_SETTINGS} (Error: ${code}.)` }),
+        );
+        box.hidden = false;
+      },
+    });
   }
 
   // --- Ficha ---

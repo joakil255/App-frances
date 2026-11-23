@@ -147,6 +147,7 @@ Con la app instalada en el teléfono, marca cada punto:
 - [ ] El botón del altavoz de una fila pronuncia la palabra en francés.
 - [ ] Al tocar una palabra se abre su ficha; **Oír** y **Oír lento** suenan a distinta velocidad.
 - [ ] Si el teléfono no tiene voz francesa, aparece el aviso con los pasos para instalarla.
+- [ ] Si el motor de voz del teléfono falla, aparece «El teléfono no pudo leer en voz alta.» con los pasos (no se queda en silencio).
 - [ ] **Añadir palabra**: guardar vacío muestra los errores junto a cada campo; con `chat` + femenino pide el artículo; con `la chat` + masculino avisa que «la» es femenino.
 - [ ] Añadir `le chat` / `el gato` la muestra en la lista; volver a añadirla dice que ya está en tu lista.
 - [ ] **Editar** una palabra cambia el texto en la lista y la lista **no salta arriba** (el foco vuelve a esa palabra); **Borrar** pide confirmación y, al confirmar, desaparece.

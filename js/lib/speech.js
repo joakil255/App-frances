@@ -30,12 +30,19 @@ export function loadVoices(synth, timeoutMs = 2000) {
   });
 }
 
-// Lee el texto; antes corta lo que estuviera sonando
-export function speak(synth, voice, text, rate, Utterance = globalThis.SpeechSynthesisUtterance) {
+// Errores que solo significan «se cortó para leer otra cosa»: no son un problema
+const NORMAL_STOPS = ['interrupted', 'canceled'];
+
+// Lee el texto; antes corta lo que estuviera sonando.
+// onError(código) se llama si el motor de voz del sistema falla (p. ej. «synthesis-failed»).
+export function speak(synth, voice, text, rate, { Utterance = globalThis.SpeechSynthesisUtterance, onError = () => {} } = {}) {
   synth.cancel();
   const utterance = new Utterance(text);
   utterance.voice = voice;
   utterance.lang = voice ? String(voice.lang).replace('_', '-') : 'fr-FR';
   utterance.rate = rate;
+  utterance.onerror = (event) => {
+    if (!NORMAL_STOPS.includes(event.error)) onError(event.error);
+  };
   synth.speak(utterance);
 }

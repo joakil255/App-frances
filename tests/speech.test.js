@@ -76,11 +76,40 @@ test('speak cancela lo que suena y lee el texto con la voz y la velocidad', () =
   }
   const synth = new FakeSynth();
   const french = voice('A', 'fr-FR');
-  speak(synth, french, 'la fenêtre', RATES.slow, FakeUtterance);
+  speak(synth, french, 'la fenêtre', RATES.slow, { Utterance: FakeUtterance });
   assert.equal(synth.calls[0][0], 'cancel');
   const utterance = synth.calls[1][1];
   assert.equal(utterance.text, 'la fenêtre');
   assert.equal(utterance.voice, french);
   assert.equal(utterance.lang, 'fr-FR');
   assert.equal(utterance.rate, 0.6);
+});
+
+test('si el motor de voz falla, speak avisa con el código del error', () => {
+  class FakeUtterance {
+    constructor(text) {
+      this.text = text;
+    }
+  }
+  const synth = new FakeSynth();
+  const errors = [];
+  speak(synth, null, 'bonjour', RATES.normal, { Utterance: FakeUtterance, onError: (code) => errors.push(code) });
+  const utterance = synth.calls[1][1];
+  utterance.onerror({ error: 'synthesis-failed' });
+  assert.deepEqual(errors, ['synthesis-failed']);
+});
+
+test('cortar una lectura con otra (interrupted o canceled) no es un error para el usuario', () => {
+  class FakeUtterance {
+    constructor(text) {
+      this.text = text;
+    }
+  }
+  const synth = new FakeSynth();
+  const errors = [];
+  speak(synth, null, 'bonjour', RATES.normal, { Utterance: FakeUtterance, onError: (code) => errors.push(code) });
+  const utterance = synth.calls[1][1];
+  utterance.onerror({ error: 'interrupted' });
+  utterance.onerror({ error: 'canceled' });
+  assert.deepEqual(errors, []);
 });
