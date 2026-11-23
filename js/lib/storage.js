@@ -38,7 +38,7 @@ export function createWordStore(backend, { initialWords, makeId = () => crypto.r
     words = nextWords;
   }
 
-  return {
+  const store = {
     // Devuelve { words, corruptBackupKey }. corruptBackupKey indica dónde se copiaron datos dañados.
     async load() {
       let raw;
@@ -114,5 +114,16 @@ export function createWordStore(backend, { initialWords, makeId = () => crypto.r
       persist(next);
       return { added: added.length, replaced };
     },
+
+    // Si otra copia de la app (otra pestaña o la app instalada) guarda cambios, el navegador
+    // lanza «storage» en esta: se vuelve a leer para no borrar lo que hizo la otra al guardar.
+    watchExternalChanges(target, onChange) {
+      target.addEventListener('storage', async (event) => {
+        if (event.key !== STORAGE_KEY && event.key !== null) return; // null = se borró todo
+        await store.load();
+        onChange();
+      });
+    },
   };
+  return store;
 }

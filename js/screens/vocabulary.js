@@ -137,7 +137,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     ]);
     open.addEventListener('click', () => openDetail(word, open));
 
-    return el('li', { className: 'word-row' }, [listen, open]);
+    return el('li', { className: 'word-row', attrs: { 'data-id': word.id } }, [listen, open]);
   }
 
   function render() {
@@ -149,6 +149,11 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     emptyText.textContent = all.length === 0
       ? 'Todavía no hay palabras. Añade una o importa un archivo.'
       : 'Ninguna palabra coincide con la búsqueda.';
+  }
+
+  // Botón de la fila de una palabra (tras volver a dibujar la lista), o null si no se ve
+  function rowButton(id) {
+    return list.querySelector(`[data-id="${CSS.escape(id)}"] .word-open`);
   }
 
   search.addEventListener('input', render);
@@ -287,9 +292,11 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       }
       clearNotice();
       say(`Se guardó «${result.word.fr}».`);
-      formDialog.close();
       renderCategories();
       render();
+      // El foco vuelve a la palabra guardada (si el filtro la oculta, al buscador)
+      returnFocusTo = rowButton(result.word.id) || search;
+      formDialog.close();
     } catch (error) {
       if (!(error instanceof StorageError)) throw error;
       const formError = $('.form-error', form);
@@ -368,7 +375,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       say(replaced > 0
         ? `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')} y se reemplazaron ${replaced}.`
         : `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')}.`);
-      returnFocusTo = search;
+      returnFocusTo = $('#vocab-import');
       dialog.close();
       renderCategories();
       render();
@@ -406,6 +413,11 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     }
     renderCategories();
     render();
+    // Cambios guardados desde otra copia de la app: se vuelve a dibujar con la lista actual
+    store.watchExternalChanges(window, () => {
+      renderCategories();
+      render();
+    });
   }
 
   return start();

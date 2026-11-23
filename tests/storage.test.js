@@ -162,3 +162,44 @@ test('si no se puede leer el almacenamiento, load avisa con StorageError', async
   const backend = { getItem() { throw new Error('SecurityError'); }, setItem() {} };
   await assert.rejects(makeStore(backend).load(), (error) => error instanceof StorageError && error.code === 'unavailable');
 });
+
+// Otra copia de la app (pestaña o app instalada) cambia los datos: el navegador avisa con «storage»
+function storageEvent(key) {
+  const event = new Event('storage');
+  Object.defineProperty(event, 'key', { value: key });
+  return event;
+}
+
+test('watchExternalChanges recarga la lista cuando otra copia de la app guarda', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  await store.load();
+  const target = new EventTarget();
+  let changes = 0;
+  store.watchExternalChanges(target, () => { changes += 1; });
+
+  // La otra copia añade una palabra
+  const other = makeStore(backend);
+  await other.load();
+  await other.saveWord({ fr: 'le pain', es: 'el pan', gender: 'm' });
+
+  target.dispatchEvent(storageEvent(STORAGE_KEY));
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(changes, 1);
+  assert.equal(store.getWords().length, 3);
+
+  // Guardar aquí ya no borra la palabra de la otra copia
+  await store.saveWord({ fr: 'le lait', es: 'la leche', gender: 'm' });
+  assert.deepEqual(saved(backend).words.map((w) => w.fr).sort(), ['le chat', 'le lait', 'le pain', 'être']);
+});
+
+test('watchExternalChanges ignora cambios de otras claves', async () => {
+  const store = makeStore();
+  await store.load();
+  const target = new EventTarget();
+  let changes = 0;
+  store.watchExternalChanges(target, () => { changes += 1; });
+  target.dispatchEvent(storageEvent('otra-clave'));
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(changes, 0);
+});

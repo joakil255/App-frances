@@ -149,7 +149,8 @@ Con la app instalada en el teléfono, marca cada punto:
 - [ ] Si el teléfono no tiene voz francesa, aparece el aviso con los pasos para instalarla.
 - [ ] **Añadir palabra**: guardar vacío muestra los errores junto a cada campo; con `chat` + femenino pide el artículo; con `la chat` + masculino avisa que «la» es femenino.
 - [ ] Añadir `le chat` / `el gato` la muestra en la lista; volver a añadirla dice que ya está en tu lista.
-- [ ] **Editar** una palabra cambia el texto en la lista; **Borrar** pide confirmación y, al confirmar, desaparece.
+- [ ] **Editar** una palabra cambia el texto en la lista y la lista **no salta arriba** (el foco vuelve a esa palabra); **Borrar** pide confirmación y, al confirmar, desaparece.
+- [ ] Con un error de género (`la chat` + masculino), la opción elegida se sigue leyendo (blanco sobre azul) y el selector tiene borde rojo.
 - [ ] El gesto **atrás** de Android con una ventana abierta la cierra sin guardar.
 - [ ] **Exportar CSV** y **Exportar JSON** descargan `vocabulario-AAAA-MM-DD`; el CSV se abre con los acentos bien.
 - [ ] **Importar** ese mismo archivo: el resumen dice que todas ya existen y no hay botón para importar nuevas.
