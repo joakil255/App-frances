@@ -170,6 +170,10 @@ export function initProgress({ wordStore, studyStore, now = () => new Date() }) 
   window.addEventListener('hashchange', () => {
     if (resolveRoute(location.hash) === 'progress') render();
   });
+  // Al volver a la app (p. ej. al día siguiente, sin cambiar de pantalla) también
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && resolveRoute(location.hash) === 'progress') render();
+  });
 
   async function start() {
     try {
