@@ -44,3 +44,58 @@ export function nextSm2(state, answer, today) {
   }
   return { reps: state.reps + 1, interval, ease, lapses: state.lapses, due: addDays(today, interval) };
 }
+
+// ---- Leitner ----
+
+export const NEW_LEITNER = Object.freeze({ box: 0, due: null });
+// Días hasta el próximo repaso según la caja (caja 1 → 1 día … caja 5 → 16 días)
+export const LEITNER_DAYS = Object.freeze([1, 2, 4, 8, 16]);
+const MAX_BOX = LEITNER_DAYS.length;
+
+export function nextLeitner(state, answer, today) {
+  checkAnswer(answer);
+  if (answer === 'again') return { box: 1, due: today };
+  const step = { hard: 0, good: 1, easy: 2 }[answer];
+  const box = Math.min(MAX_BOX, Math.max(1, state.box + step));
+  return { box, due: addDays(today, LEITNER_DAYS[box - 1]) };
+}
+
+// ---- Tarjetas ----
+
+const ALGORITHMS = ['sm2', 'leitner'];
+
+export function cardIdOf(wordId, direction) {
+  return `${wordId}:${direction}`;
+}
+
+export function newCard(wordId, direction) {
+  return {
+    id: cardIdOf(wordId, direction), wordId, direction,
+    introducedOn: null, lastReviewedAt: null, sm2: NEW_SM2, leitner: NEW_LEITNER,
+  };
+}
+
+// Aplica la respuesta con los dos algoritmos: cambiar de algoritmo no pierde progreso
+export function review(card, answer, today, nowIso) {
+  return {
+    ...card,
+    introducedOn: card.introducedOn ?? today,
+    lastReviewedAt: nowIso,
+    sm2: nextSm2(card.sm2, answer, today),
+    leitner: nextLeitner(card.leitner, answer, today),
+  };
+}
+
+export function dueOf(card, algorithm) {
+  if (!ALGORITHMS.includes(algorithm)) throw new Error(`Algoritmo desconocido: ${algorithm}`);
+  return card[algorithm].due;
+}
+
+// Días hasta el próximo repaso con cada respuesta (0 = hoy), para los botones
+export function previewDays(card, algorithm, today) {
+  const days = {};
+  for (const answer of ANSWERS) {
+    days[answer] = daysBetween(today, dueOf(review(card, answer, today, ''), algorithm));
+  }
+  return days;
+}
