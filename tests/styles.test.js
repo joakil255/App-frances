@@ -59,3 +59,16 @@ test('el verde de acierto y el rojo de fallo se leen sobre la tarjeta y el fondo
     }
   }
 });
+
+test('las barras y la línea del gráfico de Progreso se ven sobre el fondo y la tarjeta (≥ 3:1)', () => {
+  const orange = css.match(/\.line-progress \{ --line: (#[0-9A-Fa-f]{6}); \}/)[1];
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    const bar = token(block, '--chart-bar');
+    assert.ok(bar, `${theme}: falta --chart-bar`);
+    for (const background of ['--surface', '--bg']) {
+      const bg = token(block, background) ?? token(lightTokens, background);
+      assert.ok(contrast(bar, bg) >= 3, `${theme}: --chart-bar ${bar} sobre ${background} ${bg}`);
+      assert.ok(contrast(orange, bg) >= 3, `${theme}: línea ${orange} sobre ${background} ${bg}`);
+    }
+  }
+});

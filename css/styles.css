@@ -80,6 +80,8 @@
   --emphasis: #233A7A;
   /* Quiz (DESIGN.md, Etapa 4) */
   --success-text: #1D6B3F;
+  /* Progreso (DESIGN.md, Etapa 5) */
+  --chart-bar: #233A7A;
 }
 
 /* --- Tokens: tema oscuro («andén de noche») --- */
@@ -106,6 +108,7 @@
     --dialog-title: #FFFFFF;
     --emphasis: #FFFFFF;
     --success-text: #7FD3A3;
+    --chart-bar: #9DB0E3;
   }
 }
 
@@ -643,6 +646,66 @@ main {
 .quiz-failed p { margin: 0; overflow-wrap: anywhere; }
 .quiz-failed-q { font-weight: 600; }
 .quiz-failed-typed { color: var(--text-muted); font-size: var(--size-sm); }
+
+/* --- Progreso (DESIGN.md, Etapa 5) --- */
+.progress-activity { margin-top: var(--space-5); }
+.progress-today { flex-direction: row; align-items: center; gap: var(--space-1); color: var(--text); font: 700 1.1rem/1.25 var(--font-sign); }
+.progress-title { margin: var(--space-6) 0 var(--space-3); font: 700 1.25rem/1.2 var(--font-sign); }
+
+/* Gráfico: barras sobre una «línea de metro» con una estación por día */
+.progress-chart svg { display: block; width: 100%; max-width: 400px; height: auto; overflow: visible; }
+.chart-bar { fill: var(--chart-bar); }
+.chart-count { fill: var(--text); font: 700 15px var(--font-sign); text-anchor: middle; }
+.chart-day { fill: var(--text-muted); font: 500 15px var(--font-sign); text-anchor: middle; }
+.chart-day-today { fill: var(--text); font-weight: 700; }
+.chart-track { stroke: var(--line); stroke-width: 4; }
+.chart-station { fill: var(--bg); stroke: var(--line); stroke-width: 2.5; }
+.chart-station-studied { fill: var(--line); stroke: var(--bg); }
+
+.progress-details { margin-top: var(--space-3); }
+.progress-details summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--secondary-text);
+  font: 700 var(--size-base) var(--font-sign);
+  cursor: pointer;
+}
+/* Al poner display: flex el navegador quita el triángulo: se dibuja aquí */
+.progress-details summary::before { content: '▸'; width: 1em; flex: none; }
+.progress-details[open] > summary::before { content: '▾'; }
+.progress-table { border-collapse: collapse; margin-top: var(--space-2); }
+.progress-table th,
+.progress-table td { padding: var(--space-1) var(--space-4) var(--space-1) 0; border-bottom: 1px solid var(--divider); text-align: left; }
+.progress-table th { font: 500 var(--size-sm) var(--font-sign); color: var(--text-muted); }
+
+.progress-accuracy { margin: 0; }
+.progress-rate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--divider);
+}
+.progress-rate dt { min-width: 5.5em; font: 500 var(--size-base) var(--font-sign); }
+.progress-rate dd { margin: 0; flex: 1; }
+.progress-percent { color: var(--emphasis); font: 700 1.6rem/1.1 var(--font-sign); }
+.progress-rate-detail { color: var(--text-muted); }
+
+/* Palabras por estado: la barra es decoración; los números van escritos */
+.progress-states-bar { display: flex; gap: 2px; height: 12px; }
+.progress-states-bar span { flex: 0 0 auto; }
+.progress-state-new { background: var(--divider); }
+.progress-state-learning { background: var(--chart-bar); }
+.progress-state-mastered { background: var(--line); }
+.progress-states { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.progress-states li { display: flex; align-items: center; gap: var(--space-2); }
+.progress-swatch { width: 14px; height: 14px; flex: none; }
+.progress-mastered-list { margin: 0; padding: 0; list-style: none; }
+.progress-mastered-list li { padding: var(--space-2) 0; border-bottom: 1px solid var(--divider); overflow-wrap: anywhere; }
+.progress-mastered-fr { display: block; font-weight: 600; }
+.progress-mastered-es { display: block; font-style: italic; color: var(--text-muted); }
 
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {

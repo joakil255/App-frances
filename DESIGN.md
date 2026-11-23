@@ -125,6 +125,24 @@ El fallo usa `--error-text` (7,1–7,4 / 7,6–8,7). El color nunca va solo: sie
 - **Respuesta:** caja `--surface` con borde izquierdo de 4 px del color del resultado; título en Barlow 700 de 1,25 rem en `--success-text` o `--error-text` con «✓» o «✗»; «Respuesta correcta», «Escribiste» y el ejemplo en Source Serif, la traducción en cursiva `--text-muted`. **Siguiente** primario, a lo ancho en el móvil.
 - **Resumen:** «Acertaste 7 de 10» en Barlow 700 de 1,3 rem; lista de falladas con separador `--divider`: la pregunta en Source Serif 600, la respuesta correcta debajo y, si la hay, «Escribiste: …» en `--text-muted`. **Otro quiz** primario.
 
+## Pantalla Progreso (Etapa 5)
+
+**Color nuevo** (contraste comprobado; claro / oscuro):
+
+| Token | Claro | Oscuro | Uso | Contraste |
+|---|---|---|---|---|
+| `--chart-bar` | `#233A7A` | `#9DB0E3` | Barras del gráfico y muestra «en aprendizaje» | 10,4–10,7 / 7,2–8,3 |
+
+La línea naranja de Progreso (`#E0663A`) se usa en el gráfico como elemento gráfico (no como texto): 3,3–3,4 en claro y 4,5–5,2 en oscuro, por encima del 3:1 exigido. Una prueba de `tests/styles.test.js` lo comprueba.
+
+- **Racha y hoy:** los dos recuadros del resumen de Estudiar. A la izquierda, el número de días (o «Sin racha») y «días seguidos» (o «Estudia hoy para empezar una nueva.»). A la derecha, «✓ Hoy ya estudiaste» o «Hoy todavía no estudiaste» en Barlow 700 de 1,1 rem, en una fila.
+- **Títulos de sección:** `h2` en Barlow 700 de 1,25 rem, con 32 px de aire encima: «Respuestas de los últimos 14 días», «Acierto en los últimos 30 días», «Tus palabras».
+- **Gráfico (el elemento propio de esta pantalla):** las barras se apoyan en una **línea de metro** naranja de 4 unidades con una **estación por día**: llena (naranja con anillo del color de fondo, radio 7) si ese día estudiaste y hueca (fondo con borde naranja, radio 6) si no. Barras `--chart-bar` de 14 unidades de ancho, sin esquinas redondeadas, con el número encima (Barlow 700) y debajo la inicial del día (L M X J V S D) o «hoy» en negrita. SVG con `viewBox`, a lo ancho hasta 400 px. `role="img"` y un `aria-label` con el resumen; el detalle está en la tabla del desplegable.
+- **Desplegables** («Ver los datos día por día», «Ver las N palabras dominadas»): `<details>` con el `summary` en Barlow 700 color `--secondary-text`, 44 px de alto y un triángulo ▸/▾ dibujado con CSS.
+- **Acierto:** lista de definiciones; cada fila con el nombre en Barlow 500, el porcentaje en Barlow 700 de 1,6 rem color `--emphasis` y «de N respuestas» en `--text-muted`, con separador `--divider`. Sin datos: «—» y una frase que lo explica.
+- **Tus palabras:** barra de proporción decorativa (`aria-hidden`) de 12 px con tres tramos: nuevas `--divider`, en aprendizaje `--chart-bar`, dominadas naranja. Debajo, los tres números con una muestra de 14 px del mismo color: la información está en el texto.
+- **Lista de dominadas:** francés en Source Serif 600 (`lang="fr"`) y traducción en cursiva `--text-muted`, con separador `--divider`, en el orden de Vocabulario.
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.

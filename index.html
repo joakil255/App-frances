@@ -234,7 +234,60 @@
 
       <section id="screen-progress" class="screen line-progress" hidden>
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Progreso</h1>
-        <p class="empty">Aquí verás cuánto has avanzado.</p>
+        <div id="progress-notice" class="notice" role="alert" hidden></div>
+        <p id="progress-empty" class="empty" hidden>Aquí verás tu racha y tus respuestas de cada día cuando respondas tu primera tarjeta en Estudiar o en el Quiz.</p>
+
+        <!-- Actividad: racha, días y acierto (se rellena con textContent) -->
+        <div id="progress-activity" class="progress-activity" hidden>
+          <div class="study-today">
+            <p id="progress-streak" class="study-count">
+              <span id="progress-streak-number" class="study-number"></span>
+              <span id="progress-streak-label" class="study-label"></span>
+            </p>
+            <p id="progress-today" class="study-count progress-today"></p>
+          </div>
+
+          <h2 class="progress-title">Respuestas de los últimos 14 días</h2>
+          <div id="progress-chart" class="progress-chart"></div>
+          <details class="progress-details">
+            <summary>Ver los datos día por día</summary>
+            <table class="progress-table">
+              <thead><tr><th scope="col">Día</th><th scope="col">Respuestas</th></tr></thead>
+              <tbody id="progress-table-body"></tbody>
+            </table>
+          </details>
+
+          <h2 class="progress-title">Acierto en los últimos 30 días</h2>
+          <dl id="progress-accuracy" class="progress-accuracy">
+            <div class="progress-rate">
+              <dt>Estudiar</dt>
+              <dd><span id="progress-study-percent" class="progress-percent"></span> <span id="progress-study-detail" class="progress-rate-detail"></span></dd>
+            </div>
+            <div class="progress-rate">
+              <dt>Quiz</dt>
+              <dd><span id="progress-quiz-percent" class="progress-percent"></span> <span id="progress-quiz-detail" class="progress-rate-detail"></span></dd>
+            </div>
+          </dl>
+          <p class="hint">En Estudiar, «Otra vez» cuenta como fallo.</p>
+        </div>
+
+        <h2 class="progress-title">Tus palabras</h2>
+        <p id="progress-words-empty" class="progress-words-empty" hidden>Añade palabras en Vocabulario para empezar.</p>
+        <div id="progress-words" hidden>
+          <div class="progress-states-bar" aria-hidden="true">
+            <span class="progress-state-new"></span><span class="progress-state-learning"></span><span class="progress-state-mastered"></span>
+          </div>
+          <ul class="progress-states">
+            <li><span class="progress-swatch progress-state-new" aria-hidden="true"></span><span id="progress-new"></span></li>
+            <li><span class="progress-swatch progress-state-learning" aria-hidden="true"></span><span id="progress-learning"></span></li>
+            <li><span class="progress-swatch progress-state-mastered" aria-hidden="true"></span><span id="progress-mastered-count"></span></li>
+          </ul>
+          <details id="progress-mastered" class="progress-details">
+            <summary id="progress-mastered-summary"></summary>
+            <ul id="progress-mastered-list" class="progress-mastered-list"></ul>
+          </details>
+          <p id="progress-mastered-none" class="hint" hidden>Cuando repases una palabra y su próximo repaso quede a 14 días o más, aparecerá aquí.</p>
+        </div>
       </section>
     </main>
   </div>
