@@ -38,6 +38,7 @@ const PRECACHE_URLS = [
   'js/lib/stats.js',
   'js/lib/deck.js',
   'js/lib/messages.js',
+  'js/lib/backup.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
