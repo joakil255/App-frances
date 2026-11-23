@@ -2,10 +2,11 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Funcionan **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas) y **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas).
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Funcionan **Inicio** (tu copia de seguridad), **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas) y **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas).
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
+- **Auditorías:** [accesibilidad](docs/auditoria/accesibilidad.md) y [seguridad](docs/auditoria/seguridad.md)
 
 ## Requisitos
 
@@ -45,6 +46,36 @@ Las dos deben terminar sin errores antes de cada commit.
 
 No hay paso de construcción: los archivos del repositorio *son* la app. GitHub Pages los publica tal cual (el archivo `.nojekyll` le pide que no los transforme).
 
+## Publicación
+
+La app está publicada en **GitHub Pages**, gratis, desde la rama `main`:
+
+- **Dirección:** https://joakil255.github.io/App-frances/
+- **Ruta base:** `/App-frances/` (el nombre del repositorio). Por eso todos los enlaces de la app son **relativos** (`css/styles.css`, `./sw.js`, `start_url` y `scope` `"./"` en el manifiesto): así funcionan igual en `http://localhost:8000/` y bajo `/App-frances/`. El service worker se registra como `./sw.js`, de modo que su alcance es justamente `/App-frances/` y guarda en la caché los archivos de esa ruta.
+- **Dónde se configura:** en GitHub, *Settings → Pages → Build and deployment*: «Deploy from a branch», rama `main`, carpeta `/ (root)`.
+
+### Publicar una versión nueva
+
+1. En una rama de trabajo, sube `CACHE_VERSION` en `sw.js` (y añade los archivos nuevos a `PRECACHE_URLS`; ver abajo).
+2. `npm test` y `npm run lint` sin errores; commit.
+3. Sube la rama y crea un *pull request*; al hacer **merge a `main`**, GitHub Pages publica solo (unos minutos). Puedes seguirlo en la pestaña **Actions** del repositorio.
+4. Comprueba que se publicó: abre `https://joakil255.github.io/App-frances/sw.js` y mira que `CACHE_VERSION` sea la nueva.
+5. En el teléfono, abre la app: aparece «Hay una versión nueva de la app.» → **Actualizar**.
+
+### Instalar en Android
+
+Abre https://joakil255.github.io/App-frances/ en **Chrome**, espera unos segundos, menú **⋮** → **Instalar app** (o **Agregar a la pantalla principal** → **Instalar**). Los pasos con detalle están en la [comprobación 4](#4-instalar-en-android).
+
+## Copia de seguridad
+
+Tus palabras, tu progreso (el estado de repaso de cada tarjeta), tu historial de respuestas y tus ajustes se guardan **solo en este navegador**. Si borras los datos del navegador o desinstalas la app, se pierden. La copia de seguridad los guarda **todos** en un archivo.
+
+- **Guardar:** en **Inicio**, pulsa **Guardar copia**. Se descarga `copia-frances-AAAA-MM-DD.json`. En Android queda en la carpeta **Descargas** (app *Archivos*). Guárdala también fuera del teléfono (por ejemplo, en tu correo o en Drive): si la borras, no hay copia.
+- **Restaurar:** en **Inicio**, pulsa **Restaurar copia** y elige el archivo. Una ventana te dice qué tiene la copia y qué tienes ahora. Al pulsar **Restaurar**, **todo** se reemplaza por lo de la copia (no se combina) y la app se recarga. No se puede deshacer: si quieres conservar lo de ahora, guarda antes otra copia.
+- **Si algo falla:** un archivo que no es una copia de la app, dañado o de una versión más nueva **no cambia nada** y la app te dice por qué. Si falta espacio a mitad de la restauración, tus datos quedan como estaban.
+- La copia no incluye los respaldos que la app guarda aparte cuando encuentra datos dañados.
+- **Exportar** e **Importar** de Vocabulario siguen sirviendo para listas de palabras (por ejemplo, en CSV para Excel), pero no guardan tu progreso.
+
 ## Cómo funciona sin conexión
 
 El archivo [`sw.js`](sw.js) es el *service worker*: un programa que el navegador instala junto a la app y que se queda entre la app y la red.
@@ -55,13 +86,13 @@ El archivo [`sw.js`](sw.js) es el *service worker*: un programa que el navegador
 2. **Al pedir un archivo** lo entrega desde esa caché, así que la app abre al instante, con o sin internet. Abrir o recargar la app siempre devuelve la página guardada. Lo que no esté guardado se pide a la red.
 3. **Cuando hay una versión nueva**, el navegador la descarga en segundo plano y la deja *esperando*. La app muestra «Hay una versión nueva de la app.» con el botón **Actualizar**. Nada cambia hasta que lo pulsas: entonces la versión nueva se activa, borra la caché vieja y la página se recarga una vez.
 
-### Publicar una versión nueva (paso obligatorio)
+### Subir la versión de la caché (paso obligatorio)
 
 Cada vez que cambies **cualquier** archivo de la app:
 
-1. Abre `sw.js` y sube `CACHE_VERSION` (`'v1'` → `'v2'` → `'v3'`…).
+1. Abre `sw.js` y sube `CACHE_VERSION` (`'v13'` → `'v14'` → `'v15'`…).
 2. Si creaste un archivo nuevo, añádelo a `PRECACHE_URLS`. `npm test` falla si se te olvida.
-3. `npm test`, commit y push.
+3. `npm test`, commit y publica como en [Publicar una versión nueva](#publicar-una-versión-nueva).
 
 Si no subes `CACHE_VERSION`, los teléfonos que ya tienen la app **no se enteran del cambio**. Las pruebas no pueden detectar este olvido.
 
@@ -84,7 +115,7 @@ Al pulsarlo se abre la misma ventana que al importar un archivo («100 palabras 
 
 ### Tus datos y la copia de seguridad
 
-Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras los datos del navegador o desinstalas la app, se pierden. **Exporta de vez en cuando** (botón *Exportar*) y guarda el archivo: es tu copia de seguridad.
+Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras los datos del navegador o desinstalas la app, se pierden. **Guarda de vez en cuando una [copia de seguridad](#copia-de-seguridad) en Inicio**: incluye las palabras, tu progreso y tu historial. *Exportar* solo guarda las palabras.
 
 ### Formatos para importar y exportar
 
@@ -124,7 +155,7 @@ Cada respuesta se guarda con **los dos** algoritmos a la vez: cambiar de uno a o
 
 **Atajos de teclado** (en el computador, durante una sesión): `Espacio` o `Intro` muestran la respuesta, `1` `2` `3` `4` responden Otra vez, Difícil, Bien y Fácil, y `O` lee el francés en voz alta (solo cuando el francés está a la vista). Con ratón, los botones muestran su tecla.
 
-**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. **La exportación de Vocabulario no incluye el progreso del estudio.**
+**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. Para no perderlo, usa la [copia de seguridad](#copia-de-seguridad) de Inicio (la exportación de Vocabulario solo guarda las palabras).
 
 ## Quiz
 
@@ -298,6 +329,19 @@ En el computador:
 
 Si no aparece, cierra y vuelve a abrir la app: GitHub Pages puede tardar hasta 10 minutos en dejar de servir el `sw.js` anterior.
 
+### 11. Copia de seguridad en el celular
+
+- [ ] En **Inicio**, **Guardar copia** descarga `copia-frances-AAAA-MM-DD.json` y dice cuántas palabras y respuestas guardó; el archivo aparece en **Descargas**.
+- [ ] Anota la racha y los números de **Progreso** y cuántas palabras tienes.
+- [ ] Borra los datos del sitio: en Chrome, ⋮ → **Configuración** → **Configuración de sitios** → **Todos los sitios** → `joakil255.github.io` → **Borrar y restablecer** (si usas la app instalada, ciérrala antes). Al volver a abrir la app solo están las 60 palabras iniciales y Progreso está vacío.
+- [ ] **Restaurar copia** → elige el archivo de Descargas. La ventana dice qué tiene la copia y qué tienes ahora. **Cancelar** no cambia nada.
+- [ ] Vuelve a elegirlo y pulsa **Restaurar**: la app se recarga, Inicio dice «Se restauró la copia del …», y las palabras, la racha, los números de Progreso y tus ajustes de Estudiar son los mismos que anotaste.
+- [ ] Elige un archivo que no sea una copia (una foto o la exportación de Vocabulario): aparece un aviso que dice por qué y nada cambia.
+
+### 12. Lector de pantalla (TalkBack)
+
+- [ ] Activa **TalkBack** (Ajustes → Accesibilidad). Recorre Inicio, Vocabulario (abre una ficha), Estudiar (una tarjeta), Quiz y Progreso: cada botón se lee con su nombre, los avisos se anuncian y el gráfico de Progreso se lee con su resumen.
+
 ## Estructura
 
 ```
@@ -313,6 +357,7 @@ js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
 js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
 js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
+js/screens/home.js      pantalla Inicio (guardar y restaurar la copia de seguridad)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV
@@ -325,6 +370,8 @@ js/lib/study-storage.js progreso del estudio, historial (Estudiar y Quiz) y ajus
 js/lib/answer-check.js  comprobar respuestas escritas (mayúsculas, espacios, acentos…)
 js/lib/quiz.js          modos del quiz, elección de palabras y opciones
 js/lib/stats.js         estadísticas de Progreso (racha, días, acierto y estado de las palabras)
+js/lib/backup.js        copia de seguridad: armar, validar y restaurar (sin dejar datos a medias)
+js/lib/messages.js      catálogo único de mensajes de error
 js/data/initial-words.js lista inicial de 60 palabras
 js/lib/deck.js          carga del mazo A1 opcional
 data/a1-deck.json       mazo de 100 palabras A1 (formato de exportación de la app)
@@ -333,5 +380,6 @@ icons/                  iconos de la app
 tests/                  pruebas automáticas (*.test.js)
 docs/superpowers/       diseños y planes de cada etapa
 docs/contenido/         revisión del contenido (mazo A1: tabla completa y lista REVISAR)
+docs/auditoria/         auditorías de accesibilidad y seguridad (y Lighthouse)
 DESIGN.md               guía visual
 ```
