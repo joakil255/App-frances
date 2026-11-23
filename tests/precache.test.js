@@ -5,7 +5,7 @@ import { loadServiceWorker } from './helpers/fake-sw-env.js';
 
 const root = new URL('../', import.meta.url);
 const PRECACHE_URLS = loadServiceWorker().read('PRECACHE_URLS');
-const CACHED_EXTENSIONS = ['.css', '.js', '.woff2', '.svg', '.png'];
+const CACHED_EXTENSIONS = ['.css', '.js', '.json', '.woff2', '.svg', '.png'];
 
 // Lista los archivos de una carpeta (y subcarpetas) con rutas relativas a la raíz
 function listFiles(dir) {
@@ -27,7 +27,7 @@ test('la lista de caché no tiene rutas absolutas ni repetidas', () => {
 
 test('todo archivo que la app necesita está en la lista de caché', () => {
   const needed = ['index.html', 'manifest.webmanifest'];
-  for (const dir of ['css', 'js', 'fonts', 'icons']) {
+  for (const dir of ['css', 'js', 'data', 'fonts', 'icons']) {
     needed.push(...listFiles(dir).filter((file) => CACHED_EXTENSIONS.some((ext) => file.endsWith(ext))));
   }
   for (const file of needed) {

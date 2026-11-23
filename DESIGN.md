@@ -99,6 +99,8 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 
 **Aviso:** caja `--notice-bg` con borde de 2 px `--notice-border` y texto `--notice-text`, título en Barlow 700. Explica qué pasa y qué hacer.
 
+**Mazo A1 (Etapa 6):** botón *secundario* «Añadir 100 palabras A1» al final de la fila de acciones de Vocabulario (después de Exportar). Sin estilos nuevos: la fila ya pasa a la línea siguiente en el móvil. Abre la misma ventana de importar, con el título «Revisión de «100 palabras A1»», y el foco vuelve al botón al cerrarla. Si no se puede cargar el mazo, el aviso de siempre lo dice en una frase.
+
 ## Pantalla Estudiar (Etapa 3)
 
 - **Resumen del día:** dos recuadros (`--surface`, borde 2 px `--divider`, radio 8 px) con el número en Barlow 700 de 30 px color `--plaque` (oscuro: `--plaque-text`) y la etiqueta en Barlow 500 `--text-muted`: «para repasar» y «nuevas». Debajo, dirección y algoritmo en `--text-muted`; **Empezar** (primario) y **Ajustes del estudio** (secundario).

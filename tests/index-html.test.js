@@ -229,3 +229,9 @@ test('Progreso tiene «Tus palabras» con los tres estados y la lista de dominad
   assert.match(progress, /<details id="progress-mastered" class="progress-details"/);
   assert.match(progress, /<div class="progress-states-bar" aria-hidden="true">/);
 });
+
+// --- Mazo A1 (Etapa 6) ---
+test('Vocabulario tiene el botón para añadir el mazo A1 junto a Importar y Exportar', () => {
+  const actions = html.match(/<div class="vocab-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
+  assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
+});
