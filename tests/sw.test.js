@@ -88,3 +88,14 @@ test('el mensaje SKIP_WAITING activa la versión nueva una vez', async () => {
   await sw.dispatch('message', { data: { type: 'SKIP_WAITING' } });
   assert.equal(sw.calls.skipWaiting, 1);
 });
+
+test('install pide cada archivo a la red, saltándose la caché HTTP del navegador', async () => {
+  const { sw, urls, cacheName } = setup();
+  await sw.dispatch('install');
+  const cache = await sw.caches.open(cacheName);
+  assert.equal(cache.addAllRequests.length, urls.length);
+  for (const request of cache.addAllRequests) {
+    // Sin cache: 'reload', una versión nueva podría guardar archivos viejos (GitHub Pages: max-age=600)
+    assert.equal(request.cache, 'reload', `sin cache: 'reload': ${request.url ?? request}`);
+  }
+});

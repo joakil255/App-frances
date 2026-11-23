@@ -17,10 +17,12 @@ class FakeCache {
   constructor(fetchFn) {
     this.store = new Map();
     this.fetch = fetchFn;
+    this.addAllRequests = []; // lo que recibió addAll, para comprobar opciones como cache: 'reload'
   }
 
   // Como en el navegador: si una respuesta no es «ok», falla todo y no guarda nada
   async addAll(urls) {
+    this.addAllRequests.push(...urls);
     const entries = await Promise.all(
       urls.map(async (url) => {
         const response = await this.fetch(keyOf(url));
@@ -97,7 +99,7 @@ export function loadServiceWorker({ files = {} } = {}) {
     },
   };
 
-  const ctx = vm.createContext({ self, caches, fetch: fetchFn, URL, Response, console });
+  const ctx = vm.createContext({ self, caches, fetch: fetchFn, URL, Request, Response, console });
   vm.runInContext(SW_SOURCE, ctx, { filename: 'sw.js' });
 
   // Lanza un evento y espera a todo lo que el service worker pidió esperar

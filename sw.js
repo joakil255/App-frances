@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -37,7 +37,11 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)));
+  // cache: 'reload' pide cada archivo a la red, saltándose la caché HTTP del
+  // navegador (GitHub Pages la mantiene 10 min): así una versión nueva nunca
+  // guarda archivos de la anterior.
+  const requests = PRECACHE_URLS.map((url) => new Request(new URL(url, self.location), { cache: 'reload' }));
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(requests)));
 });
 
 self.addEventListener('activate', (event) => {
