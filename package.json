@@ -6,7 +6,7 @@
     "node": "^20.19.0 || ^22.13.0 || >=24"
   },
   "scripts": {
-    "start": "python3 -m http.server 8000",
+    "start": "python3 -m http.server 8000 --bind 127.0.0.1",
     "test": "node --test",
     "lint": "eslint ."
   },

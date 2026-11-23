@@ -26,7 +26,8 @@ npm start
 Abre `http://localhost:8000` en el navegador. Para detener el servidor, pulsa `Ctrl + C`.
 
 - **No abras `index.html` con doble clic** (`file://`). La parte que permitirá usar la app sin conexión solo funciona si la página se sirve desde un servidor.
-- Si sale el error `Address already in use`, el puerto 8000 está ocupado. Usa otro: `python3 -m http.server 8001` y abre `http://localhost:8001`.
+- Si sale el error `Address already in use`, el puerto 8000 está ocupado. Usa otro: `python3 -m http.server 8001 --bind 127.0.0.1` y abre `http://localhost:8001`.
+- El servidor solo es accesible desde este computador (`--bind 127.0.0.1`), para no compartir la carpeta del proyecto con otros equipos de la red wifi.
 
 ## Probar
 
