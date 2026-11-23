@@ -71,6 +71,7 @@ La primera vez que abres la app se cargan **60 palabras A1** (saludos, familia, 
 
 - **Buscar:** en francés o en español, sin importar mayúsculas ni acentos («etre» encuentra *être*).
 - **Oír:** el botón del altavoz usa la voz francesa del teléfono. En la ficha de cada palabra está también **Oír lento**. Si no hay voz francesa, la app explica cómo instalarla.
+- **Si no suena:** en Ajustes de Android busca «Salida de texto a voz», elige el motor «Servicios de voz de Google», instala la voz Francés (Francia) y comprueba que «Escuchar un ejemplo» suena. Después **fuerza la detención de Chrome** (Ajustes → Aplicaciones → Chrome → Forzar detención): Chrome sigue usando el motor anterior hasta que se reinicia.
 - **Reglas al guardar:** francés y español son obligatorios; el ejemplo es opcional, pero si escribes una frase hace falta su traducción; si eliges género, el francés lleva artículo y debe coincidir (*la* = femenino, *le* = masculino).
 
 ### Tus datos y la copia de seguridad
