@@ -92,12 +92,12 @@ Si al hacer doble clic todo aparece en una sola columna: en Excel ve a **Datos �
 
 ## Estudiar
 
-Cada día la app te prepara una **cola**: primero las tarjetas que ya estudiaste y **te toca repasar**, y después **palabras nuevas** hasta tu límite diario. Cada palabra tiene dos tarjetas: una de francés a español (reconocer) y otra de español a francés (producir); estudias la dirección que elijas en los ajustes.
+Cada día la app te prepara una **cola**: primero las tarjetas que ya estudiaste y **te toca repasar**, después **palabras nuevas** hasta tu límite diario y, al final, las que fallaste hoy. Cada palabra tiene dos tarjetas: una de francés a español (reconocer) y otra de español a francés (producir); estudias la dirección que elijas en los ajustes.
 
 1. **Empezar** muestra la primera tarjeta. Intenta recordar la respuesta.
 2. **Mostrar respuesta** enseña el francés (con altavoz), el español y el ejemplo.
 3. Responde con sinceridad según lo que recordaste. Debajo de cada botón ves cuándo volverá la tarjeta:
-   - **Otra vez**: no la recordabas. Vuelve **hoy**, en esta misma sesión.
+   - **Otra vez**: no la recordabas. Vuelve **hoy**, en esta misma sesión, al final: después de las palabras nuevas.
    - **Difícil**: la recordaste con esfuerzo. Vuelve pronto.
    - **Bien**: la recordaste. Vuelve más adelante.
    - **Fácil**: la sabías al instante. Vuelve mucho más adelante.
@@ -195,7 +195,7 @@ En el teléfono (app instalada), marca cada punto:
 - [ ] Estudiar muestra «0 para repasar» y «10 nuevas», con «Francés → español, con SM-2 simplificado.».
 - [ ] **Empezar** → «Tarjeta 1 de 10» y la palabra en francés con su altavoz, que suena.
 - [ ] **Mostrar respuesta** enseña francés, español y ejemplo, y cuatro botones (2 × 2) con «hoy», «1 día», «1 día», «4 días».
-- [ ] **Otra vez** hace que esa tarjeta vuelva hoy (el total de la sesión sube en 1).
+- [ ] **Otra vez** hace que esa tarjeta vuelva hoy (el total de la sesión sube en 1), pero no enseguida: sale después de las nuevas.
 - [ ] A mitad de la sesión, **cierra la app** del todo y vuelve a abrirla: Estudiar muestra las mismas tarjetas pendientes y **no** aparecen nuevas de más.
 - [ ] Termina la sesión: «Terminaste por hoy», tus respuestas y cuántas vencen mañana.
 - [ ] En **Ajustes del estudio**, escribe `7.5` en nuevas por día y **Guardar**: aparece «Escribe un número entero entre 0 y 100.» junto al campo. Con `3` se guarda y el resumen dice «3 nuevas» (o menos si ya estudiaste nuevas hoy).

@@ -57,7 +57,7 @@ test('Q4: al día siguiente vuelven a ser 10 nuevas', () => {
   assert.deepEqual(newIds(queue).slice(0, 2), ['w5', 'w6']);
 });
 
-test('Q5: una «Otra vez» vuelve hoy, al final de las vencidas', () => {
+test('Q5: una «Otra vez» vuelve hoy, al final de la cola (después de las nuevas)', () => {
   const words = makeWords(4);
   const cards = {};
   answer(cards, 'w1', 'good', '2026-11-21', '09:00'); // vence el 11-22
@@ -66,7 +66,39 @@ test('Q5: una «Otra vez» vuelve hoy, al final de las vencidas', () => {
   assert.deepEqual(dueIds(buildQueue({ words, cards, settings: SETTINGS, today: TODAY })), ['w1', 'w3', 'w2']);
   answer(cards, 'w1', 'again', TODAY, '10:00');
   const queue = buildQueue({ words, cards, settings: SETTINGS, today: TODAY });
-  assert.deepEqual(ids(queue), ['w3', 'w2', 'w1', 'w4']);
+  assert.deepEqual(ids(queue), ['w3', 'w2', 'w4', 'w1']);
+  assert.equal(queue.at(-1).isNew, false);
+});
+
+test('Q5: una nueva fallada hoy no se repite enseguida: van antes las otras nuevas', () => {
+  const words = makeWords(3);
+  const cards = {};
+  answer(cards, 'w1', 'again', TODAY, '10:00');
+  assert.deepEqual(ids(buildQueue({ words, cards, settings: SETTINGS, today: TODAY })), ['w2', 'w3', 'w1']);
+});
+
+test('Q5: varias falladas hoy salen en el orden en que se fallaron', () => {
+  const words = makeWords(4);
+  const cards = {};
+  answer(cards, 'w2', 'again', TODAY, '10:05');
+  answer(cards, 'w1', 'again', TODAY, '10:00');
+  answer(cards, 'w1', 'again', TODAY, '10:10'); // w1 se volvió a fallar: va detrás de w2
+  assert.deepEqual(ids(buildQueue({ words, cards, settings: SETTINGS, today: TODAY })), ['w3', 'w4', 'w2', 'w1']);
+});
+
+test('Q5: una fallada ayer que vence hoy es un repaso normal, al principio', () => {
+  const words = makeWords(2);
+  const cards = {};
+  answer(cards, 'w1', 'again', '2026-11-22', '10:00'); // vence el 11-22 y no se repasó más
+  assert.deepEqual(ids(buildQueue({ words, cards, settings: SETTINGS, today: TODAY })), ['w1', 'w2']);
+});
+
+test('Q5: con Leitner, la fallada hoy también va al final', () => {
+  const words = makeWords(2);
+  const cards = {};
+  answer(cards, 'w1', 'again', TODAY, '10:00');
+  const queue = buildQueue({ words, cards, settings: { ...SETTINGS, algorithm: 'leitner' }, today: TODAY });
+  assert.deepEqual(ids(queue), ['w2', 'w1']);
 });
 
 test('Q6: al cambiar de algoritmo cambian las vencidas', () => {

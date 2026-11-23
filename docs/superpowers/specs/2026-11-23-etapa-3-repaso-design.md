@@ -74,10 +74,12 @@ Respuestas: `again` (Otra vez), `hard` (Difícil), `good` (Bien), `easy` (Fácil
 ## Cola diaria (`queue.js`)
 
 `buildQueue({ words, cards, settings, today })` → lista de `{ cardId, wordId, direction, isNew }`, solo de la dirección elegida y de palabras que existen:
-1. **Vencidas** según el algoritmo elegido (`due <= today`), ordenadas por `due` (más antigua primero) y, a igual fecha, por `lastReviewedAt` (las falladas hoy al final).
+1. **Vencidas** según el algoritmo elegido (`due <= today`), ordenadas por `due` (más antigua primero) y, a igual fecha, por `lastReviewedAt`.
 2. **Nuevas** (sin estado guardado), en el orden de la lista de palabras (creación), hasta `newPerDay − introducidasHoy`, donde `introducidasHoy` = tarjetas de esa dirección con `introducedOn === today`.
 
-La cola se recalcula tras cada respuesta (si pasa la medianoche durante el estudio, entra el nuevo día). Casos de prueba: Q1 vencidas antes que nuevas; Q2 límite de nuevas; Q3 tras introducir 4 hoy quedan 6; Q4 al día siguiente vuelven a ser 10; Q5 una «Otra vez» va al final; Q6 cambia de algoritmo → cambian las vencidas; Q7 solo la dirección elegida; Q8 palabra borrada → su tarjeta no aparece; Q9 `newPerDay = 0`.
+3. **Falladas hoy** (última respuesta «Otra vez» en este día) al final, después de las nuevas, en el orden en que se fallaron — **cambio pedido por el usuario tras la primera versión**: antes iban al final de las vencidas y, sin otras vencidas, se repetían enseguida. Una fallada otro día que vence hoy es una vencida normal.
+
+La cola se recalcula tras cada respuesta (si pasa la medianoche durante el estudio, entra el nuevo día). Casos de prueba: Q1 vencidas antes que nuevas; Q2 límite de nuevas; Q3 tras introducir 4 hoy quedan 6; Q4 al día siguiente vuelven a ser 10; Q5 una «Otra vez» va al final, después de las nuevas; Q6 cambia de algoritmo → cambian las vencidas; Q7 solo la dirección elegida; Q8 palabra borrada → su tarjeta no aparece; Q9 `newPerDay = 0`.
 
 ## Datos
 

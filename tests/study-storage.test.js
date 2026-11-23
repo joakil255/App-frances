@@ -233,5 +233,5 @@ test('cerrar y reabrir a mitad de la sesión: mismo progreso y misma cola, sin n
 
   const queueAfter = buildQueue({ words, cards: loaded.cards, settings: loaded.settings, today: TODAY });
   assert.deepEqual(queueAfter, queueBefore);
-  assert.deepEqual(queueAfter.map((item) => item.wordId), ['w1', 'w4', 'w5']);
+  assert.deepEqual(queueAfter.map((item) => item.wordId), ['w4', 'w5', 'w1']);
 });
