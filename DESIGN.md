@@ -99,6 +99,15 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 
 **Aviso:** caja `--notice-bg` con borde de 2 px `--notice-border` y texto `--notice-text`, título en Barlow 700. Explica qué pasa y qué hacer.
 
+## Pantalla Estudiar (Etapa 3)
+
+- **Resumen del día:** dos recuadros (`--surface`, borde 2 px `--divider`, radio 8 px) con el número en Barlow 700 de 30 px color `--plaque` (oscuro: `--plaque-text`) y la etiqueta en Barlow 500 `--text-muted`: «para repasar» y «nuevas». Debajo, dirección y algoritmo en `--text-muted`; **Empezar** (primario) y **Ajustes del estudio** (secundario).
+- **Progreso:** «Tarjeta 3 de 22» en Barlow 500 `--text-muted`, y una barra de 6 px (fondo `--divider`, relleno `--line` de Estudiar). La barra es decoración: el texto da la información.
+- **Tarjeta:** fondo `--surface`, borde 2 px `--plaque`, borde izquierdo de 8 px `--line`, radio 10 px, contenido centrado. Etiqueta del idioma arriba a la izquierda (Barlow 500, `--text-muted`). Palabra del anverso en Source Serif 600 de 1,95 rem; traducción en cursiva de 1,25 rem; separador `--divider`; ejemplo en 0,9 rem con la traducción en cursiva `--text-muted`. Botón de altavoz como en Vocabulario.
+- **Respuestas (opción A):** cuatro botones secundarios iguales; **Bien** primario. Nombre en Barlow 700 y, debajo, cuándo vuelve («hoy», «1 día», «8 días») en Barlow 500 de 0,8 rem. Móvil: rejilla 2 × 2, 56 px de alto. Computador (≥ 900 px): una fila de 4. Sin colores con significado: la diferencia la da el texto.
+- **Pistas de teclado:** `<kbd>` con borde 1 px `--field-border` (2 px abajo), radio 4 px, texto `--text-muted` sobre `--surface`. Solo con ratón: `@media (hover: hover) and (pointer: fine)`.
+- **Fin de sesión:** título «Terminaste por hoy» en Barlow 700 de 1,3 rem y un párrafo con las respuestas de la sesión y cuántas tarjetas vencen mañana.
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.
