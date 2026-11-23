@@ -1,0 +1,7 @@
+{
+  "name": "App de francés",
+  "short_name": "Francés",
+  "lang": "es",
+  "start_url": "./",
+  "display": "standalone"
+}
