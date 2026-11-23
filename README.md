@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Por ahora funcionan **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada) y **Quiz** (practicar con la app comprobando tus respuestas). Progreso llegará en la próxima etapa.
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Funcionan **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas) y **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas).
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -116,11 +116,11 @@ Cada respuesta se guarda con **los dos** algoritmos a la vez: cambiar de uno a o
 
 **Atajos de teclado** (en el computador, durante una sesión): `Espacio` o `Intro` muestran la respuesta, `1` `2` `3` `4` responden Otra vez, Difícil, Bien y Fácil, y `O` lee el francés en voz alta (solo cuando el francés está a la vista). Con ratón, los botones muestran su tecla.
 
-**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usará la pantalla Progreso. **La exportación de Vocabulario no incluye el progreso del estudio.**
+**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. **La exportación de Vocabulario no incluye el progreso del estudio.**
 
 ## Quiz
 
-El Quiz sirve para **practicar**: la app comprueba tu respuesta y te dice al momento si acertaste, cuál era la correcta y la frase de ejemplo. **No cambia** cuándo te toca repasar en Estudiar; cada respuesta se guarda en el historial que usará la pantalla Progreso.
+El Quiz sirve para **practicar**: la app comprueba tu respuesta y te dice al momento si acertaste, cuál era la correcta y la frase de ejemplo. **No cambia** cuándo te toca repasar en Estudiar; cada respuesta se guarda en el historial que usa la pantalla Progreso.
 
 Elige un modo; cada quiz tiene hasta **10 preguntas**, primero de palabras que ya estudiaste y, si faltan, del resto de tu lista (sin repetir):
 
@@ -134,6 +134,19 @@ Elige un modo; cada quiz tiene hasta **10 preguntas**, primero de palabras que y
 - **Marcada:** cuenta como fallo, con el aviso «Solo te falló el acento».
 
 Escribir «oe» en lugar de «œ» cuenta como error de acento. Si no sabes la respuesta, pulsa **No lo sé**: cuenta como fallada y ves la correcta. Al final ves cuántas acertaste y la lista de las falladas.
+
+## Progreso
+
+Progreso responde dos preguntas: **¿estudio todos los días?** y **¿qué palabras ya domino?** No guarda nada nuevo: cada vez que abres la pantalla, lo calcula todo a partir del historial de respuestas de Estudiar y del Quiz y de tus tarjetas.
+
+**Cómo se cuenta** (las mismas reglas que prueban las pruebas automáticas):
+
+- **Día estudiado:** un día en el que diste al menos **una respuesta**, en Estudiar o en el Quiz. Cada respuesta guarda la fecha que marcaba tu reloj **en ese momento**.
+- **Racha:** cuántos días estudiados seguidos llevas. Si hoy todavía no estudiaste, cuenta hasta ayer: **por la mañana no la pierdes**. Se rompe cuando pasa un día entero del calendario sin ninguna respuesta (estudiaste el 20, no el 21 → el 22 la racha es 0).
+- **Cambio de zona horaria:** la fecha de cada respuesta no se vuelve a calcular, así que un viaje no borra ni duplica días; lo único es que ese día te puede durar unas horas más o menos. Si al viajar hacia el oeste quedan respuestas con fecha «de mañana», la racha y el gráfico cuentan desde ese día. Una fecha más lejana (reloj mal puesto) no mueve la pantalla.
+- **Respuestas de los últimos 14 días:** una barra por día con su número; los días sin estudiar se ven como una estación vacía en la línea. Debajo, **Ver los datos día por día** muestra la misma información en una tabla.
+- **Acierto en los últimos 30 días**, por separado: en **Estudiar**, «Otra vez» es fallo y «Difícil», «Bien» y «Fácil» son aciertos (te calificas tú); en el **Quiz**, lo que corrigió la app. El porcentaje se redondea hacia abajo: nunca verás 100 % si fallaste alguna.
+- **Palabra dominada:** una tarjeta está dominada cuando su próximo repaso queda a **14 días o más** del último (con SM-2, unas 4 respuestas «Bien» seguidas; con Leitner, la caja 5). Una palabra está **dominada** si todas las tarjetas que estudiaste de ella lo están (si solo estudias francés → español, la otra dirección no cuenta), **nueva** si aún no estudiaste ninguna y **en aprendizaje** en los demás casos. Si respondes «Otra vez», vuelve a «en aprendizaje». Se usa el algoritmo elegido en Estudiar: **si cambias de algoritmo, los números pueden cambiar**.
 
 ## Iconos
 
@@ -247,7 +260,25 @@ En el computador:
 - [ ] Escribe la respuesta y pulsa `Intro` para comprobar; `Tab` hasta **Siguiente** e `Intro` para seguir.
 - [ ] A 1280 px, **Comprobar** y **No lo sé** están en una fila y todo se lee bien en tema claro y oscuro.
 
-### 9. Aviso «Actualizar»
+### 9. Progreso en el celular y en el computador
+
+En el teléfono (app instalada), marca cada punto:
+
+- [ ] Sin haber respondido nada (o en un navegador nuevo): Progreso dice «Aquí verás tu racha…» y «Tus palabras» muestra todas como nuevas.
+- [ ] Responde unas tarjetas en Estudiar y un quiz, y abre Progreso: «1 día seguido», «✓ Hoy ya estudiaste», la barra de hoy con el número de respuestas y los dos porcentajes con «de N respuestas».
+- [ ] Al día siguiente, **antes de estudiar**: la racha sigue y dice «Hoy todavía no estudiaste».
+- [ ] **Ver los datos día por día** abre una tabla con los 14 días; los números coinciden con las barras.
+- [ ] **Ver las N palabras dominadas** (cuando tengas alguna) muestra las palabras en el mismo orden que Vocabulario.
+- [ ] Con **TalkBack** activado, al tocar el gráfico se lee «Respuestas por día en los últimos 14 días: estudiaste … de 14 días, … respuestas en total.».
+- [ ] Todo se lee bien en tema claro y oscuro y no hay que desplazarse de lado.
+- [ ] Con **modo avión**, Progreso se abre y muestra lo mismo.
+
+En el computador:
+
+- [ ] Con `Tab` llegas a los dos desplegables, con el foco visible, y `Intro` los abre y cierra.
+- [ ] A 1280 px el gráfico no se estira más de su tamaño y se lee bien.
+
+### 10. Aviso «Actualizar»
 
 1. Con la app ya abierta alguna vez en el teléfono, publica una versión nueva (sube `CACHE_VERSION`, commit y push) y espera a que GitHub Pages la publique (unos minutos).
 2. Abre la app con conexión. A los pocos segundos aparece «Hay una versión nueva de la app.» con **Actualizar**.
@@ -269,6 +300,7 @@ js/screens/vocabulary.js pantalla Vocabulario (lista, ficha, formulario, importa
 js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
 js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
 js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
+js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV
@@ -280,6 +312,7 @@ js/lib/queue.js         cola diaria: vencidas y nuevas hasta el límite
 js/lib/study-storage.js progreso del estudio, historial (Estudiar y Quiz) y ajustes (localStorage)
 js/lib/answer-check.js  comprobar respuestas escritas (mayúsculas, espacios, acentos…)
 js/lib/quiz.js          modos del quiz, elección de palabras y opciones
+js/lib/stats.js         estadísticas de Progreso (racha, días, acierto y estado de las palabras)
 js/data/initial-words.js lista inicial de 60 palabras
 fonts/                  fuentes .woff2 y sus licencias (SIL OFL)
 icons/                  iconos de la app
