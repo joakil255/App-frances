@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Por ahora funciona **Vocabulario**: tu lista de palabras con búsqueda, pronunciación e importar/exportar. El estudio llegará en las próximas etapas.
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Por ahora funcionan **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar) y **Estudiar** (tarjetas con repetición espaciada). Quiz y Progreso llegarán en las próximas etapas.
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -90,6 +90,34 @@ Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras l
 
 Si al hacer doble clic todo aparece en una sola columna: en Excel ve a **Datos → Desde texto/CSV**, elige el archivo, pon **Origen del archivo: 65001 (UTF-8)** y **Delimitador: Coma**, y pulsa **Cargar**. Para volver a importarlo, guárdalo como **CSV UTF-8 (delimitado por comas)**. LibreOffice y Google Sheets lo abren directamente.
 
+## Estudiar
+
+Cada día la app te prepara una **cola**: primero las tarjetas que ya estudiaste y **te toca repasar**, y después **palabras nuevas** hasta tu límite diario. Cada palabra tiene dos tarjetas: una de francés a español (reconocer) y otra de español a francés (producir); estudias la dirección que elijas en los ajustes.
+
+1. **Empezar** muestra la primera tarjeta. Intenta recordar la respuesta.
+2. **Mostrar respuesta** enseña el francés (con altavoz), el español y el ejemplo.
+3. Responde con sinceridad según lo que recordaste. Debajo de cada botón ves cuándo volverá la tarjeta:
+   - **Otra vez**: no la recordabas. Vuelve **hoy**, en esta misma sesión.
+   - **Difícil**: la recordaste con esfuerzo. Vuelve pronto.
+   - **Bien**: la recordaste. Vuelve más adelante.
+   - **Fácil**: la sabías al instante. Vuelve mucho más adelante.
+4. Al terminar ves «Terminaste por hoy», tus respuestas y cuántas tarjetas vencen mañana.
+
+**Qué es «hoy».** El día cambia a **medianoche según la hora de tu teléfono**. Si estudias pasada la medianoche, la app ya cuenta el día nuevo (vuelven a entrar palabras nuevas).
+
+**Los dos algoritmos** (elige uno en *Ajustes del estudio*):
+
+- **SM-2 simplificado**: cada tarjeta tiene una «facilidad». Si respondes Bien o Fácil, el tiempo hasta el próximo repaso se multiplica (1 día, 3 días, 8 días…); Difícil lo alarga poco y baja la facilidad; Otra vez la reinicia. Si repasas con retraso y aún la recuerdas, se premia la mitad de los días de retraso. Nunca pasa de 365 días.
+- **Leitner**: cinco cajas. Bien sube la tarjeta una caja, Fácil dos, Difícil la deja donde está y Otra vez la devuelve a la caja 1. Cada caja vuelve en 1, 2, 4, 8 o 16 días.
+
+Cada respuesta se guarda con **los dos** algoritmos a la vez: cambiar de uno a otro no borra tu progreso, solo cambia qué calendario se usa (las fechas pueden moverse de golpe; es lo esperado).
+
+**Ajustes del estudio:** dirección (francés → español o español → francés), algoritmo y **palabras nuevas por día** (un número entero de 0 a 100; con 0 solo repasas).
+
+**Atajos de teclado** (en el computador, durante una sesión): `Espacio` o `Intro` muestran la respuesta, `1` `2` `3` `4` responden Otra vez, Difícil, Bien y Fácil, y `O` lee el francés en voz alta (solo cuando el francés está a la vista). Con ratón, los botones muestran su tecla.
+
+**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usará la pantalla Progreso. **La exportación de Vocabulario no incluye el progreso del estudio.**
+
 ## Iconos
 
 Están en `icons/`. Los dibujos fuente son `icon.svg` (también es el icono de la pestaña) e `icon-maskable.svg` (versión que Android puede recortar en círculo). La «ç» ya está convertida en trazos, así que no depende de ninguna fuente. Si cambias un SVG, regenera los PNG con:
@@ -160,7 +188,30 @@ Con la app instalada en el teléfono, marca cada punto:
 - [ ] Con **modo avión**, la lista, la búsqueda y la edición siguen funcionando.
 - [ ] Al cerrar y volver a abrir la app, los cambios siguen ahí.
 
-### 7. Aviso «Actualizar»
+### 7. Estudiar en el celular y en el computador
+
+En el teléfono (app instalada), marca cada punto:
+
+- [ ] Estudiar muestra «0 para repasar» y «10 nuevas», con «Francés → español, con SM-2 simplificado.».
+- [ ] **Empezar** → «Tarjeta 1 de 10» y la palabra en francés con su altavoz, que suena.
+- [ ] **Mostrar respuesta** enseña francés, español y ejemplo, y cuatro botones (2 × 2) con «hoy», «1 día», «1 día», «4 días».
+- [ ] **Otra vez** hace que esa tarjeta vuelva hoy (el total de la sesión sube en 1).
+- [ ] A mitad de la sesión, **cierra la app** del todo y vuelve a abrirla: Estudiar muestra las mismas tarjetas pendientes y **no** aparecen nuevas de más.
+- [ ] Termina la sesión: «Terminaste por hoy», tus respuestas y cuántas vencen mañana.
+- [ ] En **Ajustes del estudio**, escribe `7.5` en nuevas por día y **Guardar**: aparece «Escribe un número entero entre 0 y 100.» junto al campo. Con `3` se guarda y el resumen dice «3 nuevas» (o menos si ya estudiaste nuevas hoy).
+- [ ] Cambia a **Español → francés**: el anverso muestra el español, sin altavoz; el reverso, el francés con altavoz.
+- [ ] Cambia a **Leitner** y vuelve a **SM-2**: los números del resumen pueden cambiar, pero tu progreso sigue ahí.
+- [ ] Con **modo avión**, puedes estudiar igual.
+
+En el computador:
+
+- [ ] `Espacio` muestra la respuesta y `1`–`4` responden; con `Intro` también se muestra la respuesta.
+- [ ] `O` lee el francés; en español → francés, solo después de mostrar la respuesta.
+- [ ] Los botones muestran su tecla (`Espacio`, `1`…`4`) solo si usas ratón; en el teléfono no se ven.
+- [ ] Con la ventana de ajustes abierta, o escribiendo en el campo de nuevas por día, las teclas no responden tarjetas.
+- [ ] A 1280 px, las cuatro respuestas están en una fila.
+
+### 8. Aviso «Actualizar»
 
 1. Con la app ya abierta alguna vez en el teléfono, publica una versión nueva (sube `CACHE_VERSION`, commit y push) y espera a que GitHub Pages la publique (unos minutos).
 2. Abre la app con conexión. A los pocos segundos aparece «Hay una versión nueva de la app.» con **Actualizar**.
@@ -179,11 +230,17 @@ js/app.js               arranque: navegación y registro del service worker
 js/lib/router.js        qué pantalla corresponde a cada dirección (#/…)
 js/update.js            aviso «Actualizar» para versiones nuevas
 js/screens/vocabulary.js pantalla Vocabulario (lista, ficha, formulario, importar/exportar)
+js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
+js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV
 js/lib/storage.js       capa de datos (localStorage, intercambiable)
 js/lib/speech.js        voz francesa
+js/lib/dates.js         fechas locales «AAAA-MM-DD» (qué día es hoy)
+js/lib/scheduler.js     algoritmos de repaso SM-2 simplificado y Leitner
+js/lib/queue.js         cola diaria: vencidas y nuevas hasta el límite
+js/lib/study-storage.js progreso del estudio, historial y ajustes (localStorage)
 js/data/initial-words.js lista inicial de 60 palabras
 fonts/                  fuentes .woff2 y sus licencias (SIL OFL)
 icons/                  iconos de la app
