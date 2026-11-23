@@ -2,7 +2,10 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, y guarda los datos en el navegador. Está en construcción: por ahora solo existe la base del proyecto.
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Por ahora tiene las cinco pantallas vacías (Inicio, Vocabulario, Estudiar, Quiz y Progreso); el estudio llegará en las próximas etapas.
+
+- **App publicada:** https://joakil255.github.io/App-frances/
+- **Guía visual:** [`DESIGN.md`](DESIGN.md)
 
 ## Requisitos
 
@@ -25,7 +28,7 @@ npm start
 
 Abre `http://localhost:8000` en el navegador. Para detener el servidor, pulsa `Ctrl + C`.
 
-- **No abras `index.html` con doble clic** (`file://`). La parte que permitirá usar la app sin conexión solo funciona si la página se sirve desde un servidor.
+- **No abras `index.html` con doble clic** (`file://`). El service worker solo funciona si la página se sirve desde un servidor.
 - Si sale el error `Address already in use`, el puerto 8000 está ocupado. Usa otro: `python3 -m http.server 8001 --bind 127.0.0.1` y abre `http://localhost:8001`.
 - El servidor solo es accesible desde este computador (`--bind 127.0.0.1`), para no compartir la carpeta del proyecto con otros equipos de la red wifi.
 
@@ -40,17 +43,97 @@ Las dos deben terminar sin errores antes de cada commit.
 
 ## Construir
 
-No hay paso de construcción: los archivos del repositorio *son* la app. Para publicarla basta con servirlos tal cual (por ejemplo, con GitHub Pages).
+No hay paso de construcción: los archivos del repositorio *son* la app. GitHub Pages los publica tal cual (el archivo `.nojekyll` le pide que no los transforme).
+
+## Cómo funciona sin conexión
+
+El archivo [`sw.js`](sw.js) es el *service worker*: un programa que el navegador instala junto a la app y que se queda entre la app y la red.
+
+**Estrategia: copia completa con número de versión.**
+
+1. **Al instalarse** descarga *todos* los archivos de la lista `PRECACHE_URLS` y los guarda en una caché llamada `app-frances-<versión>` (por ejemplo `app-frances-v1`). Si falta un solo archivo, la instalación falla entera y la versión anterior sigue funcionando.
+2. **Al pedir un archivo** lo entrega desde esa caché, así que la app abre al instante, con o sin internet. Abrir o recargar la app siempre devuelve la página guardada. Lo que no esté guardado se pide a la red.
+3. **Cuando hay una versión nueva**, el navegador la descarga en segundo plano y la deja *esperando*. La app muestra «Hay una versión nueva de la app.» con el botón **Actualizar**. Nada cambia hasta que lo pulsas: entonces la versión nueva se activa, borra la caché vieja y la página se recarga una vez.
+
+### Publicar una versión nueva (paso obligatorio)
+
+Cada vez que cambies **cualquier** archivo de la app:
+
+1. Abre `sw.js` y sube `CACHE_VERSION` (`'v1'` → `'v2'` → `'v3'`…).
+2. Si creaste un archivo nuevo, añádelo a `PRECACHE_URLS`. `npm test` falla si se te olvida.
+3. `npm test`, commit y push.
+
+Si no subes `CACHE_VERSION`, los teléfonos que ya tienen la app **no se enteran del cambio**. Las pruebas no pueden detectar este olvido.
+
+## Iconos
+
+Están en `icons/`. Los dibujos fuente son `icon.svg` (también es el icono de la pestaña) e `icon-maskable.svg` (versión que Android puede recortar en círculo). La «ç» ya está convertida en trazos, así que no depende de ninguna fuente. Si cambias un SVG, regenera los PNG con:
+
+```bash
+rsvg-convert -w 192 -h 192 icons/icon.svg -o icons/icon-192.png
+rsvg-convert -w 512 -h 512 icons/icon.svg -o icons/icon-512.png
+rsvg-convert -w 512 -h 512 icons/icon-maskable.svg -o icons/icon-maskable-512.png
+```
+
+## Comprobación manual paso a paso
+
+Estas comprobaciones no se pueden automatizar. Hazlas al cerrar cada etapa que toque la interfaz.
+
+### 1. Navegación a 360 px y a 1280 px (computador)
+
+1. `npm start` y abre `http://localhost:8000`.
+2. Abre el modo responsive: `Ctrl + Shift + M` en Firefox, o `F12` y luego `Ctrl + Shift + M` en Chrome.
+3. Pon el ancho en **360** px. Debes ver la barra azul **abajo** con cinco enlaces. Pulsa cada uno: cambia la placa del título, el enlace activo se pone en blanco y negrita con una franja de color arriba, y la página **no se recarga**.
+4. Pon el ancho en **1280** px. La barra pasa a la **izquierda** con «Français» arriba. Repite el paso 3; la franja ahora está a la izquierda.
+5. Prueba el botón «atrás» del navegador: vuelve a la pantalla anterior.
+
+### 2. Teclado
+
+1. Recarga la página y pulsa `Tab`: aparece «Saltar al contenido». Pulsa `Intro`.
+2. Sigue con `Tab` por los enlaces: cada uno muestra un recuadro amarillo. Pulsa `Intro` en uno: cambia la pantalla y el foco pasa a su título.
+
+### 3. Tema oscuro
+
+Cambia el sistema (o el navegador) a tema oscuro. La app pasa a fondo azul noche sin juntas de azulejo y todo el texto se sigue leyendo bien.
+
+### 4. Instalar en Android
+
+1. En el teléfono, abre **Chrome** y entra en https://joakil255.github.io/App-frances/
+2. Espera unos segundos con la página abierta (Chrome guarda la app en segundo plano).
+3. Abre el menú **⋮** y toca **Instalar app** (o **Agregar a la pantalla principal** → **Instalar**).
+4. Confirma. Aparece el icono azul con la «ç» en la pantalla de inicio.
+5. Ábrela desde ese icono: se abre a pantalla completa, sin la barra de direcciones de Chrome.
+
+### 5. Sin conexión
+
+1. Con la app instalada y abierta al menos una vez, **cierra la app** del todo (desde la vista de apps recientes).
+2. Activa el **modo avión**.
+3. Abre la app desde el icono. Debe abrir normal y navegar entre las cinco pantallas.
+4. Desactiva el modo avión.
+
+En el computador puedes comprobar lo mismo: en Chrome, `F12` → **Application** → **Service workers** → marca **Offline** y recarga; en Firefox, menú **≡** → **Más herramientas** → **Trabajar sin conexión**.
+
+### 6. Aviso «Actualizar»
+
+1. Con la app ya abierta alguna vez en el teléfono, publica una versión nueva (sube `CACHE_VERSION`, commit y push) y espera a que GitHub Pages la publique (unos minutos).
+2. Abre la app con conexión. A los pocos segundos aparece «Hay una versión nueva de la app.» con **Actualizar**.
+3. Pulsa **Actualizar**: la página se recarga una vez con la versión nueva.
+
+Si no aparece, cierra y vuelve a abrir la app: GitHub Pages puede tardar hasta 10 minutos en dejar de servir el `sw.js` anterior.
 
 ## Estructura
 
 ```
-index.html              página de entrada
+index.html              página única con las cinco pantallas
+sw.js                   service worker (caché para usar sin conexión)
 manifest.webmanifest    datos de instalación de la PWA
+css/styles.css          estilos (valores de DESIGN.md)
+js/app.js               arranque: navegación y registro del service worker
+js/lib/router.js        qué pantalla corresponde a cada dirección (#/…)
+js/update.js            aviso «Actualizar» para versiones nuevas
+fonts/                  fuentes .woff2 y sus licencias (SIL OFL)
+icons/                  iconos de la app
 tests/                  pruebas automáticas (*.test.js)
 docs/superpowers/       diseños y planes de cada etapa
-eslint.config.js        configuración del linter
-package.json            comandos y dependencias de desarrollo
+DESIGN.md               guía visual
 ```
-
-Más adelante aparecerán `css/` (estilos), `js/` (código de la app), `js/lib/` (lógica probada) y `js/data/` (lista de palabras).
