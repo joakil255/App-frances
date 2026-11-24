@@ -160,3 +160,11 @@ test('revisa una importación de 1.000 filas en menos de 1 segundo', () => {
   assert.equal(plan.duplicates.length, 500);
   assert.equal(plan.newWords.length, 500);
 });
+
+// --- Mejora B de la auditoría ---
+test('importar «l’eau» sobre una lista con «l\'eau» la marca como ya existente', () => {
+  const read = readImport(csv('frances,espanol', 'l’eau,el agua'), 'v.csv');
+  const plan = planImport(read.rows, [word("l'eau", 'el agua', { id: 'w1' })]);
+  assert.equal(plan.newWords.length, 0);
+  assert.equal(plan.duplicates.length, 1);
+});

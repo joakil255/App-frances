@@ -12,9 +12,15 @@ export function normalizeText(value) {
   return String(value ?? '').normalize('NFC').trim().replace(/\s+/g, ' ');
 }
 
+// Palabra francesa: además, apóstrofo recto y sin espacios a su lado («l’ ami» → «l'ami»).
+// Solo para la palabra: en un ejemplo, una comilla recta puede ser una cita.
+export function normalizeFrenchWord(value) {
+  return normalizeText(value).replace(/[’‘ʼ]/g, "'").replace(/\s*'\s*/g, "'");
+}
+
 // Clave para detectar duplicadas: sin mayúsculas ni espacios de más; los acentos cuentan
 export function duplicateKey(fr) {
-  return normalizeText(fr).toLowerCase().replace(/’/g, "'");
+  return normalizeFrenchWord(fr).toLowerCase();
 }
 
 // Clave para buscar: además quita los acentos («Être» → «etre»)
@@ -26,6 +32,7 @@ export function searchKey(text) {
 function cleanWord(input) {
   const word = {};
   for (const field of TEXT_FIELDS) word[field] = normalizeText(input[field]);
+  word.fr = normalizeFrenchWord(input.fr);
   const gender = input.gender === '' || input.gender == null ? null : input.gender;
   word.gender = gender;
   word.needsReview = Boolean(input.needsReview);
