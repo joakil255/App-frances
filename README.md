@@ -198,6 +198,15 @@ Conversas en francés sencillo con Claude (Haiku 5.5). En cada turno responde co
 - **Tus datos:** tus mensajes se envían a Anthropic (permiso dado el 23/11/2026). La conversación se guarda solo en el teléfono y **no** entra en la copia de seguridad.
 - **Costo:** unos $0,0002 por mensaje; con los 100 mensajes diarios, unos $0,60 al mes. Pon un tope de gasto bajo en la consola de Anthropic (por ejemplo, $5 al mes).
 
+### Hablar en francés (micrófono)
+
+Toca **Hablar**, di tu frase en francés y toca **Detener** (o calla y se detiene solo). Lo que entendió el navegador se agrega al campo: **revísalo antes de tocar Enviar**, porque el reconocimiento se puede equivocar. Mientras escucha puedes seguir escribiendo, y **Enviar** detiene el micrófono.
+
+- **Tu voz sale del teléfono.** Para convertirla en texto, el navegador envía el audio a su servicio de reconocimiento (en Chrome para Android, probablemente Google). Solo mientras el micrófono está activo; la app no guarda el audio. La primera vez una ventana lo explica y pide tu aceptación.
+- **Navegadores:** funciona en Chrome (computador y Android) y en las versiones recientes de Firefox para computador. En Firefox para Android no hay micrófono: el botón no aparece y escribes como siempre.
+- **Necesita conexión**, como el resto de Conversar.
+- La evaluación de pronunciación (Fase 2) **no está hecha**. Más detalles en el [diseño de la Etapa 9](docs/superpowers/specs/2026-11-24-etapa-9-voz-design.md).
+
 ## Servidor de conversación
 
 La app no guarda ninguna clave. Habla con un servidor pequeño propio (un *Worker* de Cloudflare, carpeta `server/`) que guarda la clave de Anthropic, revisa el código de acceso, cuenta los mensajes del día y llama a Claude.

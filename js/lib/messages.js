@@ -46,6 +46,18 @@ export const MESSAGES = Object.freeze({
     'Vuelve a enviar tu mensaje.'),
   chatRefused: message('Claude no quiso responder ese mensaje.',
     'Escríbelo de otra forma y vuelve a enviarlo.'),
+  micBlocked: message('El navegador no deja usar el micrófono.',
+    'Permite el micrófono para este sitio en los ajustes del navegador (el candado junto a la dirección) y vuelve a tocar Hablar.'),
+  micNoSpeech: message('No se oyó nada.',
+    'Toca Hablar y di tu frase cerca del micrófono.'),
+  micNoDevice: message('No se encontró un micrófono.',
+    'Revisa que el dispositivo tenga micrófono y que ninguna otra app lo esté usando.'),
+  micNetwork: message('No se pudo conectar con el reconocimiento de voz.',
+    'Revisa tu conexión y vuelve a intentarlo, o escribe tu mensaje.'),
+  micLanguage: message('Este navegador no reconoce voz en francés.',
+    'Escribe tu mensaje: el resto de la pantalla funciona igual.'),
+  micFailed: message('El reconocimiento de voz falló.',
+    'Vuelve a tocar Hablar o escribe tu mensaje.'),
 });
 
 // Clave del catálogo para cada código de error que devuelve el servidor del chat

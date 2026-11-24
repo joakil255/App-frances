@@ -166,6 +166,25 @@ La línea naranja de Progreso (`#E0663A`) se usa en el gráfico como elemento gr
 - **Ventana «Código de acceso»:** como las de la Etapa 2; una frase que explica de dónde sale el código, el campo (tipo contraseña) y **Cancelar** · **Guardar y enviar**. Si el código no es correcto, la ventana vuelve a abrirse con el error bajo el campo.
 - **Ventana «¿Empezar una conversación nueva?»:** «Se borrará esta conversación. No se puede deshacer.» y **Cancelar** · **Borrar conversación** (peligro).
 
+## Conversar: escuchar (Etapa 9)
+
+Sin colores nuevos: todo usa los tokens de arriba.
+
+- **Interruptor «Escuchar primero»:** una casilla real (`checkbox`) como «Exigir acentos», en la fila de herramientas, después del nivel. Fila de 44 px de alto; toda la etiqueta se puede tocar. Empieza encendido y se guarda en el teléfono.
+- **Botones de escucha:** bajo cada respuesta de Claude, en una fila que pasa a la línea siguiente si no cabe: **🔊 Escuchar** y **🐢 Más lento** (secundarios, 44 px de alto, Barlow 700). El emoji va con `aria-hidden="true"` y el nombre completo en `aria-label` («Escuchar la respuesta», «Escuchar más lento»), que contiene el texto visible. En cada corrección, un botón cuadrado de 44 × 44 px con 🔊 a la derecha de la forma correcta («Escuchar la forma correcta»); la estación de la línea rosa queda a la altura de la primera línea.
+- **Texto tapado (el elemento propio):** con «Escuchar primero» encendido, la respuesta nueva no se ve: los botones ocupan el recuadro del mensaje, que conserva la franja `--plaque` de 8 px pero con el resto del borde **punteado** (2 px `--field-border`), como un cartel cubierto. Se añade **Mostrar texto** (secundario, `aria-expanded` y `aria-controls`); al tocarlo aparece el texto encima de los botones y dice **Ocultar texto**. Si la respuesta no se puede oír, el texto aparece solo y el aviso de siempre sale una vez. Las respuestas del historial nunca se tapan.
+- **Avisos:** los de siempre (`noSpeech`, `noFrenchVoice`, `voiceFailed`) en el aviso de arriba de la pantalla.
+
+## Conversar: micrófono (Etapa 9)
+
+Sin colores nuevos: todo usa los tokens de arriba.
+
+- **Botón «Hablar»:** secundario, a la izquierda de **Enviar** en la misma fila (Enviar ocupa el resto del ancho en el móvil). Lleva 🎤 con `aria-hidden="true"`. Un toque empieza a escuchar y otro lo detiene; `aria-pressed` y el texto cambian a **Detener**. Si el navegador no reconoce voz, el botón no aparece y **Enviar** queda a lo ancho como antes. Mientras dice «Enviando…», **Hablar** está desactivado (borde `--divider` y texto `--text-muted`, como los modos del Quiz).
+- **Escuchando (el elemento propio):** mientras escucha, el 🎤 se cambia por el **punto rosa de la línea** (14 px), como la luz de una estación. El estado nunca va solo por el color: el texto dice «Detener».
+- **Texto parcial:** una línea aparte bajo el campo que cuelga de la **línea rosa de 4 px**, como las correcciones: «Escuchando:» en Barlow 500 `--text-muted` y lo oído en Source Serif (`lang="fr"`). Solo el resultado final se agrega al campo, a continuación de lo que haya escrito.
+- **Ventana «Tu voz sale del dispositivo»:** como las de la Etapa 2; una frase sobre adónde va el audio, y **Cancelar** · **Usar el micrófono** (primario). Sale solo la primera vez. El foco vuelve a **Hablar** al cerrarla.
+- **Avisos:** los de siempre arriba (`micBlocked`, `micNoSpeech`, `micNoDevice`, `micNetwork`, `micLanguage`, `micFailed` y `chatOffline` si no hay conexión).
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.

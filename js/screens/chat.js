@@ -2,6 +2,8 @@
 // Todo el texto del usuario y del modelo se pinta con textContent.
 import { chatUrl, buildRequestBody, sendChat, appendExchange } from '../lib/chat.js';
 import { chatMessage, storageMessage, joined } from '../lib/messages.js';
+import { RATES } from '../lib/speech.js';
+import { playFrench } from './voice.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 
@@ -20,35 +22,72 @@ const remainingText = (n) => (n === 1 ? 'Te queda 1 mensaje hoy.' : `Te quedan $
 // Solo se pintan las correcciones con original y corregido en texto (lo guardado puede venir dañado)
 const isCorrection = (c) => Boolean(c) && typeof c.original === 'string' && typeof c.corrected === 'string';
 
-function correctionItem({ original, corrected, explanation }) {
+// Botón de escucha: el emoji se oculta al lector de pantalla y el nombre va en aria-label
+function listenButton({ emoji, text, label, onClick }) {
+  const button = el('button', { className: 'button button-secondary chat-listen', attrs: { type: 'button', 'aria-label': label } }, [
+    el('span', { text: emoji, attrs: { 'aria-hidden': 'true' } }),
+    ...(text ? [el('span', { text })] : []),
+  ]);
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+function correctionItem({ original, corrected, explanation }, listen) {
   const fix = el('p', { className: 'chat-fix' }, [
     el('del', { text: original, attrs: { lang: 'fr' } }),
     el('span', { text: ' → ', attrs: { 'aria-hidden': 'true' } }),
     el('span', { className: 'visually-hidden', text: ', se corrige: ' }),
     el('ins', { text: corrected, attrs: { lang: 'fr' } }),
   ]);
-  const item = el('li', { className: 'chat-correction' }, [fix]);
+  const hear = listenButton({ emoji: '🔊', label: 'Escuchar la forma correcta', onClick: () => listen(corrected, RATES.normal) });
+  const item = el('li', { className: 'chat-correction' }, [el('div', { className: 'chat-fix-row' }, [fix, hear])]);
   if (typeof explanation === 'string' && explanation) {
     item.append(el('p', { className: 'chat-explanation', text: explanation, attrs: { lang: 'es' } }));
   }
   return item;
 }
 
-function turnNode(turn) {
+// listen(texto, velocidad): lee en francés con los avisos de siempre
+function turnNode(turn, listen) {
   const isUser = turn.role === 'user';
   const node = el('div', { className: `chat-turn chat-turn-${isUser ? 'user' : 'assistant'}` }, [
     el('p', { className: 'chat-speaker', text: isUser ? 'Tú' : 'Claude' }),
     el('p', { className: 'chat-text', text: turn.text, attrs: { lang: 'fr' } }),
   ]);
+  if (!isUser) {
+    node.append(el('div', { className: 'chat-actions' }, [
+      listenButton({ emoji: '🔊', text: 'Escuchar', label: 'Escuchar la respuesta', onClick: () => listen(turn.text, RATES.normal) }),
+      listenButton({ emoji: '🐢', text: 'Más lento', label: 'Escuchar más lento', onClick: () => listen(turn.text, RATES.slow) }),
+    ]));
+  }
   const corrections = isUser && Array.isArray(turn.corrections) ? turn.corrections.filter(isCorrection) : [];
   if (corrections.length > 0) {
     node.append(el('ul', { className: 'chat-corrections', attrs: { 'aria-label': 'Correcciones' } },
-      corrections.map(correctionItem)));
+      corrections.map((c) => correctionItem(c, listen))));
   }
   return node;
 }
 
-export function initChat({ store, fetch, isOnline, hostname }) {
+// Tapa el texto de una respuesta tras «Mostrar texto». Devuelve la función que lo muestra.
+function coverReply(node, id) {
+  const text = $('.chat-text', node);
+  text.id = id;
+  const toggle = el('button', {
+    className: 'button button-secondary chat-toggle',
+    attrs: { type: 'button', 'aria-expanded': 'false', 'aria-controls': id },
+  });
+  const setShown = (shown) => {
+    text.hidden = !shown;
+    toggle.textContent = shown ? 'Ocultar texto' : 'Mostrar texto';
+    toggle.setAttribute('aria-expanded', String(shown));
+  };
+  toggle.addEventListener('click', () => setShown(text.hidden));
+  $('.chat-actions', node).append(toggle);
+  setShown(false);
+  return () => setShown(true);
+}
+
+export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }) {
   const url = chatUrl(hostname);
   const notice = $('#chat-notice');
   const log = $('#chat-log');
@@ -65,9 +104,14 @@ export function initChat({ store, fetch, isOnline, hostname }) {
   const codeForm = $('form', codeDialog);
   const codeInput = $('#chat-code-input');
   const codeError = $('#chat-code-error');
+  const listenFirstInput = $('#chat-listen-first');
 
   let { level, turns } = store.load();
   let sending = false;
+  let beforeSend = () => {};
+  let beforeSpeak = () => {};
+  let onBusy = () => {}; // avisa al micrófono de que se está enviando
+  let coveredCount = 0; // para dar un id único a cada texto tapado
 
   // --- Avisos ---
   function showNotice({ title, text }) {
@@ -98,9 +142,17 @@ export function initChat({ store, fetch, isOnline, hostname }) {
     }
   }
 
+  // --- Escuchar ---
+  // Antes de leer en voz alta se descarta la escucha, para que el micrófono no oiga a la app
+  const listen = (text, rate, onFail) => {
+    beforeSpeak();
+    return playFrench({ synth, text, rate, notice, onFail });
+  };
+
   // --- Conversación ---
+  // Las respuestas del historial se muestran siempre
   function renderAll() {
-    log.replaceChildren(...turns.map(turnNode));
+    log.replaceChildren(...turns.map((turn) => turnNode(turn, listen)));
     updateEmpty();
   }
   function updateEmpty() {
@@ -116,10 +168,12 @@ export function initChat({ store, fetch, isOnline, hostname }) {
     field.readOnly = busy;
     newButton.disabled = busy;
     for (const input of levelInputs) input.disabled = busy;
+    onBusy(busy);
   }
 
   async function send() {
     if (sending) return;
+    beforeSend();
     clearNotice();
     setFieldError('');
     const message = field.value.trim();
@@ -160,7 +214,13 @@ export function initChat({ store, fetch, isOnline, hostname }) {
 
     const before = turns.length;
     turns = appendExchange(turns, message, result);
-    log.append(...turns.slice(before).map(turnNode));
+    const added = turns.slice(before);
+    const nodes = added.map((turn) => turnNode(turn, listen));
+    // «Escuchar primero»: la respuesta se tapa y se lee sola; si no se puede oír, se muestra
+    const reply = added.findIndex((turn) => turn.role === 'assistant');
+    const reveal = listenFirstInput.checked && reply !== -1 ? coverReply(nodes[reply], `chat-reply-${++coveredCount}`) : null;
+    log.append(...nodes);
+    if (reveal) listen(added[reply].text, RATES.normal, reveal);
     updateEmpty();
     field.value = '';
     remaining.textContent = remainingText(result.remaining);
@@ -172,6 +232,16 @@ export function initChat({ store, fetch, isOnline, hostname }) {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     send();
+  });
+
+  // --- Escuchar primero (guardado en el teléfono) ---
+  listenFirstInput.checked = voiceStore.load().listenFirst;
+  listenFirstInput.addEventListener('change', () => {
+    try {
+      voiceStore.save({ ...voiceStore.load(), listenFirst: listenFirstInput.checked });
+    } catch (error) {
+      showNotice(storageMessage(error));
+    }
   });
 
   // --- Nivel ---
@@ -243,10 +313,25 @@ export function initChat({ store, fetch, isOnline, hostname }) {
 
   renderAll();
 
-  // Al abrir la pantalla, si aún no hay código se pide (si se cancela, se vuelve a pedir al enviar)
   return {
+    // Al abrir la pantalla, si aún no hay código se pide (si se cancela, se vuelve a pedir al enviar)
     onShow() {
       if (!store.loadCode() && !codeDialog.open) openCodeDialog('');
     },
+    // Antes de escuchar el micrófono se corta la lectura para que no la oiga
+    onListenStart() {
+      synth?.cancel();
+    },
+    setBeforeSend(fn) {
+      beforeSend = fn;
+    },
+    setBeforeSpeak(fn) {
+      beforeSpeak = fn;
+    },
+    setOnBusy(fn) {
+      onBusy = fn;
+    },
+    showNotice,
+    clearNotice,
   };
 }

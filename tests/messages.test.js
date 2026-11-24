@@ -7,7 +7,8 @@ import { StorageError } from '../js/lib/storage.js';
 const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'restoreFailed',
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
-  'chatBadOutput', 'chatRefused'];
+  'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
+  'micFailed'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -137,6 +138,33 @@ test('un código desconocido muestra chatUnavailable', () => {
   assert.deepEqual(chatMessage(''), MESSAGES.chatUnavailable);
   assert.deepEqual(chatMessage('toString'), MESSAGES.chatUnavailable);
   assert.deepEqual(chatMessage('__proto__'), MESSAGES.chatUnavailable);
+});
+
+test('los mensajes del micrófono tienen su texto exacto', () => {
+  assert.deepEqual(MESSAGES.micBlocked, {
+    title: 'El navegador no deja usar el micrófono.',
+    text: 'Permite el micrófono para este sitio en los ajustes del navegador (el candado junto a la dirección) y vuelve a tocar Hablar.',
+  });
+  assert.deepEqual(MESSAGES.micNoSpeech, {
+    title: 'No se oyó nada.',
+    text: 'Toca Hablar y di tu frase cerca del micrófono.',
+  });
+  assert.deepEqual(MESSAGES.micNoDevice, {
+    title: 'No se encontró un micrófono.',
+    text: 'Revisa que el dispositivo tenga micrófono y que ninguna otra app lo esté usando.',
+  });
+  assert.deepEqual(MESSAGES.micNetwork, {
+    title: 'No se pudo conectar con el reconocimiento de voz.',
+    text: 'Revisa tu conexión y vuelve a intentarlo, o escribe tu mensaje.',
+  });
+  assert.deepEqual(MESSAGES.micLanguage, {
+    title: 'Este navegador no reconoce voz en francés.',
+    text: 'Escribe tu mensaje: el resto de la pantalla funciona igual.',
+  });
+  assert.deepEqual(MESSAGES.micFailed, {
+    title: 'El reconocimiento de voz falló.',
+    text: 'Vuelve a tocar Hablar o escribe tu mensaje.',
+  });
 });
 
 test('motivo cuando el teléfono no deja abrir el archivo', () => {

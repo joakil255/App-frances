@@ -324,3 +324,37 @@ test('la ventana del código de acceso tiene su campo con etiqueta', () => {
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
   assert.match(dialog, /<button type="submit" class="button button-primary">[^<]+<\/button>/);
 });
+
+// --- Conversar: voz (Etapa 9) ---
+test('Conversar tiene el interruptor «Escuchar primero» en las herramientas', () => {
+  const tools = chat.match(/<div class="chat-tools">([\s\S]*?)<\/div>\s*<p id="chat-empty"/)?.[1] ?? '';
+  const toggle = tagWithId(tools, 'chat-listen-first');
+  assert.ok(toggle, 'falta #chat-listen-first en .chat-tools');
+  assert.ok(toggle.startsWith('<input') && toggle.includes('type="checkbox"'), '#chat-listen-first debe ser una casilla');
+  assert.match(tools, /<label for="chat-listen-first"[^>]*>Escuchar primero<\/label>/);
+});
+
+test('Conversar tiene el botón «Hablar», oculto hasta saber si hay reconocimiento', () => {
+  const mic = chat.match(/<button [^>]*id="chat-mic"[^>]*>([\s\S]*?)<\/button>/);
+  assert.ok(mic, 'falta #chat-mic');
+  const openTag = mic[0].slice(0, mic[0].indexOf('>')); // solo la etiqueta de apertura
+  for (const attr of ['type="button"', 'aria-pressed="false"', 'hidden']) assert.ok(openTag.includes(attr), `#chat-mic sin ${attr}`);
+  assert.match(mic[1], />Hablar</);
+});
+
+test('Conversar tiene la línea del texto parcial, oculta y sin aria-live', () => {
+  const interim = tagWithId(chat, 'chat-interim');
+  assert.ok(interim, 'falta #chat-interim');
+  assert.ok(interim.includes('hidden'), '#chat-interim sin hidden');
+  assert.ok(!interim.includes('aria-live'), '#chat-interim no debe tener aria-live');
+});
+
+test('la ventana del aviso de privacidad tiene título, texto y los dos botones', () => {
+  const dialog = html.match(/<dialog id="chat-voice-privacy" class="dialog" aria-labelledby="chat-voice-privacy-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta #chat-voice-privacy');
+  assert.match(dialog, /<h2 id="chat-voice-privacy-title" class="dialog-title">Tu voz sale del dispositivo<\/h2>/);
+  assert.ok(dialog.includes('<p>Para convertir tu voz en texto, el navegador envía el audio a su servicio de reconocimiento. En Chrome para Android es probablemente Google. Solo se envía mientras el micrófono está activo, y la app no guarda el audio.</p>'),
+    'falta el texto exacto del aviso');
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-primary" data-action="confirm">Usar el micrófono<\/button>/);
+});

@@ -12,10 +12,14 @@ import { initProgress } from './screens/progress.js';
 import { initHome } from './screens/home.js';
 import { createChatStore } from './lib/chat.js';
 import { initChat } from './screens/chat.js';
+import { createVoiceStore } from './lib/voice-settings.js';
+import { getRecognitionConstructor } from './lib/recognition.js';
+import { initChatVoice } from './screens/chat-voice.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
 let onChatShown = () => {}; // lo completa initChat
+let onChatHidden = () => {}; // corta el micrófono al salir de Conversar
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -35,8 +39,10 @@ function showScreen(id, moveFocus) {
 
   // El foco va al título para que el lector de pantalla anuncie dónde estás
   if (moveFocus) document.querySelector(`#screen-${id} h1`).focus();
+  const previousId = currentId;
   currentId = id;
   if (id === 'chat') onChatShown();
+  else if (previousId === 'chat') onChatHidden();
 }
 
 function handleRoute(isFirstLoad) {
@@ -82,13 +88,35 @@ initVocabulary({ store: wordStore, synth })
   ]));
 
 // Conversar no depende de las palabras ni del estudio
+const isOnline = () => navigator.onLine;
+const voiceStore = createVoiceStore(backend);
 const chat = initChat({
   store: createChatStore(backend),
   fetch: window.fetch.bind(window),
-  isOnline: () => navigator.onLine,
+  isOnline,
   hostname: location.hostname,
+  synth,
+  voiceStore,
 });
+// Micrófono: solo si el navegador reconoce voz; enviar lo detiene
+const voice = initChatVoice({
+  field: document.querySelector('#chat-message'),
+  Recognition: getRecognitionConstructor(window),
+  isOnline,
+  voiceStore,
+  showNotice: chat.showNotice,
+  clearNotice: chat.clearNotice,
+  onListenStart: chat.onListenStart,
+});
+chat.setBeforeSend(() => voice.stop());
+chat.setBeforeSpeak(() => voice.stop());
+chat.setOnBusy((busy) => voice.setBusy(busy));
 onChatShown = chat.onShow;
+onChatHidden = () => voice.stop();
+// Si la página queda oculta (otra app, pantalla apagada) el micrófono se corta
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') voice.stop();
+});
 if (currentId === 'chat') onChatShown();
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando

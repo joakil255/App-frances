@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v17';
+const CACHE_VERSION = 'v18';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -40,6 +40,8 @@ const PRECACHE_URLS = [
   'js/lib/messages.js',
   'js/lib/backup.js',
   'js/lib/chat.js',
+  'js/lib/recognition.js',
+  'js/lib/voice-settings.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
@@ -47,6 +49,7 @@ const PRECACHE_URLS = [
   'js/screens/progress.js',
   'js/screens/home.js',
   'js/screens/chat.js',
+  'js/screens/chat-voice.js',
   'js/data/initial-words.js',
   'js/update.js',
   'data/a1-deck.json',
