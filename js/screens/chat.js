@@ -134,7 +134,7 @@ export function initChat({ store, fetch, isOnline, hostname }) {
     }
     const code = store.loadCode();
     if (!code) {
-      openCodeDialog('');
+      openCodeDialog('', true);
       return;
     }
 
@@ -150,7 +150,7 @@ export function initChat({ store, fetch, isOnline, hostname }) {
         } catch (error) {
           showNotice(storageMessage(error));
         }
-        openCodeDialog(joined(chatMessage('unauthorized')));
+        openCodeDialog(joined(chatMessage('unauthorized')), true);
         return;
       }
       showNotice(chatMessage(result.error));
@@ -187,7 +187,9 @@ export function initChat({ store, fetch, isOnline, hostname }) {
 
   // --- Código de acceso ---
   let sendAfterCode = false;
-  function openCodeDialog(errorText) {
+  let sendWhenSaved = false; // solo si el diálogo se abrió desde un envío
+  function openCodeDialog(errorText, thenSend = false) {
+    sendWhenSaved = thenSend;
     setCodeError(errorText);
     codeInput.value = '';
     codeDialog.showModal();
@@ -207,7 +209,7 @@ export function initChat({ store, fetch, isOnline, hostname }) {
       setCodeError(joined(storageMessage(error)));
       return;
     }
-    sendAfterCode = true;
+    sendAfterCode = sendWhenSaved;
     codeDialog.close();
   });
   codeDialog.addEventListener('click', (event) => {
