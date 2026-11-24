@@ -22,7 +22,55 @@ export const MESSAGES = Object.freeze({
   noSpeech: message('Este navegador no puede leer en voz alta.', 'Abre la app en Chrome para oír el francés.'),
   noFrenchVoice: message('No hay voz francesa en este dispositivo.', VOICE_SETTINGS),
   voiceFailed: message('El teléfono no pudo leer en voz alta.', VOICE_SETTINGS),
+  chatOffline: message('Necesitas conexión para conversar.',
+    'Conéctate a internet y vuelve a enviar tu mensaje.'),
+  chatNetwork: message('No se pudo conectar con el servidor.',
+    'Revisa tu conexión y vuelve a enviar tu mensaje.'),
+  chatWrongCode: message('El código de acceso no es correcto.',
+    'Escríbelo de nuevo tal como lo guardaste al configurar el servidor.'),
+  chatDailyLimit: message('Llegaste al límite de hoy, vuelve mañana.',
+    'El contador se reinicia a medianoche, hora de Chile.'),
+  chatInvalid: message('El mensaje no se pudo enviar.',
+    'Escribe un mensaje de 500 caracteres como máximo.'),
+  chatConfig: message('El servidor no está bien configurado.',
+    'Revisa las variables y los secretos del servidor en Cloudflare.'),
+  chatAuth: message('El servidor no pudo usar la clave de Anthropic.',
+    'Revisa que la clave guardada en Cloudflare siga activa en la consola de Anthropic.'),
+  chatRateLimit: message('Claude recibió demasiados mensajes seguidos.',
+    'Espera un minuto y vuelve a enviar tu mensaje.'),
+  chatQuota: message('Se acabó el saldo o el tope de gasto de Anthropic.',
+    'Revisa el saldo y el tope de gasto en la consola de Anthropic.'),
+  chatUnavailable: message('Claude no respondió a tiempo.',
+    'Vuelve a enviar tu mensaje en unos minutos.'),
+  chatBadOutput: message('La respuesta de Claude llegó incompleta.',
+    'Vuelve a enviar tu mensaje.'),
+  chatRefused: message('Claude no quiso responder ese mensaje.',
+    'Escríbelo de otra forma y vuelve a enviarlo.'),
 });
+
+// Clave del catálogo para cada código de error que devuelve el servidor del chat
+const CHAT_KEYS = Object.freeze({
+  offline: 'chatOffline',
+  network: 'chatNetwork',
+  unauthorized: 'chatWrongCode',
+  daily_limit: 'chatDailyLimit',
+  invalid_input: 'chatInvalid',
+  config: 'chatConfig',
+  forbidden_origin: 'chatConfig',
+  not_found: 'chatConfig',
+  auth: 'chatAuth',
+  rate_limit: 'chatRateLimit',
+  quota: 'chatQuota',
+  unavailable: 'chatUnavailable',
+  bad_output: 'chatBadOutput',
+  refused: 'chatRefused',
+});
+
+// Mensaje para un código de error del chat; los códigos desconocidos usan chatUnavailable
+export function chatMessage(code) {
+  const key = Object.hasOwn(CHAT_KEYS, code) ? CHAT_KEYS[code] : 'chatUnavailable';
+  return MESSAGES[key];
+}
 
 // Mensaje para un error al guardar o leer (StorageError: 'quota' o 'unavailable')
 export function storageMessage(error) {
