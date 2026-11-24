@@ -109,6 +109,6 @@ export function wordFromLookup(result, sentence) {
 
 // ¿La palabra tocada ya está guardada? Por ella misma o por la forma base de su consulta en caché
 export function isSavedToken(words, cache, lang, word, sentence) {
-  const lemmas = [lemmaOf(word, null), lemmaOf(cache.get(lang, word, sentence)?.lemma ?? '', null)];
+  const lemmas = [lemmaOf(word, null), lemmaOf(cache.peek(lang, word, sentence)?.lemma ?? '', null)];
   return words.some((saved) => saved.lang === lang && saved.lemma !== '' && lemmas.includes(saved.lemma));
 }

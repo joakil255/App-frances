@@ -34,6 +34,12 @@ export function createLookupCache(backend, { max = DEFAULT_MAX, now = () => Date
   }
 
   return {
+    // Solo lee: no cambia usedAt ni escribe (para usarlo en cada palabra al pintar)
+    peek(lang, word, sentence) {
+      const key = keyOf(lang, word, sentence);
+      return load().find((item) => item.key === key)?.result ?? null;
+    },
+
     get(lang, word, sentence) {
       const key = keyOf(lang, word, sentence);
       const entries = load();

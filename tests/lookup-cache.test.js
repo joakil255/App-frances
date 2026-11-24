@@ -71,3 +71,15 @@ test('un setItem que lanza no rompe set ni get', () => {
   assert.doesNotThrow(() => cache.set('fr', 'a', 's', result('a')));
   assert.equal(cache.get('fr', 'a', 's'), null);
 });
+
+test('peek lee sin escribir ni cambiar usedAt', () => {
+  const backend = new MemoryStorage();
+  let t = 0;
+  const cache = createLookupCache(backend, { now: () => ++t });
+  cache.set('fr', 'a', 's', result('a'));
+  const before = backend.getItem(LOOKUP_CACHE_KEY);
+  backend.failSet = new Error('no debe escribir');
+  assert.deepEqual(cache.peek('fr', 'a', 's'), result('a'));
+  assert.equal(cache.peek('fr', 'zzz', 's'), null);
+  assert.equal(backend.getItem(LOOKUP_CACHE_KEY), before);
+});

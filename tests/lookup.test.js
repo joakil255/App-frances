@@ -4,7 +4,22 @@ import {
   tokenize, lookupUrl, sendLookup, resolveLookup, findInVocabulary, wordFromLookup, isSavedToken,
 } from '../js/lib/lookup.js';
 import { PRODUCTION_CHAT_URL } from '../js/lib/chat.js';
+import { createLookupCache } from '../js/lib/lookup-cache.js';
 import { validateWord, lemmaOf } from '../js/lib/words.js';
+
+class MemoryStorage {
+  constructor() {
+    this.data = new Map();
+    this.writes = 0;
+  }
+  getItem(key) {
+    return this.data.has(key) ? this.data.get(key) : null;
+  }
+  setItem(key, value) {
+    this.writes += 1;
+    this.data.set(key, String(value));
+  }
+}
 
 const words = (tokens) => tokens.filter((t) => t.word !== null).map((t) => t.word);
 
@@ -208,7 +223,7 @@ test('wordFromLookup con sustantivo: lleva género y artículo', () => {
 });
 
 test('isSavedToken: por la palabra misma o por el lemma en caché', () => {
-  const cacheWith = (result) => ({ get: () => result });
+  const cacheWith = (result) => ({ peek: () => result });
   assert.equal(isSavedToken(VOCAB, cacheWith(null), 'fr', 'manger', 's'), true);
   assert.equal(isSavedToken(VOCAB, cacheWith(null), 'fr', 'Manger', 's'), true);
   assert.equal(isSavedToken(VOCAB, cacheWith(null), 'fr', 'manges', 's'), false);
@@ -219,6 +234,15 @@ test('isSavedToken: por la palabra misma o por el lemma en caché', () => {
 
 test('isSavedToken nunca coincide con una forma base vacía', () => {
   const odd = [{ id: '9', lang: 'fr', fr: "l'", lemma: '', gender: 'f' }];
-  assert.equal(isSavedToken(odd, { get: () => null }, 'fr', '', 's'), false);
-  assert.equal(isSavedToken(odd, { get: () => ({ lemma: '' }) }, 'fr', "'", 's'), false);
+  assert.equal(isSavedToken(odd, { peek: () => null }, 'fr', '', 's'), false);
+  assert.equal(isSavedToken(odd, { peek: () => ({ lemma: '' }) }, 'fr', "'", 's'), false);
+});
+
+test('isSavedToken no escribe nada en el almacenamiento', () => {
+  const backend = new MemoryStorage();
+  const cache = createLookupCache(backend, { now: () => 1 });
+  cache.set('fr', 'manges', 's', { lemma: 'manger' });
+  backend.writes = 0;
+  assert.equal(isSavedToken(VOCAB, cache, 'fr', 'manges', 's'), true);
+  assert.equal(backend.writes, 0);
 });
