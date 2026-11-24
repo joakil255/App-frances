@@ -1,6 +1,6 @@
-# Etapa 8 — Conversación con IA: diseño (pendiente de aprobación)
+# Etapa 8 — Conversación con IA: diseño (aprobado)
 
-> **Estado:** diseño completo, pendiente de que el usuario lo apruebe. No hay código. Todas las decisiones de abajo las tomó el usuario el 23/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir al revisar).
+> **Estado:** **aprobado por el usuario el 23/11/2026.** No hay código. Todas las decisiones de abajo las tomó el usuario el 23/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir al revisar).
 
 ## Intención
 
