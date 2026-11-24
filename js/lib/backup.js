@@ -1,4 +1,4 @@
-// Copia de seguridad completa: palabras, tarjetas (estado de repaso), historial y ajustes.
+// Copia de seguridad completa: palabras, historias, tarjetas (estado de repaso), historial y ajustes.
 // readBackup lo valida todo antes de devolver nada; restoreBackup nunca deja datos a medias.
 // El historial solo tiene que ser una lista: Progreso ya ignora las respuestas raras, y exigir
 // más podría dejar sin restaurar una copia hecha por la propia app.
@@ -6,13 +6,15 @@ import { validateWord, duplicateKey, upgradeWord } from './words.js';
 import { STORAGE_KEY, toStorageError } from './storage.js';
 import { STUDY_KEY, validateSettings } from './study-storage.js';
 import { cardIdOf } from './scheduler.js';
+import { TEXTS_KEY, validateText } from './texts.js';
 
 export const BACKUP_FORMAT = 'app-frances-copia';
-export const BACKUP_VERSION = 2;
+export const BACKUP_VERSION = 3;
 export const MAX_BACKUP_BYTES = 10 * 1024 * 1024;
 const WORDS_FORMAT = 'app-frances-vocabulario';
 const SCHEMA_VERSION = 2; // palabras con lang y lemma
 const STUDY_SCHEMA_VERSION = 1;
+const TEXTS_SCHEMA_VERSION = 1;
 
 const DIRECTIONS = ['fr-es', 'es-fr'];
 
@@ -33,9 +35,9 @@ const isNumber = (value) => typeof value === 'number' && Number.isFinite(value);
 const isCount = (value) => Number.isInteger(value) && value >= 0;
 const isObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 
-export function buildBackup({ words, study, now }) {
+export function buildBackup({ words, study, texts = [], now }) {
   const { cards, history, settings } = study;
-  const data = { format: BACKUP_FORMAT, version: BACKUP_VERSION, createdAt: now.toISOString(), words: words.map(upgradeWord), study: { cards, history, settings } };
+  const data = { format: BACKUP_FORMAT, version: BACKUP_VERSION, createdAt: now.toISOString(), words: words.map(upgradeWord), study: { cards, history, settings }, texts };
   // El carácter de reemplazo se escribe como escape JSON: es el mismo texto al leerlo, y así
   // readBackup no lo confunde con un archivo mal codificado
   return `${JSON.stringify(data, null, 2).replace(/\uFFFD/g, '\\ufffd')}\n`;
@@ -79,6 +81,16 @@ function validStudy(study) {
   return Object.entries(study.cards).every(([key, card]) => validCard(card, key));
 }
 
+function validTexts(texts) {
+  if (!Array.isArray(texts)) return false;
+  const ids = new Set();
+  for (const text of texts) {
+    if (!isObject(text) || !isText(text.id) || ids.has(text.id) || !validateText(text).ok) return false;
+    ids.add(text.id);
+  }
+  return true;
+}
+
 const failed = (fatal) => ({ fatal, backup: null, summary: null });
 
 export function readBackup(text) {
@@ -92,38 +104,57 @@ export function readBackup(text) {
   if (isObject(data) && data.format === WORDS_FORMAT) return failed(BACKUP_ERRORS.wordList);
   if (!isObject(data) || data.format !== BACKUP_FORMAT) return failed(BACKUP_ERRORS.notBackup);
   if (isNumber(data.version) && data.version > BACKUP_VERSION) return failed(BACKUP_ERRORS.newer);
-  // Se leen la versión 1 (sin lang ni lemma) y la 2
-  if (data.version !== 1 && data.version !== BACKUP_VERSION || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
-    || !validWords(data.words) || !validStudy(data.study)) {
+  // Se leen la versión 1 (sin lang ni lemma), la 2 (sin historias) y la 3
+  if (![1, 2, BACKUP_VERSION].includes(data.version) || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
+    || !validWords(data.words) || !validStudy(data.study) || (data.version === BACKUP_VERSION && !validTexts(data.texts))) {
     return failed(BACKUP_ERRORS.damaged);
   }
   const { cards, history, settings } = data.study;
+  const texts = data.version === BACKUP_VERSION ? data.texts : null; // null = la copia no traía historias
   return {
     fatal: null,
     // lang y lemma se recalculan siempre: no se confía en lo que traiga el archivo
-    backup: { words: data.words.map(upgradeWord), study: { cards, history, settings }, createdAt: data.createdAt },
-    summary: { words: data.words.length, cards: Object.keys(cards).length, answers: history.length, createdAt: data.createdAt },
+    backup: { words: data.words.map(upgradeWord), study: { cards, history, settings }, texts, createdAt: data.createdAt },
+    summary: {
+      words: data.words.length, cards: Object.keys(cards).length, answers: history.length, createdAt: data.createdAt,
+      ...(texts ? { texts: texts.length } : {}),
+    },
   };
 }
 
-// Escribe palabras y progreso; si lo segundo falla, deja las palabras como estaban
+// Escribe palabras, progreso e historias; si una escritura falla, deja las claves como estaban.
+// Una copia sin historias (texts: null) no toca las historias guardadas.
 export function restoreBackup(backend, backup) {
-  const { words, study } = backup;
-  const previousWords = backend.getItem(STORAGE_KEY);
-  try {
-    backend.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: SCHEMA_VERSION, words }));
-  } catch (error) {
-    throw toStorageError(error);
-  }
-  try {
-    backend.setItem(STUDY_KEY, JSON.stringify({ schemaVersion: STUDY_SCHEMA_VERSION, ...study }));
-  } catch (error) {
+  const { words, study, texts } = backup;
+  const writes = [
+    [STORAGE_KEY, JSON.stringify({ schemaVersion: SCHEMA_VERSION, words })],
+    [STUDY_KEY, JSON.stringify({ schemaVersion: STUDY_SCHEMA_VERSION, ...study })],
+  ];
+  if (texts) writes.push([TEXTS_KEY, JSON.stringify({ schemaVersion: TEXTS_SCHEMA_VERSION, texts })]);
+  const previous = new Map(writes.map(([key]) => [key, backend.getItem(key)]));
+  const done = [];
+  for (const [key, value] of writes) {
     try {
-      if (previousWords === null) backend.removeItem(STORAGE_KEY);
-      else backend.setItem(STORAGE_KEY, previousWords);
-    } catch {
-      // si ni siquiera se puede volver atrás, se informa del error original
+      backend.setItem(key, value);
+      done.push(key);
+    } catch (error) {
+      for (const written of done) {
+        try {
+          if (previous.get(written) === null) backend.removeItem(written);
+          else backend.setItem(written, previous.get(written));
+        } catch {
+          // si ni siquiera se puede volver atrás, se informa del error original
+        }
+      }
+      throw toStorageError(error);
     }
-    throw toStorageError(error);
   }
+}
+
+// Texto de la ventana de restaurar: dice con exactitud qué se reemplaza
+export function restoreWarning({ texts }) {
+  const replaced = texts
+    ? 'Se reemplazarán tus palabras, tu progreso y tus historias.'
+    : 'Se reemplazarán tus palabras y tu progreso (esta copia no trae historias: las tuyas se mantienen).';
+  return `${replaced} No se puede deshacer. Si quieres conservarlos, guarda antes una copia.`;
 }

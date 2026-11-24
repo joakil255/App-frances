@@ -6,6 +6,7 @@ import { createWordStore } from './lib/storage.js';
 import { INITIAL_WORDS } from './data/initial-words.js';
 import { initVocabulary } from './screens/vocabulary.js';
 import { createStudyStore } from './lib/study-storage.js';
+import { createTextStore } from './lib/texts.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
@@ -79,6 +80,7 @@ const wordStore = createWordStore(backend, { initialWords: INITIAL_WORDS });
 const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
 const studyStore = createStudyStore(backend);
+const textStore = createTextStore(backend);
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
@@ -86,7 +88,7 @@ initVocabulary({ store: wordStore, synth })
   .then(() => initStudy({ wordStore, studyStore, synth }))
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
-    initHome({ wordStore, studyStore, backend }),
+    textStore.load().then(() => initHome({ wordStore, studyStore, textStore, backend })),
   ]));
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.

@@ -1,6 +1,6 @@
 // Inicio: guardar y restaurar la copia de seguridad completa.
 // Restaurar reemplaza todo tras confirmar; después la app se recarga para leer los datos nuevos.
-import { buildBackup, backupFileName, readBackup, restoreBackup, MAX_BACKUP_BYTES } from '../lib/backup.js';
+import { buildBackup, backupFileName, readBackup, restoreBackup, restoreWarning, MAX_BACKUP_BYTES } from '../lib/backup.js';
 import { MESSAGES, storageMessage, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -11,9 +11,12 @@ const dayOf = (iso) => {
   const d = new Date(iso);
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 };
-// «160 palabras, 98 tarjetas estudiadas y 1234 respuestas»
-const contents = ({ words, cards, answers }) => `${count(words, 'palabra', 'palabras')}, `
-  + `${count(cards, 'tarjeta estudiada', 'tarjetas estudiadas')} y ${count(answers, 'respuesta', 'respuestas')}`;
+// «160 palabras, 98 tarjetas estudiadas, 1234 respuestas y 3 historias» (sin historias si no se conocen)
+const contents = ({ words, cards, answers, texts }) => {
+  const parts = [count(words, 'palabra', 'palabras'), count(cards, 'tarjeta estudiada', 'tarjetas estudiadas'), count(answers, 'respuesta', 'respuestas')];
+  if (typeof texts === 'number') parts.push(count(texts, 'historia', 'historias'));
+  return `${parts.slice(0, -1).join(', ')} y ${parts.at(-1)}`;
+};
 
 function textEl(tag, text) {
   const node = document.createElement(tag);
@@ -21,7 +24,7 @@ function textEl(tag, text) {
   return node;
 }
 
-export function initHome({ wordStore, studyStore, backend, now = () => new Date() }) {
+export function initHome({ wordStore, studyStore, textStore, backend, now = () => new Date() }) {
   const notice = $('#home-notice');
   const status = $('#home-status');
   const fileInput = $('#backup-file');
@@ -41,14 +44,14 @@ export function initHome({ wordStore, studyStore, backend, now = () => new Date(
   }
   const current = () => {
     const { cards, history, settings } = studyStore.getState();
-    return { words: wordStore.getWords(), study: { cards, history, settings } };
+    return { words: wordStore.getWords(), texts: textStore.getTexts(), study: { cards, history, settings } };
   };
 
   // --- Guardar copia ---
   $('#backup-save').addEventListener('click', () => {
     clearMessages();
-    const { words, study } = current();
-    const text = buildBackup({ words, study, now: now() });
+    const { words, study, texts } = current();
+    const text = buildBackup({ words, study, texts, now: now() });
     // Solo se descarga una copia que se pueda restaurar
     if (readBackup(text).fatal) {
       showNotice(MESSAGES.backupUnverified);
@@ -91,12 +94,11 @@ export function initHome({ wordStore, studyStore, backend, now = () => new Date(
       return;
     }
     pending = read.backup;
-    const { words, study } = current();
-    const mine = { words: words.length, cards: Object.keys(study.cards).length, answers: study.history.length };
+    const { words, study, texts } = current();
+    const mine = { words: words.length, cards: Object.keys(study.cards).length, answers: study.history.length, texts: read.backup.texts && texts.length };
     $('#restore-title').textContent = `¿Restaurar la copia del ${dayOf(read.summary.createdAt)}?`;
     $('.restore-text', dialog).textContent = `La copia tiene ${contents(read.summary)}.\n`
-      + `Tus datos actuales: ${contents(mine)}. Se reemplazarán y no se puede deshacer. `
-      + 'Si quieres conservarlos, guarda antes una copia.';
+      + `Tus datos actuales: ${contents(mine)}. ${restoreWarning(read.backup)}`;
     confirmButton.disabled = false;
     dialog.showModal();
   });
