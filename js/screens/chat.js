@@ -121,6 +121,12 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore, 
   const codeError = $('#chat-code-error');
   const listenFirstInput = $('#chat-listen-first');
 
+  // Enlace «Ir a tu mensaje»: salta las palabras del registro sin cambiar la dirección de la página
+  $('#screen-chat .skip-link').addEventListener('click', (event) => {
+    event.preventDefault();
+    field.focus();
+  });
+
   let { level, turns } = store.load();
   let sending = false;
   let beforeSend = () => {};

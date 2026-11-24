@@ -178,6 +178,13 @@ test('Quiz tiene la pregunta con progreso, tarjeta, opciones y campo de respuest
   assert.match(quiz, /<button type="button"[^>]*id="quiz-skip"[^>]*>No lo sé<\/button>/);
 });
 
+test('Conversar tiene un enlace para saltar al mensaje, antes del registro', () => {
+  const link = chat.indexOf('href="#chat-message"');
+  assert.ok(link !== -1, 'falta el enlace a #chat-message');
+  assert.match(chat.slice(link - 40, link + 120), /class="skip-link"[^>]*>Ir a tu mensaje<\/a>/);
+  assert.ok(link < chat.indexOf('id="chat-log"'), 'el enlace debe ir antes de #chat-log');
+});
+
 test('Quiz tiene la respuesta inmediata y el resumen', () => {
   assert.ok(tagWithId(quiz, 'quiz-feedback'), 'falta #quiz-feedback');
   assert.match(tagWithId(quiz, 'quiz-feedback-title') ?? '', /tabindex="-1"/);
