@@ -1,0 +1,13 @@
+{
+  "name": "app-frances-chat",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "vars": {
+    "AI_PROVIDER": "claude",
+    "AI_MODEL": "claude-haiku-5-5",
+    "AI_EFFORT": "low",
+    "DAILY_LIMIT": "100",
+    "ALLOWED_ORIGINS": "https://joakil255.github.io,http://127.0.0.1:8000"
+  },
+  "kv_namespaces": [{ "binding": "CHAT_KV", "id": "REEMPLAZAR_EN_TAREA_9" }]
+}
