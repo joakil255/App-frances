@@ -5,6 +5,7 @@ export const SCREENS = [
   { id: 'study', path: 'estudiar', title: 'Estudiar' },
   { id: 'quiz', path: 'quiz', title: 'Quiz' },
   { id: 'progress', path: 'progreso', title: 'Progreso' },
+  { id: 'chat', path: 'conversar', title: 'Conversar' },
 ];
 
 // Convierte location.hash en el id de una pantalla.

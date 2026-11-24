@@ -46,6 +46,7 @@ const PRECACHE_URLS = [
   'js/screens/quiz.js',
   'js/screens/progress.js',
   'js/screens/home.js',
+  'js/screens/chat.js',
   'js/data/initial-words.js',
   'js/update.js',
   'data/a1-deck.json',

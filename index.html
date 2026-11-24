@@ -25,6 +25,7 @@
         <li><a class="nav-link line-study" href="#/estudiar"><span class="line-dot" aria-hidden="true"></span>Estudiar</a></li>
         <li><a class="nav-link line-quiz" href="#/quiz"><span class="line-dot" aria-hidden="true"></span>Quiz</a></li>
         <li><a class="nav-link line-progress" href="#/progreso"><span class="line-dot" aria-hidden="true"></span>Progreso</a></li>
+        <li><a class="nav-link line-chat" href="#/conversar"><span class="line-dot" aria-hidden="true"></span>Conversar</a></li>
       </ul>
     </nav>
 
@@ -303,6 +304,37 @@
           <p id="progress-mastered-none" class="hint" hidden>Cuando repases una palabra y su próximo repaso quede a 14 días o más, aparecerá aquí.</p>
         </div>
       </section>
+
+      <!-- Conversar: los mensajes se pintan con textContent desde js/screens/chat.js -->
+      <section id="screen-chat" class="screen line-chat" hidden>
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Conversar</h1>
+        <div id="chat-notice" class="notice" role="alert" hidden></div>
+
+        <div class="chat-tools">
+          <fieldset class="field chat-level">
+            <legend>Nivel de francés</legend>
+            <div class="segmented">
+              <input type="radio" name="level" value="A1.1" id="chat-level-a11"><label for="chat-level-a11">A1.1</label>
+              <input type="radio" name="level" value="A1.2" id="chat-level-a12"><label for="chat-level-a12">A1.2</label>
+            </div>
+          </fieldset>
+          <button type="button" class="button button-secondary" id="chat-new" hidden>Conversación nueva</button>
+        </div>
+
+        <p id="chat-empty" class="empty">Aquí verás tu conversación con Claude en francés. Bajo cada mensaje tuyo aparecerán tus errores corregidos.</p>
+        <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-label="Conversación"></div>
+
+        <form id="chat-form" class="chat-form" novalidate>
+          <div class="field">
+            <label for="chat-message">Tu mensaje en francés</label>
+            <textarea id="chat-message" name="message" rows="3" lang="fr" autocapitalize="sentences" autocorrect="off" spellcheck="false" maxlength="500" aria-describedby="chat-message-help chat-message-error"></textarea>
+            <p class="hint chat-help" id="chat-message-help">Hasta 500 caracteres.</p>
+            <p class="field-error" id="chat-message-error" hidden></p>
+          </div>
+          <button type="submit" class="button button-primary chat-send" id="chat-send">Enviar</button>
+          <p id="chat-remaining" class="hint chat-remaining" role="status" hidden></p>
+        </form>
+      </section>
     </main>
   </div>
 
@@ -432,6 +464,32 @@
       <button type="button" class="button button-secondary" data-format="json">Exportar JSON</button>
       <button type="button" class="button button-primary" data-format="csv">Exportar CSV</button>
     </div>
+  </dialog>
+
+  <!-- Ventanas de la pantalla Conversar -->
+  <dialog id="chat-confirm-new" class="dialog" aria-labelledby="chat-new-title">
+    <h2 id="chat-new-title" class="dialog-title">¿Empezar una conversación nueva?</h2>
+    <p>Se borrará esta conversación. No se puede deshacer.</p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Borrar conversación</button>
+    </div>
+  </dialog>
+
+  <dialog id="chat-code" class="dialog" aria-labelledby="chat-code-title">
+    <form method="dialog" novalidate>
+      <h2 id="chat-code-title" class="dialog-title">Código de acceso</h2>
+      <p>Escribe el código que guardaste al configurar el servidor. Se queda guardado solo en este dispositivo.</p>
+      <div class="field">
+        <label for="chat-code-input">Código de acceso</label>
+        <input type="password" id="chat-code-input" name="code" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="chat-code-error">
+        <p class="field-error" id="chat-code-error" role="alert" hidden></p>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+        <button type="submit" class="button button-primary">Guardar y enviar</button>
+      </div>
+    </form>
   </dialog>
 
   <!-- Ventana de la pantalla Estudiar -->

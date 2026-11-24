@@ -10,6 +10,8 @@ import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
 import { initHome } from './screens/home.js';
+import { createChatStore } from './lib/chat.js';
+import { initChat } from './screens/chat.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -76,6 +78,14 @@ initVocabulary({ store: wordStore, synth })
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
     initHome({ wordStore, studyStore, backend }),
   ]));
+
+// Conversar no depende de las palabras ni del estudio
+initChat({
+  store: createChatStore(backend),
+  fetch: window.fetch.bind(window),
+  isOnline: () => navigator.onLine,
+  hostname: location.hostname,
+});
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

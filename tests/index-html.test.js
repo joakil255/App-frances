@@ -271,3 +271,56 @@ test('los campos en francés del formulario no ponen mayúsculas ni corrigen al 
     assert.ok(example.includes(attr), `#form-example-fr sin ${attr}`);
   }
 });
+
+// --- Pantalla Conversar (Etapa 8) ---
+const chat = html.match(/<section id="screen-chat"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+test('Conversar tiene aviso, registro de mensajes anunciable y mensajes restantes', () => {
+  assert.match(chat, /<div id="chat-notice" class="notice" role="alert" hidden><\/div>/);
+  const log = tagWithId(chat, 'chat-log');
+  assert.ok(log, 'falta #chat-log');
+  assert.ok(log.includes('aria-live="polite"'), '#chat-log sin aria-live="polite"');
+  const remaining = tagWithId(chat, 'chat-remaining');
+  assert.ok(remaining, 'falta #chat-remaining');
+  assert.ok(remaining.includes('role="status"'), '#chat-remaining sin role="status"');
+  assert.ok(remaining.includes('hidden'), '#chat-remaining debe empezar oculto');
+});
+
+test('Conversar tiene el campo del mensaje en francés y el botón Enviar', () => {
+  const field = tagWithId(chat, 'chat-message');
+  assert.ok(field, 'falta #chat-message');
+  for (const attr of ['lang="fr"', 'autocapitalize="sentences"', 'autocorrect="off"', 'spellcheck="false"', 'maxlength="500"']) {
+    assert.ok(field.includes(attr), `#chat-message sin ${attr}`);
+  }
+  assert.ok(hasLabelFor('chat-message'), 'falta label de chat-message');
+  assert.match(chat, /<button type="submit" class="button button-primary[^"]*" id="chat-send">Enviar<\/button>/);
+});
+
+test('Conversar tiene el selector de nivel A1.1 y A1.2', () => {
+  assert.match(chat, /<fieldset[\s\S]*?<legend>[^<]*Nivel[^<]*<\/legend>/);
+  for (const [value, id] of [['A1.1', 'chat-level-a11'], ['A1.2', 'chat-level-a12']]) {
+    assert.match(chat, new RegExp(`type="radio" name="level" value="${value.replace('.', '\\.')}" id="${id}"`));
+    assert.ok(new RegExp(`<label for="${id}"[^>]*>${value.replace('.', '\\.')}</label>`).test(chat), `falta label de ${id}`);
+  }
+});
+
+test('Conversar tiene «Conversación nueva» con su ventana de confirmación', () => {
+  assert.match(chat, /<button type="button" class="button button-secondary" id="chat-new"[^>]*>Conversación nueva<\/button>/);
+  const dialog = html.match(/<dialog id="chat-confirm-new" class="dialog" aria-labelledby="chat-new-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta #chat-confirm-new');
+  assert.match(dialog, /<h2 id="chat-new-title" class="dialog-title">[^<]+<\/h2>/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">[^<]+<\/button>/);
+});
+
+test('la ventana del código de acceso tiene su campo con etiqueta', () => {
+  const dialog = html.match(/<dialog id="chat-code" class="dialog" aria-labelledby="chat-code-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta #chat-code');
+  assert.match(dialog, /<h2 id="chat-code-title" class="dialog-title">Código de acceso<\/h2>/);
+  const input = tagWithId(dialog, 'chat-code-input');
+  assert.ok(input, 'falta #chat-code-input');
+  for (const attr of ['type="password"', 'autocomplete="off"']) assert.ok(input.includes(attr), `#chat-code-input sin ${attr}`);
+  assert.ok(hasLabelFor('chat-code-input'), 'falta label de chat-code-input');
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="submit" class="button button-primary">[^<]+<\/button>/);
+});
