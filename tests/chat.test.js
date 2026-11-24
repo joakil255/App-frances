@@ -50,6 +50,11 @@ test('chatUrl usa la dirección de producción en cualquier otro sitio', () => {
   assert.equal(chatUrl('joakil255.github.io'), PRODUCTION_CHAT_URL);
 });
 
+test('la dirección de producción es el Worker publicado, con HTTPS y la ruta /chat', () => {
+  assert.equal(PRODUCTION_CHAT_URL, 'https://app-frances-chat.app-frances-chat.workers.dev/chat');
+  assert.match(PRODUCTION_CHAT_URL, /^https:\/\/[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev\/chat$/);
+});
+
 test('el almacén guarda y lee la conversación', () => {
   const backend = new MemoryStorage();
   const store = createChatStore(backend);

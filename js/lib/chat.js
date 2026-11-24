@@ -5,7 +5,7 @@ import { toStorageError } from './storage.js';
 export const CHAT_KEY = 'app-frances-chat';
 export const CHAT_CODE_KEY = 'app-frances-chat-code';
 export const MAX_MESSAGE = 500;
-export const PRODUCTION_CHAT_URL = ''; // se completa al publicar el Worker (Tarea 9)
+export const PRODUCTION_CHAT_URL = 'https://app-frances-chat.app-frances-chat.workers.dev/chat'; // Worker publicado
 
 const SCHEMA_VERSION = 1;
 const LEVELS = ['A1.1', 'A1.2'];
