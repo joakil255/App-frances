@@ -106,6 +106,7 @@ const voice = initChatVoice({
   onListenStart: chat.onListenStart,
 });
 chat.setBeforeSend(() => voice.stop());
+chat.setOnBusy((busy) => voice.setBusy(busy));
 onChatShown = chat.onShow;
 if (currentId === 'chat') onChatShown();
 

@@ -179,7 +179,7 @@ Sin colores nuevos: todo usa los tokens de arriba.
 
 Sin colores nuevos: todo usa los tokens de arriba.
 
-- **Botón «Hablar»:** secundario, a la izquierda de **Enviar** en la misma fila (Enviar ocupa el resto del ancho en el móvil). Lleva 🎤 con `aria-hidden="true"`. Un toque empieza a escuchar y otro lo detiene; `aria-pressed` y el texto cambian a **Detener**. Si el navegador no reconoce voz, el botón no aparece y **Enviar** queda a lo ancho como antes.
+- **Botón «Hablar»:** secundario, a la izquierda de **Enviar** en la misma fila (Enviar ocupa el resto del ancho en el móvil). Lleva 🎤 con `aria-hidden="true"`. Un toque empieza a escuchar y otro lo detiene; `aria-pressed` y el texto cambian a **Detener**. Si el navegador no reconoce voz, el botón no aparece y **Enviar** queda a lo ancho como antes. Mientras dice «Enviando…», **Hablar** está desactivado (borde `--divider` y texto `--text-muted`, como los modos del Quiz).
 - **Escuchando (el elemento propio):** mientras escucha, el 🎤 se cambia por el **punto rosa de la línea** (14 px), como la luz de una estación. El estado nunca va solo por el color: el texto dice «Detener».
 - **Texto parcial:** una línea aparte bajo el campo que cuelga de la **línea rosa de 4 px**, como las correcciones: «Escuchando:» en Barlow 500 `--text-muted` y lo oído en Source Serif (`lang="fr"`). Solo el resultado final se agrega al campo, a continuación de lo que haya escrito.
 - **Ventana «Tu voz sale del dispositivo»:** como las de la Etapa 2; una frase sobre adónde va el audio, y **Cancelar** · **Usar el micrófono** (primario). Sale solo la primera vez. El foco vuelve a **Hablar** al cerrarla.

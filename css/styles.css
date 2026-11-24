@@ -816,6 +816,7 @@ main {
 .chat-interim span:first-child { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
 .chat-buttons { display: flex; gap: var(--space-2); }
 .chat-send { flex: 1; }
+.chat-mic:disabled { border-color: var(--divider); color: var(--text-muted); cursor: not-allowed; } /* mientras se envía */
 /* Mientras escucha, el micrófono se cambia por el punto rosa de la línea (el texto dice «Detener») */
 .chat-mic[aria-pressed="true"] .chat-mic-icon { display: none; }
 .chat-mic[aria-pressed="true"]::before {

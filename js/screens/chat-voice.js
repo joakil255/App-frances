@@ -14,13 +14,14 @@ function span(text, lang) {
 
 export function initChatVoice({ field, Recognition, isOnline, voiceStore, showNotice, clearNotice, onListenStart }) {
   // Navegador sin reconocimiento: el botón queda oculto y se escribe como siempre
-  if (!Recognition) return { stop() {} };
+  if (!Recognition) return { stop() {}, setBusy() {} };
 
   const button = $('#chat-mic');
   const label = $('.chat-mic-label', button);
   const interim = $('#chat-interim');
   const dialog = $('#chat-voice-privacy');
   let current = null; // escucha en curso: { recognition }; nunca hay dos a la vez
+  let busy = false; // mientras se envía no se escucha (lo dicho se perdería al vaciar el campo)
 
   button.hidden = false;
 
@@ -38,7 +39,7 @@ export function initChatVoice({ field, Recognition, isOnline, voiceStore, showNo
   }
 
   function begin() {
-    if (current) return;
+    if (current || busy) return;
     const session = { recognition: null };
     current = session;
     onListenStart();
@@ -115,6 +116,11 @@ export function initChatVoice({ field, Recognition, isOnline, voiceStore, showNo
       const { recognition } = current;
       finish();
       recognition?.stop();
+    },
+    // «Hablar» desactivado mientras se espera la respuesta
+    setBusy(value) {
+      busy = value;
+      button.disabled = value;
     },
   };
 }

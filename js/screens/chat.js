@@ -109,6 +109,7 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
   let { level, turns } = store.load();
   let sending = false;
   let beforeSend = () => {};
+  let onBusy = () => {}; // avisa al micrófono de que se está enviando
   let coveredCount = 0; // para dar un id único a cada texto tapado
 
   // --- Avisos ---
@@ -162,6 +163,7 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
     field.readOnly = busy;
     newButton.disabled = busy;
     for (const input of levelInputs) input.disabled = busy;
+    onBusy(busy);
   }
 
   async function send() {
@@ -317,6 +319,9 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
     },
     setBeforeSend(fn) {
       beforeSend = fn;
+    },
+    setOnBusy(fn) {
+      onBusy = fn;
     },
     showNotice,
     clearNotice,
