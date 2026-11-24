@@ -324,3 +324,12 @@ test('la ventana del código de acceso tiene su campo con etiqueta', () => {
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
   assert.match(dialog, /<button type="submit" class="button button-primary">[^<]+<\/button>/);
 });
+
+// --- Conversar: voz (Etapa 9) ---
+test('Conversar tiene el interruptor «Escuchar primero» en las herramientas', () => {
+  const tools = chat.match(/<div class="chat-tools">([\s\S]*?)<\/div>\s*<p id="chat-empty"/)?.[1] ?? '';
+  const toggle = tagWithId(tools, 'chat-listen-first');
+  assert.ok(toggle, 'falta #chat-listen-first en .chat-tools');
+  assert.ok(toggle.startsWith('<input') && toggle.includes('type="checkbox"'), '#chat-listen-first debe ser una casilla');
+  assert.match(tools, /<label for="chat-listen-first"[^>]*>Escuchar primero<\/label>/);
+});

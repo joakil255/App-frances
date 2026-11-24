@@ -12,6 +12,7 @@ import { initProgress } from './screens/progress.js';
 import { initHome } from './screens/home.js';
 import { createChatStore } from './lib/chat.js';
 import { initChat } from './screens/chat.js';
+import { createVoiceStore } from './lib/voice-settings.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -87,6 +88,8 @@ const chat = initChat({
   fetch: window.fetch.bind(window),
   isOnline: () => navigator.onLine,
   hostname: location.hostname,
+  synth,
+  voiceStore: createVoiceStore(backend),
 });
 onChatShown = chat.onShow;
 if (currentId === 'chat') onChatShown();

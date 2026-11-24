@@ -24,9 +24,11 @@ export async function hasFrenchVoice(synth) {
 
 // Lee «text» con la mejor voz francesa. Si no se puede, explica por qué en «notice».
 // showAccent: avisar también si la voz es francesa pero no de Francia.
-export async function playFrench({ synth, text: phrase, rate, notice, showAccent = false }) {
+// onFail: se llama una vez si no se pudo leer (sin voz del sistema, sin voz francesa o fallo del motor).
+export async function playFrench({ synth, text: phrase, rate, notice, showAccent = false, onFail = () => {} }) {
   if (!synth) {
     show(notice, text('strong', MESSAGES.noSpeech.title), text('span', ` ${MESSAGES.noSpeech.text}`));
+    onFail();
     return;
   }
   voicesPromise ||= loadVoices(synth);
@@ -34,6 +36,7 @@ export async function playFrench({ synth, text: phrase, rate, notice, showAccent
   if (!choice) {
     voicesPromise = null; // quizá se instale una voz; se vuelve a buscar la próxima vez
     show(notice, text('strong', MESSAGES.noFrenchVoice.title), text('span', ` ${MESSAGES.noFrenchVoice.text}`));
+    onFail();
     return;
   }
   if (!choice.exact && showAccent) {
@@ -41,8 +44,11 @@ export async function playFrench({ synth, text: phrase, rate, notice, showAccent
   }
   speak(synth, choice.voice, phrase, rate, {
     // El motor de voz del teléfono falló: se avisa en vez de quedarse en silencio
-    onError: (code) => show(notice,
-      text('strong', MESSAGES.voiceFailed.title),
-      text('span', ` ${MESSAGES.voiceFailed.text} (Error: ${code}.)`)),
+    onError: (code) => {
+      show(notice,
+        text('strong', MESSAGES.voiceFailed.title),
+        text('span', ` ${MESSAGES.voiceFailed.text} (Error: ${code}.)`));
+      onFail();
+    },
   });
 }
