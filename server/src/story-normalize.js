@@ -3,16 +3,18 @@ import { straighten } from './lookup-validate.js';
 
 const MAX_TITLE = 80;
 const MAX_BODY_LETTERS = 3000;
-const MIN_WORDS = 80;
-const MAX_WORDS = 300;
-const MIN_SENTENCES = 4;
+export const MIN_WORDS = 80;
+export const MAX_WORDS = 300;
+export const MIN_SENTENCES = 4;
 const QUESTIONS = 4;
 
 const isText = (value) => typeof value === 'string' && value.trim() !== '';
 // HTML: cualquier <etiqueta>. Markdown: ** __ ` y líneas que empiezan con #, - o *
-const HAS_MARKUP = /<\/?[a-z!][^>]*>|\*\*|__|`|^\s*(#|[-*]\s)/im;
+export const HAS_MARKUP = /<\/?[a-z!][^>]*>|\*\*|__|`|^\s*(#|[-*]\s)/im;
 // Frases: trozos que terminan en . ! ? o … (varios signos seguidos cuentan como un final)
-const countSentences = (text) => text.split(/[.!?…]+/).filter((part) => /\p{L}/u.test(part)).length;
+export const countSentences = (text) => text.split(/[.!?…]+/).filter((part) => /\p{L}/u.test(part)).length;
+
+export const countWords = (text) => text.trim().split(/\s+/).length;
 
 // Valida la historia que devuelve Claude; si algo no cumple lanza bad_output
 export function normalizeStory(raw) {
@@ -21,12 +23,18 @@ export function normalizeStory(raw) {
   const { title, body, questions } = raw;
   if (!isText(title) || [...title].length > MAX_TITLE || HAS_MARKUP.test(title)) throw bad();
   if (!isText(body) || [...body].length > MAX_BODY_LETTERS || HAS_MARKUP.test(body)) throw bad();
-  const words = body.trim().split(/\s+/).length;
+  const words = countWords(body);
   if (words < MIN_WORDS || words > MAX_WORDS || countSentences(body) < MIN_SENTENCES) throw bad();
+  return { title, body, questions: cleanQuestions(questions, body) };
+}
+
+// Valida las preguntas contra el texto; si algo no cumple lanza bad_output
+export function cleanQuestions(questions, body) {
+  const bad = () => new ProviderError('bad_output');
   if (!Array.isArray(questions) || questions.length !== QUESTIONS) throw bad();
 
   const text = straighten(body);
-  const clean = questions.map((item) => {
+  return questions.map((item) => {
     if (item === null || typeof item !== 'object') throw bad();
     const { question, options, answer, explanation, evidence } = item;
     if (!isText(question) || !isText(explanation) || !isText(evidence)) throw bad();
@@ -36,5 +44,4 @@ export function normalizeStory(raw) {
     if (!text.includes(straighten(evidence.trim()))) throw bad();
     return { question, options, answer, explanation, evidence };
   });
-  return { title, body, questions: clean };
 }

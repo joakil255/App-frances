@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClaudeAdapter } from '../src/providers/claude.js';
 import { PROVIDERS } from '../src/providers/index.js';
-import { buildSystemPrompt, buildLookupPrompt, LOOKUP_SCHEMA } from '../src/prompt.js';
+import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, LOOKUP_SCHEMA, STORY_SCHEMA } from '../src/prompt.js';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -166,4 +166,93 @@ test('lookup: refusal es refused y max_tokens es bad_output', async () => {
 test('el esquema de consulta lista todo en required y permite gender null', () => {
   assert.equal(LOOKUP_SCHEMA.additionalProperties, false);
   assert.deepEqual([...LOOKUP_SCHEMA.required].sort(), Object.keys(LOOKUP_SCHEMA.properties).sort());
+});
+
+const storyInput = { lang: 'fr', level: 'A1.2', topic: 'le marché', quizLang: 'es' };
+const storyBody = Array.from({ length: 20 }, (_, i) => `Je vois un chat ${i} dans la maison.`).join(' ');
+const goodStory = {
+  title: 'Mon chat',
+  body: storyBody,
+  questions: Array.from({ length: 4 }, () => ({
+    question: '¿Qué ve el narrador?',
+    options: ['Un gato', 'Un perro', 'Un pájaro'],
+    answer: 0,
+    explanation: 'El texto dice que ve un gato.',
+    evidence: 'Je vois un chat 3 dans la maison.',
+  })),
+};
+
+async function storyCodeOf(fetch) {
+  try {
+    await adapterWith(fetch).story(storyInput);
+  } catch (error) {
+    assert.equal(error.name, 'ProviderError');
+    return error.code;
+  }
+  assert.fail('debía fallar');
+}
+
+test('story arma la petición con el esquema, el nivel, el idioma de las preguntas y el tema', async () => {
+  let sent;
+  const fetch = async (url, init) => {
+    sent = JSON.parse(init.body);
+    return json(200, textBody(goodStory));
+  };
+  await adapterWith(fetch).story(storyInput);
+  assert.equal(sent.model, 'claude-haiku-5-5');
+  assert.equal(sent.output_config.effort, 'low');
+  assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: STORY_SCHEMA });
+  assert.equal(sent.system, buildStoryPrompt('A1.2', 'es'));
+  assert.ok(sent.system.includes('A1.2'));
+  assert.ok(sent.system.includes('español'));
+  assert.equal(sent.messages.length, 1);
+  assert.equal(sent.messages[0].role, 'user');
+  assert.ok(sent.messages[0].content.includes('le marché'));
+  assert.equal(sent.system.includes('le marché'), false);
+});
+
+test('story sin tema pide un tema libre', async () => {
+  let sent;
+  const fetch = async (url, init) => {
+    sent = JSON.parse(init.body);
+    return json(200, textBody(goodStory));
+  };
+  await adapterWith(fetch).story({ ...storyInput, topic: '' });
+  assert.equal(sent.messages[0].content.includes('undefined'), false);
+  assert.ok(sent.messages[0].content.trim().length > 0);
+});
+
+test('las instrucciones de historia cambian con el nivel y el idioma de las preguntas', () => {
+  assert.ok(buildStoryPrompt('A2', 'fr').includes('passé composé'));
+  assert.ok(buildStoryPrompt('A2', 'fr').includes('francés'));
+  assert.ok(buildStoryPrompt('A1.1', 'es').includes('A1.1'));
+  assert.equal(buildStoryPrompt('A1.1', 'es').includes('{'), false);
+});
+
+test('story normaliza una salida válida', async () => {
+  const out = await adapterWith(async () => json(200, textBody(goodStory))).story(storyInput);
+  assert.deepEqual(out, goodStory);
+});
+
+test('story rechaza una salida inválida como bad_output', async () => {
+  assert.equal(await storyCodeOf(async () => json(200, textBody({ ...goodStory, questions: [] }))), 'bad_output');
+});
+
+test('story traduce los errores HTTP igual que chat', async () => {
+  assert.equal(await storyCodeOf(async () => json(401, errBody('authentication_error'))), 'auth');
+  assert.equal(await storyCodeOf(async () => json(429, errBody('rate_limit_error'))), 'rate_limit');
+  assert.equal(await storyCodeOf(async () => json(500, errBody('api_error'))), 'unavailable');
+});
+
+test('story: refusal es refused y max_tokens es bad_output', async () => {
+  assert.equal(await storyCodeOf(async () => json(200, okBody([{ type: 'text', text: '' }], 'refusal'))), 'refused');
+  assert.equal(await storyCodeOf(async () => json(200, okBody([{ type: 'text', text: '{' }], 'max_tokens'))), 'bad_output');
+});
+
+test('el esquema de historia lista todo en required y no admite campos extra', () => {
+  assert.equal(STORY_SCHEMA.additionalProperties, false);
+  assert.deepEqual([...STORY_SCHEMA.required].sort(), Object.keys(STORY_SCHEMA.properties).sort());
+  const item = STORY_SCHEMA.properties.questions.items;
+  assert.equal(item.additionalProperties, false);
+  assert.deepEqual([...item.required].sort(), Object.keys(item.properties).sort());
 });
