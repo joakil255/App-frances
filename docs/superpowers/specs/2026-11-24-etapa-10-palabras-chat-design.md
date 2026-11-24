@@ -92,14 +92,14 @@ También se descartó meter la consulta dentro de `/chat` con una bandera: compl
 | `lemma` (nuevo) | Forma base para detectar duplicados: sin artículo, en minúsculas, NFC, con apóstrofo recto («maison», «école», «manger»). Para una expresión, la expresión entera |
 
 - El idioma propio (español) queda implícito. Agregar `nativeLang` se deja para cuando haga falta. **Decisión del diseño.**
-- `lemmaOf(fr)` (lógica pura):
+- `lemmaOf(fr, gender)` (lógica pura):
   - normaliza como `normalizeFrenchWord`;
   - pasa a minúsculas;
-  - quita **un** artículo inicial: `le `, `la `, `les `, `un `, `une `, `des ` o `l'`.
-  - Todo lo demás queda igual: «s'appeler» sigue siendo «s'appeler».
+  - **solo si la palabra tiene género** (es un sustantivo), quita **un** artículo inicial: `le `, `la `, `les `, `un `, `une `, `des ` o `l'`.
+  - Sin género queda entera: «un peu», «la plupart», «des fois» y «s'appeler» no cambian.
+  - **Regla invariable:** toda palabra guardada cumple `lemma === lemmaOf(fr, gender)`, venga de donde venga. Por eso la forma base se puede recalcular siempre (al migrar, restaurar, importar o editar en Vocabulario) y la copia de seguridad hace ida y vuelta idéntica. **Decisión del diseño** (tras la revisión del constructor).
 - **Toda palabra nueva** sale con `lang` y `lemma`, venga del formulario, del mazo A1, de una importación, de una copia restaurada o del chat.
-  - En las cuatro primeras, `lemma = lemmaOf(fr)`.
-  - Desde el chat, el `lemma` viene de la consulta.
+  - Siempre `lemma = lemmaOf(fr, gender)`. Desde el chat, `fr = baseWithArticle`, y el servidor garantiza que eso da el mismo `lemma` que devolvió la consulta.
 - **Duplicados:**
   - El formulario, la importación y el mazo **no cambian**: siguen comparando `duplicateKey(fr)`. Así «le livre» y «la livre» se pueden tener las dos. **Decisión del diseño.**
   - **Guardar desde el chat** se bloquea si alguna palabra del mismo `lang` tiene el mismo `lemma` **o** la misma `duplicateKey(fr)`.
@@ -107,7 +107,7 @@ También se descartó meter la consulta dentro de `/chat` con una bandera: compl
 ### Migración v1 → v2 (al abrir la app)
 - Si el documento guardado tiene `schemaVersion` 1, o no la tiene, se migra **una vez**:
   1. se copia el texto original intacto en `app-frances-v1-<fecha ISO>`;
-  2. a cada palabra se le agregan `lang: 'fr'` y `lemma: lemmaOf(fr)`;
+  2. a cada palabra se le agregan `lang: 'fr'` y `lemma: lemmaOf(fr, gender)`;
   3. se guarda con `schemaVersion: 2`.
 - **Si guardar falla** (por ejemplo, sin espacio), la app sigue con los datos v1 en memoria, migrados solo en memoria, y muestra el aviso de almacenamiento. Lo guardado no cambia.
 - Las tarjetas de repaso usan el `id` de la palabra, así que **no cambian**.
@@ -133,30 +133,33 @@ También se descartó meter la consulta dentro de `/chat` con una bandera: compl
 - **Adaptador:** el contrato suma `lookup({ lang, word, sentence })`. Claude lo implementa con salida estructurada (Haiku 5.5, esfuerzo `low`), con los mismos errores normalizados que `chat`.
 - **Salida validada en el servidor:**
   `{ contextTranslation, lemma, lemmaTranslation, partOfSpeech, gender, baseWithArticle, sentenceTranslation }`
-  - `partOfSpeech` ∈ `noun`, `verb`, `adjective`, `adverb`, `pronoun`, `article`, `preposition`, `conjunction`, `number`, `interjection`, `expression`, `other`.
+  - `partOfSpeech` ∈ `noun`, `proper_noun`, `verb`, `adjective`, `adverb`, `pronoun`, `article`, `preposition`, `conjunction`, `number`, `interjection`, `expression`, `other`.
   - `gender` ∈ `m`, `f`, `null`.
-  - **Sustantivo:**
-    - exige `gender` y un `baseWithArticle` que empiece por `le `, `la ` o `l'` y termine en `lemma`;
+  - **Sustantivo (`noun`):**
+    - exige `gender` (`m` o `f`) y un `baseWithArticle` que sea `le `, `la `, `les ` o `l'` seguido del `lemma`;
     - `le` exige `m` y `la` exige `f`;
-    - con `l'` vale cualquier género, como en «le héros».
-  - **Otros tipos:** `gender: null` y `baseWithArticle` igual a `lemma`.
-  - El `lemma` se normaliza como `lemmaOf`.
+    - con `l'` o `les` vale cualquiera de los dos. Así caben «l'école», «le héros» y los sustantivos que solo se usan en plural, como «les vacances» o «les gens».
+  - **Nombre propio (`proper_noun`):** «Paris», «Marie». `gender: null` y `baseWithArticle` igual a la palabra con su mayúscula; el `lemma` va en minúsculas.
+  - **Otros tipos:** `gender: null` y `baseWithArticle` igual al `lemma`. Una expresión («un peu») es su propio `lemma`.
+  - El servidor solo normaliza el `lemma` (minúsculas, NFC, apóstrofo recto). **Nunca le quita artículos.** Comprueba que `lemmaOf(baseWithArticle, gender)` dé ese mismo `lemma`.
   - Si algo no cumple: `bad_output`.
 - **Respuesta 200:** la salida más `remainingLookups`.
 - **Instrucciones y prueba real:** las instrucciones de consulta se escriben y ajustan con una prueba real de 10 casos (`server/eval/`), con permiso, por menos de un centavo. Casos:
 
-  | Palabra | Frase | Qué pone a prueba |
-  |---|---|---|
-  | manges | Tu manges souvent ? | Verbo conjugado |
-  | école | Je vais à l'école. | Sustantivo tras elisión |
-  | chats | J'ai deux chats. | Plural |
-  | petite | une petite maison | Adjetivo femenino |
-  | vais | Je vais bien. | Verbo irregular |
-  | au | Je vais au marché. | Contracción |
-  | est | Qu'est-ce que c'est ? | Verbo en expresión |
-  | souvent | Tu manges souvent ? | Adverbio |
-  | livre | Le livre est sur la table. | Homógrafo |
-  | belle | Elle est belle. | Adjetivo irregular |
+  | Palabra | Frase | Forma base esperada | Tipo | Qué pone a prueba |
+  |---|---|---|---|---|
+  | manges | Tu manges souvent ? | manger | verb | Verbo conjugado |
+  | école | Je vais à l'école. | école («l'école», f) | noun | Sustantivo tras elisión |
+  | chats | J'ai deux chats. | chat («le chat», m) | noun | Plural |
+  | petite | une petite maison | petit | adjective | Adjetivo femenino |
+  | vais | Je vais bien. | aller | verb | Verbo irregular |
+  | au | Je vais au marché. | au | preposition | Contracción (se guarda «au», que traduce «al / a la») |
+  | est | Qu'est-ce que c'est ? | être | verb | Verbo dentro de una expresión (se consulta la palabra, no la expresión) |
+  | souvent | Tu manges souvent ? | souvent | adverb | Adverbio |
+  | livre | Le livre est sur la table. | livre («le livre», m) | noun | Homógrafo: el contexto elige «el libro» |
+  | vacances | Je suis en vacances. | vacances («les vacances», f) | noun | Sustantivo solo plural |
+
+  **Criterio para publicar:** forma base y tipo correctos en al menos **9 de 10**, cero respuestas rechazadas por el esquema, y la traducción en contexto revisada a mano. Si no se cumple, se ajustan las instrucciones y se repite, hasta 3 veces; si sigue sin cumplirse, se le consulta al usuario antes de publicar. **Decisión del diseño** (tras la revisión del constructor).
 
   Costo estimado: unos $0,0001 por consulta; con 200 al día, unos $0,60 al mes como máximo.
 
@@ -225,8 +228,10 @@ También se descartó meter la consulta dentro de `/chat` con una bandera: compl
 - El formulario sigue permitiendo «le livre» y «la livre».
 
 **`lemmaOf`**
-- Cada artículo, `l'` recto y tipográfico.
-- Una expresión, «s'appeler», texto vacío, NFC.
+- Con género: cada artículo, y `l'` recto y tipográfico.
+- Sin género: «un peu», «la plupart» y «s'appeler» quedan enteras.
+- Texto vacío y NFC.
+- La regla invariable `lemma === lemmaOf(fr, gender)` se cumple tras migrar, importar, restaurar, editar y guardar desde el chat.
 
 **Migración**
 - De v1 a v2 agrega `lang` y `lemma` sin cambiar ningún otro campo ni ningún `id`.
@@ -258,7 +263,7 @@ También se descartó meter la consulta dentro de `/chat` con una bandera: compl
 **Recorrido:** a 360 y 1280 px, con teclado, y la prueba final en el teléfono.
 
 ## Límites conocidos
-- La forma base calculada en la migración, quitando el artículo, puede no ser la verdadera forma base para una palabra vieja que no es sustantivo. Solo hace que un duplicado no se detecte.
+- En las palabras viejas que no son sustantivos, la forma base es la palabra tal como está escrita. Si alguna estaba conjugada («mange» en vez de «manger»), su duplicado no se detecta.
 - Dos palabras distintas que se escriben igual («le livre» / «la livre») cuentan como duplicado al guardar desde el chat.
 - La calidad de la traducción depende de Claude; la prueba de 10 casos la mide.
 
