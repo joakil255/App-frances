@@ -13,6 +13,8 @@ import { initHome } from './screens/home.js';
 import { createChatStore } from './lib/chat.js';
 import { initChat } from './screens/chat.js';
 import { createVoiceStore } from './lib/voice-settings.js';
+import { getRecognitionConstructor } from './lib/recognition.js';
+import { initChatVoice } from './screens/chat-voice.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -83,14 +85,27 @@ initVocabulary({ store: wordStore, synth })
   ]));
 
 // Conversar no depende de las palabras ni del estudio
+const isOnline = () => navigator.onLine;
+const voiceStore = createVoiceStore(backend);
 const chat = initChat({
   store: createChatStore(backend),
   fetch: window.fetch.bind(window),
-  isOnline: () => navigator.onLine,
+  isOnline,
   hostname: location.hostname,
   synth,
-  voiceStore: createVoiceStore(backend),
+  voiceStore,
 });
+// Micrófono: solo si el navegador reconoce voz; enviar lo detiene
+const voice = initChatVoice({
+  field: document.querySelector('#chat-message'),
+  Recognition: getRecognitionConstructor(window),
+  isOnline,
+  voiceStore,
+  showNotice: chat.showNotice,
+  clearNotice: chat.clearNotice,
+  onListenStart: chat.onListenStart,
+});
+chat.setBeforeSend(() => voice.stop());
 onChatShown = chat.onShow;
 if (currentId === 'chat') onChatShown();
 

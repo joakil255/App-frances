@@ -333,3 +333,26 @@ test('Conversar tiene el interruptor «Escuchar primero» en las herramientas', 
   assert.ok(toggle.startsWith('<input') && toggle.includes('type="checkbox"'), '#chat-listen-first debe ser una casilla');
   assert.match(tools, /<label for="chat-listen-first"[^>]*>Escuchar primero<\/label>/);
 });
+
+test('Conversar tiene el botón «Hablar», oculto hasta saber si hay reconocimiento', () => {
+  const mic = chat.match(/<button [^>]*id="chat-mic"[^>]*>([\s\S]*?)<\/button>/);
+  assert.ok(mic, 'falta #chat-mic');
+  for (const attr of ['type="button"', 'aria-pressed="false"', 'hidden']) assert.ok(mic[0].includes(attr), `#chat-mic sin ${attr}`);
+  assert.match(mic[1], />Hablar</);
+});
+
+test('Conversar tiene la línea del texto parcial, anunciable y oculta', () => {
+  const interim = tagWithId(chat, 'chat-interim');
+  assert.ok(interim, 'falta #chat-interim');
+  for (const attr of ['aria-live="polite"', 'hidden']) assert.ok(interim.includes(attr), `#chat-interim sin ${attr}`);
+});
+
+test('la ventana del aviso de privacidad tiene título, texto y los dos botones', () => {
+  const dialog = html.match(/<dialog id="chat-voice-privacy" class="dialog" aria-labelledby="chat-voice-privacy-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta #chat-voice-privacy');
+  assert.match(dialog, /<h2 id="chat-voice-privacy-title" class="dialog-title">Tu voz sale del dispositivo<\/h2>/);
+  assert.ok(dialog.includes('<p>Para convertir tu voz en texto, el navegador envía el audio a su servicio de reconocimiento. En Chrome para Android es probablemente Google. Solo se envía mientras el micrófono está activo, y la app no guarda el audio.</p>'),
+    'falta el texto exacto del aviso');
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-primary" data-action="confirm">Usar el micrófono<\/button>/);
+});

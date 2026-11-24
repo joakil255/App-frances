@@ -806,7 +806,25 @@ main {
 .chat-form { margin-top: var(--space-5); }
 .chat-form textarea { min-height: 96px; resize: vertical; line-height: 1.4; }
 .chat-help { margin: var(--space-1) 0 0; }
-.chat-send { width: 100%; }
+/* Texto parcial del micrófono: cuelga del campo sobre la línea rosa */
+.chat-interim {
+  margin: 0 0 var(--space-3) 2px;
+  padding: var(--space-1) 0 var(--space-1) var(--space-3);
+  border-left: 4px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.chat-interim span:first-child { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.chat-buttons { display: flex; gap: var(--space-2); }
+.chat-send { flex: 1; }
+/* Mientras escucha, el micrófono se cambia por el punto rosa de la línea (el texto dice «Detener») */
+.chat-mic[aria-pressed="true"] .chat-mic-icon { display: none; }
+.chat-mic[aria-pressed="true"]::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--line);
+}
 .chat-remaining { margin: var(--space-3) 0 0; font-family: var(--font-sign); font-weight: 500; }
 
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
@@ -856,7 +874,7 @@ main {
   .study-answers { grid-template-columns: repeat(4, 1fr); }
   .quiz-answer-actions { display: flex; }
   .quiz-next { width: auto; }
-  .chat-send { width: auto; }
+  .chat-send { flex: none; }
 
   .update-banner {
     left: calc(200px + var(--space-7));

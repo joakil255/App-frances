@@ -335,7 +335,11 @@
             <p class="hint chat-help" id="chat-message-help">Hasta 500 caracteres.</p>
             <p class="field-error" id="chat-message-error" hidden></p>
           </div>
-          <button type="submit" class="button button-primary chat-send" id="chat-send">Enviar</button>
+          <p id="chat-interim" class="chat-interim" aria-live="polite" hidden></p>
+          <div class="chat-buttons">
+            <button type="button" class="button button-secondary chat-mic" id="chat-mic" aria-pressed="false" hidden><span class="chat-mic-icon" aria-hidden="true">🎤</span><span class="chat-mic-label">Hablar</span></button>
+            <button type="submit" class="button button-primary chat-send" id="chat-send">Enviar</button>
+          </div>
           <p id="chat-remaining" class="hint chat-remaining" role="status" hidden></p>
         </form>
       </section>
@@ -477,6 +481,15 @@
     <div class="dialog-actions">
       <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
       <button type="button" class="button button-danger" data-action="confirm">Borrar conversación</button>
+    </div>
+  </dialog>
+
+  <dialog id="chat-voice-privacy" class="dialog" aria-labelledby="chat-voice-privacy-title">
+    <h2 id="chat-voice-privacy-title" class="dialog-title">Tu voz sale del dispositivo</h2>
+    <p>Para convertir tu voz en texto, el navegador envía el audio a su servicio de reconocimiento. En Chrome para Android es probablemente Google. Solo se envía mientras el micrófono está activo, y la app no guarda el audio.</p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-primary" data-action="confirm">Usar el micrófono</button>
     </div>
   </dialog>
 
