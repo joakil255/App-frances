@@ -23,7 +23,10 @@ export function normalizeLookup(raw) {
   if (gender !== 'm' && gender !== 'f' && gender !== null) throw bad();
 
   const lemma = clean(raw.lemma).toLowerCase();
-  const baseWithArticle = clean(raw.baseWithArticle);
+  let baseWithArticle = clean(raw.baseWithArticle);
+  // Al inicio de una frase Claude puede devolver la palabra con mayúscula: se baja a minúsculas
+  if (partOfSpeech === 'noun') baseWithArticle = baseWithArticle.replace(/^(le|la|les|l') ?/i, (article) => article.toLowerCase());
+  else if (partOfSpeech !== 'proper_noun' && baseWithArticle.toLowerCase() === lemma) baseWithArticle = lemma;
 
   if (partOfSpeech === 'noun') {
     const match = ARTICLE.exec(baseWithArticle.toLowerCase());

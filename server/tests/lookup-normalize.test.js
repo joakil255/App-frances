@@ -76,3 +76,23 @@ test('campos de más, faltantes, vacíos o de tipo malo son bad_output', () => {
   assert.throws(() => normalizeLookup(make({ gender: 'x' })), isBad);
   for (const raw of [null, [], 'x']) assert.throws(() => normalizeLookup(raw), isBad);
 });
+
+test('palabra con mayúscula al inicio de frase: sin artículo vuelve al lemma', () => {
+  const other = { gender: null };
+  const hi = normalizeLookup(make({ ...other, partOfSpeech: 'interjection', lemma: 'bonjour', baseWithArticle: 'Bonjour' }));
+  assert.equal(hi.baseWithArticle, 'bonjour');
+  const il = normalizeLookup(make({ ...other, partOfSpeech: 'pronoun', lemma: 'il', baseWithArticle: 'Il' }));
+  assert.equal(il.baseWithArticle, 'il');
+  const today = normalizeLookup(make({ ...other, partOfSpeech: 'adverb', lemma: "aujourd'hui", baseWithArticle: 'Aujourd’hui' }));
+  assert.equal(today.baseWithArticle, "aujourd'hui");
+});
+
+test('sustantivo con artículo en mayúscula: «La maison» pasa a «la maison»', () => {
+  assert.equal(normalizeLookup(make({ baseWithArticle: 'La maison' })).baseWithArticle, 'la maison');
+  assert.equal(normalizeLookup(make({ lemma: 'école', gender: 'm', baseWithArticle: "L'école" })).baseWithArticle, "l'école");
+});
+
+test('una diferencia real sigue siendo bad_output aunque haya mayúsculas', () => {
+  assert.throws(() => normalizeLookup(make({ gender: null, partOfSpeech: 'interjection', lemma: 'bonjour', baseWithArticle: 'Salut' })), isBad);
+  assert.throws(() => normalizeLookup(make({ baseWithArticle: 'Le maison' })), isBad);
+});
