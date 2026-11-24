@@ -21,6 +21,7 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - tocar una frase lee desde ahí.
 - Tocar una palabra abre la tarjeta y permite guardarla con la frase de la historia como ejemplo.
 - Aprobar o descartar una historia, y marcarla como leída.
+- **Un cuestionario de comprensión por historia,** con 4 preguntas de opción múltiple y su resultado guardado (pedido por el usuario).
 - Funcionar sin conexión con las historias ya guardadas; solo generar y consultar palabras nuevas necesita red.
 - Modelo de datos compatible con varios idiomas.
 - Pruebas automáticas.
@@ -28,7 +29,6 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 **No-objetivos**
 - LibriVox y cualquier texto o audio de terceros.
 - Voz en la nube.
-- Preguntas de comprensión.
 - Importar textos propios.
 - Editar el texto de una historia.
 - Resaltar palabra por palabra.
@@ -68,6 +68,8 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 2. **Enfoque 1:** historias de Claude con la voz del navegador, frase por frase. LibriVox y la voz en la nube quedan fuera.
 3. La biblioteca, la generación, REVISAR, el lector, los datos y el límite, como se describen abajo, aprobados como se los propuse.
 4. **Navegación:** un séptimo botón «Leer» en la barra, si cabe a 360 px con 44 px de ancho por botón. Si no cabe, se le muestran alternativas antes de seguir.
+5. **Cuestionarios de comprensión** («para comprobar que se hayan entendido»), como se describen en «App: cuestionario».
+6. **Idioma de las preguntas a elección del usuario**, al pedir cada historia: Español o Francés. La app recuerda la última elección y la primera vez viene marcado Español. Se descartó cambiar el idioma dentro del lector, porque exigiría escribir las preguntas en los dos idiomas.
 
 ## Enfoques considerados
 
@@ -92,6 +94,8 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 | `readAt` | Fecha ISO en que se marcó como leído, o `null` |
 | `source` | `{ kind: 'generated', name: 'Claude (Anthropic)', license: 'Historia original generada para uso personal' }`. `kind` deja lugar a otros orígenes en el futuro (`'own'`, `'public-domain'`…), cada uno con su licencia obligatoria. **Decisión del diseño** |
 | `topic` | El tema pedido, o `''` |
+| `quiz` | `{ lang: 'es' \| 'fr', questions: [{ question, options: [texto ×3 o 4], answer: índice, explanation, evidence }] }`. Siempre son 4 preguntas. `explanation` va en español. `evidence` es la frase exacta de `body` que tiene la respuesta |
+| `quizResult` | `{ correct, total, at }` del último intento, o `null` |
 | `createdAt`, `updatedAt` | Fechas ISO |
 
 - **Validación** (`validateText`):
@@ -100,7 +104,9 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - `title` de 1 a 80 letras;
   - `body` de 1 a 3000 letras;
   - `status` en la lista;
-  - `source.license` no vacío.
+  - `source.license` no vacío;
+  - `quiz` con 4 preguntas; cada una con 3 o 4 opciones distintas, `answer` válido y `evidence` contenida en `body`;
+  - `quizResult` nulo o con números válidos.
 - Si el almacén está dañado, se copia aparte y empieza vacío, como el de palabras.
 - **Copia de seguridad, versión 3:** incluye `texts`. Lee las versiones 1, 2 y 3, y al restaurar valida cada texto.
   - **Restaurar una v3** reemplaza las historias, igual que reemplaza las palabras. Las tres claves se escriben juntas y, si una falla, se deshace todo.
@@ -109,22 +115,24 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 
 ### Servidor: ruta `POST /story`
 - Mismo Worker, código de acceso, origen y CORS.
-- **Cuerpo:** `{ lang: 'fr', level, topic }`. `topic` tiene de 0 a 60 letras, sin saltos de línea. Si no cumple: 400 `invalid_input`.
+- **Cuerpo:** `{ lang: 'fr', level, topic, quizLang }`, con `quizLang` ∈ `['es', 'fr']`. `topic` tiene de 0 a 60 letras, sin saltos de línea. Si no cumple: 400 `invalid_input`.
 - **Contador aparte:** clave KV `story:AAAA-MM-DD` y `STORY_LIMIT=5`. Se reserva antes de llamar al proveedor; al llegar al tope responde 429 `story_limit`. No toca los otros contadores.
-- **Adaptador:** `story({ lang, level, topic })`, con salida estructurada (Haiku 5.5, esfuerzo `low`). La salida es `{ title, body }`.
+- **Adaptador:** `story({ lang, level, topic, quizLang })`, con salida estructurada (Haiku 5.5, esfuerzo `low`). La salida es `{ title, body, questions }`: la historia y sus 4 preguntas salen en una sola petición, que cuenta una vez en el límite.
 - **Validación de la salida en el servidor:**
   - `title` de 1 a 80 letras;
   - `body` de 80 a 300 palabras y como máximo 3000 letras;
   - al menos 4 frases;
-  - sin etiquetas HTML ni Markdown.
+  - sin etiquetas HTML ni Markdown;
+  - 4 preguntas; cada una con 3 o 4 opciones distintas, un `answer` dentro del rango, `explanation` no vacía y `evidence` que aparece tal cual en `body` (sin distinguir mayúsculas ni tipo de apóstrofo).
   - Si algo no cumple: `bad_output`.
 - **Instrucciones**, en español, pidiendo una historia en francés:
   - para un hispanohablante del nivel pedido, con frases cortas y vocabulario frecuente;
   - presente y passé composé solo en `A2`;
   - género y concordancia correctos;
   - sin datos personales reales;
-  - sobre el tema, si lo hay.
-- **Prueba real, con permiso:** generar 3 historias (una por nivel) y comprobar con código la longitud, el número de frases y la ausencia de etiquetas. Las revisa a mano el controlador, que marca las dudas con REVISAR. **No se publica si alguna falla la validación.**
+  - sobre el tema, si lo hay;
+  - 4 preguntas de comprensión en el idioma `quizLang`, que se respondan con el texto, con una sola opción correcta y distractores creíbles, y la explicación en español.
+- **Prueba real, con permiso:** generar 3 historias (una por nivel, con preguntas en español en dos y en francés en una) y comprobar con código la longitud, el número de frases, la ausencia de etiquetas y las preguntas (cantidad, una sola correcta, `evidence` en el texto). Las revisa a mano el controlador, que marca las dudas con REVISAR. **No se publica si alguna falla la validación.**
 
 ### App: biblioteca
 - Pantalla **«Leer»** (`#/leer`), séptimo botón de la barra (decisión 4).
@@ -133,9 +141,10 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - el título;
   - el nivel;
   - la marca **REVISAR** (con texto, no solo color) o nada;
-  - «Leída» si `readAt` existe.
+  - «Leída» si `readAt` existe;
+  - «Preguntas: 3/4» si hay `quizResult`.
 - **Botón «Nueva historia»:**
-  - abre una ventana con el nivel (por defecto `A1.2`) y un tema opcional;
+  - abre una ventana con el nivel (por defecto `A1.2`), un tema opcional y **«Preguntas en: Español / Francés»** (recuerda la última elección; la primera vez, Español);
   - al enviar muestra «Escribiendo…»;
   - si funciona, guarda el texto con `status: 'review'` y lo abre en el lector;
   - los errores usan el catálogo (`chatMessage`) más el mensaje nuevo `story_limit`;
@@ -171,6 +180,16 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - las consultas cuentan en el límite de 200 de la Etapa 10.
 - **La tarjeta de palabras se generaliza:** `refresh(root)` subraya dentro del contenedor que se le pase (chat o lector), sin depender de `#chat-log`.
 
+### App: cuestionario
+- En el lector, debajo del texto: **«¿Lo entendiste? Responder 4 preguntas»**.
+- Una pregunta por vez: «1/4», la pregunta y sus opciones como botones de radio con etiqueta.
+- **«Comprobar»** dice si es correcta («Correcto.» o «No es correcta. La respuesta es: …»), muestra la explicación en español y **resalta en el texto la frase `evidence`**. Después viene **«Siguiente»**.
+- Al final: «Resultado: X de 4», con **«Volver a intentar»**. Se guarda `quizResult` con la fecha; repetir lo reemplaza.
+- Funciona sin conexión.
+- Mientras la historia está en REVISAR, el cuestionario se puede hacer, pero muestra la misma marca, porque las preguntas también son de Claude.
+- No se mezcla con la pantalla Quiz, que repasa el vocabulario.
+- Lógica pura y probada: `createReadingQuiz(quiz)` → `{ current(), answer(i), next(), result() }`.
+
 ### Mensajes nuevos
 - `story_limit`: «Llegaste al límite de historias de hoy.» / «Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.»
 - Los textos de la biblioteca y del lector van en el plan.
@@ -193,6 +212,13 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 - Normalización y rechazo de salidas: muy corta, muy larga, con HTML, con menos de 4 frases.
 - Adaptador `story` con un `fetch` falso.
 
+**Cuestionario**
+- `createReadingQuiz`: avanza, puntúa y da el resultado.
+- No deja responder dos veces la misma pregunta.
+- Valida `evidence` y el rango de `answer`.
+- `quizResult` se guarda y se reemplaza.
+- El servidor rechaza preguntas con opciones repetidas, `answer` fuera de rango o `evidence` que no está en el texto.
+
 **Reproductor**, con un `speechSynthesis` falso:
 - recorre las frases en orden;
 - `pause` espera al fin de la frase;
@@ -213,7 +239,7 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 **Recorrido** a 360 y 1280 px, en modo claro y oscuro, con un servidor falso, y la prueba final en el teléfono.
 
 ## Estimación de tiempo
-- **Programar y revisar con agentes:** unas **5 a 7 horas** de trabajo. Comparado con la Etapa 10, que tuvo 6 tareas con su revisión: aquí son 7 tareas, y la pantalla es más grande. Puede necesitar **dos sesiones**, porque en la Etapa 10 se agotó una vez el límite de uso.
+- **Programar y revisar con agentes:** unas **6 a 8 horas** de trabajo (los cuestionarios suman cerca de una hora). Comparado con la Etapa 10, que tuvo 6 tareas con su revisión: aquí son 7 tareas, y la pantalla es más grande. Puede necesitar **dos sesiones**, porque en la Etapa 10 se agotó una vez el límite de uso.
 - **Tu tiempo:** unos 20 a 30 minutos. Lo usas en:
   - aprobar el plan;
   - dar permiso para la prueba real (3 historias, menos de un centavo);
