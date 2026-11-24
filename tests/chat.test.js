@@ -236,3 +236,19 @@ test('el texto con <script> se conserva tal cual', async () => {
   store.save({ level: 'A1.2', turns: next });
   assert.equal(store.load().turns[1].text, evil);
 });
+
+test('sendChat con un tiempo agotado devuelve unavailable', async () => {
+  const fetch = async () => {
+    throw new DOMException('timeout', 'TimeoutError');
+  };
+  assert.deepEqual(await send(fetch), { ok: false, error: 'unavailable' });
+});
+
+test('sendChat pasa una señal de tiempo límite a fetch', async () => {
+  let signal;
+  await send(async (_url, init) => {
+    signal = init.signal;
+    return { ok: true, json: async () => ({ reply: 'x', corrections: [], remaining: 1 }) };
+  });
+  assert.ok(signal instanceof AbortSignal);
+});

@@ -77,7 +77,8 @@ export function buildRequestBody({ level, turns, message }) {
 }
 
 // Nunca lanza: devuelve { ok: true, reply, corrections, remaining } o { ok: false, error }
-export async function sendChat({ url, code, body, fetch, isOnline }) {
+// El Worker puede reintentar a Claude hasta 3 × 30 s: el navegador espera un poco más
+export async function sendChat({ url, code, body, fetch, isOnline, timeoutMs = 100000 }) {
   if (!isOnline) return { ok: false, error: 'offline' };
 
   let response;
@@ -86,8 +87,10 @@ export async function sendChat({ url, code, body, fetch, isOnline }) {
       method: 'POST',
       headers: { Authorization: `Bearer ${code}`, 'content-type': 'application/json' },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(timeoutMs),
     });
-  } catch {
+  } catch (error) {
+    if (error?.name === 'TimeoutError' || error?.name === 'AbortError') return { ok: false, error: 'unavailable' };
     return { ok: false, error: 'network' };
   }
 

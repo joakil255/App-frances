@@ -240,4 +240,11 @@ export function initChat({ store, fetch, isOnline, hostname }) {
   });
 
   renderAll();
+
+  // Al abrir la pantalla, si aún no hay código se pide (si se cancela, se vuelve a pedir al enviar)
+  return {
+    onShow() {
+      if (!store.loadCode() && !codeDialog.open) openCodeDialog('');
+    },
+  };
 }
