@@ -214,7 +214,7 @@ Todos los comandos se escriben **dentro de la carpeta `server/`** (`cd server`).
 
 1. Crea una cuenta gratuita en Cloudflare.
 2. Conecta Wrangler con tu cuenta: `npx wrangler login` (abre el navegador para autorizar).
-3. Crea el almacén del contador: `npx wrangler kv namespace create CHAT_KV`. Copia el `id` que muestra en `server/wrangler.jsonc`, en lugar de `REEMPLAZAR_EN_TAREA_9`. No es secreto.
+3. Crea el almacén del contador: `npx wrangler kv namespace create CHAT_KV`. Wrangler ofrece escribir el `id` en `server/wrangler.jsonc` (campo `id` de `kv_namespaces`); si no lo hace, cópialo tú ahí. No es secreto.
 4. Publica: `npx wrangler deploy`. Al final muestra la dirección `https://app-frances-chat.<tu-subdominio>.workers.dev`. Esa dirección, terminada en `/chat`, va en `PRODUCTION_CHAT_URL` de `js/lib/chat.js`.
 5. Guarda la clave de Anthropic sin pegarla en ningún archivo:
    `tr -d '[:space:]' < ~/.config/app-frances/anthropic.key | npx wrangler secret put ANTHROPIC_API_KEY`
