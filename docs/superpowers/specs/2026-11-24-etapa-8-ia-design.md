@@ -1,6 +1,6 @@
 # Etapa 8 — Conversación con IA: diseño (BORRADOR, pendiente de aprobación)
 
-> **Estado:** borrador. No hay código. Falta que el usuario apruebe el proveedor inicial, el alojamiento, el modelo, el límite diario y las dependencias. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
+> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Falta que el usuario apruebe el alojamiento, el modelo, el límite diario y las dependencias. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
 
 **Intención.** Practicar francés A1 conversando: la IA responde en francés sencillo y, al final de cada turno, corrige los errores del usuario con una explicación en español.
 
@@ -74,9 +74,14 @@ PWA (GitHub Pages)  ──HTTPS──►  Servidor pequeño  ──►  proveedo
 - App: sin conexión → aviso «Necesitas conexión para conversar»; cada error normalizado → su mensaje del catálogo.
 - Seguridad: la prueba existente se amplía para impedir claves con forma conocida (`sk-ant-`, `AIza`, `gsk_`…) en el repositorio.
 
+## Decisiones tomadas
+
+- **Proveedor y modelo inicial: Claude Haiku 5.5** (`claude-haiku-5-5`), elegido por el usuario («prefiero las IAs de Anthropic, solo Haiku para abaratar»). Precio verificado: $0,10 / $0,50 por millón de piezas; ≈ $0,36 al mes con 30 mensajes diarios. Esfuerzo propuesto: `low` (el razonamiento se paga como salida), a confirmar con la prueba de las 10 frases.
+- Se descartaron por ahora Gemini (su plan gratuito usa los datos para entrenar y permite revisión humana), Mistral (precio verificado para Small 4, pero límites y conservación de datos sin verificar) y Ollama (privado y gratis, pero exige el computador encendido y corrige peor con la tarjeta disponible).
+
 ## Decisiones pendientes del usuario
 
-1. Proveedor inicial (recomendado: Claude).
+1. ~~Proveedor inicial~~ → Claude Haiku 5.5. **¿Se mantiene el adaptador intercambiable** (solo con el de Claude implementado) o se simplifica a Claude directamente?
 2. Alojamiento (recomendado antes: Cloudflare Workers).
 3. Modelo inicial, tras la prueba de las 10 frases.
 4. Límite diario de mensajes (propuesto: 30).
