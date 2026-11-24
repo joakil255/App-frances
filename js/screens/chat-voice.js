@@ -58,8 +58,8 @@ export function initChatVoice({ field, Recognition, isOnline, voiceStore, showNo
         }),
         // Se agrega al texto que hay en el campo ahora (puedes escribir mientras escucha)
         onFinal: own((text) => {
+          // Sin mover el foco: así no se abre el teclado del teléfono tras hablar
           field.value = appendTranscript(field.value, text);
-          field.focus();
         }),
         // Tras un error el navegador puede no avisar del final: se reinicia aquí
         onError: own((code) => {
@@ -110,12 +110,12 @@ export function initChatVoice({ field, Recognition, isOnline, voiceStore, showNo
   dialog.addEventListener('close', () => button.focus());
 
   return {
-    // Al enviar: se corta la escucha y lo que llegue después se descarta
+    // Descarta la escucha (enviar, salir de la pantalla, leer en voz alta): nada más se agrega al campo
     stop() {
       if (!current) return;
       const { recognition } = current;
       finish();
-      recognition?.stop();
+      recognition?.abort();
     },
     // «Hablar» desactivado mientras se espera la respuesta
     setBusy(value) {

@@ -109,6 +109,7 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
   let { level, turns } = store.load();
   let sending = false;
   let beforeSend = () => {};
+  let beforeSpeak = () => {};
   let onBusy = () => {}; // avisa al micrófono de que se está enviando
   let coveredCount = 0; // para dar un id único a cada texto tapado
 
@@ -142,7 +143,11 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
   }
 
   // --- Escuchar ---
-  const listen = (text, rate, onFail) => playFrench({ synth, text, rate, notice, onFail });
+  // Antes de leer en voz alta se descarta la escucha, para que el micrófono no oiga a la app
+  const listen = (text, rate, onFail) => {
+    beforeSpeak();
+    return playFrench({ synth, text, rate, notice, onFail });
+  };
 
   // --- Conversación ---
   // Las respuestas del historial se muestran siempre
@@ -319,6 +324,9 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
     },
     setBeforeSend(fn) {
       beforeSend = fn;
+    },
+    setBeforeSpeak(fn) {
+      beforeSpeak = fn;
     },
     setOnBusy(fn) {
       onBusy = fn;
