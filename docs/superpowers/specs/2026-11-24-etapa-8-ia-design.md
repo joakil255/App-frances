@@ -78,17 +78,8 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedo
 
 - **Proveedor y modelo inicial: Claude Haiku 5.5** (`claude-haiku-5-5`), elegido por el usuario («prefiero las IAs de Anthropic, solo Haiku para abaratar»). Precio verificado: $0,10 / $0,50 por millón de piezas; ≈ $0,36 al mes con 30 mensajes diarios. Esfuerzo propuesto: `low` (el razonamiento se paga como salida), a confirmar con la prueba de las 10 frases.
 - Se descartaron por ahora Gemini (su plan gratuito usa los datos para entrenar y permite revisión humana), Mistral (precio verificado para Small 4, pero límites y conservación de datos sin verificar) y Ollama (privado y gratis, pero exige el computador encendido y corrige peor con la tarjeta disponible).
-
-## Decisiones pendientes del usuario
-
-1. ~~Proveedor inicial~~ → Claude Haiku 5.5. ~~Adaptador~~ → **se mantiene el adaptador intercambiable, con solo el de Claude implementado** (elegido por el usuario); Gemini, Mistral y Groq quedan como adaptadores futuros.
-2. ~~Alojamiento~~ → **Cloudflare Workers + KV** (ver «Decisiones tomadas»).
-3. Modelo inicial, tras la prueba de las 10 frases.
-4. ~~Límite diario~~ → **100 mensajes** (ver «Decisiones tomadas»).
-5. ~~Dependencias~~ → **`@anthropic-ai/sdk` + Wrangler** (ver «Decisiones tomadas»). Adaptadores futuros (Gemini, Mistral, Groq): su dependencia se decidirá cuando se añadan.
-6. Permiso para enviar los mensajes del chat (y las 10 frases de la prueba) al proveedor elegido.
 - **Alojamiento: Cloudflare Workers, con el contador diario en Workers KV** (elegido por el usuario, 23/11/2026). Documentación oficial consultada ese día:
-  - Plan gratuito de Workers: 100.000 peticiones al día; al pasarse devuelve un error (1027) y no cobra. 10 ms de CPU por petición (**por confirmar** que la espera a la respuesta del proveedor no cuenta como CPU).
+  - Plan gratuito de Workers: 100.000 peticiones al día; al pasarse devuelve un error (1027) y no cobra. 10 ms de CPU por petición (la espera a la respuesta del proveedor no cuenta; ver «Dependencias»).
   - KV gratuito: 100.000 lecturas y 1000 escrituras al día; al pasarse, la operación falla con error. Uso esperado: unas 100 escrituras al día.
   - No se pudo confirmar en esas páginas si la cuenta pide tarjeta, ni la consistencia de KV.
   - **Enfoques considerados:** (A) Workers + KV: el más simple; con mensajes casi simultáneos el contador podría contar uno de menos, un riesgo aceptable con un solo usuario y el tope de gasto de Anthropic. **Elegido.** (B) Workers + Durable Objects: contador exacto y también gratis, pero con más código y configuración para un caso que casi no ocurre. (C) Deno Deploy: **descartado**, porque cierra en abril de 2027 (aviso en su página de precios).
@@ -98,3 +89,12 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedo
   - `wrangler` 4.167.0 (MIT o Apache-2.0), solo de desarrollo: pruebas locales con KV simulado, `wrangler secret put` para guardar la clave sin archivos y `wrangler deploy` para publicar.
   - Confirmado en la documentación de Cloudflare: la espera de red (`fetch`, KV) **no** cuenta para los 10 ms de CPU; el Worker debe iniciar en menos de 1 s, y su tamaño máximo es de 64 MiB sin comprimir (plan gratuito).
   - **Enfoques considerados:** (1) SDK + Wrangler: **elegido**. (2) `fetch` + Wrangler: una dependencia menos, pero hay que rehacer a mano los reintentos y los errores. (3) `fetch` + pegar el código en el panel web: ninguna dependencia, pero el código publicado puede quedar distinto del repositorio y no se puede probar el servidor completo en local.
+
+## Decisiones pendientes del usuario
+
+1. ~~Proveedor inicial~~ → Claude Haiku 5.5. ~~Adaptador~~ → **se mantiene el adaptador intercambiable, con solo el de Claude implementado** (elegido por el usuario); Gemini, Mistral y Groq quedan como adaptadores futuros.
+2. ~~Alojamiento~~ → **Cloudflare Workers + KV** (ver «Decisiones tomadas»).
+3. Modelo inicial, tras la prueba de las 10 frases.
+4. ~~Límite diario~~ → **100 mensajes** (ver «Decisiones tomadas»).
+5. ~~Dependencias~~ → **`@anthropic-ai/sdk` + Wrangler** (ver «Decisiones tomadas»). Adaptadores futuros (Gemini, Mistral, Groq): su dependencia se decidirá cuando se añadan.
+6. Permiso para enviar los mensajes del chat (y las 10 frases de la prueba) al proveedor elegido.
