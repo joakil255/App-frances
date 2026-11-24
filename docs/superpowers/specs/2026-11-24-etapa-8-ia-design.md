@@ -1,6 +1,6 @@
 # Etapa 8 — Conversación con IA: diseño (BORRADOR, pendiente de aprobación)
 
-> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Falta que el usuario apruebe el alojamiento, el modelo, el límite diario y las dependencias. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
+> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Alojamiento: Cloudflare Workers + KV. Límite diario: 100 mensajes. Falta confirmar el modelo (prueba de las 10 frases), aprobar las dependencias y dar permiso para enviar datos. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
 
 **Intención.** Practicar francés A1 conversando: la IA responde en francés sencillo y, al final de cada turno, corrige los errores del usuario con una explicación en español.
 
@@ -11,9 +11,9 @@
 ## Arquitectura
 
 ```
-PWA (GitHub Pages)  ──HTTPS──►  Servidor pequeño  ──►  proveedor elegido (AI_PROVIDER)
+PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedor elegido (AI_PROVIDER)
   sin claves                    · código de acceso       Claude | Gemini | Mistral | Groq
-  código de acceso local        · límite diario
+  código de acceso local        · límite diario (contador en KV)
                                 · instrucciones de práctica (nivel A1.1–A1.2)
                                 · adaptador → respuesta normalizada
 ```
@@ -30,7 +30,7 @@ PWA (GitHub Pages)  ──HTTPS──►  Servidor pequeño  ──►  proveedo
 **Protección del servidor:**
 1. Código de acceso personal (cadena larga y aleatoria; secreto `ACCESS_CODE`, comparación en tiempo constante).
 2. Solo peticiones desde el origen `https://joakil255.github.io` (complemento, no barrera).
-3. Límite diario de mensajes (`DAILY_LIMIT`, por defecto propuesto 30), contado en el servidor por fecha de Chile (`America/Santiago`).
+3. Límite diario de mensajes (`DAILY_LIMIT`, por defecto **100**), contado en el servidor por fecha de Chile (`America/Santiago`) y guardado en Workers KV (clave por fecha, p. ej. `count:2026-11-23`). Al alcanzarlo, la app muestra en español que se llegó al límite de hoy.
 4. Límite de gasto en la consola de cada proveedor que lo permita.
 
 **Datos:** los mensajes del chat se envían al proveedor elegido; el usuario debe aprobarlo al aprobar esta etapa. La conversación se guarda solo en el teléfono (como el resto de la app) y no forma parte de la copia de seguridad salvo decisión posterior.
@@ -82,8 +82,14 @@ PWA (GitHub Pages)  ──HTTPS──►  Servidor pequeño  ──►  proveedo
 ## Decisiones pendientes del usuario
 
 1. ~~Proveedor inicial~~ → Claude Haiku 5.5. ~~Adaptador~~ → **se mantiene el adaptador intercambiable, con solo el de Claude implementado** (elegido por el usuario); Gemini, Mistral y Groq quedan como adaptadores futuros.
-2. Alojamiento (recomendado antes: Cloudflare Workers).
+2. ~~Alojamiento~~ → **Cloudflare Workers + KV** (ver «Decisiones tomadas»).
 3. Modelo inicial, tras la prueba de las 10 frases.
-4. Límite diario de mensajes (propuesto: 30).
-5. **Dependencias:** el adaptador de Claude usaría el SDK oficial `@anthropic-ai/sdk` (solo en el servidor). Para Gemini, Mistral y Groq: SDK oficial de cada uno (`@google/genai`, `@mistralai/mistralai`, `groq-sdk`) o llamadas `fetch` directas sin dependencias. Cada dependencia necesita aprobación (CLAUDE.md).
+4. ~~Límite diario~~ → **100 mensajes** (ver «Decisiones tomadas»).
+5. **Dependencias:** el adaptador de Claude usaría el SDK oficial `@anthropic-ai/sdk` (solo en el servidor). Para publicar el Worker: **Wrangler** (herramienta oficial de Cloudflare, solo de desarrollo); alternativa sin dependencia: pegar el código en el panel web de Cloudflare. Para Gemini, Mistral y Groq: SDK oficial de cada uno (`@google/genai`, `@mistralai/mistralai`, `groq-sdk`) o llamadas `fetch` directas sin dependencias. Cada dependencia necesita aprobación (CLAUDE.md).
 6. Permiso para enviar los mensajes del chat (y las 10 frases de la prueba) al proveedor elegido.
+- **Alojamiento: Cloudflare Workers, con el contador diario en Workers KV** (elegido por el usuario, 23/11/2026). Documentación oficial consultada ese día:
+  - Plan gratuito de Workers: 100.000 peticiones al día; al pasarse devuelve un error (1027) y no cobra. 10 ms de CPU por petición (**por confirmar** que la espera a la respuesta del proveedor no cuenta como CPU).
+  - KV gratuito: 100.000 lecturas y 1000 escrituras al día; al pasarse, la operación falla con error. Uso esperado: unas 100 escrituras al día.
+  - No se pudo confirmar en esas páginas si la cuenta pide tarjeta, ni la consistencia de KV.
+  - **Enfoques considerados:** (A) Workers + KV: el más simple; con mensajes casi simultáneos el contador podría contar uno de menos, un riesgo aceptable con un solo usuario y el tope de gasto de Anthropic. **Elegido.** (B) Workers + Durable Objects: contador exacto y también gratis, pero con más código y configuración para un caso que casi no ocurre. (C) Deno Deploy: **descartado**, porque cierra en abril de 2027 (aviso en su página de precios).
+- **Límite diario: 100 mensajes** (elegido por el usuario: unos 20 minutos un día normal y hasta una hora un día con ganas). Gasto máximo estimado con Haiku 5.5: unos $1,20 al mes (≈ $0,0004 por mensaje).
