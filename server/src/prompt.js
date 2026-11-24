@@ -56,7 +56,7 @@ Campos de la salida:
 
 Reglas:
 - Las contracciones au, aux, du y des son "preposition" y su forma base es ella misma (au → au).
-- Un nombre propio es "proper_noun", sin género (null) y "lemma" y "baseWithArticle" son el mismo nombre en minúsculas.
+- Un nombre propio es "proper_noun", sin género (null) "lemma" en minúsculas y "baseWithArticle" el nombre con su mayúscula ("Paris").
 - Si la palabra forma parte de una expresión, explica solo la palabra consultada.
 - Elige el significado que pide el contexto de la frase.`;
 
