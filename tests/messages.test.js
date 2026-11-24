@@ -196,3 +196,11 @@ test('las pantallas no repiten los textos del catálogo', () => {
     }
   }
 });
+
+test('storyLimit tiene su texto exacto y story_limit lo usa', () => {
+  assert.deepEqual(MESSAGES.storyLimit, {
+    title: 'Llegaste al límite de historias de hoy.',
+    text: 'Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.',
+  });
+  assert.deepEqual(chatMessage('story_limit'), MESSAGES.storyLimit);
+});

@@ -122,3 +122,14 @@ test('cortar una lectura con otra (interrupted o canceled) no es un error para e
   utterance.onerror({ error: 'canceled' });
   assert.deepEqual(errors, []);
 });
+
+test('speak llama a onStart y onEnd de la frase', () => {
+  const spoken = [];
+  const synth = { cancel() {}, speak(u) { spoken.push(u); } };
+  class U { constructor(text) { this.text = text; } }
+  const calls = [];
+  speak(synth, null, 'Salut', 1, { Utterance: U, onStart: () => calls.push('start'), onEnd: () => calls.push('end') });
+  spoken[0].onstart();
+  spoken[0].onend();
+  assert.deepEqual(calls, ['start', 'end']);
+});

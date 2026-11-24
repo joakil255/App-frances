@@ -20,7 +20,7 @@ export const GENERATED_SOURCE = {
 };
 
 // Misma comparación que el servidor: sin mayúsculas y con apóstrofos tipográficos como '
-const evidenceKey = (value) => normalizeText(value).toLowerCase().replace(/[’‘]/g, "'");
+export const evidenceKey = (value) => normalizeText(value).toLowerCase().replace(/[’‘]/g, "'");
 
 const letters = (value) => [...normalizeText(value)].length;
 const isString = (value) => typeof value === 'string';

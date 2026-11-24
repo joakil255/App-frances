@@ -75,7 +75,7 @@ export function findInVocabulary(words, { lang, lemma, fr }) {
 }
 
 // Entrada para saveWord. El ejemplo va solo si la frase y su traducción caben en 200
-export function wordFromLookup(result, sentence) {
+export function wordFromLookup(result, sentence, { category = 'Conversación', needsReview = false } = {}) {
   const exampleFr = normalizeText(sentence);
   const exampleEs = normalizeText(result.sentenceTranslation);
   const fits = exampleFr.length <= MAX_EXAMPLE && exampleEs.length <= MAX_EXAMPLE;
@@ -86,8 +86,8 @@ export function wordFromLookup(result, sentence) {
     gender: result.gender,
     exampleFr: fits ? exampleFr : '',
     exampleEs: fits ? exampleEs : '',
-    category: 'Conversación',
-    needsReview: false,
+    category,
+    needsReview,
   };
 }
 
