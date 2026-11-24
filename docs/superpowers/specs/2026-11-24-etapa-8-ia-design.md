@@ -81,7 +81,7 @@ PWA (GitHub Pages)  ──HTTPS──►  Servidor pequeño  ──►  proveedo
 
 ## Decisiones pendientes del usuario
 
-1. ~~Proveedor inicial~~ → Claude Haiku 5.5. **¿Se mantiene el adaptador intercambiable** (solo con el de Claude implementado) o se simplifica a Claude directamente?
+1. ~~Proveedor inicial~~ → Claude Haiku 5.5. ~~Adaptador~~ → **se mantiene el adaptador intercambiable, con solo el de Claude implementado** (elegido por el usuario); Gemini, Mistral y Groq quedan como adaptadores futuros.
 2. Alojamiento (recomendado antes: Cloudflare Workers).
 3. Modelo inicial, tras la prueba de las 10 frases.
 4. Límite diario de mensajes (propuesto: 30).
