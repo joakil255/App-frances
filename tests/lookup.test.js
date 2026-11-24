@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  tokenize, lookupUrl, sendLookup, resolveLookup, findInVocabulary, wordFromLookup, isSavedToken,
+  tokenize, lookupUrl, sendLookup, resolveLookup, findInVocabulary, wordFromLookup, isSavedToken, isSavedTokenIn,
 } from '../js/lib/lookup.js';
 import { PRODUCTION_CHAT_URL } from '../js/lib/chat.js';
 import { createLookupCache } from '../js/lib/lookup-cache.js';
@@ -257,4 +257,13 @@ test('isSavedToken no escribe nada en el almacenamiento', () => {
   backend.writes = 0;
   assert.equal(isSavedToken(VOCAB, cache, 'fr', 'manges', 's'), true);
   assert.equal(backend.writes, 0);
+});
+
+test('isSavedTokenIn: igual que isSavedToken pero con el conjunto de lemmas ya hecho', () => {
+  const lemmas = new Set(VOCAB.map((word) => word.lemma));
+  const cacheWith = (result) => ({ peek: () => result });
+  assert.equal(isSavedTokenIn(lemmas, cacheWith(null), 'fr', 'Manger', 's'), true);
+  assert.equal(isSavedTokenIn(lemmas, cacheWith(null), 'fr', 'manges', 's'), false);
+  assert.equal(isSavedTokenIn(lemmas, cacheWith({ lemma: 'manger' }), 'fr', 'manges', 's'), true);
+  assert.equal(isSavedTokenIn(new Set(['']), { peek: () => ({ lemma: '' }) }, 'fr', "'", 's'), false);
 });

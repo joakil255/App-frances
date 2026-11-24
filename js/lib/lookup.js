@@ -93,6 +93,12 @@ export function wordFromLookup(result, sentence) {
 
 // ¿La palabra tocada ya está guardada? Por ella misma o por la forma base de su consulta en caché
 export function isSavedToken(words, cache, lang, word, sentence) {
+  const savedLemmas = new Set(words.filter((saved) => saved.lang === lang).map((saved) => saved.lemma));
+  return isSavedTokenIn(savedLemmas, cache, lang, word, sentence);
+}
+
+// Igual, pero con el conjunto de lemmas guardados ya armado (para revisar muchas palabras seguidas)
+export function isSavedTokenIn(savedLemmas, cache, lang, word, sentence) {
   const lemmas = [lemmaOf(word, null), lemmaOf(cache.peek(lang, word, sentence)?.lemma ?? '', null)];
-  return words.some((saved) => saved.lang === lang && saved.lemma !== '' && lemmas.includes(saved.lemma));
+  return lemmas.some((lemma) => lemma !== '' && savedLemmas.has(lemma));
 }

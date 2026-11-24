@@ -1,6 +1,6 @@
 // Tarjeta de una palabra de Claude en Conversar: qué significa en la frase, su forma base,
 // escucharla y guardarla en el vocabulario. Todo se pinta con textContent.
-import { lookupUrl, sendLookup, resolveLookup, findInVocabulary, wordFromLookup, isSavedToken } from '../lib/lookup.js';
+import { lookupUrl, sendLookup, resolveLookup, findInVocabulary, wordFromLookup, isSavedTokenIn } from '../lib/lookup.js';
 import { chatMessage, storageMessage } from '../lib/messages.js';
 import { StorageError } from '../lib/storage.js';
 import { RATES } from '../lib/speech.js';
@@ -57,7 +57,9 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
     notice.replaceChildren();
   }
   // La zona de estado nunca se oculta (si no, el lector de pantalla puede no anunciarla): solo cambia su texto
-  function setStatus(text) {
+  // Con el resultado la zona queda oculta a la vista (el texto ya se ve en la tarjeta) pero se anuncia
+  function setStatus(text, onlyAnnounce = false) {
+    status.classList.toggle('visually-hidden', onlyAnnounce);
     status.textContent = text;
   }
 
@@ -74,9 +76,8 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
   const inVocabulary = (result) => findInVocabulary(wordStore.getWords(), { lang: LANG, lemma: result.lemma, fr: result.baseWithArticle });
 
   function showResult(result) {
-    const isNoun = result.partOfSpeech === 'noun';
     field('context').textContent = result.contextTranslation;
-    field('base').textContent = isNoun ? result.baseWithArticle : result.lemma;
+    field('base').textContent = result.baseWithArticle;
     field('base-es').textContent = result.lemmaTranslation;
     field('type').textContent = PART_OF_SPEECH[result.partOfSpeech] ?? PART_OF_SPEECH.other;
     field('gender').textContent = GENDER[result.gender] ?? '';
@@ -107,11 +108,12 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
 
     const outcome = await resolveLookup({ cache, lang: LANG, word: token.word, sentence: token.sentence, isOnline: isOnline(), send });
     if (id !== request) return;
-    setStatus('');
     if (!outcome.ok) {
+      setStatus('');
       showMessage(chatMessage(outcome.error));
       return;
     }
+    setStatus(outcome.result.contextTranslation, true);
     current = { token, result: outcome.result };
     showResult(outcome.result);
     refresh(); // la consulta nueva puede subrayar otras formas de una palabra guardada
@@ -144,10 +146,10 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
 
   // Subraya en todo el chat las palabras que ya están en el vocabulario (sin escribir nada al pintar)
   function refresh() {
-    const words = wordStore.getWords();
+    const savedLemmas = new Set(wordStore.getWords().filter((word) => word.lang === LANG).map((word) => word.lemma));
     for (const button of document.querySelectorAll('#chat-log .chat-word')) {
       const { word, sentence } = button.dataset;
-      const saved = isSavedToken(words, cache, LANG, word, sentence);
+      const saved = isSavedTokenIn(savedLemmas, cache, LANG, word, sentence);
       button.classList.toggle('chat-word-saved', saved);
       if (saved) button.setAttribute('aria-label', `${button.textContent}${SAVED_SUFFIX}`);
       else button.removeAttribute('aria-label');
