@@ -37,7 +37,7 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  Claude H
 - **Protección:**
   1. Código de acceso personal: cadena larga y aleatoria, comparada en tiempo constante. Si falta o no coincide, responde 401.
   2. Solo acepta el origen `https://joakil255.github.io` (CORS). Es un complemento, no una barrera. En desarrollo también se admite el origen local.
-  3. Límite diario: clave KV por fecha de Chile (`America/Santiago`), por ejemplo `count:2026-11-23`. Al alcanzar `DAILY_LIMIT` responde 429 sin llamar al proveedor. El contador sube solo cuando el proveedor respondió bien. **Decisión del diseño.**
+  3. Límite diario: clave KV por fecha de Chile (`America/Santiago`), por ejemplo `count:2026-11-23`. Al alcanzar `DAILY_LIMIT` responde 429 sin llamar al proveedor. El contador **sube antes de llamar al proveedor**, de modo que también cuentan las llamadas que fallan pero se cobran (`bad_output`, `refused`): así el límite frena también los fallos repetidos. Un mensaje fallido gasta uno de los 100. **Decisión del diseño** (cambiada tras la revisión: antes contaba solo las respuestas buenas, lo que dejaba sin tope los fallos cobrados).
   4. El usuario fija un tope de gasto bajo en la consola de Anthropic (sugerido: $5 al mes).
 - **Validación de entrada:** `level` ∈ {`A1.1`, `A1.2`}; `message` no vacío y de 500 caracteres como máximo; `history`, una lista de turnos `{ role: "user"|"assistant", text }`, recortada en el servidor a los últimos 10 turnos (20 mensajes). Si algo no cumple, responde 400. **Decisión del diseño** (cifras ajustables).
 
@@ -82,7 +82,7 @@ Esquema de salida: objeto con `reply` (texto) y `corrections` (lista de objetos 
 - **Pantalla nueva «Conversar»** (ruta `#/chat`), diseñada con la skill frontend-design y DESIGN.md: lista de mensajes; bajo cada mensaje del usuario, sus correcciones (original → corregido, con la explicación); campo de texto en francés (sin autocorrección del teclado, como en Vocabulario); botón Enviar; selector de nivel; aviso de mensajes restantes del día; botón para empezar una conversación nueva.
 - **Código de acceso:** se pide la primera vez que se abre la pantalla y se guarda en `localStorage`. No es una clave de API: solo abre el servidor propio y no da acceso a la cuenta de Anthropic.
 - **URL del servidor:** constante en el código de la app. No es secreta.
-- **Conversación:** se guarda solo en el teléfono (`localStorage`), fuera de la copia de seguridad. Todo texto del modelo o del usuario se muestra con `textContent`, nunca como HTML.
+- **Conversación:** se guarda solo en el teléfono (`localStorage`), fuera de la copia de seguridad, **sin tope de tamaño** (elegido por el usuario): se borra a mano con «Conversación nueva». Si al guardarla el navegador se queda sin espacio, la pantalla muestra el mensaje existente `storageQuota`. Todo texto del modelo o del usuario se muestra con `textContent`, nunca como HTML.
 - **Mensajes nuevos en `js/lib/messages.js`:**
   - sin conexión: «Necesitas conexión para conversar.»;
   - código de acceso incorrecto;
@@ -94,7 +94,7 @@ Esquema de salida: objeto con `reply` (texto) y `corrections` (lista de objetos 
 
 ## Prueba real: 10 frases A1
 
-Archivos `server/eval/a1-sentences.json` y `server/eval/compare.mjs` (nombres en inglés, según CLAUDE.md). El script envía cada frase al proveedor configurado y genera una tabla con cuatro preguntas: ¿encontró el error?, ¿la forma corregida es la esperada?, ¿explicó en español?, ¿inventó errores en las frases correctas? **Solo se ejecuta con permiso explícito**, porque cuesta dinero y envía las frases. La clave se lee de `~/.config/app-frances/anthropic.key` o de una variable de entorno local, nunca de un archivo del repositorio.
+Archivos `server/eval/a1-sentences.json` y `server/eval/compare.mjs` (nombres en inglés, según CLAUDE.md). El script envía cada frase al proveedor configurado y genera una tabla con cuatro preguntas: ¿encontró el error?, ¿la forma corregida es la esperada?, ¿explicó en español?, ¿inventó errores en las frases correctas? Llama **directamente al adaptador de Claude**, no al Worker publicado, y **califica sola**: la función de calificación (normalizar el texto, aceptar varias correcciones válidas, detectar correcciones inventadas) lleva pruebas automáticas. Que la explicación esté en español no se califica con código: la tabla la muestra para leerla. **Decisión del diseño.** Ejecutarla es **opcional** y **solo con permiso explícito**, porque cuesta dinero y envía las frases. La clave se lee de `~/.config/app-frances/anthropic.key` o de una variable de entorno local, nunca de un archivo del repositorio.
 
 | # | Frase del alumno | Corrección aceptada | Qué pone a prueba |
 |---|---|---|---|
@@ -135,7 +135,7 @@ Archivos `server/eval/a1-sentences.json` y `server/eval/compare.mjs` (nombres en
   - origen no permitido → 403;
   - entrada inválida → 400;
   - límite alcanzado → 429, sin llamar al proveedor;
-  - el contador sube solo si el proveedor respondió bien;
+  - el contador sube antes de llamar al proveedor, también cuando la llamada termina en `bad_output` o `refused`;
   - el cambio de día en Chile reinicia el contador (incluido el cambio de horario);
   - una configuración incompleta o un `AI_PROVIDER` desconocido dan error de configuración;
   - el historial se recorta a 10 turnos.
@@ -179,11 +179,25 @@ Archivos `server/eval/a1-sentences.json` y `server/eval/compare.mjs` (nombres en
   - Mistral: límites y conservación de datos sin verificar.
   - Ollama: privado y gratis, pero exige el computador encendido y, con la tarjeta disponible, corrige peor.
 
+## Cuándo está terminada la etapa
+
+**Con el servidor publicado y funcionando en el teléfono** (elegido por el usuario). Los pasos son:
+1. El plan se detiene a la mitad para que el usuario cree su cuenta de Cloudflare (quizás pida una tarjeta) y siga una guía para crear el espacio KV y los secretos.
+2. Se publica el Worker con `wrangler deploy`, y su dirección real queda como constante en la app.
+3. La prueba final se hace en el teléfono, con Claude de verdad (costo de centavos).
+4. **Publicar el Worker y actualizar la app en GitHub Pages (merge a `main`) requieren, cada uno, la confirmación del usuario.**
+
+## Límites conocidos
+
+- La conversación no tiene tope. Una muy larga podría llenar el espacio del navegador (unos 5 MB, compartidos con las palabras y el progreso) y hacer fallar el guardado en otras pantallas. El usuario lo aceptó.
+- Con mensajes casi simultáneos, el contador de KV podría contar uno de menos.
+- La prueba de 10 frases es una muestra pequeña.
+
 ## Lo que queda para el plan
 
 - Textos exactos de los mensajes nuevos del catálogo.
 - Diseño visual de la pantalla «Conversar», con frontend-design y DESIGN.md.
-- Pasos para el usuario: crear la cuenta de Cloudflare, el espacio KV y los secretos, y publicar con `wrangler deploy`. Publicar el Worker y la app requiere su confirmación.
+- La guía paso a paso para el usuario (cuenta de Cloudflare, KV, secretos y publicación).
 - Cómo se ejecutan las pruebas del servidor junto a las de la app (`npm test`).
 
 ## Anexo: comparación de proveedores (documentación oficial, consultada el 23/11/2026)
