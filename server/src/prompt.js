@@ -51,7 +51,7 @@ Campos de la salida:
 - "lemmaTranslation": traducción de la forma base.
 - "partOfSpeech": uno de noun, proper_noun, verb, adjective, adverb, pronoun, article, preposition, conjunction, number, interjection, expression, other.
 - "gender": "m" o "f" si es sustantivo; null en cualquier otro caso.
-- "baseWithArticle": si es sustantivo, la forma base con su artículo: le, la, l' (delante de vocal o h muda) o les (si solo se usa en plural). Si no es sustantivo, igual que "lemma".
+- "baseWithArticle": si es sustantivo, la forma base con su artículo: le, la, l' (delante de vocal o h muda) o les (si solo se usa en plural). Si no es sustantivo, igual que "lemma" (salvo los nombres propios).
 - "sentenceTranslation": traducción de la frase completa.
 
 Reglas:

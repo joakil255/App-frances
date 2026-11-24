@@ -89,7 +89,8 @@ test('palabra con mayúscula al inicio de frase: sin artículo vuelve al lemma',
 
 test('sustantivo con artículo en mayúscula: «La maison» pasa a «la maison»', () => {
   assert.equal(normalizeLookup(make({ baseWithArticle: 'La maison' })).baseWithArticle, 'la maison');
-  assert.equal(normalizeLookup(make({ lemma: 'école', gender: 'm', baseWithArticle: "L'école" })).baseWithArticle, "l'école");
+  assert.equal(normalizeLookup(make({ lemma: 'école', gender: 'f', baseWithArticle: "L'école" })).baseWithArticle, "l'école");
+  assert.equal(normalizeLookup(make({ lemma: 'gens', gender: 'f', baseWithArticle: 'LES GENS' })).baseWithArticle, 'les gens');
 });
 
 test('una diferencia real sigue siendo bad_output aunque haya mayúsculas', () => {

@@ -25,7 +25,7 @@ export function normalizeLookup(raw) {
   const lemma = clean(raw.lemma).toLowerCase();
   let baseWithArticle = clean(raw.baseWithArticle);
   // Al inicio de una frase Claude puede devolver la palabra con mayúscula: se baja a minúsculas
-  if (partOfSpeech === 'noun') baseWithArticle = baseWithArticle.replace(/^(le|la|les|l') ?/i, (article) => article.toLowerCase());
+  if (partOfSpeech === 'noun') baseWithArticle = baseWithArticle.toLowerCase();
   else if (partOfSpeech !== 'proper_noun' && baseWithArticle.toLowerCase() === lemma) baseWithArticle = lemma;
 
   if (partOfSpeech === 'noun') {
