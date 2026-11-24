@@ -204,7 +204,8 @@ test('story arma la petición con el esquema, el nivel, el idioma de las pregunt
   assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: STORY_SCHEMA });
   assert.equal(sent.system, buildStoryPrompt('A1.2', 'es'));
   assert.ok(sent.system.includes('A1.2'));
-  assert.ok(sent.system.includes('español'));
+  assert.ok(sent.system.includes('escritas en español'));
+  assert.equal(sent.system.includes('escritas en francés'), false);
   assert.equal(sent.messages.length, 1);
   assert.equal(sent.messages[0].role, 'user');
   assert.ok(sent.messages[0].content.includes('le marché'));
@@ -224,7 +225,11 @@ test('story sin tema pide un tema libre', async () => {
 
 test('las instrucciones de historia cambian con el nivel y el idioma de las preguntas', () => {
   assert.ok(buildStoryPrompt('A2', 'fr').includes('passé composé'));
-  assert.ok(buildStoryPrompt('A2', 'fr').includes('francés'));
+  assert.ok(buildStoryPrompt('A2', 'fr').includes('escritas en francés'));
+  assert.equal(buildStoryPrompt('A2', 'fr').includes('escritas en español'), false);
+  assert.ok(buildStoryPrompt('A2', 'es').includes('escritas en español'));
+  assert.equal(buildStoryPrompt('A2', 'es').includes('escritas en francés'), false);
+  assert.notEqual(buildStoryPrompt('A2', 'es'), buildStoryPrompt('A2', 'fr'));
   assert.ok(buildStoryPrompt('A1.1', 'es').includes('A1.1'));
   assert.equal(buildStoryPrompt('A1.1', 'es').includes('{'), false);
 });
