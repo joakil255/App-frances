@@ -39,3 +39,51 @@ export const OUTPUT_SCHEMA = {
   required: ['reply', 'corrections'],
   additionalProperties: false,
 };
+
+const LOOKUP_INSTRUCTIONS = `Eres un diccionario de francés para un alumno hispanohablante de nivel A1. Recibirás una palabra y la frase francesa donde aparece. Responde en español, con traducciones cortas y sencillas.
+
+Campos de la salida:
+- "contextTranslation": traducción de la palabra tal como se usa en esa frase.
+- "lemma": su forma base, en minúsculas y sin artículo:
+  - verbo: el infinitivo (manges → manger);
+  - adjetivo: el masculino singular (petite → petit);
+  - sustantivo: el singular (chats → chat), salvo que solo se use en plural (vacances).
+- "lemmaTranslation": traducción de la forma base.
+- "partOfSpeech": uno de noun, proper_noun, verb, adjective, adverb, pronoun, article, preposition, conjunction, number, interjection, expression, other.
+- "gender": "m" o "f" si es sustantivo; null en cualquier otro caso.
+- "baseWithArticle": si es sustantivo, la forma base con su artículo: le, la, l' (delante de vocal o h muda) o les (si solo se usa en plural). Si no es sustantivo, igual que "lemma" (salvo los nombres propios).
+- "sentenceTranslation": traducción de la frase completa.
+
+Reglas:
+- Las contracciones au, aux, du y des son "preposition" y su forma base es ella misma (au → au).
+- Un nombre propio es "proper_noun", sin género (null), "lemma" en minúsculas y "baseWithArticle" el nombre con su mayúscula ("Paris").
+- Si la palabra forma parte de una expresión, explica solo la palabra consultada.
+- Elige el significado que pide el contexto de la frase.`;
+
+export function buildLookupPrompt() {
+  return LOOKUP_INSTRUCTIONS;
+}
+
+export const LOOKUP_SCHEMA = {
+  type: 'object',
+  properties: {
+    contextTranslation: { type: 'string' },
+    lemma: { type: 'string' },
+    lemmaTranslation: { type: 'string' },
+    partOfSpeech: {
+      type: 'string',
+      enum: [
+        'noun', 'proper_noun', 'verb', 'adjective', 'adverb', 'pronoun', 'article',
+        'preposition', 'conjunction', 'number', 'interjection', 'expression', 'other',
+      ],
+    },
+    gender: { anyOf: [{ type: 'string', enum: ['m', 'f'] }, { type: 'null' }] },
+    baseWithArticle: { type: 'string' },
+    sentenceTranslation: { type: 'string' },
+  },
+  required: [
+    'contextTranslation', 'lemma', 'lemmaTranslation', 'partOfSpeech',
+    'gender', 'baseWithArticle', 'sentenceTranslation',
+  ],
+  additionalProperties: false,
+};

@@ -207,6 +207,18 @@ Toca **Hablar**, di tu frase en francés y toca **Detener** (o calla y se detien
 - **Necesita conexión**, como el resto de Conversar.
 - La evaluación de pronunciación (Fase 2) **no está hecha**. Más detalles en el [diseño de la Etapa 9](docs/superpowers/specs/2026-11-24-etapa-9-voz-design.md).
 
+### Consultar palabras
+
+Toca cualquier palabra de una respuesta de Claude y se abre su tarjeta: qué significa **en esa frase**, su forma base («manges» → «manger») con la traducción, el tipo de palabra y, si es un sustantivo, el artículo y el género. **🔊 Escuchar** lee la forma base.
+
+- **Guardar** la añade a tu Vocabulario (categoría «Conversación», con la frase como ejemplo si cabe en 200 letras) y entra al repaso de Estudiar como cualquier palabra nueva.
+- **Sin duplicados:** si ya tienes la palabra, aunque sea en otra forma («manges» cuando guardaste «manger», o «école» cuando tienes «l'école»), la tarjeta dice «Ya está en tu vocabulario».
+- **Subrayado:** las palabras que ya están en tu vocabulario se ven con una raya rosa debajo en todo el chat.
+- **Límite: 200 consultas al día**, contadas por el servidor aparte de los mensajes. Se reinicia a medianoche, hora de Chile.
+- **Caché:** cada consulta se guarda en el teléfono (hasta 500); la misma palabra en la misma frase no se vuelve a pedir y se puede ver **sin conexión**. Sin conexión y sin caché, la tarjeta lo avisa. La caché no entra en la copia de seguridad.
+- **Tus datos:** la palabra y su frase se envían a Anthropic, igual que tus mensajes.
+- Con «Escuchar primero», las palabras de una respuesta tapada se pueden tocar en cuanto tocas **Mostrar texto**.
+
 ## Servidor de conversación
 
 La app no guarda ninguna clave. Habla con un servidor pequeño propio (un *Worker* de Cloudflare, carpeta `server/`) que guarda la clave de Anthropic, revisa el código de acceso, cuenta los mensajes del día y llama a Claude.

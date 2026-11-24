@@ -1,0 +1,14 @@
+[
+  { "id": 1, "word": "manges", "sentence": "Tu manges souvent ?", "lemma": "manger", "partOfSpeech": "verb" },
+  { "id": 2, "word": "école", "sentence": "Je vais à l'école.", "lemma": "école", "partOfSpeech": "noun" },
+  { "id": 3, "word": "chats", "sentence": "J'ai deux chats.", "lemma": "chat", "partOfSpeech": "noun" },
+  { "id": 4, "word": "petite", "sentence": "une petite maison", "lemma": "petit", "partOfSpeech": "adjective" },
+  { "id": 5, "word": "vais", "sentence": "Je vais bien.", "lemma": "aller", "partOfSpeech": "verb" },
+  { "id": 6, "word": "au", "sentence": "Je vais au marché.", "lemma": "au", "partOfSpeech": "preposition" },
+  { "id": 7, "word": "est", "sentence": "Qu'est-ce que c'est ?", "lemma": "être", "partOfSpeech": "verb" },
+  { "id": 8, "word": "souvent", "sentence": "Tu manges souvent ?", "lemma": "souvent", "partOfSpeech": "adverb" },
+  { "id": 9, "word": "livre", "sentence": "Le livre est sur la table.", "lemma": "livre", "partOfSpeech": "noun" },
+  { "id": 10, "word": "vacances", "sentence": "Je suis en vacances.", "lemma": "vacances", "partOfSpeech": "noun" },
+  { "id": 11, "word": "Bonjour", "sentence": "Bonjour, tu vas bien ?", "lemma": "bonjour", "partOfSpeech": "interjection" },
+  { "id": 12, "word": "Paris", "sentence": "J'habite à Paris.", "lemma": "paris", "partOfSpeech": "proper_noun" }
+]

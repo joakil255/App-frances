@@ -33,7 +33,7 @@ test('handleRequest responde 200 y el proveedor recibe la historia como role/con
   };
   const kv = { async get() { return null; }, async put() {} };
   const env = {
-    AI_PROVIDER: 'claude', AI_MODEL: 'm', AI_EFFORT: 'low', DAILY_LIMIT: '100',
+    AI_PROVIDER: 'claude', AI_MODEL: 'm', AI_EFFORT: 'low', DAILY_LIMIT: '100', LOOKUP_LIMIT: '200',
     ALLOWED_ORIGINS: ORIGIN, ANTHROPIC_API_KEY: 'k', ACCESS_CODE: 'c', CHAT_KV: kv,
   };
   const request = new Request('https://worker.test/chat', {

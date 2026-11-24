@@ -1,6 +1,7 @@
 // Pantalla Conversar: chatear en francés con Claude y ver las correcciones de cada mensaje.
 // Todo el texto del usuario y del modelo se pinta con textContent.
 import { chatUrl, buildRequestBody, sendChat, appendExchange } from '../lib/chat.js';
+import { tokenize } from '../lib/lookup.js';
 import { chatMessage, storageMessage, joined } from '../lib/messages.js';
 import { RATES } from '../lib/speech.js';
 import { playFrench } from './voice.js';
@@ -47,12 +48,26 @@ function correctionItem({ original, corrected, explanation }, listen) {
   return item;
 }
 
-// listen(texto, velocidad): lee en francés con los avisos de siempre
-function turnNode(turn, listen) {
+// Respuesta de Claude: cada palabra es un botón que abre su tarjeta; espacios y puntuación quedan como texto
+function replyText(text, openWord) {
+  return tokenize(text).map((token) => {
+    if (token.word === null) return document.createTextNode(token.text);
+    const button = el('button', { className: 'chat-word', text: token.text, attrs: { type: 'button' } });
+    button.dataset.word = token.word; // para el subrayado
+    button.dataset.sentence = token.sentence;
+    button.addEventListener('click', () => openWord(token, button));
+    return button;
+  });
+}
+
+// listen(texto, velocidad): lee en francés con los avisos de siempre. openWord(token, botón): abre la tarjeta
+function turnNode(turn, listen, openWord) {
   const isUser = turn.role === 'user';
   const node = el('div', { className: `chat-turn chat-turn-${isUser ? 'user' : 'assistant'}` }, [
     el('p', { className: 'chat-speaker', text: isUser ? 'Tú' : 'Claude' }),
-    el('p', { className: 'chat-text', text: turn.text, attrs: { lang: 'fr' } }),
+    isUser
+      ? el('p', { className: 'chat-text', text: turn.text, attrs: { lang: 'fr' } })
+      : el('p', { className: 'chat-text', attrs: { lang: 'fr' } }, replyText(turn.text, openWord)),
   ]);
   if (!isUser) {
     node.append(el('div', { className: 'chat-actions' }, [
@@ -87,7 +102,7 @@ function coverReply(node, id) {
   return () => setShown(true);
 }
 
-export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }) {
+export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore, wordCard }) {
   const url = chatUrl(hostname);
   const notice = $('#chat-notice');
   const log = $('#chat-log');
@@ -105,6 +120,12 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
   const codeInput = $('#chat-code-input');
   const codeError = $('#chat-code-error');
   const listenFirstInput = $('#chat-listen-first');
+
+  // Enlace «Ir a tu mensaje»: salta las palabras del registro sin cambiar la dirección de la página
+  $('#screen-chat .skip-link').addEventListener('click', (event) => {
+    event.preventDefault();
+    field.focus();
+  });
 
   let { level, turns } = store.load();
   let sending = false;
@@ -152,7 +173,8 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
   // --- Conversación ---
   // Las respuestas del historial se muestran siempre
   function renderAll() {
-    log.replaceChildren(...turns.map((turn) => turnNode(turn, listen)));
+    log.replaceChildren(...turns.map((turn) => turnNode(turn, listen, wordCard.open)));
+    wordCard.refresh();
     updateEmpty();
   }
   function updateEmpty() {
@@ -215,11 +237,12 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore }
     const before = turns.length;
     turns = appendExchange(turns, message, result);
     const added = turns.slice(before);
-    const nodes = added.map((turn) => turnNode(turn, listen));
+    const nodes = added.map((turn) => turnNode(turn, listen, wordCard.open));
     // «Escuchar primero»: la respuesta se tapa y se lee sola; si no se puede oír, se muestra
     const reply = added.findIndex((turn) => turn.role === 'assistant');
     const reveal = listenFirstInput.checked && reply !== -1 ? coverReply(nodes[reply], `chat-reply-${++coveredCount}`) : null;
     log.append(...nodes);
+    wordCard.refresh();
     if (reveal) listen(added[reply].text, RATES.normal, reveal);
     updateEmpty();
     field.value = '';

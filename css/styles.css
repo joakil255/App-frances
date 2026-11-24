@@ -828,6 +828,74 @@ main {
 }
 .chat-remaining { margin: var(--space-3) 0 0; font-family: var(--font-sign); font-weight: 500; }
 
+/* --- Conversar: consultar palabras (DESIGN.md, Etapa 10) --- */
+/* Interlineado más alto en los mensajes: cada palabra tocable ocupa la altura entera de su línea (30,6 px) */
+.chat-text { line-height: 1.8; }
+/* Palabra de Claude: un botón que se lee como texto. No lleva relleno, para no mover las letras ni montarse en otra línea */
+.chat-word {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.chat-word:active { background: var(--divider); }
+@media (hover: hover) and (pointer: fine) {
+  .chat-word:hover { background: var(--divider); }
+}
+/* Palabra que ya está en tu vocabulario: va sobre la línea rosa de Conversar (una raya gruesa, no solo un color) */
+.chat-word-saved {
+  text-decoration-line: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: var(--line);
+  text-underline-offset: 0.25em;
+  text-decoration-skip-ink: none;
+}
+
+/* Tarjeta: en el móvil, una hoja abajo con la franja rosa arriba (como el enlace activo de la barra) */
+.word-card {
+  width: 100%;
+  max-width: none;
+  margin: auto 0 0;
+  max-height: 85dvh;
+  padding: 0;
+  border-radius: 12px 12px 0 0;
+}
+/* El relleno va en el cuerpo: así un toque en el propio <dialog> es un toque fuera de la tarjeta */
+.word-card-body {
+  padding: var(--space-5) var(--space-4) max(var(--space-4), env(safe-area-inset-bottom));
+  border-top: 6px solid var(--line);
+}
+#word-card-title:focus { outline: none; } /* recibe el foco para que se lea la palabra; no es interactivo */
+.word-card-status { margin: var(--space-2) 0 0; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.word-card-status:empty { margin: 0; }
+.word-card-notice { margin-bottom: 0; }
+.word-card-info p { margin: 0; }
+.word-card-label { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.word-card-info .word-card-context { margin-top: var(--space-2); }
+.word-card-context .word-card-es { font-size: 1.1rem; }
+.word-card-es { font-style: italic; }
+.word-card-info .word-card-base {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--divider);
+}
+.word-card-fr { font-weight: 600; font-size: 1.1rem; overflow-wrap: anywhere; }
+p.word-card-es { color: var(--text-muted); }
+/* «Ya está en tu vocabulario» y «Guardada»: desactivado, como los modos del Quiz */
+.word-card-save[aria-disabled="true"] {
+  background: var(--surface);
+  color: var(--text-muted);
+  border-color: var(--divider);
+  cursor: default;
+}
+
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {
   .layout {
@@ -876,6 +944,13 @@ main {
   .quiz-answer-actions { display: flex; }
   .quiz-next { width: auto; }
   .chat-send { flex: none; }
+  /* En el computador la tarjeta es una ventana centrada, como las demás */
+  .word-card {
+    width: min(32rem, calc(100vw - 2 * var(--space-4)));
+    margin: auto;
+    max-height: calc(100dvh - 2 * var(--space-4));
+    border-radius: 12px;
+  }
 
   .update-banner {
     left: calc(200px + var(--space-7));

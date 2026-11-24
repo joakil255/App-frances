@@ -1,10 +1,10 @@
 // Capa de datos de las palabras. Hoy guarda en localStorage; todas las funciones
 // devuelven promesas, como haría IndexedDB, para poder cambiarlo sin tocar el resto.
 // Regla: primero se guarda y, solo si salió bien, cambia la lista en memoria.
-import { validateWord } from './words.js';
+import { validateWord, upgradeWord } from './words.js';
 
 export const STORAGE_KEY = 'app-frances';
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 export class StorageError extends Error {
   // code: 'quota' (no hay espacio) o 'unavailable' (el navegador no deja leer o guardar)
@@ -39,7 +39,8 @@ export function createWordStore(backend, { initialWords, makeId = () => crypto.r
   }
 
   const store = {
-    // Devuelve { words, corruptBackupKey }. corruptBackupKey indica dónde se copiaron datos dañados.
+    // Devuelve { words, corruptBackupKey, migrationError }. corruptBackupKey indica dónde se copiaron
+    // datos dañados; migrationError (StorageError o null) avisa si no se pudo guardar la migración.
     async load() {
       let raw;
       try {
@@ -50,22 +51,41 @@ export function createWordStore(backend, { initialWords, makeId = () => crypto.r
 
       if (raw === null) {
         const stamp = now().toISOString();
-        persist(initialWords.map((word) => ({ ...word, createdAt: stamp, updatedAt: stamp })));
-        return { words: [...words], corruptBackupKey: null };
+        persist(initialWords.map((word) => ({ ...upgradeWord(word), createdAt: stamp, updatedAt: stamp })));
+        return { words: [...words], corruptBackupKey: null, migrationError: null };
       }
 
+      let doc;
+      let migrated = null;
       try {
-        const doc = JSON.parse(raw);
+        doc = JSON.parse(raw);
         if (!doc || !Array.isArray(doc.words)) throw new Error('sin lista de palabras');
-        words = doc.words;
-        return { words: [...words], corruptBackupKey: null };
+        // Versión 1 (o sin versión): se agregan lang y lemma a cada palabra
+        if ((doc.schemaVersion ?? 1) === 1) migrated = doc.words.map(upgradeWord);
       } catch {
         // Datos dañados: se copian intactos aparte y se empieza con la lista vacía
         const corruptBackupKey = `${STORAGE_KEY}-corrupt-${now().toISOString()}`;
         write(corruptBackupKey, raw);
         persist([]);
-        return { words: [], corruptBackupKey };
+        return { words: [], corruptBackupKey, migrationError: null };
       }
+
+      if (!migrated) {
+        words = doc.words;
+        return { words: [...words], corruptBackupKey: null, migrationError: null };
+      }
+
+      // Migración: primero la copia intacta de la v1, después la v2. Si algo falla, no se escribe
+      // nada más, lo guardado sigue en v1 y la app sigue con las palabras migradas solo en memoria.
+      let migrationError = null;
+      try {
+        write(`${STORAGE_KEY}-v1-${now().toISOString()}`, raw);
+        write(STORAGE_KEY, JSON.stringify({ schemaVersion: SCHEMA_VERSION, words: migrated }));
+      } catch (error) {
+        migrationError = error;
+      }
+      words = migrated;
+      return { words: [...words], corruptBackupKey: null, migrationError };
     },
 
     getWords() {

@@ -2,28 +2,29 @@
 // La importación nunca cambia nada: solo lee el archivo y prepara un plan
 // (nuevas, duplicadas, inválidas) para que el usuario decida.
 import { parseCsv, toCsv, CsvError } from './csv.js';
-import { validateWord, duplicateKey, sortWords, searchKey } from './words.js';
+import { validateWord, upgradeWord, duplicateKey, sortWords, searchKey } from './words.js';
 
 export const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
 export const CSV_COLUMNS = ['frances', 'espanol', 'ejemplo_frances', 'ejemplo_espanol', 'categoria', 'genero', 'revisar'];
 
 const JSON_FORMAT = 'app-frances-vocabulario';
-const EXPORT_FIELDS = ['fr', 'es', 'exampleFr', 'exampleEs', 'category', 'gender', 'needsReview'];
+const EXPORT_FIELDS = ['fr', 'es', 'exampleFr', 'exampleEs', 'category', 'gender', 'needsReview', 'lang', 'lemma'];
 const COLUMN_FIELD = {
   frances: 'fr', espanol: 'es', ejemplo_frances: 'exampleFr', ejemplo_espanol: 'exampleEs', categoria: 'category',
 };
 const REQUIRED_COLUMNS = ['frances', 'espanol'];
 // Orden en que se muestran los motivos de una fila inválida
-const FIELD_ORDER = ['fr', 'es', 'exampleFr', 'exampleEs', 'category', 'gender'];
+const FIELD_ORDER = ['fr', 'es', 'exampleFr', 'exampleEs', 'category', 'gender', 'lang'];
 // Celdas que una hoja de cálculo ejecutaría como fórmula
 const FORMULA_START = /^[=+\-@]/;
 
 function pick(word) {
-  return Object.fromEntries(EXPORT_FIELDS.map((field) => [field, word[field] ?? (field === 'gender' ? null : '')]));
+  const full = upgradeWord(word); // lang y lemma siempre calculados
+  return Object.fromEntries(EXPORT_FIELDS.map((field) => [field, full[field] ?? (field === 'gender' ? null : '')]));
 }
 
 export function exportJson(words, now) {
-  const data = { format: JSON_FORMAT, version: 1, exportedAt: now.toISOString(), words: sortWords(words).map(pick) };
+  const data = { format: JSON_FORMAT, version: 2, exportedAt: now.toISOString(), words: sortWords(words).map(pick) };
   return JSON.stringify(data, null, 2) + '\n';
 }
 

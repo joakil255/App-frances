@@ -15,6 +15,8 @@ import { initChat } from './screens/chat.js';
 import { createVoiceStore } from './lib/voice-settings.js';
 import { getRecognitionConstructor } from './lib/recognition.js';
 import { initChatVoice } from './screens/chat-voice.js';
+import { createLookupCache } from './lib/lookup-cache.js';
+import { initWordCard } from './screens/word-card.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -87,16 +89,29 @@ initVocabulary({ store: wordStore, synth })
     initHome({ wordStore, studyStore, backend }),
   ]));
 
-// Conversar no depende de las palabras ni del estudio
+// Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
 const isOnline = () => navigator.onLine;
 const voiceStore = createVoiceStore(backend);
+const chatStore = createChatStore(backend);
+// Tarjeta de las palabras de Claude: consulta (con caché), escuchar y guardar en el vocabulario
+const wordCard = initWordCard({
+  wordStore,
+  cache: createLookupCache(backend),
+  fetch: window.fetch.bind(window),
+  isOnline,
+  hostname: location.hostname,
+  getCode: () => chatStore.loadCode(),
+  synth,
+  beforeSpeak: () => voice.stop(), // voice se crea más abajo; solo se usa al tocar una palabra
+});
 const chat = initChat({
-  store: createChatStore(backend),
+  store: chatStore,
   fetch: window.fetch.bind(window),
   isOnline,
   hostname: location.hostname,
   synth,
   voiceStore,
+  wordCard,
 });
 // Micrófono: solo si el navegador reconoce voz; enviar lo detiene
 const voice = initChatVoice({
@@ -111,7 +126,12 @@ const voice = initChatVoice({
 chat.setBeforeSend(() => voice.stop());
 chat.setBeforeSpeak(() => voice.stop());
 chat.setOnBusy((busy) => voice.setBusy(busy));
-onChatShown = chat.onShow;
+// Al abrir Conversar o si otra pestaña cambia el vocabulario, se vuelve a subrayar
+onChatShown = () => {
+  chat.onShow();
+  wordCard.refresh();
+};
+wordStore.watchExternalChanges(window, () => wordCard.refresh());
 onChatHidden = () => voice.stop();
 // Si la página queda oculta (otra app, pantalla apagada) el micrófono se corta
 document.addEventListener('visibilitychange', () => {

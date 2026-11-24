@@ -326,6 +326,7 @@
         </div>
 
         <p id="chat-empty" class="empty">Aquí verás tu conversación con Claude en francés. Bajo cada mensaje tuyo aparecerán tus errores corregidos.</p>
+        <a class="skip-link" href="#chat-message">Ir a tu mensaje</a>
         <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-label="Conversación"></div>
 
         <form id="chat-form" class="chat-form" novalidate>
@@ -507,6 +508,28 @@
         <button type="submit" class="button button-primary">Guardar y enviar</button>
       </div>
     </form>
+  </dialog>
+
+  <!-- Tarjeta de una palabra de Claude (se rellena con textContent). En el móvil es una hoja abajo. -->
+  <dialog id="word-card" class="dialog word-card line-chat" aria-labelledby="word-card-title">
+    <div class="word-card-body">
+      <h2 id="word-card-title" class="detail-fr" lang="fr" tabindex="-1"></h2>
+      <p class="word-card-status" role="status">Buscando…</p>
+      <div class="notice word-card-notice" role="alert" hidden></div>
+      <div class="word-card-info" hidden>
+        <p class="word-card-context"><span class="word-card-label">En esta frase:</span> <span class="word-card-es" data-field="context"></span></p>
+        <p class="word-card-base"><span class="word-card-label">Forma base:</span> <span class="word-card-fr" lang="fr" data-field="base"></span></p>
+        <p class="word-card-es" data-field="base-es"></p>
+        <p class="detail-meta"><span data-field="type"></span><span data-field="gender"></span></p>
+        <div class="detail-voice">
+          <button type="button" class="button button-secondary chat-listen" data-action="listen"><span aria-hidden="true">🔊</span><span>Escuchar</span></button>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="button button-secondary" data-action="close">Cerrar</button>
+        <button type="button" class="button button-primary word-card-save" data-action="save" hidden>Guardar</button>
+      </div>
+    </div>
   </dialog>
 
   <!-- Ventana de la pantalla Estudiar -->

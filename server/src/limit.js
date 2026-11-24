@@ -10,9 +10,9 @@ export function chileDate(date) {
   }).format(date);
 }
 
-// Cuenta el mensaje antes de llamar al proveedor; no escribe si se alcanzó el límite
-export async function reserveMessage(kv, date, limit) {
-  const key = `count:${chileDate(date)}`;
+// Cuenta el mensaje (o la consulta, con prefix 'lookup') antes de llamar al proveedor; no escribe si se alcanzó el límite
+export async function reserveMessage(kv, date, limit, prefix = 'count') {
+  const key = `${prefix}:${chileDate(date)}`;
   const stored = Number.parseInt(await kv.get(key), 10);
   const count = Number.isInteger(stored) && stored > 0 ? stored : 0;
   if (count >= limit) return { ok: false };

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClaudeAdapter } from '../src/providers/claude.js';
 import { PROVIDERS } from '../src/providers/index.js';
-import { buildSystemPrompt } from '../src/prompt.js';
+import { buildSystemPrompt, buildLookupPrompt, LOOKUP_SCHEMA } from '../src/prompt.js';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -107,4 +107,63 @@ test('max_tokens o texto que no es JSON es bad_output', async () => {
   assert.equal(await codeOf(async () => json(200, textBody('hola, no es JSON'))), 'bad_output');
   assert.equal(await codeOf(async () => json(200, okBody([]))), 'bad_output');
   assert.equal(await codeOf(async () => json(200, textBody({ reply: 'x' }))), 'bad_output');
+});
+
+const lookupInput = { lang: 'fr', word: 'manges', sentence: 'Tu manges souvent ?' };
+const goodLookup = {
+  contextTranslation: 'comes', lemma: 'manger', lemmaTranslation: 'comer', partOfSpeech: 'verb',
+  gender: null, baseWithArticle: 'manger', sentenceTranslation: '¿Comes a menudo?',
+};
+
+async function lookupCodeOf(fetch) {
+  try {
+    await adapterWith(fetch).lookup(lookupInput);
+  } catch (error) {
+    assert.equal(error.name, 'ProviderError');
+    return error.code;
+  }
+  assert.fail('debía fallar');
+}
+
+test('lookup arma la petición con el esquema, la palabra y la frase', async () => {
+  let sent;
+  const fetch = async (url, init) => {
+    sent = JSON.parse(init.body);
+    return json(200, textBody(goodLookup));
+  };
+  await adapterWith(fetch).lookup(lookupInput);
+  assert.equal(sent.model, 'claude-haiku-5-5');
+  assert.equal(sent.output_config.effort, 'low');
+  assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: LOOKUP_SCHEMA });
+  assert.equal(sent.system, buildLookupPrompt());
+  assert.equal(sent.messages.length, 1);
+  assert.equal(sent.messages[0].role, 'user');
+  assert.ok(sent.messages[0].content.includes('manges'));
+  assert.ok(sent.messages[0].content.includes('Tu manges souvent ?'));
+  for (const key of ['thinking', 'temperature', 'top_p', 'top_k']) assert.equal(key in sent, false);
+});
+
+test('lookup normaliza una salida válida', async () => {
+  const out = await adapterWith(async () => json(200, textBody({ ...goodLookup, lemma: 'Manger', baseWithArticle: 'manger' }))).lookup(lookupInput);
+  assert.deepEqual(out, goodLookup);
+});
+
+test('lookup rechaza una salida inválida como bad_output', async () => {
+  assert.equal(await lookupCodeOf(async () => json(200, textBody({ ...goodLookup, partOfSpeech: 'foo' }))), 'bad_output');
+});
+
+test('lookup traduce los errores HTTP igual que chat', async () => {
+  assert.equal(await lookupCodeOf(async () => json(401, errBody('authentication_error'))), 'auth');
+  assert.equal(await lookupCodeOf(async () => json(429, errBody('rate_limit_error'))), 'rate_limit');
+  assert.equal(await lookupCodeOf(async () => json(500, errBody('api_error'))), 'unavailable');
+});
+
+test('lookup: refusal es refused y max_tokens es bad_output', async () => {
+  assert.equal(await lookupCodeOf(async () => json(200, okBody([{ type: 'text', text: '' }], 'refusal'))), 'refused');
+  assert.equal(await lookupCodeOf(async () => json(200, okBody([{ type: 'text', text: '{' }], 'max_tokens'))), 'bad_output');
+});
+
+test('el esquema de consulta lista todo en required y permite gender null', () => {
+  assert.equal(LOOKUP_SCHEMA.additionalProperties, false);
+  assert.deepEqual([...LOOKUP_SCHEMA.required].sort(), Object.keys(LOOKUP_SCHEMA.properties).sort());
 });

@@ -178,6 +178,13 @@ test('Quiz tiene la pregunta con progreso, tarjeta, opciones y campo de respuest
   assert.match(quiz, /<button type="button"[^>]*id="quiz-skip"[^>]*>No lo sé<\/button>/);
 });
 
+test('Conversar tiene un enlace para saltar al mensaje, antes del registro', () => {
+  const link = chat.indexOf('href="#chat-message"');
+  assert.ok(link !== -1, 'falta el enlace a #chat-message');
+  assert.match(chat.slice(link - 40, link + 120), /class="skip-link"[^>]*>Ir a tu mensaje<\/a>/);
+  assert.ok(link < chat.indexOf('id="chat-log"'), 'el enlace debe ir antes de #chat-log');
+});
+
 test('Quiz tiene la respuesta inmediata y el resumen', () => {
   assert.ok(tagWithId(quiz, 'quiz-feedback'), 'falta #quiz-feedback');
   assert.match(tagWithId(quiz, 'quiz-feedback-title') ?? '', /tabindex="-1"/);
@@ -357,4 +364,24 @@ test('la ventana del aviso de privacidad tiene título, texto y los dos botones'
     'falta el texto exacto del aviso');
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
   assert.match(dialog, /<button type="button" class="button button-primary" data-action="confirm">Usar el micrófono<\/button>/);
+});
+
+// --- Conversar: consultar palabras (Etapa 10) ---
+test('la tarjeta de palabras es una ventana con título enlazado', () => {
+  const dialog = html.match(/<dialog id="word-card" class="dialog word-card[^"]*" aria-labelledby="word-card-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta <dialog id="word-card"> con aria-labelledby="word-card-title"');
+  assert.match(dialog, /<h2 id="word-card-title"[^>]*lang="fr"[^>]*><\/h2>/);
+});
+
+test('la tarjeta de palabras tiene «Buscando…» anunciable y un aviso de errores', () => {
+  const dialog = dialogOf('word-card') ?? '';
+  assert.match(dialog, /<p class="word-card-status" role="status">Buscando…<\/p>/);
+  assert.match(dialog, /<div class="notice word-card-notice" role="alert" hidden><\/div>/);
+});
+
+test('la tarjeta de palabras tiene los botones Escuchar, Guardar y Cerrar', () => {
+  const dialog = dialogOf('word-card') ?? '';
+  assert.match(dialog, /<button type="button" class="button button-secondary chat-listen" data-action="listen"[^>]*><span aria-hidden="true">🔊<\/span><span>Escuchar<\/span><\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-primary word-card-save" data-action="save"[^>]*>Guardar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cerrar<\/button>/);
 });

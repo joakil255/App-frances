@@ -15,3 +15,8 @@ test('el esquema exige reply y corrections sin campos extra', () => {
   assert.deepEqual(OUTPUT_SCHEMA.required, ['reply', 'corrections']);
   assert.deepEqual(OUTPUT_SCHEMA.properties.corrections.items.required, ['original', 'corrected', 'explanation']);
 });
+
+test('la consulta pide que el nombre propio conserve su mayúscula en baseWithArticle', async () => {
+  const { buildLookupPrompt } = await import('../src/prompt.js');
+  assert.match(buildLookupPrompt(), /"baseWithArticle" el nombre con su mayúscula/);
+});

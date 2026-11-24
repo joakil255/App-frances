@@ -76,9 +76,9 @@ export function buildRequestBody({ level, turns, message }) {
   return { level, history, message };
 }
 
-// Nunca lanza: devuelve { ok: true, reply, corrections, remaining } o { ok: false, error }
+// Envío común al servidor (chat y consulta). Nunca lanza: devuelve { ok: true, data } o { ok: false, error }
 // El Worker puede reintentar a Claude hasta 3 × 30 s: el navegador espera un poco más
-export async function sendChat({ url, code, body, fetch, isOnline, timeoutMs = 100000 }) {
+export async function postJson({ url, code, body, fetch, isOnline, timeoutMs = 100000 }) {
   if (!isOnline) return { ok: false, error: 'offline' };
 
   let response;
@@ -103,6 +103,14 @@ export async function sendChat({ url, code, body, fetch, isOnline, timeoutMs = 1
 
   if (data && typeof data.error === 'string') return { ok: false, error: data.error };
   if (!response.ok) return { ok: false, error: 'unavailable' };
+  return { ok: true, data };
+}
+
+// Nunca lanza: devuelve { ok: true, reply, corrections, remaining } o { ok: false, error }
+export async function sendChat(options) {
+  const sent = await postJson(options);
+  if (!sent.ok) return sent;
+  const { data } = sent;
   if (!data || typeof data.reply !== 'string' || !Array.isArray(data.corrections) || typeof data.remaining !== 'number') {
     return { ok: false, error: 'bad_output' };
   }

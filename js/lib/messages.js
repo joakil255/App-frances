@@ -46,6 +46,8 @@ export const MESSAGES = Object.freeze({
     'Vuelve a enviar tu mensaje.'),
   chatRefused: message('Claude no quiso responder ese mensaje.',
     'Escríbelo de otra forma y vuelve a enviarlo.'),
+  lookupLimit: message('Llegaste al límite de consultas de hoy.',
+    'Puedes seguir conversando; las consultas se reinician a medianoche, hora de Chile.'),
   micBlocked: message('El navegador no deja usar el micrófono.',
     'Permite el micrófono para este sitio en los ajustes del navegador (el candado junto a la dirección) y vuelve a tocar Hablar.'),
   micNoSpeech: message('No se oyó nada.',
@@ -76,6 +78,7 @@ const CHAT_KEYS = Object.freeze({
   unavailable: 'chatUnavailable',
   bad_output: 'chatBadOutput',
   refused: 'chatRefused',
+  lookup_limit: 'lookupLimit',
 });
 
 // Mensaje para un código de error del chat; los códigos desconocidos usan chatUnavailable

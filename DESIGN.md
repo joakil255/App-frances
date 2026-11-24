@@ -185,6 +185,21 @@ Sin colores nuevos: todo usa los tokens de arriba.
 - **Ventana «Tu voz sale del dispositivo»:** como las de la Etapa 2; una frase sobre adónde va el audio, y **Cancelar** · **Usar el micrófono** (primario). Sale solo la primera vez. El foco vuelve a **Hablar** al cerrarla.
 - **Avisos:** los de siempre arriba (`micBlocked`, `micNoSpeech`, `micNoDevice`, `micNetwork`, `micLanguage`, `micFailed` y `chatOffline` si no hay conexión).
 
+## Conversar: consultar palabras (Etapa 10)
+
+Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
+
+- **Palabras tocables:** solo en las respuestas de Claude. Cada palabra es un botón real (`<button type="button" class="chat-word">`) que se ve como texto: misma letra, mismo color, sin borde ni relleno, para no mover las letras. El interlineado de los mensajes sube a **1,8**: cada palabra ocupa la altura entera de su línea (30,6 px) sin montarse en la de arriba ni en la de abajo. Al tocarla (o al pasar el ratón) se ve un fondo `--divider` con radio 4 px. Con el teclado, el anillo de foco de siempre. El nombre accesible es la palabra. Espacios y puntuación quedan como texto.
+- **Palabra que ya está en tu vocabulario (el elemento propio):** va «sobre la línea»: una **raya rosa de 3 px** bajo la palabra, separada 0,25 em, como el trazo de una línea de metro. Es una forma, no solo un color, y el rosa sobre la tarjeta tiene 4,0 en claro y 3,9 en oscuro (elemento gráfico, ≥ 3:1). Para el lector de pantalla, el nombre suma «, en tu vocabulario».
+- **Respuesta tapada** («Escuchar primero»): sus palabras están dentro del texto oculto, así que no se pueden tocar ni enfocar hasta tocar **Mostrar texto**.
+- **Tarjeta** (`<dialog id="word-card">`, modal, con `aria-labelledby` en la palabra):
+  - **Móvil (< 900 px):** una **hoja abajo**, a lo ancho, con radio de 12 px solo arriba y hasta el 85 % del alto. Arriba lleva una **franja rosa de 6 px**, como el enlace activo de la barra del móvil.
+  - **Computador (≥ 900 px):** una ventana centrada como las demás (32 rem), con la misma franja rosa arriba.
+  - **Contenido:** la palabra tocada como título (Source Serif 600 de 1,95 rem, `lang="fr"`); «En esta frase:» (Barlow 500 `--text-muted`) con la traducción en cursiva; un separador `--divider`; «Forma base:» con la forma base en Source Serif 600 (con artículo si es sustantivo), su traducción en cursiva `--text-muted` y debajo el tipo de palabra y el género («masculino» o «femenino»), como los datos de la ficha de Vocabulario; **🔊 Escuchar** (secundario) lee la forma base con artículo.
+  - **Mientras espera:** «Buscando…» en Barlow 500 `--text-muted` (`role="status"`). Los errores van en el aviso de siempre dentro de la tarjeta (`role="alert"`); no se abren otras ventanas.
+  - **Botones abajo a la derecha:** **Cerrar** (secundario) y **Guardar** (primario). Si la palabra ya está, el mismo botón dice «Ya está en tu vocabulario»; después de guardar, «Guardada». Los dos desactivados con `aria-disabled` (fondo `--surface`, borde `--divider`, texto `--text-muted`), para que el foco se quede en el botón y se oiga el cambio.
+  - Se cierra con **Escape**, con **Cerrar** o tocando fuera; el foco vuelve a la palabra. Al abrirla, el foco va al título para que se lea la palabra.
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.
