@@ -1,0 +1,225 @@
+# Etapa 11 — Lecturas con audio: diseño (pendiente de aprobación)
+
+> **Estado:** borrador para revisar. No hay código. Las decisiones las tomó el usuario el 24/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir).
+
+## Intención
+
+El usuario quiere **practicar la comprensión lectora y auditiva con textos a su nivel** (sus palabras). La etapa agrega una sección **«Leer»**:
+- una **biblioteca** de textos con nivel, estado leído, y fuente y licencia;
+- un **lector** que lee en voz alta frase por frase, resaltando la que suena, con pausa y velocidad;
+- tocar una palabra abre la **tarjeta de la Etapa 10** para traducirla y guardarla;
+- los textos son **historias originales que escribe Claude** a su nivel, con el adaptador de la Etapa 8, y quedan **REVISAR** hasta que el usuario las aprueba.
+
+Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
+
+**Objetivos**
+- Biblioteca con nivel (`A1.1`, `A1.2`, `A2`), estado REVISAR o aprobada, leída o no, y fuente y licencia por texto.
+- Generar historias desde la app, con un límite diario aparte.
+- **Lector:**
+  - lee frase por frase con resaltado;
+  - Escuchar, Pausa (al terminar la frase) y velocidad normal o lenta;
+  - tocar una frase lee desde ahí.
+- Tocar una palabra abre la tarjeta y permite guardarla con la frase de la historia como ejemplo.
+- Aprobar o descartar una historia, y marcarla como leída.
+- Funcionar sin conexión con las historias ya guardadas; solo generar y consultar palabras nuevas necesita red.
+- Modelo de datos compatible con varios idiomas.
+- Pruebas automáticas.
+
+**No-objetivos**
+- LibriVox y cualquier texto o audio de terceros.
+- Voz en la nube.
+- Preguntas de comprensión.
+- Importar textos propios.
+- Editar el texto de una historia.
+- Resaltar palabra por palabra.
+- Otros idiomas en la interfaz.
+
+**Anti-objetivos (fracaso aunque funcione)**
+- Incluir textos de terceros sin licencia confirmada.
+- Enviar datos a alguien que no sea Anthropic.
+- Mostrar una historia sin aprobar como si estuviera revisada.
+- Perder historias o palabras.
+- Que las historias consuman mensajes o consultas del día.
+- Mostrar como HTML lo que escribe Claude.
+- Que el lector quede «hablando solo» al salir de la pantalla.
+- Una pantalla inaccesible o incómoda en el teléfono.
+
+## Lo que se verificó (documentación oficial, consultada el 24/11/2026)
+
+| | Voz del navegador | LibriVox | Voz en la nube |
+|---|---|---|---|
+| Disponibilidad | `speechSynthesis` en Chrome 33+, Chrome Android, Firefox 49+ y Safari 7+ (datos de compatibilidad de MDN); ya la usa la app | 21 969 grabaciones en el Internet Archive, **276 marcadas en francés** (API `advancedsearch` del Internet Archive) | Google Cloud TTS: unas 36 voces `fr-FR`, en una lista aproximada. Azure: no se pudo leer |
+| Calidad en francés | La de la voz del teléfono | Voces de voluntarios; obras clásicas (Balzac, Loti, poesía), lejos de A1 | Voces neuronales; no se pudo comparar |
+| Costo | Gratis | Gratis | Google: el precio no se veía. Azure: 0,5 millones de caracteres gratis al mes y el precio de pago no se veía |
+| Licencia o datos | Las voces locales no envían datos | Los ítems revisados dicen *Public Domain Mark*; el dominio público es de EE. UU. | Google: *«no registra el texto ni el audio»*. Azure: *«no guarda el texto»*. Ninguna aclara el entrenamiento. Es otra empresa: necesitaría permiso |
+| Resaltar la frase | El evento `boundary` está marcado como *«does not fire as expected»* en Chrome. Se resuelve leyendo **una frase por vez** | No se encontró sincronía | Google: marcas `<mark>`. Azure: eventos por palabra y por frase |
+| Pausa en Android | *«In Android, `pause()` ends the current utterance»* | — | — |
+
+**No se pudo verificar**
+- Las páginas de LibriVox, que daban error 522 en todos los intentos: su licencia exacta, la de los textos y si hay sincronía.
+- Los precios de pago de Google y Azure.
+- La calidad de las voces en la nube y la lista de voces de Azure.
+- Si Google o Azure entrenan con el texto.
+- Que Anthropic no tiene voz (síntesis de voz) es conocimiento previo, no verificado de nuevo.
+
+## Decisiones del usuario
+
+1. Para qué: comprensión lectora y auditiva con textos a su nivel.
+2. **Enfoque 1:** historias de Claude con la voz del navegador, frase por frase. LibriVox y la voz en la nube quedan fuera.
+3. La biblioteca, la generación, REVISAR, el lector, los datos y el límite, como se describen abajo, aprobados como se los propuse.
+4. **Navegación:** un séptimo botón «Leer» en la barra, si cabe a 360 px con 44 px de ancho por botón. Si no cabe, se le muestran alternativas antes de seguir.
+
+## Enfoques considerados
+
+| Enfoque | Qué cuesta | Resultado |
+|---|---|---|
+| **1. Historias de Claude + voz del navegador frase por frase** | Voz algo robótica; la pausa espera al fin de la frase | **Elegido.** Sin empresas nuevas, gratis y sin conexión una vez guardada |
+| 2. Historias de Claude + voz en la nube (Azure) | Permiso para Microsoft, cuenta, clave, ruta de audio y caché de audio; precio de pago no verificado | Para después, si la voz del teléfono no alcanza; la biblioteca no cambia |
+| 3. Sumar LibriVox | Textos demasiado difíciles, sin resaltado y con la licencia por confirmar en Chile | Descartado |
+
+## Diseño
+
+### Modelo de datos de los textos
+`app-frances-texts` → `{ schemaVersion: 1, texts: [...] }`. Cada texto:
+
+| Campo | Qué es |
+|---|---|
+| `id` | UUID |
+| `lang` | Idioma del texto; hoy `'fr'` |
+| `title`, `body` | Título y texto, en el idioma de `lang` |
+| `level` | `A1.1`, `A1.2` o `A2` (niveles MCER, válidos para cualquier idioma) |
+| `status` | `'review'` (REVISAR) o `'approved'` |
+| `readAt` | Fecha ISO en que se marcó como leído, o `null` |
+| `source` | `{ kind: 'generated', name: 'Claude (Anthropic)', license: 'Historia original generada para uso personal' }`. `kind` deja lugar a otros orígenes en el futuro (`'own'`, `'public-domain'`…), cada uno con su licencia obligatoria. **Decisión del diseño** |
+| `topic` | El tema pedido, o `''` |
+| `createdAt`, `updatedAt` | Fechas ISO |
+
+- **Validación** (`validateText`):
+  - `lang` ∈ `['fr']`;
+  - `level` en la lista;
+  - `title` de 1 a 80 letras;
+  - `body` de 1 a 3000 letras;
+  - `status` en la lista;
+  - `source.license` no vacío.
+- Si el almacén está dañado, se copia aparte y empieza vacío, como el de palabras.
+- **Copia de seguridad, versión 3:** incluye `texts`. Lee las versiones 1, 2 y 3; las dos primeras quedan con `texts: []`. Al restaurar se valida cada texto.
+
+### Servidor: ruta `POST /story`
+- Mismo Worker, código de acceso, origen y CORS.
+- **Cuerpo:** `{ lang: 'fr', level, topic }`. `topic` tiene de 0 a 60 letras, sin saltos de línea. Si no cumple: 400 `invalid_input`.
+- **Contador aparte:** clave KV `story:AAAA-MM-DD` y `STORY_LIMIT=5`. Se reserva antes de llamar al proveedor; al llegar al tope responde 429 `story_limit`. No toca los otros contadores.
+- **Adaptador:** `story({ lang, level, topic })`, con salida estructurada (Haiku 5.5, esfuerzo `low`). La salida es `{ title, body }`.
+- **Validación de la salida en el servidor:**
+  - `title` de 1 a 80 letras;
+  - `body` de 80 a 300 palabras y como máximo 3000 letras;
+  - al menos 4 frases;
+  - sin etiquetas HTML ni Markdown.
+  - Si algo no cumple: `bad_output`.
+- **Instrucciones**, en español, pidiendo una historia en francés:
+  - para un hispanohablante del nivel pedido, con frases cortas y vocabulario frecuente;
+  - presente y passé composé solo en `A2`;
+  - género y concordancia correctos;
+  - sin datos personales reales;
+  - sobre el tema, si lo hay.
+- **Prueba real, con permiso:** generar 3 historias (una por nivel) y comprobar con código la longitud, el número de frases y la ausencia de etiquetas. Las revisa a mano el controlador, que marca las dudas con REVISAR. **No se publica si alguna falla la validación.**
+
+### App: biblioteca
+- Pantalla **«Leer»** (`#/leer`), séptimo botón de la barra (decisión 4).
+- **Lista de textos,** de más nuevo a más viejo. Cada uno muestra:
+  - el título;
+  - el nivel;
+  - la marca **REVISAR** (con texto, no solo color) o nada;
+  - «Leída» si `readAt` existe.
+- **Botón «Nueva historia»:**
+  - abre una ventana con el nivel (por defecto `A1.2`) y un tema opcional;
+  - al enviar muestra «Escribiendo…»;
+  - si funciona, guarda el texto con `status: 'review'` y lo abre en el lector;
+  - los errores usan el catálogo (`chatMessage`) más el mensaje nuevo `story_limit`;
+  - sin conexión: `chatOffline`.
+- **Biblioteca vacía:** «Aquí verás tus lecturas. Pide a Claude una historia a tu nivel.»
+
+### App: lector
+- **Cabecera:**
+  - el título;
+  - el nivel;
+  - la marca REVISAR (con «Esta historia aún no está revisada.»);
+  - la fuente y la licencia en texto pequeño.
+- **El texto** se corta en frases y palabras con `tokenize` (Etapa 10).
+  - Cada frase es un bloque que se puede tocar para leer desde ahí.
+  - Cada palabra válida es un botón que abre la tarjeta.
+  - Todo con `textContent`.
+- **Reproductor:** `createSentencePlayer({ synth, voice, sentences, onSentence, onEnd })` (lógica pura, probada con un `speechSynthesis` falso).
+  - `play(from)` lee la frase `from` y sigue con las siguientes. Cada frase es un `SpeechSynthesisUtterance`, y `onSentence(i)` se avisa al empezar cada una.
+  - `pause()` deja de avanzar al terminar la frase actual.
+  - `resume()` sigue desde la siguiente.
+  - `stop()` cancela de inmediato.
+  - `setRate(rate)` usa `RATES.normal` o `RATES.slow`.
+  - Si la voz falla, se usa el aviso `voiceFailed` y se detiene.
+  - Resalta la frase activa con una clase y `aria-current="true"`. El resaltado no depende solo del color.
+- **El lector se detiene** al salir de la pantalla, al ocultar la página, al abrir la tarjeta de una palabra y cuando se activa el micrófono del chat.
+- **Botones:** «Escuchar» o «Seguir», «Pausa», «Más lento» o «Normal», «Marcar como leída», y para REVISAR «Aprobar» y «Descartar» (este último con confirmación).
+- **Guardar una palabra desde el lector:**
+  - la frase de la historia queda como ejemplo;
+  - `category: 'Lectura'`. `wordFromLookup` recibe la categoría como parámetro, y el chat sigue usando `'Conversación'`. **Decisión del diseño**;
+  - las consultas cuentan en el límite de 200 de la Etapa 10.
+- **La tarjeta de palabras se generaliza:** `refresh(root)` subraya dentro del contenedor que se le pase (chat o lector), sin depender de `#chat-log`.
+
+### Mensajes nuevos
+- `story_limit`: «Llegaste al límite de historias de hoy.» / «Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.»
+- Los textos de la biblioteca y del lector van en el plan.
+
+## Pruebas automáticas (sin red y sin gastar)
+
+**Textos**
+- `validateText` acepta y rechaza cada campo.
+- El almacén guarda, lee, aprueba, descarta, marca leída y copia aparte los datos dañados.
+- La copia de seguridad v3:
+  - hace ida y vuelta con textos;
+  - las v1 y v2 se restauran con `texts: []`;
+  - un texto inválido la marca como dañada.
+
+**Servidor**
+- Validación de `/story`.
+- Contador `story:` aparte (el 6.º del día da 429 `story_limit`; no toca `count:` ni `lookup:`).
+- Normalización y rechazo de salidas: muy corta, muy larga, con HTML, con menos de 4 frases.
+- Adaptador `story` con un `fetch` falso.
+
+**Reproductor**, con un `speechSynthesis` falso:
+- recorre las frases en orden;
+- `pause` espera al fin de la frase;
+- `resume` sigue con la siguiente;
+- `play(3)` empieza en la cuarta frase;
+- `stop` cancela;
+- la velocidad se aplica;
+- un error de voz detiene la lectura y avisa una sola vez;
+- texto de una sola frase y texto vacío.
+
+**App**
+- Orden de la biblioteca.
+- Que `wordFromLookup` use la categoría.
+- Que `refresh(root)` subraye solo dentro del contenedor.
+- Seguridad: los archivos nuevos entran en la prueba que prohíbe `innerHTML`.
+
+**Recorrido** a 360 y 1280 px, en modo claro y oscuro, con un servidor falso, y la prueba final en el teléfono.
+
+## Estimación de tiempo
+- **Programar y revisar con agentes:** unas **5 a 7 horas** de trabajo. Comparado con la Etapa 10, que tuvo 6 tareas con su revisión: aquí son 7 tareas, y la pantalla es más grande. Puede necesitar **dos sesiones**, porque en la Etapa 10 se agotó una vez el límite de uso.
+- **Tu tiempo:** unos 20 a 30 minutos. Lo usas en:
+  - aprobar el plan;
+  - dar permiso para la prueba real (3 historias, menos de un centavo);
+  - confirmar la publicación del servidor y el push;
+  - probar en el teléfono;
+  - revisar tus primeras historias.
+
+## Límites conocidos
+- La voz del teléfono suena algo robótica.
+- La pausa espera a que termine la frase actual.
+- El francés de las historias lo escribe Claude: por eso quedan REVISAR hasta que las apruebas, y la prueba real las revisa a mano.
+- No se verificó la licencia de LibriVox, que queda fuera.
+
+## Lo que queda para el plan
+- Los textos exactos de la biblioteca, el lector y la ventana «Nueva historia».
+- Las instrucciones de la historia.
+- El diseño visual, con frontend-design y DESIGN.md, y la medición de la barra con 7 botones.
+- `CACHE_VERSION` y la precarga.
+- Volver a publicar el servidor, con confirmación.
