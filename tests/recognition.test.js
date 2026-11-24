@@ -74,6 +74,9 @@ class FakeRecognition {
   stop() {
     this.stopCalls += 1;
   }
+  abort() {
+    this.abortCalls = (this.abortCalls ?? 0) + 1;
+  }
 }
 
 function listen() {
@@ -136,4 +139,27 @@ test('stop() detiene el reconocimiento', () => {
   const { handle, recognition } = listen();
   handle.stop();
   assert.equal(recognition.stopCalls, 1);
+});
+
+test('abort() descarta la escucha con abort() del reconocimiento', () => {
+  const { handle, recognition } = listen();
+  handle.abort();
+  assert.equal(recognition.abortCalls, 1);
+  assert.equal(recognition.stopCalls, 0);
+});
+
+test('abort() usa stop() si el navegador no tiene abort()', () => {
+  let instance;
+  class NoAbort {
+    constructor() {
+      instance = this;
+    }
+    start() {}
+    stop() {
+      this.stopped = true;
+    }
+  }
+  const handle = startListening({ Recognition: NoAbort, onInterim() {}, onFinal() {}, onError() {}, onEnd() {} });
+  handle.abort();
+  assert.equal(instance.stopped, true);
 });

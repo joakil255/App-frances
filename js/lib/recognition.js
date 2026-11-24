@@ -50,5 +50,9 @@ export function startListening({ Recognition, onInterim, onFinal, onError, onEnd
   recognition.onend = () => onEnd();
 
   recognition.start();
-  return { stop: () => recognition.stop() };
+  return {
+    stop: () => recognition.stop(),
+    // Descarta: corta la captura ya (si el navegador no tiene abort, usa stop)
+    abort: () => (typeof recognition.abort === 'function' ? recognition.abort() : recognition.stop()),
+  };
 }
