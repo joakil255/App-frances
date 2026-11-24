@@ -8,7 +8,7 @@ const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStud
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
-  'micFailed'];
+  'micFailed', 'lookupLimit'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -110,6 +110,14 @@ test('cada código del servidor tiene su mensaje exacto', () => {
     title: 'Claude no quiso responder ese mensaje.',
     text: 'Escríbelo de otra forma y vuelve a enviarlo.',
   });
+});
+
+test('lookupLimit tiene su texto exacto y lookup_limit lo usa', () => {
+  assert.deepEqual(MESSAGES.lookupLimit, {
+    title: 'Llegaste al límite de consultas de hoy.',
+    text: 'Puedes seguir conversando; las consultas se reinician a medianoche, hora de Chile.',
+  });
+  assert.deepEqual(chatMessage('lookup_limit'), MESSAGES.lookupLimit);
 });
 
 test('chatMessage elige el mensaje según el código del servidor', () => {
