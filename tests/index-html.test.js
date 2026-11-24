@@ -337,14 +337,16 @@ test('Conversar tiene el interruptor «Escuchar primero» en las herramientas', 
 test('Conversar tiene el botón «Hablar», oculto hasta saber si hay reconocimiento', () => {
   const mic = chat.match(/<button [^>]*id="chat-mic"[^>]*>([\s\S]*?)<\/button>/);
   assert.ok(mic, 'falta #chat-mic');
-  for (const attr of ['type="button"', 'aria-pressed="false"', 'hidden']) assert.ok(mic[0].includes(attr), `#chat-mic sin ${attr}`);
+  const openTag = mic[0].slice(0, mic[0].indexOf('>')); // solo la etiqueta de apertura
+  for (const attr of ['type="button"', 'aria-pressed="false"', 'hidden']) assert.ok(openTag.includes(attr), `#chat-mic sin ${attr}`);
   assert.match(mic[1], />Hablar</);
 });
 
-test('Conversar tiene la línea del texto parcial, anunciable y oculta', () => {
+test('Conversar tiene la línea del texto parcial, oculta y sin aria-live', () => {
   const interim = tagWithId(chat, 'chat-interim');
   assert.ok(interim, 'falta #chat-interim');
-  for (const attr of ['aria-live="polite"', 'hidden']) assert.ok(interim.includes(attr), `#chat-interim sin ${attr}`);
+  assert.ok(interim.includes('hidden'), '#chat-interim sin hidden');
+  assert.ok(!interim.includes('aria-live'), '#chat-interim no debe tener aria-live');
 });
 
 test('la ventana del aviso de privacidad tiene título, texto y los dos botones', () => {
