@@ -1,11 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { MESSAGES, storageMessage, importFailed, fileTooLarge, FILE_UNREADABLE } from '../js/lib/messages.js';
+import { MESSAGES, storageMessage, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
 import { StorageError } from '../js/lib/storage.js';
 
 const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'restoreFailed',
-  'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed'];
+  'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
+  'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
+  'chatBadOutput', 'chatRefused'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -56,6 +58,85 @@ test('storageMessage elige el mensaje según el error', () => {
   assert.deepEqual(storageMessage(new StorageError('quota')), MESSAGES.storageQuota);
   assert.deepEqual(storageMessage(new StorageError('unavailable')), MESSAGES.storageUnavailable);
   assert.deepEqual(storageMessage(new Error('otro')), MESSAGES.storageUnavailable);
+});
+
+test('cada código del servidor tiene su mensaje exacto', () => {
+  assert.deepEqual(MESSAGES.chatOffline, {
+    title: 'Necesitas conexión para conversar.',
+    text: 'Conéctate a internet y vuelve a enviar tu mensaje.',
+  });
+  assert.deepEqual(MESSAGES.chatNetwork, {
+    title: 'No se pudo conectar con el servidor.',
+    text: 'Revisa tu conexión y vuelve a enviar tu mensaje.',
+  });
+  assert.deepEqual(MESSAGES.chatWrongCode, {
+    title: 'El código de acceso no es correcto.',
+    text: 'Escríbelo de nuevo tal como lo guardaste al configurar el servidor.',
+  });
+  assert.deepEqual(MESSAGES.chatDailyLimit, {
+    title: 'Llegaste al límite de hoy, vuelve mañana.',
+    text: 'El contador se reinicia a medianoche, hora de Chile.',
+  });
+  assert.deepEqual(MESSAGES.chatInvalid, {
+    title: 'El mensaje no se pudo enviar.',
+    text: 'Escribe un mensaje de 500 caracteres como máximo.',
+  });
+  assert.deepEqual(MESSAGES.chatConfig, {
+    title: 'El servidor no está bien configurado.',
+    text: 'Revisa las variables y los secretos del servidor en Cloudflare.',
+  });
+  assert.deepEqual(MESSAGES.chatAuth, {
+    title: 'El servidor no pudo usar la clave de Anthropic.',
+    text: 'Revisa que la clave guardada en Cloudflare siga activa en la consola de Anthropic.',
+  });
+  assert.deepEqual(MESSAGES.chatRateLimit, {
+    title: 'Claude recibió demasiados mensajes seguidos.',
+    text: 'Espera un minuto y vuelve a enviar tu mensaje.',
+  });
+  assert.deepEqual(MESSAGES.chatQuota, {
+    title: 'Se acabó el saldo o el tope de gasto de Anthropic.',
+    text: 'Revisa el saldo y el tope de gasto en la consola de Anthropic.',
+  });
+  assert.deepEqual(MESSAGES.chatUnavailable, {
+    title: 'Claude no respondió a tiempo.',
+    text: 'Vuelve a enviar tu mensaje en unos minutos.',
+  });
+  assert.deepEqual(MESSAGES.chatBadOutput, {
+    title: 'La respuesta de Claude llegó incompleta.',
+    text: 'Vuelve a enviar tu mensaje.',
+  });
+  assert.deepEqual(MESSAGES.chatRefused, {
+    title: 'Claude no quiso responder ese mensaje.',
+    text: 'Escríbelo de otra forma y vuelve a enviarlo.',
+  });
+});
+
+test('chatMessage elige el mensaje según el código del servidor', () => {
+  assert.deepEqual(chatMessage('offline'), MESSAGES.chatOffline);
+  assert.deepEqual(chatMessage('network'), MESSAGES.chatNetwork);
+  assert.deepEqual(chatMessage('unauthorized'), MESSAGES.chatWrongCode);
+  assert.deepEqual(chatMessage('daily_limit'), MESSAGES.chatDailyLimit);
+  assert.deepEqual(chatMessage('invalid_input'), MESSAGES.chatInvalid);
+  assert.deepEqual(chatMessage('auth'), MESSAGES.chatAuth);
+  assert.deepEqual(chatMessage('rate_limit'), MESSAGES.chatRateLimit);
+  assert.deepEqual(chatMessage('quota'), MESSAGES.chatQuota);
+  assert.deepEqual(chatMessage('unavailable'), MESSAGES.chatUnavailable);
+  assert.deepEqual(chatMessage('bad_output'), MESSAGES.chatBadOutput);
+  assert.deepEqual(chatMessage('refused'), MESSAGES.chatRefused);
+});
+
+test('config, forbidden_origin y not_found muestran el mismo mensaje de configuración', () => {
+  assert.deepEqual(chatMessage('config'), MESSAGES.chatConfig);
+  assert.deepEqual(chatMessage('forbidden_origin'), MESSAGES.chatConfig);
+  assert.deepEqual(chatMessage('not_found'), MESSAGES.chatConfig);
+});
+
+test('un código desconocido muestra chatUnavailable', () => {
+  assert.deepEqual(chatMessage('codigo_inventado'), MESSAGES.chatUnavailable);
+  assert.deepEqual(chatMessage(undefined), MESSAGES.chatUnavailable);
+  assert.deepEqual(chatMessage(''), MESSAGES.chatUnavailable);
+  assert.deepEqual(chatMessage('toString'), MESSAGES.chatUnavailable);
+  assert.deepEqual(chatMessage('__proto__'), MESSAGES.chatUnavailable);
 });
 
 test('motivo cuando el teléfono no deja abrir el archivo', () => {

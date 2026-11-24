@@ -30,11 +30,12 @@ Los carteles esmaltados del metro de París: placas azules con borde blanco sobr
 | Estudiar | `--line-study` | `#9B5BB5` violeta |
 | Quiz | `--line-quiz` | `#2FA36B` verde |
 | Progreso | `--line-progress` | `#E0663A` naranja |
+| Conversar | `--line-chat` | `#D9478A` rosa |
 
 Los puntos de línea siempre llevan un anillo blanco y van sobre la barra azul: el amarillo sobre fondo claro solo tiene 1,6:1.
 
 **Contraste comprobado** (WCAG AA exige 4,5:1 en texto y 3:1 en elementos gráficos):
-texto/fondo claro 15,0 · texto/fondo oscuro 15,0 · blanco/placa 10,7 (oscuro 8,2) · inactivo/barra 7,2 (oscuro 9,1) · foco amarillo/barra 6,4 (oscuro 8,1) · foco amarillo/fondo oscuro 10,6 · foco azul/fondo claro 10,4 · aviso blanco/#1C2433 15,6 · «ç» del icono 10,4.
+texto/fondo claro 15,0 · texto/fondo oscuro 15,0 · blanco/placa 10,7 (oscuro 8,2) · inactivo/barra 7,2 (oscuro 9,1) · foco amarillo/barra 6,4 (oscuro 8,1) · foco amarillo/fondo oscuro 10,6 · foco azul/fondo claro 10,4 · aviso blanco/#1C2433 15,6 · «ç» del icono 10,4 · línea rosa/fondo 3,9 (oscuro 4,4) · línea rosa/tarjeta 4,0 (oscuro 3,9).
 Si se añade un color nuevo, se comprueba su contraste antes de usarlo.
 
 ## Letras
@@ -55,7 +56,7 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 
 ## Estructura
 
-- **Móvil (< 900 px):** barra de navegación fija abajo, cinco enlaces de igual ancho, cada uno de 48 px de alto como mínimo.
+- **Móvil (< 900 px):** barra de navegación fija abajo, seis enlaces que se reparten el ancho, cada uno de 48 px de alto como mínimo. «Vocabulario», el nombre más largo, ocupa unos píxeles más (67 px); a 360 px los demás miden 58 × 64 px y ningún nombre se corta.
 - **Computador (≥ 900 px):** barra vertical a la izquierda, de 200 px, con «Français» arriba. El contenido se alinea a la izquierda, con un ancho máximo de 65 caracteres.
 - Cada pantalla empieza con su **placa**: el punto de color de su línea y el nombre de la pantalla.
 - **Enlace activo:** texto blanco, negrita y franja del color de la línea (arriba en el móvil, a la izquierda en el computador), más `aria-current="page"`. Nunca se indica solo con color.
@@ -150,6 +151,20 @@ La línea naranja de Progreso (`#E0663A`) se usa en el gráfico como elemento gr
 - Debajo de la frase de Inicio, un recuadro `--surface` con borde de 2 px `--divider`, **franja izquierda de 8 px del amarillo de Inicio** (decoración: el amarillo nunca va como texto) y radio 8 px. Título `h2` «Copia de seguridad» como los de Progreso, un párrafo que explica qué guarda y para qué sirve, y dos botones: **Guardar copia** (primario) y **Restaurar copia** (secundario). Debajo, el resultado en Barlow 500 (`role="status"`); los errores van en el aviso de siempre (`role="alert"`) arriba del recuadro.
 - **Ventana «¿Restaurar la copia del DD/MM/AAAA?»:** como las de la Etapa 2; dos líneas: qué tiene la copia y qué se reemplaza («no se puede deshacer»). Botones **Cancelar** (secundario) y **Restaurar** (peligro). El foco vuelve a **Restaurar copia** al cerrarla.
 - Mismo verbo de principio a fin: «Guardar copia» → «Se guardó la copia…»; «Restaurar» → «Se restauró la copia…».
+
+## Pantalla Conversar (Etapa 8)
+
+**Color nuevo:** la línea rosa `#D9478A` (`.line-chat`). Además de los puntos y la franja del enlace activo, aquí dibuja la línea de las correcciones, así que se usa como elemento gráfico sobre el fondo y la tarjeta: 3,9–4,0 en claro y 3,9–4,4 en oscuro, por encima del 3:1 exigido. Una prueba de `tests/styles.test.js` lo comprueba. Nunca se usa como color de texto.
+
+- **Arriba:** el selector **Nivel de francés** (A1.1 · A1.2) como el de género (botones de opción reales dentro de un `fieldset`) y, si hay mensajes, **Conversación nueva** (secundario). En el móvil el botón pasa a la línea siguiente.
+- **Pantalla vacía:** «Aquí verás tu conversación con Claude en francés. Bajo cada mensaje tuyo aparecerán tus errores corregidos.»
+- **Mensajes:** cada uno con quién habla encima («Tú» o «Claude», Barlow 500 `--text-muted`) y el texto en Source Serif (`lang="fr"`) dentro de un recuadro `--surface` con borde de 2 px `--divider`, radio 8 px y **franja izquierda de 8 px**: rosa en tus mensajes y `--plaque` en los de Claude. Todos alineados a la izquierda; la diferencia la da el nombre, no solo el color. Se respetan los saltos de línea y las palabras largas se parten.
+- **Correcciones (el elemento propio de esta pantalla):** bajo tu mensaje baja una **línea rosa de 4 px** y cada corrección es una **estación** (círculo rosa de 14 px con anillo del color de fondo). En cada estación: lo que escribiste tachado (`<del>`, `--text-muted`), «→» y la forma correcta en Source Serif 600 (`<ins>`), los dos con `lang="fr"`; debajo, la explicación en español (`lang="es"`, 13,6 px, `--text-muted`). Para el lector de pantalla, la flecha se lee como «se corrige:».
+- **Campo:** «Tu mensaje en francés», un `textarea` de 3 líneas como los campos de la Etapa 2, con mayúscula automática al empezar cada frase y sin corrector, y la ayuda «Hasta 500 caracteres.». **Enviar** (primario) a lo ancho en el móvil. Mientras se espera la respuesta dice «Enviando…» y está desactivado, igual que el nivel y **Conversación nueva**; el campo queda de solo lectura.
+- **Mensajes restantes:** «Te quedan N mensajes hoy.» (con 1: «Te queda 1 mensaje hoy.») en Barlow 500 `--text-muted` bajo **Enviar**, oculto hasta la primera respuesta.
+- **Errores:** el aviso de siempre arriba (`role="alert"`). Tu texto queda en el campo y la conversación no cambia.
+- **Ventana «Código de acceso»:** como las de la Etapa 2; una frase que explica de dónde sale el código, el campo (tipo contraseña) y **Cancelar** · **Guardar y enviar**. Si el código no es correcto, la ventana vuelve a abrirse con el error bajo el campo.
+- **Ventana «¿Empezar una conversación nueva?»:** «Se borrará esta conversación. No se puede deshacer.» y **Cancelar** · **Borrar conversación** (peligro).
 
 ## Icono
 

@@ -10,9 +10,12 @@ import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
 import { initHome } from './screens/home.js';
+import { createChatStore } from './lib/chat.js';
+import { initChat } from './screens/chat.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
+let onChatShown = () => {}; // lo completa initChat
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -33,6 +36,7 @@ function showScreen(id, moveFocus) {
   // El foco va al título para que el lector de pantalla anuncie dónde estás
   if (moveFocus) document.querySelector(`#screen-${id} h1`).focus();
   currentId = id;
+  if (id === 'chat') onChatShown();
 }
 
 function handleRoute(isFirstLoad) {
@@ -76,6 +80,16 @@ initVocabulary({ store: wordStore, synth })
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
     initHome({ wordStore, studyStore, backend }),
   ]));
+
+// Conversar no depende de las palabras ni del estudio
+const chat = initChat({
+  store: createChatStore(backend),
+  fetch: window.fetch.bind(window),
+  isOnline: () => navigator.onLine,
+  hostname: location.hostname,
+});
+onChatShown = chat.onShow;
+if (currentId === 'chat') onChatShown();
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

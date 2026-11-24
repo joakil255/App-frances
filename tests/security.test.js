@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,5 +31,21 @@ test('ningún archivo de la app pone atributos on… como texto', () => {
   for (const file of appScripts()) {
     const source = readFileSync(join(root, file), 'utf8');
     assert.doesNotMatch(source, /setAttribute\(\s*['"]on/i, `${file} pone un atributo on… con setAttribute`);
+  }
+});
+
+test('ningún archivo del repositorio contiene una clave de API', () => {
+  const files = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean);
+  assert.ok(files.length > 5, 'git ls-files no devolvió archivos');
+  for (const file of files) {
+    // Solo texto: se saltan las imágenes y las fuentes
+    if (/\.(png|jpe?g|webp|ico|woff2?)$/i.test(file)) continue;
+    let source;
+    try {
+      source = readFileSync(join(root, file), 'utf8');
+    } catch {
+      continue; // archivo borrado aún sin confirmar en git
+    }
+    assert.doesNotMatch(source, /sk-ant-[A-Za-z0-9_-]{10,}/, `${file} parece contener una clave de API`);
   }
 });

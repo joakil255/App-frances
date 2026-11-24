@@ -98,3 +98,15 @@ for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTo
     }
   });
 }
+
+// --- Conversar (Etapa 8): la línea rosa enlaza cada mensaje con sus correcciones ---
+test('la línea rosa de Conversar se ve sobre el fondo y la tarjeta (≥ 3:1)', () => {
+  const pink = css.match(/\.line-chat \{ --line: (#[0-9A-Fa-f]{6}); \}/)?.[1];
+  assert.ok(pink, 'falta .line-chat');
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    for (const background of ['--surface', '--bg']) {
+      const bg = token(block, background);
+      assert.ok(contrast(pink, bg) >= 3, `${theme}: línea ${pink} sobre ${background} ${bg}`);
+    }
+  }
+});

@@ -17,9 +17,10 @@ Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. 
 
 ```bash
 npm install
+npm install --prefix server
 ```
 
-Instala ESLint, que solo se usa mientras programas. La app no tiene dependencias.
+La primera línea instala ESLint, que solo se usa mientras programas. La app no tiene dependencias. La segunda instala las del servidor de conversación (`server/`): la librería oficial de Anthropic y Wrangler, la herramienta de Cloudflare. `npm test` también ejecuta las pruebas del servidor, así que necesita las dos.
 
 ## Ejecutar la app
 
@@ -186,6 +187,49 @@ Progreso responde dos preguntas: **¿estudio todos los días?** y **¿qué palab
 - **Respuestas de los últimos 14 días:** una barra por día con su número; los días sin estudiar se ven como una estación vacía en la línea. Debajo, **Ver los datos día por día** muestra la misma información en una tabla.
 - **Acierto en los últimos 30 días**, por separado: en **Estudiar**, «Otra vez» es fallo y «Difícil», «Bien» y «Fácil» son aciertos (te calificas tú); en el **Quiz**, lo que corrigió la app. El porcentaje se redondea hacia abajo: nunca verás 100 % si fallaste alguna.
 - **Palabra dominada:** una tarjeta está dominada cuando su próximo repaso queda a **14 días o más** del último (con SM-2, unas 4 respuestas «Bien» seguidas; con Leitner, la caja 5). Una palabra está **dominada** si todas las tarjetas que estudiaste de ella lo están (si solo estudias francés → español, la otra dirección no cuenta), **nueva** si aún no estudiaste ninguna y **en aprendizaje** en los demás casos. Si respondes «Otra vez», vuelve a «en aprendizaje». Se usa el algoritmo elegido en Estudiar: **si cambias de algoritmo, los números pueden cambiar**.
+
+## Conversar
+
+Conversas en francés sencillo con Claude (Haiku 5.5). En cada turno responde con una pregunta corta y, debajo de tu mensaje, te muestra los errores: lo que escribiste, la forma correcta y una explicación en español. Eliges el nivel (A1.1 o A1.2). **Conversación nueva** borra la conversación.
+
+- **Necesita conexión.** Sin internet, la pantalla avisa y no envía nada; las demás pantallas siguen funcionando.
+- **Límite: 100 mensajes al día**, contados por el servidor. El contador se reinicia a medianoche, hora de Chile. Un mensaje que falla después de llegar a Claude también cuenta.
+- **Código de acceso:** la primera vez que abres la pantalla te lo pide y lo guarda en el teléfono. No es la clave de Anthropic: solo abre tu servidor.
+- **Tus datos:** tus mensajes se envían a Anthropic (permiso dado el 23/11/2026). La conversación se guarda solo en el teléfono y **no** entra en la copia de seguridad.
+- **Costo:** unos $0,0002 por mensaje; con los 100 mensajes diarios, unos $0,60 al mes. Pon un tope de gasto bajo en la consola de Anthropic (por ejemplo, $5 al mes).
+
+## Servidor de conversación
+
+La app no guarda ninguna clave. Habla con un servidor pequeño propio (un *Worker* de Cloudflare, carpeta `server/`) que guarda la clave de Anthropic, revisa el código de acceso, cuenta los mensajes del día y llama a Claude.
+
+### Probarlo en tu computador
+
+1. Crea `server/.dev.vars` (git lo ignora; **nunca** lo subas) con dos líneas: `ANTHROPIC_API_KEY=<tu clave>` y `ACCESS_CODE=<un código de prueba>`.
+2. En una terminal: `cd server && npx wrangler dev --port 8787 --ip 127.0.0.1`. En otra: `npm start`.
+3. Abre `http://127.0.0.1:8000/#/conversar`: en tu computador, la app usa el servidor local.
+
+### Publicarlo en Cloudflare (la primera vez)
+
+Todos los comandos se escriben **dentro de la carpeta `server/`** (`cd server`).
+
+1. Crea una cuenta gratuita en Cloudflare.
+2. Conecta Wrangler con tu cuenta: `npx wrangler login` (abre el navegador para autorizar).
+3. Crea el almacén del contador: `npx wrangler kv namespace create CHAT_KV`. Wrangler ofrece escribir el `id` en `server/wrangler.jsonc` (campo `id` de `kv_namespaces`); si no lo hace, cópialo tú ahí. No es secreto.
+4. Publica: `npx wrangler deploy`. Al final muestra la dirección `https://app-frances-chat.<tu-subdominio>.workers.dev`. Esa dirección, terminada en `/chat`, va en `PRODUCTION_CHAT_URL` de `js/lib/chat.js`.
+5. Guarda la clave de Anthropic sin pegarla en ningún archivo:
+   `tr -d '[:space:]' < ~/.config/app-frances/anthropic.key | npx wrangler secret put ANTHROPIC_API_KEY`
+6. Genera tu código de acceso (20 letras y números en 4 grupos) y guárdalo como secreto:
+   `node -e 'const a="abcdefghijklmnopqrstuvwxyz0123456789",b=require("crypto").randomBytes(20);let s="";for(let i=0;i<20;i++){s+=a[b[i]%36];if(i%5===4&&i<19)s+="-"}console.log(s)'`
+   y después `npx wrangler secret put ACCESS_CODE` (pega el código cuando lo pida). Anótalo en un lugar seguro: lo escribirás una vez en el teléfono.
+7. En la consola de Anthropic, fija un tope de gasto bajo.
+
+### Después
+
+- **Actualizar el servidor** tras un cambio en `server/`: `cd server && npx wrangler deploy`.
+- **Cambiar el límite diario:** edita `DAILY_LIMIT` en `server/wrangler.jsonc` y vuelve a publicar.
+- **Ver el contador de hoy:** `npx wrangler kv key get --binding CHAT_KV --remote "count:AAAA-MM-DD"` (fecha de Chile).
+- **Cambiar el código de acceso:** repite el paso 6; en el teléfono, la app te pedirá el código nuevo.
+- **Prueba de las 10 frases** (cuesta unos centavos y envía las frases a Anthropic): `npm run eval --prefix server`.
 
 ## Iconos
 
