@@ -2,16 +2,17 @@
 // readBackup lo valida todo antes de devolver nada; restoreBackup nunca deja datos a medias.
 // El historial solo tiene que ser una lista: Progreso ya ignora las respuestas raras, y exigir
 // más podría dejar sin restaurar una copia hecha por la propia app.
-import { validateWord, duplicateKey } from './words.js';
+import { validateWord, duplicateKey, upgradeWord } from './words.js';
 import { STORAGE_KEY, toStorageError } from './storage.js';
 import { STUDY_KEY, validateSettings } from './study-storage.js';
 import { cardIdOf } from './scheduler.js';
 
 export const BACKUP_FORMAT = 'app-frances-copia';
-export const BACKUP_VERSION = 1;
+export const BACKUP_VERSION = 2;
 export const MAX_BACKUP_BYTES = 10 * 1024 * 1024;
 const WORDS_FORMAT = 'app-frances-vocabulario';
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2; // palabras con lang y lemma
+const STUDY_SCHEMA_VERSION = 1;
 
 const DIRECTIONS = ['fr-es', 'es-fr'];
 
@@ -34,7 +35,7 @@ const isObject = (value) => Boolean(value) && typeof value === 'object' && !Arra
 
 export function buildBackup({ words, study, now }) {
   const { cards, history, settings } = study;
-  const data = { format: BACKUP_FORMAT, version: BACKUP_VERSION, createdAt: now.toISOString(), words, study: { cards, history, settings } };
+  const data = { format: BACKUP_FORMAT, version: BACKUP_VERSION, createdAt: now.toISOString(), words: words.map(upgradeWord), study: { cards, history, settings } };
   // El carácter de reemplazo se escribe como escape JSON: es el mismo texto al leerlo, y así
   // readBackup no lo confunde con un archivo mal codificado
   return `${JSON.stringify(data, null, 2).replace(/\uFFFD/g, '\\ufffd')}\n`;
@@ -91,14 +92,16 @@ export function readBackup(text) {
   if (isObject(data) && data.format === WORDS_FORMAT) return failed(BACKUP_ERRORS.wordList);
   if (!isObject(data) || data.format !== BACKUP_FORMAT) return failed(BACKUP_ERRORS.notBackup);
   if (isNumber(data.version) && data.version > BACKUP_VERSION) return failed(BACKUP_ERRORS.newer);
-  if (data.version !== BACKUP_VERSION || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
+  // Se leen la versión 1 (sin lang ni lemma) y la 2
+  if (data.version !== 1 && data.version !== BACKUP_VERSION || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
     || !validWords(data.words) || !validStudy(data.study)) {
     return failed(BACKUP_ERRORS.damaged);
   }
   const { cards, history, settings } = data.study;
   return {
     fatal: null,
-    backup: { words: data.words, study: { cards, history, settings }, createdAt: data.createdAt },
+    // lang y lemma se recalculan siempre: no se confía en lo que traiga el archivo
+    backup: { words: data.words.map(upgradeWord), study: { cards, history, settings }, createdAt: data.createdAt },
     summary: { words: data.words.length, cards: Object.keys(cards).length, answers: history.length, createdAt: data.createdAt },
   };
 }
@@ -113,7 +116,7 @@ export function restoreBackup(backend, backup) {
     throw toStorageError(error);
   }
   try {
-    backend.setItem(STUDY_KEY, JSON.stringify({ schemaVersion: SCHEMA_VERSION, ...study }));
+    backend.setItem(STUDY_KEY, JSON.stringify({ schemaVersion: STUDY_SCHEMA_VERSION, ...study }));
   } catch (error) {
     try {
       if (previousWords === null) backend.removeItem(STORAGE_KEY);

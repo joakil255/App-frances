@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { readImport, planImport } from '../js/lib/transfer.js';
-import { duplicateKey } from '../js/lib/words.js';
+import { duplicateKey, lemmaOf } from '../js/lib/words.js';
 import { INITIAL_WORDS } from '../js/data/initial-words.js';
 import { exampleWordCount, textProblems } from './helpers/content-checks.js';
 
@@ -145,6 +145,10 @@ test('regla 10: la importación de la Etapa 2 lo acepta entero', () => {
     assert.equal(plan.newWords.length, 100);
     assert.equal(plan.duplicates.length, 0);
     assert.deepEqual(plan.invalid, []);
+    for (const { word } of plan.newWords) {
+      assert.equal(word.lang, 'fr');
+      assert.equal(word.lemma, lemmaOf(word.fr, word.gender));
+    }
   }
 });
 

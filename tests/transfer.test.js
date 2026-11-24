@@ -151,7 +151,7 @@ test('ida y vuelta en JSON de 1.000 palabras con caracteres especiales', () => {
 
 test('la exportación no incluye datos internos (id, fechas)', () => {
   const text = exportJson([{ id: 'x', createdAt: 'a', updatedAt: 'b', ...word('être', 'ser') }], new Date());
-  assert.deepEqual(Object.keys(JSON.parse(text).words[0]), ['fr', 'es', 'exampleFr', 'exampleEs', 'category', 'gender', 'needsReview']);
+  assert.deepEqual(Object.keys(JSON.parse(text).words[0]), ['fr', 'es', 'exampleFr', 'exampleEs', 'category', 'gender', 'needsReview', 'lang', 'lemma']);
 });
 
 test('revisa una importación de 1.000 filas en menos de 1 segundo', () => {
@@ -169,4 +169,41 @@ test('importar «l’eau» sobre una lista con «l\'eau» la marca como ya exist
   const plan = planImport(read.rows, [word("l'eau", 'el agua', { id: 'w1' })]);
   assert.equal(plan.newWords.length, 0);
   assert.equal(plan.duplicates.length, 1);
+});
+
+// --- Etapa 10: versión 2 con lang y lemma ---
+
+test('exportJson escribe version 2 con lang y lemma', () => {
+  const data = JSON.parse(exportJson([word("l'école", 'la escuela', { gender: 'f' })], new Date()));
+  assert.equal(data.version, 2);
+  assert.equal(data.words[0].lang, 'fr');
+  assert.equal(data.words[0].lemma, 'école');
+});
+
+test('readImport acepta las versiones 1 y 2 de JSON', () => {
+  for (const version of [1, 2]) {
+    const text = JSON.stringify({ format: 'app-frances-vocabulario', version, words: [word('être', 'ser')] });
+    const plan = planImport(readImport(text, 'v.json').rows, []);
+    assert.equal(plan.invalid.length, 0, `v${version}`);
+    assert.equal(plan.newWords[0].word.lang, 'fr');
+    assert.equal(plan.newWords[0].word.lemma, 'être');
+  }
+});
+
+test('un lemma guardado en el JSON no se cree: se recalcula', () => {
+  const text = JSON.stringify({ format: 'app-frances-vocabulario', version: 2, words: [word('la maison', 'la casa', { gender: 'f', lang: 'fr', lemma: 'otra' })] });
+  const plan = planImport(readImport(text, 'v.json').rows, []);
+  assert.equal(plan.newWords[0].word.lemma, 'maison');
+});
+
+test('un JSON con idioma no admitido da una fila inválida', () => {
+  const text = JSON.stringify({ format: 'app-frances-vocabulario', version: 2, words: [word('cat', 'gato', { lang: 'en' })] });
+  const plan = planImport(readImport(text, 'v.json').rows, []);
+  assert.equal(plan.newWords.length, 0);
+  assert.deepEqual(plan.invalid, [{ row: 1, reasons: ['Idioma no admitido.'] }]);
+});
+
+test('planImport de un CSV calcula lemma', () => {
+  const plan = planImport(readImport(csv('frances,espanol,genero', "l'ami,el amigo,m", 'bonjour,hola,'), 'v.csv').rows, []);
+  assert.deepEqual(plan.newWords.map((n) => [n.word.lang, n.word.lemma]), [['fr', 'ami'], ['fr', 'bonjour']]);
 });
