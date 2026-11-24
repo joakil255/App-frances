@@ -21,7 +21,7 @@ const DIRECTIONS = ['fr-es', 'es-fr'];
 export const BACKUP_ERRORS = Object.freeze({
   notUtf8: 'El archivo no está en UTF-8.',
   unreadable: 'El archivo no se puede leer.',
-  wordList: 'Este archivo es una lista de palabras: impórtalo en Vocabulario con «Importar».',
+  wordList: 'Este archivo es una lista de palabras: impórtalo en Palabras con «Importar».',
   notBackup: 'Este archivo no es una copia de seguridad de la app.',
   newer: 'La copia es de una versión más nueva de la app. Actualiza la app y vuelve a intentarlo.',
   damaged: 'La copia está incompleta o dañada.',

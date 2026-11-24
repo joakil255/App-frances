@@ -4,7 +4,7 @@ import { SCREENS, resolveRoute, routeParam } from '../js/lib/router.js';
 
 test('SCREENS tiene las siete pantallas en orden', () => {
   assert.deepEqual(SCREENS.map((s) => s.id), ['home', 'vocabulary', 'study', 'quiz', 'progress', 'chat', 'reader']);
-  assert.deepEqual(SCREENS.map((s) => s.title), ['Inicio', 'Vocabulario', 'Estudiar', 'Quiz', 'Progreso', 'Conversar', 'Leer']);
+  assert.deepEqual(SCREENS.map((s) => s.title), ['Inicio', 'Palabras', 'Estudiar', 'Quiz', 'Progreso', 'Conversar', 'Leer']);
 });
 
 test('cada dirección lleva a su pantalla', () => {

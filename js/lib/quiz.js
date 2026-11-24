@@ -5,9 +5,9 @@ import { normalizeAnswer } from './answer-check.js';
 export const QUIZ_LENGTH = 10;
 export const MODES = ['choice', 'write', 'dictation'];
 export const MODE_MESSAGES = {
-  noWords: 'Añade palabras en Vocabulario para empezar.',
+  noWords: 'Añade palabras en Palabras para empezar.',
   choice: 'Necesitas al menos 4 palabras con traducciones distintas.',
-  noExamples: 'Ninguna de tus palabras tiene frase de ejemplo. Añádelas en Vocabulario.',
+  noExamples: 'Ninguna de tus palabras tiene frase de ejemplo. Añádelas en Palabras.',
   noVoice: 'Este dispositivo no tiene voz francesa.',
   checkingVoice: 'Comprobando la voz…',
 };

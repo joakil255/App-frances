@@ -20,6 +20,12 @@ test('la navegación principal tiene un enlace por pantalla', () => {
   }
 });
 
+test('la barra dice «Palabras» (antes «Vocabulario») y lleva a #/vocabulario', () => {
+  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  assert.match(nav, /href="#\/vocabulario"><span class="line-dot" aria-hidden="true"><\/span>Palabras<\/a>/);
+  assert.ok(!nav.includes('Vocabulario'));
+});
+
 test('cada pantalla tiene su sección con título enfocable', () => {
   for (const screen of SCREENS) {
     const section = html.match(new RegExp(`<section id="screen-${screen.id}"[^>]*>([\\s\\S]*?)</section>`));
@@ -121,7 +127,7 @@ test('Estudiar tiene el fin de sesión y un aviso anunciable', () => {
   assert.match(study, /id="study-done"/);
   assert.match(study, /Terminaste por hoy/);
   assert.match(study, /id="study-notice"[^>]*role="alert"/);
-  assert.match(study, /Añade palabras en Vocabulario para empezar\./);
+  assert.match(study, /Añade palabras en Palabras para empezar\./);
 });
 
 test('la ventana de ajustes del estudio tiene dirección, algoritmo y nuevas por día', () => {

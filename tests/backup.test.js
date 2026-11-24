@@ -116,7 +116,7 @@ test('archivos que no son una copia válida se rechazan con su motivo', async ()
   assert.equal(readBackup(`{"format":"app-frances-copia"${FFFD}}`).fatal, 'El archivo no está en UTF-8.');
   assert.equal(readBackup('esto no es JSON').fatal, 'El archivo no se puede leer.');
   assert.equal(readBackup(JSON.stringify({ format: 'app-frances-vocabulario', version: 1, words: [] })).fatal,
-    'Este archivo es una lista de palabras: impórtalo en Vocabulario con «Importar».');
+    'Este archivo es una lista de palabras: impórtalo en Palabras con «Importar».');
   assert.equal(readBackup(JSON.stringify({ format: 'otra-app' })).fatal, 'Este archivo no es una copia de seguridad de la app.');
   assert.equal(readBackup('null').fatal, 'Este archivo no es una copia de seguridad de la app.');
   assert.equal((await mutate((d) => { d.version = 4; })).fatal,

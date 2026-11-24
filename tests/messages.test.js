@@ -47,7 +47,7 @@ test('los textos exactos de almacenamiento y datos dañados nombran Inicio', () 
   assert.equal(MESSAGES.restoreFailed.title, 'No se pudo restaurar la copia.');
   assert.deepEqual(MESSAGES.backupUnverified, {
     title: 'No se guardó la copia.',
-    text: 'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Vocabulario mientras tanto.',
+    text: 'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Palabras mientras tanto.',
   });
   assert.equal(MESSAGES.noSpeech.title, 'Este navegador no puede leer en voz alta.');
   assert.equal(MESSAGES.noFrenchVoice.title, 'No hay voz francesa en este dispositivo.');

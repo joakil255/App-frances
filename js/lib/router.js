@@ -1,7 +1,7 @@
 // Pantallas de la app: id en código, dirección visible (#/path) y título
 export const SCREENS = [
   { id: 'home', path: '', title: 'Inicio' },
-  { id: 'vocabulary', path: 'vocabulario', title: 'Vocabulario' },
+  { id: 'vocabulary', path: 'vocabulario', title: 'Palabras' },
   { id: 'study', path: 'estudiar', title: 'Estudiar' },
   { id: 'quiz', path: 'quiz', title: 'Quiz' },
   { id: 'progress', path: 'progreso', title: 'Progreso' },

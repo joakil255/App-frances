@@ -86,7 +86,7 @@ test('QZ5: el azar cambia el orden de las opciones', () => {
 test('QZ6: sin palabras no hay ningún modo', () => {
   const status = modeStatus({ words: [], hasVoice: true });
   for (const mode of MODES) {
-    assert.deepEqual(status[mode], { available: false, reason: 'Añade palabras en Vocabulario para empezar.' });
+    assert.deepEqual(status[mode], { available: false, reason: 'Añade palabras en Palabras para empezar.' });
   }
 });
 
@@ -102,16 +102,16 @@ test('QZ6: la opción múltiple pide 4 traducciones distintas', () => {
 test('QZ6: el dictado pide frases de ejemplo y voz francesa', () => {
   const noExamples = [word(1, { exampleFr: '' }), word(2, { exampleFr: ' ' })];
   assert.deepEqual(modeStatus({ words: noExamples, hasVoice: true }).dictation,
-    { available: false, reason: 'Ninguna de tus palabras tiene frase de ejemplo. Añádelas en Vocabulario.' });
+    { available: false, reason: 'Ninguna de tus palabras tiene frase de ejemplo. Añádelas en Palabras.' });
   assert.deepEqual(modeStatus({ words: makeWords(2), hasVoice: false }).dictation,
     { available: false, reason: 'Este dispositivo no tiene voz francesa.' });
   assert.deepEqual(modeStatus({ words: makeWords(2), hasVoice: null }).dictation,
     { available: false, reason: 'Comprobando la voz…' });
   assert.deepEqual(modeStatus({ words: makeWords(2), hasVoice: true }).dictation, { available: true, reason: null });
   assert.deepEqual(MODE_MESSAGES, {
-    noWords: 'Añade palabras en Vocabulario para empezar.',
+    noWords: 'Añade palabras en Palabras para empezar.',
     choice: 'Necesitas al menos 4 palabras con traducciones distintas.',
-    noExamples: 'Ninguna de tus palabras tiene frase de ejemplo. Añádelas en Vocabulario.',
+    noExamples: 'Ninguna de tus palabras tiene frase de ejemplo. Añádelas en Palabras.',
     noVoice: 'Este dispositivo no tiene voz francesa.',
     checkingVoice: 'Comprobando la voz…',
   });
