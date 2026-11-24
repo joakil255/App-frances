@@ -130,3 +130,33 @@ test('filtra 1.000 palabras en menos de 50 ms', () => {
   assert.ok(performance.now() - start < 50, 'demasiado lento');
   assert.ok(result.length > 0);
 });
+
+// --- Mejora B de la auditoría: la palabra francesa se guarda con el apóstrofo recto y sin espacios a su lado ---
+const saved = (fr, extra = {}) => validateWord({ ...base, gender: null, fr, ...extra }).word;
+
+test('al guardar, el apóstrofo de la palabra se unifica y pierde los espacios', () => {
+  for (const fr of ['l’ami', "l' ami", 'l ’ami', 'l ʼ ami', 'l‘ami']) {
+    assert.equal(saved(fr).fr, "l'ami", fr);
+  }
+  assert.equal(saved('L’Ami').fr, "L'Ami"); // no cambia las mayúsculas
+});
+
+test('las palabras sin apóstrofo o con apóstrofo interno no cambian', () => {
+  for (const fr of ["aujourd'hui", "s'il vous plaît", 'la maison', 'bonjour']) assert.equal(saved(fr).fr, fr);
+});
+
+test('el ejemplo en francés no se normaliza (puede tener comillas)', () => {
+  assert.equal(saved('le chat', { exampleFr: "Il dit 'oui'.", exampleEs: 'Dice «sí».' }).exampleFr, "Il dit 'oui'.");
+  assert.equal(saved('le chat', { exampleFr: 'L’œuf est là.', exampleEs: 'El huevo está ahí.' }).exampleFr, 'L’œuf est là.');
+});
+
+test("duplicateKey trata «l' ami», «l'ami» y «l’ami» como la misma palabra", () => {
+  assert.equal(duplicateKey("l' ami"), duplicateKey("l'ami"));
+  assert.equal(duplicateKey('l ’ami'), duplicateKey('l’ami'));
+});
+
+test('guardar «l\' ami» con una «l’ami» ya guardada avisa; editar esa misma no', () => {
+  const existing = [{ id: 'w1', fr: 'l’ami' }];
+  assert.match(errorsOf({ fr: "l' ami", gender: null }, existing).fr, /ya está en tu lista/);
+  assert.deepEqual(errorsOf({ fr: "l' ami", gender: null }, existing, 'w1'), {});
+});
