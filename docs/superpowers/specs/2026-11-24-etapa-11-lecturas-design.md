@@ -1,6 +1,6 @@
-# Etapa 11 — Lecturas con audio: diseño (pendiente de aprobación)
+# Etapa 11 — Lecturas con audio: diseño (aprobado)
 
-> **Estado:** borrador para revisar. No hay código. Las decisiones las tomó el usuario el 24/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir).
+> **Estado:** **aprobado por el usuario el 24/11/2026.** No hay código. Las decisiones las tomó el usuario el 24/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir).
 
 ## Intención
 
