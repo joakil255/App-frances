@@ -259,3 +259,15 @@ test('la ventana de confirmar la restauración tiene título, texto y los dos bo
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Restaurar<\/button>/);
 });
+
+// --- Mejora A de la auditoría: teclado móvil en los campos en francés de Vocabulario ---
+test('los campos en francés del formulario no ponen mayúsculas ni corrigen al español', () => {
+  const fr = tagWithId(html, 'form-fr');
+  const example = tagWithId(html, 'form-example-fr');
+  for (const attr of ['lang="fr"', 'autocapitalize="none"', 'autocorrect="off"', 'spellcheck="false"']) {
+    assert.ok(fr.includes(attr), `#form-fr sin ${attr}`);
+  }
+  for (const attr of ['lang="fr"', 'autocapitalize="sentences"', 'autocorrect="off"', 'spellcheck="false"']) {
+    assert.ok(example.includes(attr), `#form-example-fr sin ${attr}`);
+  }
+});
