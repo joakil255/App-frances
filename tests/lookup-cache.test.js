@@ -8,6 +8,7 @@ class MemoryStorage {
     this.failSet = null;
   }
   getItem(key) {
+    this.reads = (this.reads ?? 0) + 1;
     return this.data.has(key) ? this.data.get(key) : null;
   }
   setItem(key, value) {
@@ -82,4 +83,14 @@ test('peek lee sin escribir ni cambiar usedAt', () => {
   assert.deepEqual(cache.peek('fr', 'a', 's'), result('a'));
   assert.equal(cache.peek('fr', 'zzz', 's'), null);
   assert.equal(backend.getItem(LOOKUP_CACHE_KEY), before);
+});
+
+test('100 peek seguidos leen el almacenamiento una sola vez', () => {
+  const backend = new MemoryStorage();
+  const cache = createLookupCache(backend, { now: counter() });
+  cache.set('fr', 'a', 's', result('a'));
+  const other = createLookupCache(backend, { now: counter() });
+  backend.reads = 0;
+  for (let i = 0; i < 100; i += 1) assert.ok(other.peek('fr', 'a', 's'));
+  assert.ok(backend.reads <= 1);
 });

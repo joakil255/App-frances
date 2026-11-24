@@ -57,6 +57,18 @@ test('tokenize: cada palabra lleva la oración que la contiene', () => {
   assert.equal(sentenceOf('Oui'), 'Oui !');
 });
 
+test('tokenize: no se puede tocar lo que el servidor rechazaría', () => {
+  assert.deepEqual(words(tokenize('Le 1er jour')), ['Le', 'jour']);
+  const longWord = 'a'.repeat(41);
+  assert.deepEqual(words(tokenize(`Un ${longWord} ok`)), ['Un', 'ok']);
+  assert.deepEqual(words(tokenize(`${'a'.repeat(40)} ok`)), ['a'.repeat(40), 'ok']);
+});
+
+test('tokenize: con una oración de más de 1000 letras ninguna palabra es tocable', () => {
+  const tokens = tokenize(`Bonjour ${'mot '.repeat(300)}fin. Salut.`);
+  assert.deepEqual(words(tokens), ['Salut']);
+});
+
 test('tokenize sin Segmenter deja un solo token sin palabra', () => {
   assert.deepEqual(tokenize('Tu manges.', null), [{ text: 'Tu manges.', word: null, sentence: 'Tu manges.' }]);
   assert.deepEqual(tokenize('', null), []);
