@@ -1,0 +1,12 @@
+[
+  { "id": 1, "sentence": "Je suis 20 ans.", "expected": "j'ai 20 ans" },
+  { "id": 2, "sentence": "Le maison est grande.", "expected": "la maison" },
+  { "id": 3, "sentence": "Je habite à Santiago.", "expected": "j'habite" },
+  { "id": 4, "sentence": "Nous allons à le marché.", "expected": "au marché" },
+  { "id": 5, "sentence": "Elle a deux chat.", "expected": "deux chats" },
+  { "id": 6, "sentence": "Je mange un pomme.", "expected": "une pomme" },
+  { "id": 7, "sentence": "Ils est dans la cuisine.", "expected": ["ils sont", "il est"] },
+  { "id": 8, "sentence": "Je vais à la école.", "expected": "l'école" },
+  { "id": 9, "sentence": "Il fait froid aujourd'hui.", "expected": null },
+  { "id": 10, "sentence": "Je ne mange pas de viande.", "expected": null }
+]
