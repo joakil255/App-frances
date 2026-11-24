@@ -1,0 +1,191 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { handleRequest } from '../src/handler.js';
+import { ProviderError } from '../src/errors.js';
+
+const ORIGIN = 'https://joakil255.github.io';
+const NOW = new Date('2026-11-24T02:30:00Z');
+const KEY = 'count:2026-11-23';
+
+function makeKv(initial = {}) {
+  const store = new Map(Object.entries(initial));
+  return {
+    store,
+    async get(key) {
+      return store.has(key) ? store.get(key) : null;
+    },
+    async put(key, value) {
+      store.set(key, value);
+    },
+  };
+}
+
+function makeEnv(overrides = {}) {
+  return {
+    AI_PROVIDER: 'claude',
+    AI_MODEL: 'claude-haiku-5-5',
+    AI_EFFORT: 'low',
+    DAILY_LIMIT: '100',
+    ALLOWED_ORIGINS: `${ORIGIN},http://127.0.0.1:8000`,
+    ANTHROPIC_API_KEY: 'clave-de-prueba',
+    ACCESS_CODE: 'codigo-de-prueba',
+    CHAT_KV: makeKv(),
+    ...overrides,
+  };
+}
+
+// Proveedor falso que cuenta sus llamadas
+function makeProviders(behavior) {
+  const state = { calls: 0, created: [], received: [] };
+  const claude = (options) => {
+    state.created.push(options);
+    return {
+      async chat(input) {
+        state.calls += 1;
+        state.received.push(input);
+        return behavior(input);
+      },
+    };
+  };
+  return { providers: { claude }, state };
+}
+
+const okBehavior = () => ({ reply: 'Salut !', corrections: [] });
+const goodBody = { level: 'A1.1', history: [], message: 'Bonjour' };
+
+function chatRequest({ origin = ORIGIN, code = 'codigo-de-prueba', body = goodBody, method = 'POST', path = '/chat', raw } = {}) {
+  const headers = { 'content-type': 'application/json' };
+  if (origin !== null) headers.origin = origin;
+  if (code !== null) headers.authorization = `Bearer ${code}`;
+  const init = { method, headers };
+  if (method !== 'GET' && method !== 'HEAD') init.body = raw ?? JSON.stringify(body);
+  return new Request(`https://worker.example${path}`, init);
+}
+
+async function run(request, env = makeEnv(), providers = makeProviders(okBehavior)) {
+  const response = await handleRequest(request, env, { providers: providers.providers, now: () => NOW });
+  return { response, body: response.status === 204 ? null : await response.json(), env, state: providers.state };
+}
+
+test('OPTIONS /chat desde origen permitido responde 204 con CORS', async () => {
+  const request = new Request('https://worker.example/chat', { method: 'OPTIONS', headers: { origin: ORIGIN } });
+  const { response } = await run(request);
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
+  assert.equal(response.headers.get('vary'), 'Origin');
+  assert.equal(response.headers.get('access-control-allow-methods'), 'POST');
+  assert.equal(response.headers.get('access-control-allow-headers'), 'authorization, content-type');
+  assert.equal(response.headers.get('access-control-max-age'), '86400');
+});
+
+test('origen ausente da 403 forbidden_origin', async () => {
+  const { response, body } = await run(chatRequest({ origin: null }));
+  assert.equal(response.status, 403);
+  assert.deepEqual(body, { error: 'forbidden_origin' });
+  assert.equal(response.headers.get('access-control-allow-origin'), null);
+});
+
+test('origen no permitido da 403, también en OPTIONS', async () => {
+  const { response, body } = await run(chatRequest({ origin: 'https://malo.example' }));
+  assert.equal(response.status, 403);
+  assert.deepEqual(body, { error: 'forbidden_origin' });
+  const preflight = new Request('https://worker.example/chat', { method: 'OPTIONS', headers: { origin: 'https://malo.example' } });
+  assert.equal((await run(preflight)).response.status, 403);
+});
+
+test('otra ruta o método da 404 not_found', async () => {
+  const route = await run(chatRequest({ path: '/otra' }));
+  assert.equal(route.response.status, 404);
+  assert.deepEqual(route.body, { error: 'not_found' });
+  const method = await run(chatRequest({ method: 'GET' }));
+  assert.equal(method.response.status, 404);
+  assert.deepEqual(method.body, { error: 'not_found' });
+});
+
+test('config inválida da 500 config', async () => {
+  const { response, body } = await run(chatRequest(), makeEnv({ ACCESS_CODE: undefined }));
+  assert.equal(response.status, 500);
+  assert.deepEqual(body, { error: 'config' });
+});
+
+test('código ausente o distinto da 401 y no cuenta', async () => {
+  for (const code of [null, 'otro']) {
+    const env = makeEnv();
+    const { response, body, state } = await run(chatRequest({ code }), env);
+    assert.equal(response.status, 401);
+    assert.deepEqual(body, { error: 'unauthorized' });
+    assert.equal(env.CHAT_KV.store.has(KEY), false);
+    assert.equal(state.calls, 0);
+  }
+});
+
+test('JSON inválido o entrada inválida da 400 y no cuenta', async () => {
+  for (const request of [chatRequest({ raw: '{no es json' }), chatRequest({ body: { ...goodBody, message: '' } })]) {
+    const env = makeEnv();
+    const { response, body, state } = await run(request, env);
+    assert.equal(response.status, 400);
+    assert.deepEqual(body, { error: 'invalid_input' });
+    assert.equal(env.CHAT_KV.store.has(KEY), false);
+    assert.equal(state.calls, 0);
+  }
+});
+
+test('límite alcanzado da 429, no llama al proveedor ni escribe', async () => {
+  const env = makeEnv({ CHAT_KV: makeKv({ [KEY]: '100' }) });
+  const { response, body, state } = await run(chatRequest(), env);
+  assert.equal(response.status, 429);
+  assert.deepEqual(body, { error: 'daily_limit' });
+  assert.equal(state.calls, 0);
+  assert.equal(env.CHAT_KV.store.get(KEY), '100');
+});
+
+test('ProviderError da 502 con su código y el contador sube', async () => {
+  for (const code of ['bad_output', 'refused', 'rate_limit']) {
+    const env = makeEnv();
+    const providers = makeProviders(() => {
+      throw new ProviderError(code);
+    });
+    const { response, body } = await run(chatRequest(), env, providers);
+    assert.equal(response.status, 502);
+    assert.deepEqual(body, { error: code });
+    assert.equal(env.CHAT_KV.store.get(KEY), '1');
+  }
+});
+
+test('ProviderError config da 500', async () => {
+  const providers = makeProviders(() => {
+    throw new ProviderError('config');
+  });
+  const { response, body } = await run(chatRequest(), makeEnv(), providers);
+  assert.equal(response.status, 500);
+  assert.deepEqual(body, { error: 'config' });
+});
+
+test('un error que no es ProviderError da 502 unavailable', async () => {
+  const providers = makeProviders(() => {
+    throw new Error('boom');
+  });
+  const { response, body } = await run(chatRequest(), makeEnv(), providers);
+  assert.equal(response.status, 502);
+  assert.deepEqual(body, { error: 'unavailable' });
+});
+
+test('éxito: 200 con reply, corrections, remaining y CORS', async () => {
+  const providers = makeProviders(() => ({ reply: 'Salut !', corrections: [{ original: 'a', corrected: 'b', explanation: 'c' }] }));
+  const env = makeEnv();
+  const { response, body, state } = await run(chatRequest(), env, providers);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('content-type'), 'application/json; charset=utf-8');
+  assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
+  assert.equal(response.headers.get('vary'), 'Origin');
+  assert.deepEqual(body, { reply: 'Salut !', corrections: [{ original: 'a', corrected: 'b', explanation: 'c' }], remaining: 99 });
+  assert.equal(state.calls, 1);
+  assert.deepEqual(state.created[0], { apiKey: 'clave-de-prueba', model: 'claude-haiku-5-5', effort: 'low' });
+  assert.deepEqual(state.received[0], goodBody);
+});
+
+test('los errores de un origen permitido también llevan CORS', async () => {
+  const { response } = await run(chatRequest({ code: 'otro' }));
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
+});
