@@ -51,13 +51,14 @@ La Fase 2, evaluar la pronunciación con un servicio externo, **solo se compara 
 - Si existe paquete local en francés.
 - Si Chromium 158 (no es Chrome) puede usar el servidor o el modo local.
 - Si Firefox 160.0.1 ya lo trae activado o recién la 161.
-- Si Chrome para Android lee en voz alta una respuesta que llega unos segundos después del toque en **Enviar**: la lectura podría exigir un toque reciente. Se comprueba en la Tarea 1 del plan.
+- Si Chrome para Android lee en voz alta una respuesta que llega unos segundos después del toque en **Enviar**: la lectura podría exigir un toque reciente. Por decisión del usuario no se hace una prueba previa; el diseño tiene un plan de respaldo (ver «Escuchar primero») y se comprueba en la prueba final en el teléfono.
 
 ## Decisiones del usuario
 
 1. **Privacidad: opción A.** El micrófono funciona en el teléfono aunque el audio salga a un servidor. La primera vez la app avisa que tu voz sale del teléfono al servicio de reconocimiento del navegador. Solo se envía audio mientras el micrófono está activo.
 2. **Escuchar primero**, con un botón para mostrar el texto.
 3. **Enfoque 1:** voz dentro de «Conversar», **sin cambiar el servidor**.
+4. **Sin prueba previa en el teléfono:** la lectura automática se comprueba al final, en el teléfono. Si no funciona, rige el respaldo de «Escuchar primero».
 
 ## Enfoques considerados
 
@@ -73,7 +74,8 @@ En el computador se usa el mismo modo que en el teléfono: el navegador decide. 
 
 ### Micrófono
 - **Tocar para hablar** (no mantener pulsado): un toque empieza a escuchar y otro lo detiene. También se detiene solo cuando callas, como hace Chrome en Android. El botón usa `aria-pressed` y su texto cambia de «Hablar» a «Detener». **Decisión del diseño:** mantener pulsado es difícil con teclado y con lector de pantalla.
-- `lang = 'fr-FR'`, `interimResults = true` (el texto parcial se ve mientras hablas) y `maxAlternatives = 1`.
+- `lang = 'fr-FR'`, `interimResults = true` y `maxAlternatives = 1`.
+- **El texto parcial** se ve en una línea aparte bajo el campo («Escuchando: …»), no dentro del campo. **Solo el resultado final** se agrega al campo, así que puedes escribir mientras escucha sin que se borre nada. **Decisión del diseño** (tras la revisión del constructor).
 - Lo reconocido **se agrega** al campo: si está vacío, lo llena; si tiene texto, lo pone a continuación con un espacio. Nunca borra lo que escribiste. Respeta el máximo de 500 caracteres.
 - Mientras escucha, el botón **Enviar** sigue disponible; enviar detiene el micrófono.
 - **Navegador sin reconocimiento** (por ejemplo, Firefox en Android): el botón no aparece y escribir funciona igual.
@@ -92,6 +94,7 @@ En el computador se usa el mismo modo que en el teléfono: el navegador decide. 
 - Con el interruptor encendido:
   - cada respuesta nueva de Claude **se lee sola** con la mejor voz francesa (se reutiliza `playFrench` de `js/screens/voice.js`);
   - su texto queda oculto, con el atributo `hidden`, tras un botón **«Mostrar texto»** (`aria-expanded`).
+- **Si la respuesta no se puede oír** (no hay `speechSynthesis`, no hay voz francesa, el motor falla o el navegador bloquea la lectura sin un toque reciente), **el texto se muestra solo** y aparece el aviso que corresponda una sola vez. Así nunca quedas atascado detrás de «Mostrar texto». Para eso, `playFrench` debe informar si pudo leer. **Decisión del diseño** (tras la revisión del constructor).
 - Con el interruptor apagado, la respuesta se muestra y **no** se lee sola.
 - Las respuestas cargadas del historial al abrir la pantalla siempre se muestran: no se tapan otra vez. **Decisión del diseño.**
 - Las correcciones, que están en español, se ven siempre.
@@ -126,20 +129,15 @@ Los textos exactos se escriben en el plan.
 
 - **Pruebas automáticas** de la lógica nueva, sin navegador real (TDD):
   - elegir el constructor de reconocimiento, con o sin prefijo, o ninguno;
+  - que, con «Escuchar primero», una lectura que falla muestre el texto;
   - agregar lo reconocido al campo sin perder texto, con acentos, apóstrofos tipográficos y el límite de 500 caracteres;
   - convertir cada error en su mensaje, y `aborted` en ninguno;
   - el almacén de `app-frances-voice`, incluidos los datos dañados;
   - los mensajes nuevos del catálogo.
-- **Tarea 1 del plan: prueba desechable en el teléfono, antes de programar.** Una página mínima, fuera del proyecto, comprueba en Chrome para Android:
-  - que el reconocimiento en `fr-FR` funcione;
-  - que la lectura en voz alta funcione después de esperar una respuesta, unos segundos tras el toque;
-  - cómo llegan los resultados parciales.
-
-  Si la lectura automática falla, el diseño vuelve aquí antes de seguir.
 - **Recorrido** en el navegador a 360 y 1280 px, en modo claro y oscuro:
   - el reconocimiento se simula con un objeto falso;
   - se comprueban el aviso de privacidad, el texto tapado y «Mostrar texto», los botones de escucha y el modo sin conexión.
-- **Prueba final en el teléfono**, hecha por el usuario.
+- **Prueba final en el teléfono**, hecha por el usuario. Comprueba el reconocimiento en `fr-FR`, la lectura automática tras la respuesta (y, si falla, que el texto aparezca solo), los resultados parciales y el aviso de privacidad.
 - `sw.js`: `CACHE_VERSION = 'v18'` y los archivos nuevos en la precarga.
 
 ## Fase 2: evaluación de pronunciación (solo comparación)
