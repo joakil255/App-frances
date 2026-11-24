@@ -5,6 +5,8 @@ import { safeEqual } from './access.js';
 import { validateChatInput } from './validate.js';
 import { validateLookupInput } from './lookup-validate.js';
 import { normalizeLookup } from './lookup-normalize.js';
+import { validateStoryInput } from './story-validate.js';
+import { normalizeStory } from './story-normalize.js';
 import { reserveMessage } from './limit.js';
 
 function jsonResponse(status, body, corsHeaders) {
@@ -37,7 +39,8 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
   // 2) Ruta y método
   const { pathname } = new URL(request.url);
   const isLookup = pathname === '/lookup';
-  if ((pathname !== '/chat' && !isLookup) || (request.method !== 'POST' && request.method !== 'OPTIONS')) {
+  const isStory = pathname === '/story';
+  if ((pathname !== '/chat' && !isLookup && !isStory) || (request.method !== 'POST' && request.method !== 'OPTIONS')) {
     return jsonResponse(404, { error: 'not_found' }, cors);
   }
   if (request.method === 'OPTIONS') {
@@ -68,19 +71,19 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
   } catch {
     return jsonResponse(400, { error: 'invalid_input' }, cors);
   }
-  const input = isLookup ? validateLookupInput(body) : validateChatInput(body);
+  const input = isLookup ? validateLookupInput(body) : isStory ? validateStoryInput(body) : validateChatInput(body);
   if (!input.ok) return jsonResponse(400, { error: 'invalid_input' }, cors);
 
   // 5) Límite diario (cuenta antes de llamar al proveedor)
   let reservation;
   try {
-    reservation = isLookup
-      ? await reserveMessage(env.CHAT_KV, now(), config.lookupLimit, 'lookup')
-      : await reserveMessage(env.CHAT_KV, now(), config.dailyLimit);
+    if (isLookup) reservation = await reserveMessage(env.CHAT_KV, now(), config.lookupLimit, 'lookup');
+    else if (isStory) reservation = await reserveMessage(env.CHAT_KV, now(), config.storyLimit, 'story');
+    else reservation = await reserveMessage(env.CHAT_KV, now(), config.dailyLimit);
   } catch {
     return jsonResponse(502, { error: 'unavailable' }, cors);
   }
-  if (!reservation.ok) return jsonResponse(429, { error: isLookup ? 'lookup_limit' : 'daily_limit' }, cors);
+  if (!reservation.ok) return jsonResponse(429, { error: isLookup ? 'lookup_limit' : isStory ? 'story_limit' : 'daily_limit' }, cors);
 
   // 6) Proveedor
   try {
@@ -88,6 +91,10 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
     if (isLookup) {
       const result = normalizeLookup(await provider.lookup(input.value));
       return jsonResponse(200, { ...result, remainingLookups: reservation.remaining }, cors);
+    }
+    if (isStory) {
+      const result = normalizeStory(await provider.story(input.value));
+      return jsonResponse(200, { ...result, remainingStories: reservation.remaining }, cors);
     }
     const { reply, corrections } = await provider.chat(input.value);
     return jsonResponse(200, { reply, corrections, remaining: reservation.remaining }, cors);
