@@ -26,6 +26,7 @@ function makeEnv(overrides = {}) {
     AI_MODEL: 'claude-haiku-5-5',
     AI_EFFORT: 'low',
     DAILY_LIMIT: '100',
+    LOOKUP_LIMIT: '200',
     ALLOWED_ORIGINS: `${ORIGIN},http://127.0.0.1:8000`,
     ANTHROPIC_API_KEY: 'clave-de-prueba',
     ACCESS_CODE: 'codigo-de-prueba',
@@ -41,6 +42,11 @@ function makeProviders(behavior) {
     state.created.push(options);
     return {
       async chat(input) {
+        state.calls += 1;
+        state.received.push(input);
+        return behavior(input);
+      },
+      async lookup(input) {
         state.calls += 1;
         state.received.push(input);
         return behavior(input);
@@ -200,4 +206,79 @@ test('si KV falla al reservar responde 502 unavailable con CORS', async () => {
   assert.deepEqual(body, { error: 'unavailable' });
   assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
   assert.equal(state.calls, 0);
+});
+
+// --- /lookup ---
+const lookupOut = {
+  contextTranslation: 'la escuela',
+  lemma: 'école',
+  lemmaTranslation: 'escuela',
+  partOfSpeech: 'noun',
+  gender: 'f',
+  baseWithArticle: "l'école",
+  sentenceTranslation: 'Voy a la escuela.',
+};
+const lookupBody = { lang: 'fr', word: 'école', sentence: 'Je vais à l’école.' };
+const lookupRequest = (options = {}) => chatRequest({ path: '/lookup', body: lookupBody, ...options });
+
+test('OPTIONS /lookup responde como /chat', async () => {
+  const request = new Request('https://worker.example/lookup', { method: 'OPTIONS', headers: { origin: ORIGIN } });
+  const { response } = await run(request);
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
+  assert.equal(response.headers.get('access-control-allow-methods'), 'POST');
+});
+
+test('/lookup sin código → 401 y con otro origen → 403', async () => {
+  assert.equal((await run(lookupRequest({ code: null }))).response.status, 401);
+  assert.equal((await run(lookupRequest({ origin: 'https://malo.example' }))).response.status, 403);
+});
+
+test('/lookup con cuerpo inválido → 400 sin llamar al proveedor ni contar', async () => {
+  const { response, body, state, env } = await run(lookupRequest({ body: { ...lookupBody, word: 'chat' } }), makeEnv(), makeProviders(() => lookupOut));
+  assert.equal(response.status, 400);
+  assert.deepEqual(body, { error: 'invalid_input' });
+  assert.equal(state.calls, 0);
+  assert.equal(env.CHAT_KV.store.size, 0);
+});
+
+test('/lookup responde 200 con la salida y remainingLookups; solo sube lookup:', async () => {
+  const { response, body, state, env } = await run(lookupRequest(), makeEnv(), makeProviders(() => lookupOut));
+  assert.equal(response.status, 200);
+  assert.deepEqual(body, { ...lookupOut, remainingLookups: 199 });
+  assert.deepEqual(state.received[0], lookupBody);
+  assert.equal(env.CHAT_KV.store.get('lookup:2026-11-23'), '1');
+  assert.equal(env.CHAT_KV.store.has(KEY), false);
+});
+
+test('la consulta número 201 del día → 429 lookup_limit sin llamar al proveedor', async () => {
+  const env = makeEnv({ CHAT_KV: makeKv({ 'lookup:2026-11-23': '200' }) });
+  const { response, body, state } = await run(lookupRequest(), env, makeProviders(() => lookupOut));
+  assert.equal(response.status, 429);
+  assert.deepEqual(body, { error: 'lookup_limit' });
+  assert.equal(state.calls, 0);
+});
+
+test('un límite de mensajes agotado no bloquea /lookup', async () => {
+  const env = makeEnv({ CHAT_KV: makeKv({ [KEY]: '100' }) });
+  const { response } = await run(lookupRequest(), env, makeProviders(() => lookupOut));
+  assert.equal(response.status, 200);
+});
+
+test('/lookup: ProviderError config → 500, otro ProviderError → 502, error raro → 502 unavailable', async () => {
+  const cases = [
+    [() => { throw new ProviderError('config'); }, 500, 'config'],
+    [() => { throw new ProviderError('bad_output'); }, 502, 'bad_output'],
+    [() => { throw new Error('raro'); }, 502, 'unavailable'],
+  ];
+  for (const [behavior, status, error] of cases) {
+    const { response, body } = await run(lookupRequest(), makeEnv(), makeProviders(behavior));
+    assert.equal(response.status, status);
+    assert.deepEqual(body, { error });
+  }
+});
+
+test('/lookup sin LOOKUP_LIMIT → 500 config', async () => {
+  const { response } = await run(lookupRequest(), makeEnv({ LOOKUP_LIMIT: undefined }));
+  assert.equal(response.status, 500);
 });

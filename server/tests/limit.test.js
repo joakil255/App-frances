@@ -73,3 +73,12 @@ test('reserveMessage trata un valor dañado como cero', async () => {
   const result = await reserveMessage(kv, new Date('2026-11-24T02:30:00Z'), 100);
   assert.deepEqual(result, { ok: true, remaining: 99 });
 });
+
+test('reserveMessage con prefijo lookup usa otra clave y no toca count', async () => {
+  const kv = memoryKv();
+  kv.store.set('count:2026-11-23', '7');
+  const result = await reserveMessage(kv, new Date('2026-11-24T02:30:00Z'), 200, 'lookup');
+  assert.deepEqual(result, { ok: true, remaining: 199 });
+  assert.equal(kv.store.get('lookup:2026-11-23'), '1');
+  assert.equal(kv.store.get('count:2026-11-23'), '7');
+});
