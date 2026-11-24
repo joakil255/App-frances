@@ -23,6 +23,10 @@ test('chileDate usa la fecha de Santiago, no la UTC', () => {
   assert.equal(chileDate(new Date('2026-11-24T02:30:00Z')), '2026-11-23');
 });
 
+test('chileDate usa UTC-3 en horario de verano (distingue de un UTC-4 fijo)', () => {
+  assert.equal(chileDate(new Date('2026-11-24T03:30:00Z')), '2026-11-24');
+});
+
 test('chileDate respeta el cambio de horario del 5 de abril de 2026', () => {
   // A las 03:00 UTC Chile pasa de -03 a -04: la medianoche local llega a las 04:00 UTC
   assert.equal(chileDate(new Date('2026-04-05T02:30:00Z')), '2026-04-04');
