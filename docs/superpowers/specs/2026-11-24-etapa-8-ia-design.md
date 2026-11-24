@@ -1,6 +1,6 @@
 # Etapa 8 — Conversación con IA: diseño (BORRADOR, pendiente de aprobación)
 
-> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Alojamiento: Cloudflare Workers + KV. Límite diario: 100 mensajes. Falta confirmar el modelo (prueba de las 10 frases), aprobar las dependencias y dar permiso para enviar datos. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
+> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Alojamiento: Cloudflare Workers + KV. Límite diario: 100 mensajes. Dependencias: `@anthropic-ai/sdk` + Wrangler. Falta confirmar el modelo (prueba de las 10 frases) y dar permiso para enviar datos. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
 
 **Intención.** Practicar francés A1 conversando: la IA responde en francés sencillo y, al final de cada turno, corrige los errores del usuario con una explicación en español.
 
@@ -85,7 +85,7 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedo
 2. ~~Alojamiento~~ → **Cloudflare Workers + KV** (ver «Decisiones tomadas»).
 3. Modelo inicial, tras la prueba de las 10 frases.
 4. ~~Límite diario~~ → **100 mensajes** (ver «Decisiones tomadas»).
-5. **Dependencias:** el adaptador de Claude usaría el SDK oficial `@anthropic-ai/sdk` (solo en el servidor). Para publicar el Worker: **Wrangler** (herramienta oficial de Cloudflare, solo de desarrollo); alternativa sin dependencia: pegar el código en el panel web de Cloudflare. Para Gemini, Mistral y Groq: SDK oficial de cada uno (`@google/genai`, `@mistralai/mistralai`, `groq-sdk`) o llamadas `fetch` directas sin dependencias. Cada dependencia necesita aprobación (CLAUDE.md).
+5. ~~Dependencias~~ → **`@anthropic-ai/sdk` + Wrangler** (ver «Decisiones tomadas»). Adaptadores futuros (Gemini, Mistral, Groq): su dependencia se decidirá cuando se añadan.
 6. Permiso para enviar los mensajes del chat (y las 10 frases de la prueba) al proveedor elegido.
 - **Alojamiento: Cloudflare Workers, con el contador diario en Workers KV** (elegido por el usuario, 23/11/2026). Documentación oficial consultada ese día:
   - Plan gratuito de Workers: 100.000 peticiones al día; al pasarse devuelve un error (1027) y no cobra. 10 ms de CPU por petición (**por confirmar** que la espera a la respuesta del proveedor no cuenta como CPU).
@@ -93,3 +93,8 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedo
   - No se pudo confirmar en esas páginas si la cuenta pide tarjeta, ni la consistencia de KV.
   - **Enfoques considerados:** (A) Workers + KV: el más simple; con mensajes casi simultáneos el contador podría contar uno de menos, un riesgo aceptable con un solo usuario y el tope de gasto de Anthropic. **Elegido.** (B) Workers + Durable Objects: contador exacto y también gratis, pero con más código y configuración para un caso que casi no ocurre. (C) Deno Deploy: **descartado**, porque cierra en abril de 2027 (aviso en su página de precios).
 - **Límite diario: 100 mensajes** (elegido por el usuario: unos 20 minutos un día normal y hasta una hora un día con ganas). Gasto máximo estimado con Haiku 5.5: unos $1,20 al mes (≈ $0,0004 por mensaje).
+- **Dependencias (aprobadas por el usuario, 23/11/2026):**
+  - `@anthropic-ai/sdk` 1.13.0 (Apache-2.0), solo en el servidor. Su README oficial lista Cloudflare Workers entre los entornos compatibles. Se usa por sus reintentos, sus errores tipados y la lectura de la salida estructurada. Las pruebas le pasan un `fetch` falso.
+  - `wrangler` 4.167.0 (MIT o Apache-2.0), solo de desarrollo: pruebas locales con KV simulado, `wrangler secret put` para guardar la clave sin archivos y `wrangler deploy` para publicar.
+  - Confirmado en la documentación de Cloudflare: la espera de red (`fetch`, KV) **no** cuenta para los 10 ms de CPU; el Worker debe iniciar en menos de 1 s, y su tamaño máximo es de 64 MiB sin comprimir (plan gratuito).
+  - **Enfoques considerados:** (1) SDK + Wrangler: **elegido**. (2) `fetch` + Wrangler: una dependencia menos, pero hay que rehacer a mano los reintentos y los errores. (3) `fetch` + pegar el código en el panel web: ninguna dependencia, pero el código publicado puede quedar distinto del repositorio y no se puede probar el servidor completo en local.
