@@ -102,7 +102,10 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - `status` en la lista;
   - `source.license` no vacío.
 - Si el almacén está dañado, se copia aparte y empieza vacío, como el de palabras.
-- **Copia de seguridad, versión 3:** incluye `texts`. Lee las versiones 1, 2 y 3; las dos primeras quedan con `texts: []`. Al restaurar se valida cada texto.
+- **Copia de seguridad, versión 3:** incluye `texts`. Lee las versiones 1, 2 y 3, y al restaurar valida cada texto.
+  - **Restaurar una v3** reemplaza las historias, igual que reemplaza las palabras. Las tres claves se escriben juntas y, si una falla, se deshace todo.
+  - **Restaurar una v1 o v2**, que no traen historias, **no toca las historias guardadas**. Así una copia vieja nunca las borra. **Decisión del diseño** (tras la revisión del constructor).
+  - La ventana de confirmación dice qué se reemplaza.
 
 ### Servidor: ruta `POST /story`
 - Mismo Worker, código de acceso, origen y CORS.
@@ -125,6 +128,7 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 
 ### App: biblioteca
 - Pantalla **«Leer»** (`#/leer`), séptimo botón de la barra (decisión 4).
+- **El lector tiene su propia dirección,** `#/leer/<id>`. Así, el gesto «atrás» de Android vuelve a la biblioteca y una recarga mantiene la historia abierta. El enrutador acepta `leer/<id>`; un `id` desconocido vuelve a la biblioteca. Salir de `#/leer/<id>` cuenta como salir del lector. **Decisión del diseño** (tras la revisión del constructor).
 - **Lista de textos,** de más nuevo a más viejo. Cada uno muestra:
   - el título;
   - el nivel;
@@ -145,9 +149,10 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - la marca REVISAR (con «Esta historia aún no está revisada.»);
   - la fuente y la licencia en texto pequeño.
 - **El texto** se corta en frases y palabras con `tokenize` (Etapa 10).
-  - Cada frase es un bloque que se puede tocar para leer desde ahí.
+  - Cada frase empieza con un botón pequeño **«▶»**, con nombre accesible «Leer desde esta frase». Es la forma de leer desde ahí: un bloque tocable con botones dentro no es HTML válido y confunde al lector de pantalla.
   - Cada palabra válida es un botón que abre la tarjeta.
   - Todo con `textContent`.
+  - **Decisión del diseño** (tras la revisión del constructor).
 - **Reproductor:** `createSentencePlayer({ synth, voice, sentences, onSentence, onEnd })` (lógica pura, probada con un `speechSynthesis` falso).
   - `play(from)` lee la frase `from` y sigue con las siguientes. Cada frase es un `SpeechSynthesisUtterance`, y `onSentence(i)` se avisa al empezar cada una.
   - `pause()` deja de avanzar al terminar la frase actual.
@@ -157,10 +162,12 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
   - Si la voz falla, se usa el aviso `voiceFailed` y se detiene.
   - Resalta la frase activa con una clase y `aria-current="true"`. El resaltado no depende solo del color.
 - **El lector se detiene** al salir de la pantalla, al ocultar la página, al abrir la tarjeta de una palabra y cuando se activa el micrófono del chat.
-- **Botones:** «Escuchar» o «Seguir», «Pausa», «Más lento» o «Normal», «Marcar como leída», y para REVISAR «Aprobar» y «Descartar» (este último con confirmación).
+- **Botones:** «Escuchar» o «Seguir», «Pausa», «Más lento» o «Normal», «Marcar como leída», y para REVISAR «Aprobar» y «Descartar».
+- **Descartar** borra la historia para siempre, después de confirmar. Una historia aprobada también se puede borrar, con «Borrar historia» y confirmación. El almacén tiene `deleteText(id)` y no hay estado «descartada». **Decisión del diseño** (tras la revisión del constructor).
 - **Guardar una palabra desde el lector:**
   - la frase de la historia queda como ejemplo;
-  - `category: 'Lectura'`. `wordFromLookup` recibe la categoría como parámetro, y el chat sigue usando `'Conversación'`. **Decisión del diseño**;
+  - `category: 'Lectura'`. `wordFromLookup(result, sentence, { category, needsReview })` recibe la categoría y la marca de revisión, y el chat sigue usando `'Conversación'` y `false`. **Decisión del diseño**;
+  - **si la historia está en REVISAR**, la palabra se guarda con `needsReview: true` (la marca «revisar» que ya existe en Vocabulario), porque su ejemplo viene de un texto sin revisar. **Decisión del diseño** (tras la revisión del constructor);
   - las consultas cuentan en el límite de 200 de la Etapa 10.
 - **La tarjeta de palabras se generaliza:** `refresh(root)` subraya dentro del contenedor que se le pase (chat o lector), sin depender de `#chat-log`.
 
@@ -175,8 +182,10 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 - El almacén guarda, lee, aprueba, descarta, marca leída y copia aparte los datos dañados.
 - La copia de seguridad v3:
   - hace ida y vuelta con textos;
-  - las v1 y v2 se restauran con `texts: []`;
+  - restaurar una v1 o v2 deja intactas las historias guardadas;
+  - restaurar una v3 las reemplaza, y si falla una escritura, se deshace todo;
   - un texto inválido la marca como dañada.
+- `deleteText`.
 
 **Servidor**
 - Validación de `/story`.
@@ -196,7 +205,8 @@ Depende de la Etapa 10: tarjeta de palabras, `/lookup` y la caché de consultas.
 
 **App**
 - Orden de la biblioteca.
-- Que `wordFromLookup` use la categoría.
+- Que `wordFromLookup` use la categoría y `needsReview`.
+- Que el enrutador acepte `#/leer/<id>`.
 - Que `refresh(root)` subraye solo dentro del contenedor.
 - Seguridad: los archivos nuevos entran en la prueba que prohíbe `innerHTML`.
 
