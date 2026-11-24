@@ -7,6 +7,7 @@ import { StorageError } from '../lib/storage.js';
 import { MESSAGES, storageMessage, joined, importFailed, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
 import { RATES } from '../lib/speech.js';
 import { playFrench } from './voice.js';
+import { resolveRoute } from '../lib/router.js';
 
 const GENDER_NAMES = { m: 'masculino', f: 'femenino' };
 const FORM_FIELDS = ['fr', 'es', 'gender', 'category', 'exampleFr', 'exampleEs'];
@@ -423,6 +424,12 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     render();
     // Cambios guardados desde otra copia de la app: se vuelve a dibujar con la lista actual
     store.watchExternalChanges(window, () => {
+      renderCategories();
+      render();
+    });
+    // Al entrar en Vocabulario se vuelve a dibujar: Conversar puede haber guardado palabras
+    window.addEventListener('hashchange', () => {
+      if (resolveRoute(location.hash) !== 'vocabulary') return;
       renderCategories();
       render();
     });
