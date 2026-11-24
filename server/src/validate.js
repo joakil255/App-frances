@@ -17,9 +17,9 @@ export function validateChatInput(body) {
   for (const turn of history) {
     if (turn === null || typeof turn !== 'object') return { ok: false };
     if (turn.role !== 'user' && turn.role !== 'assistant') return { ok: false };
-    if (!isText(turn.content) || letters(turn.content) > MAX_TURN) return { ok: false };
+    if (!isText(turn.text) || letters(turn.text) > MAX_TURN) return { ok: false };
   }
-  const recent = history.slice(-MAX_HISTORY).map(({ role, content }) => ({ role, content }));
+  const recent = history.slice(-MAX_HISTORY).map(({ role, text }) => ({ role, content: text }));
   // La conversación debe empezar con un mensaje del alumno
   while (recent.length > 0 && recent[0].role === 'assistant') recent.shift();
   return { ok: true, value: { level, history: recent, message } };

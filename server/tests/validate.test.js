@@ -34,27 +34,27 @@ test('rechaza cuerpo que no es objeto, nivel desconocido o historia que no es li
 });
 
 test('rechaza un rol distinto de user/assistant', () => {
-  const history = [{ role: 'system', content: 'hola' }];
+  const history = [{ role: 'system', text: 'hola' }];
   assert.equal(validateChatInput({ ...base, history }).ok, false);
 });
 
 test('rechaza un turno de más de 2000 caracteres y acepta 2000', () => {
-  const ok = [{ role: 'user', content: 'a'.repeat(2000) }];
-  const long = [{ role: 'user', content: 'a'.repeat(2001) }];
+  const ok = [{ role: 'user', text: 'a'.repeat(2000) }];
+  const long = [{ role: 'user', text: 'a'.repeat(2001) }];
   assert.equal(validateChatInput({ ...base, history: ok }).ok, true);
   assert.equal(validateChatInput({ ...base, history: long }).ok, false);
 });
 
 test('rechaza turnos mal formados', () => {
   assert.equal(validateChatInput({ ...base, history: [null] }).ok, false);
-  assert.equal(validateChatInput({ ...base, history: [{ role: 'user', content: 3 }] }).ok, false);
+  assert.equal(validateChatInput({ ...base, history: [{ role: 'user', text: 3 }] }).ok, false);
 });
 
 test('recorta la historia a los últimos 20 y quita assistant al inicio', () => {
   // 25 turnos alternando user/assistant; los últimos 20 empiezan en índice 5 (assistant)
   const history = Array.from({ length: 25 }, (_, i) => ({
     role: i % 2 === 0 ? 'user' : 'assistant',
-    content: `m${i}`,
+    text: `m${i}`,
   }));
   const result = validateChatInput({ ...base, history });
   assert.equal(result.ok, true);
