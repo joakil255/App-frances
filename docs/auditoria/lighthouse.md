@@ -30,6 +30,17 @@ Medido con **PageSpeed Insights** (el Lighthouse de Google en sus servidores), p
 | Network dependency tree | Cadena de archivos que se piden unos tras otros (página → estilos → fuentes; página → `app.js` → módulos) | Igual que el anterior: se medirá en el «después» |
 | Use efficient cache lifetimes (146 KiB) | GitHub Pages pide al navegador guardar los archivos solo 10 minutos | **No se puede cambiar** en GitHub Pages. No afecta a las visitas siguientes: el service worker sirve toda la app desde su propia caché |
 
-## Después (esta etapa)
+## Después (Etapa 7 publicada en `main`, commit `d1c19a3`)
 
-**Pendiente:** se medirá igual cuando el usuario confirme publicar la Etapa 7. Esta etapa no cambió nada de rendimiento a propósito: añade tres módulos pequeños (`backup.js`, `messages.js`, `home.js`) a la caché.
+- **Fecha:** 23/11/2026, 21:40. PageSpeed Insights, **móvil**, misma dirección. Medido por el usuario; capturas revisadas.
+
+| Categoría | Antes | Después |
+|---|---|---|
+| Rendimiento | 98 | 100 |
+| Accesibilidad | 100 | 100 |
+| Prácticas recomendadas | 100 | 100 |
+| SEO | 100 | 100 |
+
+**Avisos:** los mismos que antes. Render-blocking requests con un ahorro estimado de 140 ms (antes, 110 ms); network dependency tree; use efficient cache lifetimes con 153 KiB (antes, 146 KiB: la diferencia son los tres módulos nuevos, `backup.js`, `messages.js` y `home.js`).
+
+**Lectura:** esta etapa **no cambió nada de rendimiento**, así que la subida de 98 a 100 es la variación normal entre dos mediciones, no una mejora. Lo que importa es que no empeoró nada. Las capturas del «después» no muestran las métricas detalladas (FCP, LCP, TBT, CLS, Speed Index), por eso no se anotan.
