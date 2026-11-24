@@ -2,6 +2,7 @@
 // fin de la sesión y ventana de ajustes. Todo texto del usuario va con textContent.
 import { resolveRoute } from '../lib/router.js';
 import { StorageError } from '../lib/storage.js';
+import { MESSAGES, storageMessage, joined } from '../lib/messages.js';
 import { RATES } from '../lib/speech.js';
 import { localDate, addDays } from '../lib/dates.js';
 import { ANSWERS, newCard, review, previewDays } from '../lib/scheduler.js';
@@ -53,11 +54,8 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
   }
   function storageProblem(error) {
     if (!(error instanceof StorageError)) throw error;
-    if (error.code === 'quota') {
-      showNotice('No hay espacio para guardar tu progreso.', 'Exporta tus palabras como copia y borra las que no necesites.');
-    } else {
-      showNotice('El navegador no deja guardar datos.', 'Comprueba que no estás en modo privado.');
-    }
+    const { title, text } = storageMessage(error);
+    showNotice(title, text);
   }
 
   // --- Cola y vistas ---
@@ -273,9 +271,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
       renderSummary();
     } catch (error) {
       if (!(error instanceof StorageError)) throw error;
-      settingsFormError.textContent = error.code === 'quota'
-        ? 'No hay espacio para guardar. Exporta tus palabras y borra las que no necesites.'
-        : 'El navegador no deja guardar datos. Comprueba que no estás en modo privado.';
+      settingsFormError.textContent = joined(storageMessage(error));
       settingsFormError.hidden = false;
     }
   });
@@ -290,7 +286,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     try {
       const { corruptBackupKey } = await studyStore.load();
       if (corruptBackupKey) {
-        showNotice('Tu progreso guardado estaba dañado.', 'Se guardó una copia sin tocar y el estudio empezó de cero.');
+        showNotice(MESSAGES.corruptStudy.title, MESSAGES.corruptStudy.text);
       }
     } catch (error) {
       storageProblem(error);

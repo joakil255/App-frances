@@ -145,6 +145,12 @@ La línea naranja de Progreso (`#E0663A`) se usa en el gráfico como elemento gr
 - **Tus palabras:** barra de proporción decorativa (`aria-hidden`) de 12 px con tres tramos: nuevas `--divider`, en aprendizaje `--chart-bar`, dominadas naranja. Debajo, los tres números con una muestra de 14 px del mismo color: la información está en el texto.
 - **Lista de dominadas:** francés en Source Serif 600 (`lang="fr"`) y traducción en cursiva `--text-muted`, con separador `--divider`, en el orden de Vocabulario.
 
+## Inicio: copia de seguridad (Etapa 7)
+
+- Debajo de la frase de Inicio, un recuadro `--surface` con borde de 2 px `--divider`, **franja izquierda de 8 px del amarillo de Inicio** (decoración: el amarillo nunca va como texto) y radio 8 px. Título `h2` «Copia de seguridad» como los de Progreso, un párrafo que explica qué guarda y para qué sirve, y dos botones: **Guardar copia** (primario) y **Restaurar copia** (secundario). Debajo, el resultado en Barlow 500 (`role="status"`); los errores van en el aviso de siempre (`role="alert"`) arriba del recuadro.
+- **Ventana «¿Restaurar la copia del DD/MM/AAAA?»:** como las de la Etapa 2; dos líneas: qué tiene la copia y qué se reemplaza («no se puede deshacer»). Botones **Cancelar** (secundario) y **Restaurar** (peligro). El foco vuelve a **Restaurar copia** al cerrarla.
+- Mismo verbo de principio a fin: «Guardar copia» → «Se guardó la copia…»; «Restaurar» → «Se restauró la copia…».
+
 ## Icono
 
 Azulejo azul (`#233A7A`) con borde biselado `#3B5399` y una «ç» blanca (`#FAFBFC`) de Source Serif 4 600, convertida en trazos y centrada por su forma real (de la parte de arriba de la «c» a la punta de la cedilla). La versión *maskable* reduce el dibujo al 80 % central para que Android pueda recortarlo en círculo.

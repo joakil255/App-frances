@@ -235,3 +235,27 @@ test('Vocabulario tiene el botón para añadir el mazo A1 junto a Importar y Exp
   const actions = html.match(/<div class="vocab-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
   assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
 });
+
+// --- Inicio: copia de seguridad (Etapa 7) ---
+const home = html.match(/<section id="screen-home"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+test('Inicio mantiene su frase y tiene la copia de seguridad con avisos', () => {
+  assert.match(home, /<span lang="fr">Bonjour\.<\/span> Aquí verás cada día lo que te toca repasar\./);
+  assert.match(home, /<div id="home-notice" class="notice" role="alert" hidden><\/div>/);
+  assert.match(home, /<p id="home-status" class="vocab-message" role="status"><\/p>/);
+  assert.match(home, /<h2[^>]*>Copia de seguridad<\/h2>/);
+  assert.ok(home.includes('Guarda en un archivo tus palabras, tu progreso y tu historial. '
+    + 'Si se borran los datos del navegador, con ese archivo lo recuperas todo.'));
+  assert.match(home, /<button type="button" class="button button-primary" id="backup-save">Guardar copia<\/button>/);
+  assert.match(home, /<button type="button" class="button button-secondary" id="backup-restore">Restaurar copia<\/button>/);
+  assert.match(home, /<input type="file" id="backup-file" accept="\.json,application\/json" hidden>/);
+});
+
+test('la ventana de confirmar la restauración tiene título, texto y los dos botones', () => {
+  const dialog = html.match(/<dialog id="restore-confirm" class="dialog" aria-labelledby="restore-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta #restore-confirm');
+  assert.match(dialog, /<h2 id="restore-title" class="dialog-title"><\/h2>/);
+  assert.match(dialog, /class="restore-text"/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Restaurar<\/button>/);
+});

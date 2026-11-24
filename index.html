@@ -32,6 +32,19 @@
       <section id="screen-home" class="screen line-home">
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Inicio</h1>
         <p class="empty"><span lang="fr">Bonjour.</span> Aquí verás cada día lo que te toca repasar.</p>
+        <div id="home-notice" class="notice" role="alert" hidden></div>
+
+        <!-- Copia de seguridad: todo en un archivo (se rellena con textContent) -->
+        <div class="backup">
+          <h2 class="progress-title backup-title">Copia de seguridad</h2>
+          <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
+          <div class="study-actions">
+            <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
+            <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
+            <input type="file" id="backup-file" accept=".json,application/json" hidden>
+          </div>
+          <p id="home-status" class="vocab-message" role="status"></p>
+        </div>
       </section>
 
       <section id="screen-vocabulary" class="screen line-vocabulary" hidden>
@@ -394,6 +407,16 @@
     <div class="dialog-actions">
       <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
       <button type="button" class="button button-danger" data-action="confirm">Reemplazar</button>
+    </div>
+  </dialog>
+
+  <!-- Ventana de Inicio: confirmar la restauración de una copia -->
+  <dialog id="restore-confirm" class="dialog" aria-labelledby="restore-title">
+    <h2 id="restore-title" class="dialog-title"></h2>
+    <p class="restore-text"></p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Restaurar</button>
     </div>
   </dialog>
 

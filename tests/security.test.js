@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 // Formas de convertir texto en HTML: con datos del usuario permitirían inyectar código
-const FORBIDDEN = ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write'];
+const FORBIDDEN = ['innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'setHTMLUnsafe', 'createContextualFragment'];
 
 function appScripts() {
   const files = readdirSync(join(root, 'js'), { recursive: true })
@@ -23,5 +23,12 @@ test('ningún archivo de la app convierte texto en HTML', () => {
     for (const word of FORBIDDEN) {
       assert.ok(!source.includes(word), `${file} usa ${word}: usa textContent`);
     }
+  }
+});
+
+test('ningún archivo de la app pone atributos on… como texto', () => {
+  for (const file of appScripts()) {
+    const source = readFileSync(join(root, file), 'utf8');
+    assert.doesNotMatch(source, /setAttribute\(\s*['"]on/i, `${file} pone un atributo on… con setAttribute`);
   }
 });

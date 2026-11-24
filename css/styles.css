@@ -707,6 +707,20 @@ main {
 .progress-mastered-fr { display: block; font-weight: 600; }
 .progress-mastered-es { display: block; font-style: italic; color: var(--text-muted); }
 
+/* --- Inicio: copia de seguridad (DESIGN.md, Etapa 7) --- */
+.backup {
+  margin-top: var(--space-6);
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  background: var(--surface);
+  border: 2px solid var(--divider);
+  border-left: 8px solid var(--line);
+  border-radius: var(--radius);
+}
+.backup-title { margin-top: var(--space-3); }
+.backup p { margin: 0 0 var(--space-3); }
+.backup .study-actions { margin-top: 0; }
+.restore-text { white-space: pre-line; }
+
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {
   .layout {
