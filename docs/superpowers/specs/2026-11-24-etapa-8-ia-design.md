@@ -1,6 +1,6 @@
 # Etapa 8 — Conversación con IA: diseño (BORRADOR, pendiente de aprobación)
 
-> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Alojamiento: Cloudflare Workers + KV. Límite diario: 100 mensajes. Dependencias: `@anthropic-ai/sdk` + Wrangler. Falta confirmar el modelo (prueba de las 10 frases) y dar permiso para enviar datos. **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
+> **Estado:** borrador. No hay código. Proveedor elegido: Claude Haiku 5.5. Alojamiento: Cloudflare Workers + KV. Límite diario: 100 mensajes. Dependencias: `@anthropic-ai/sdk` + Wrangler. Permiso para enviar datos a Anthropic: concedido. Falta confirmar el modelo (prueba de las 10 frases). **Traspaso:** la implementación se hará en una sesión nueva; este documento es el punto de partida.
 
 **Intención.** Practicar francés A1 conversando: la IA responde en francés sencillo y, al final de cada turno, corrige los errores del usuario con una explicación en español.
 
@@ -90,6 +90,8 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedo
   - Confirmado en la documentación de Cloudflare: la espera de red (`fetch`, KV) **no** cuenta para los 10 ms de CPU; el Worker debe iniciar en menos de 1 s, y su tamaño máximo es de 64 MiB sin comprimir (plan gratuito).
   - **Enfoques considerados:** (1) SDK + Wrangler: **elegido**. (2) `fetch` + Wrangler: una dependencia menos, pero hay que rehacer a mano los reintentos y los errores. (3) `fetch` + pegar el código en el panel web: ninguna dependencia, pero el código publicado puede quedar distinto del repositorio y no se puede probar el servidor completo en local.
 
+- **Permiso de datos (concedido por el usuario, 23/11/2026):** se pueden enviar a Anthropic los mensajes del chat y las 10 frases de la prueba. El permiso es **solo para Anthropic**: añadir otro proveedor exige pedirlo de nuevo.
+
 ## Decisiones pendientes del usuario
 
 1. ~~Proveedor inicial~~ → Claude Haiku 5.5. ~~Adaptador~~ → **se mantiene el adaptador intercambiable, con solo el de Claude implementado** (elegido por el usuario); Gemini, Mistral y Groq quedan como adaptadores futuros.
@@ -97,4 +99,4 @@ PWA (GitHub Pages)  ──HTTPS──►  Cloudflare Worker  ──►  proveedo
 3. Modelo inicial, tras la prueba de las 10 frases.
 4. ~~Límite diario~~ → **100 mensajes** (ver «Decisiones tomadas»).
 5. ~~Dependencias~~ → **`@anthropic-ai/sdk` + Wrangler** (ver «Decisiones tomadas»). Adaptadores futuros (Gemini, Mistral, Groq): su dependencia se decidirá cuando se añadan.
-6. Permiso para enviar los mensajes del chat (y las 10 frases de la prueba) al proveedor elegido.
+6. ~~Permiso para enviar datos~~ → **concedido para Anthropic** (ver «Decisiones tomadas»).
