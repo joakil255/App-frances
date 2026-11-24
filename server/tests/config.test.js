@@ -36,3 +36,10 @@ test('falta un secreto, una variable o el proveedor no existe → ok: false', ()
     assert.deepEqual(readConfig(env), { ok: false });
   }
 });
+
+test('wrangler.jsonc permite 127.0.0.1 y localhost en el puerto 8000', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const text = await readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
+  const origins = JSON.parse(text).vars.ALLOWED_ORIGINS.split(',');
+  assert.deepEqual(origins, ['https://joakil255.github.io', 'http://127.0.0.1:8000', 'http://localhost:8000']);
+});

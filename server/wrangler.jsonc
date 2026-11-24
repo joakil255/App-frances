@@ -7,7 +7,7 @@
     "AI_MODEL": "claude-haiku-5-5",
     "AI_EFFORT": "low",
     "DAILY_LIMIT": "100",
-    "ALLOWED_ORIGINS": "https://joakil255.github.io,http://127.0.0.1:8000"
+    "ALLOWED_ORIGINS": "https://joakil255.github.io,http://127.0.0.1:8000,http://localhost:8000"
   },
   "kv_namespaces": [{ "binding": "CHAT_KV", "id": "REEMPLAZAR_EN_TAREA_9" }]
 }

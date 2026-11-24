@@ -69,7 +69,12 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
   if (!input.ok) return jsonResponse(400, { error: 'invalid_input' }, cors);
 
   // 5) Límite diario (cuenta antes de llamar al proveedor)
-  const reservation = await reserveMessage(env.CHAT_KV, now(), config.dailyLimit);
+  let reservation;
+  try {
+    reservation = await reserveMessage(env.CHAT_KV, now(), config.dailyLimit);
+  } catch {
+    return jsonResponse(502, { error: 'unavailable' }, cors);
+  }
   if (!reservation.ok) return jsonResponse(429, { error: 'daily_limit' }, cors);
 
   // 6) Proveedor

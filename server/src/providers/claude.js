@@ -11,6 +11,7 @@ import { OUTPUT_SCHEMA, buildSystemPrompt } from '../prompt.js';
 import { normalizeOutput } from '../normalize.js';
 
 const MAX_TOKENS = 4000;
+const SPEND_LIMIT_CODES = ['enforced_spend_limit_reached', 'contract_spend_limit_reached'];
 
 // Traduce un error del SDK a un ProviderError (de lo más específico a lo más general)
 function toProviderError(error) {
@@ -18,7 +19,7 @@ function toProviderError(error) {
   if (error instanceof APIConnectionError) return new ProviderError('unavailable');
   if (error instanceof AuthenticationError || error instanceof PermissionDeniedError) return new ProviderError('auth');
   if (error instanceof RateLimitError) {
-    return new ProviderError(error.errorCode === 'enforced_spend_limit_reached' ? 'quota' : 'rate_limit');
+    return new ProviderError(SPEND_LIMIT_CODES.includes(error.errorCode) ? 'quota' : 'rate_limit');
   }
   if (error instanceof InternalServerError) return new ProviderError('unavailable');
   if (error instanceof APIError) {

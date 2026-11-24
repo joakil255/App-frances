@@ -189,3 +189,15 @@ test('los errores de un origen permitido también llevan CORS', async () => {
   assert.equal(response.status, 401);
   assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
 });
+
+test('si KV falla al reservar responde 502 unavailable con CORS', async () => {
+  const kv = {
+    async get() { throw new Error('kv caído'); },
+    async put() { throw new Error('kv caído'); },
+  };
+  const { response, body, state } = await run(chatRequest(), makeEnv({ CHAT_KV: kv }));
+  assert.equal(response.status, 502);
+  assert.deepEqual(body, { error: 'unavailable' });
+  assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
+  assert.equal(state.calls, 0);
+});

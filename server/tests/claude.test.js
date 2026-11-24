@@ -80,6 +80,7 @@ test('errores HTTP se traducen a códigos', async () => {
     [403, errBody('permission_error'), 'auth'],
     [402, errBody('billing_error'), 'quota'],
     [429, errBody('rate_limit_error', { error_code: 'enforced_spend_limit_reached' }), 'quota'],
+    [429, errBody('rate_limit_error', { error_code: 'contract_spend_limit_reached' }), 'quota'],
     [429, errBody('rate_limit_error'), 'rate_limit'],
     [500, errBody('api_error'), 'unavailable'],
     [529, errBody('overloaded_error'), 'unavailable'],

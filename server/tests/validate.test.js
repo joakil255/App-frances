@@ -71,3 +71,17 @@ test('safeEqual compara textos', () => {
   assert.equal(safeEqual('', ''), true);
   assert.equal(safeEqual('é', 'e'), false);
 });
+
+test('un turno assistant de más de 2000 caracteres se corta, no se rechaza', () => {
+  const text = 'é😀'.repeat(1500); // 3000 letras
+  const history = [{ role: 'user', text: 'Salut' }, { role: 'assistant', text }];
+  const result = validateChatInput({ ...base, history });
+  assert.equal(result.ok, true);
+  assert.equal([...result.value.history[1].content].length, 2000);
+  assert.equal(result.value.history[1].content, [...text].slice(0, 2000).join(''));
+});
+
+test('un turno user de más de 2000 caracteres con emoji se sigue rechazando', () => {
+  const history = [{ role: 'user', text: 'é😀'.repeat(1001) }];
+  assert.equal(validateChatInput({ ...base, history }).ok, false);
+});
