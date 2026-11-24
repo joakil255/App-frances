@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  normalizeText, validateWord, duplicateKey, searchKey, sortWords, filterWords, categoriesOf,
+  normalizeText, validateWord, duplicateKey, searchKey, sortWords, filterWords, categoriesOf, lemmaOf, upgradeWord,
 } from '../js/lib/words.js';
 
 const base = { fr: 'la maison', es: 'la casa', exampleFr: '', exampleEs: '', category: '', gender: 'f' };
@@ -19,6 +19,7 @@ test('una palabra correcta es válida y sale normalizada', () => {
   assert.deepEqual(result.errors, {});
   assert.deepEqual(result.word, {
     fr: 'la maison', es: 'la casa', exampleFr: '', exampleEs: '', category: '', gender: 'f', needsReview: true,
+    lang: 'fr', lemma: 'maison',
   });
 });
 
@@ -159,4 +160,65 @@ test('guardar «l\' ami» con una «l’ami» ya guardada avisa; editar esa mism
   const existing = [{ id: 'w1', fr: 'l’ami' }];
   assert.match(errorsOf({ fr: "l' ami", gender: null }, existing).fr, /ya está en tu lista/);
   assert.deepEqual(errorsOf({ fr: "l' ami", gender: null }, existing, 'w1'), {});
+});
+
+// --- Etapa 10: idioma y forma base (lemma) de cada palabra ---
+test('lemmaOf quita un artículo solo si la palabra tiene género', () => {
+  assert.equal(lemmaOf('la maison', 'f'), 'maison');
+  assert.equal(lemmaOf('L’école', 'f'), 'école');
+  assert.equal(lemmaOf("l' école", 'f'), 'école');
+  assert.equal(lemmaOf('les vacances', 'f'), 'vacances');
+  assert.equal(lemmaOf('Le Chat', 'm'), 'chat');
+  assert.equal(lemmaOf('un livre', 'm'), 'livre');
+  assert.equal(lemmaOf('une pomme', 'f'), 'pomme');
+  assert.equal(lemmaOf('des pommes', 'f'), 'pommes');
+  assert.equal(lemmaOf('la la', 'f'), 'la', 'quita un solo artículo');
+});
+
+test('lemmaOf deja enteras las palabras y expresiones sin género, en minúsculas', () => {
+  assert.equal(lemmaOf('un peu', null), 'un peu');
+  assert.equal(lemmaOf('la plupart', null), 'la plupart');
+  assert.equal(lemmaOf('des fois', null), 'des fois');
+  assert.equal(lemmaOf("s'appeler", null), "s'appeler");
+  assert.equal(lemmaOf('S’appeler', null), "s'appeler");
+  assert.equal(lemmaOf('Manger', null), 'manger');
+});
+
+test('lemmaOf usa NFC, junta espacios de más y acepta texto vacío', () => {
+  assert.equal(lemmaOf('L’école'.normalize('NFD'), 'f'), 'école');
+  assert.equal(lemmaOf('  la   maison  ', 'f'), 'maison');
+  assert.equal(lemmaOf('  un   peu ', null), 'un peu');
+  assert.equal(lemmaOf('', null), '');
+  assert.equal(lemmaOf('   ', 'f'), '');
+  assert.equal(lemmaOf(undefined, null), '');
+});
+
+test('validateWord agrega el idioma y la forma base', () => {
+  const { word } = validateWord({ ...base, fr: ' L’école ' });
+  assert.equal(word.lang, 'fr');
+  assert.equal(word.lemma, 'école');
+  assert.equal(validateWord({ ...base, fr: 'manger', gender: null, lang: 'fr' }).word.lemma, 'manger');
+});
+
+test('validateWord rechaza un idioma distinto del francés', () => {
+  assert.equal(errorsOf({ lang: 'en' }).lang, 'Idioma no admitido.');
+  assert.equal(errorsOf({ lang: 'fr' }).lang, undefined);
+  assert.equal(validateWord({ ...base, lang: 'en' }).ok, false);
+});
+
+test('el formulario sigue permitiendo «le livre» y «la livre»', () => {
+  const existing = [{ id: 'w1', ...validateWord({ ...base, fr: 'le livre', gender: 'm' }).word }];
+  assert.deepEqual(errorsOf({ fr: 'la livre', gender: 'f' }, existing), {});
+});
+
+test('upgradeWord agrega lang y lemma sin tocar nada más', () => {
+  const old = {
+    id: 'w1', fr: 'L’école', es: 'la escuela', exampleFr: '', exampleEs: '', category: 'Casa', gender: 'f',
+    needsReview: false, createdAt: '2026-11-01T10:00:00.000Z', updatedAt: '2026-11-02T10:00:00.000Z',
+  };
+  const copy = structuredClone(old);
+  const upgraded = upgradeWord(old);
+  assert.deepEqual(upgraded, { ...copy, lang: 'fr', lemma: 'école' });
+  assert.deepEqual(old, copy, 'no cambia la palabra original');
+  assert.equal(upgradeWord({ id: 'w2', fr: 'un peu', gender: null }).lemma, 'un peu');
 });

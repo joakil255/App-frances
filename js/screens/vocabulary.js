@@ -410,10 +410,12 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   // --- Arranque ---
   async function start() {
     try {
-      const { corruptBackupKey } = await store.load();
+      const { corruptBackupKey, migrationError } = await store.load();
       if (corruptBackupKey) {
         showNotice(MESSAGES.corruptWords.title, MESSAGES.corruptWords.text);
       }
+      // No se pudo guardar la versión 2: las palabras siguen en memoria; se avisa del almacenamiento
+      if (migrationError) storageProblem(migrationError);
     } catch (error) {
       storageProblem(error);
     }

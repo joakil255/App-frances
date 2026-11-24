@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   CSV_COLUMNS, MAX_IMPORT_BYTES, exportJson, exportCsv, exportFileName, readImport, planImport,
 } from '../js/lib/transfer.js';
-import { sortWords } from '../js/lib/words.js';
+import { sortWords, upgradeWord } from '../js/lib/words.js';
 
 const word = (fr, es, extra = {}) => ({
   fr, es, exampleFr: '', exampleEs: '', category: '', gender: null, needsReview: false, ...extra,
@@ -135,7 +135,8 @@ test('ida y vuelta en CSV de 1.000 palabras con caracteres especiales', () => {
   const words = manyWords();
   const plan = planImport(readImport(exportCsv(words), 'v.csv').rows, []);
   assert.equal(plan.invalid.length, 0);
-  assert.deepEqual(sortWords(plan.newWords.map((n) => n.word)), sortWords(words));
+  // Al importar, cada palabra recibe lang y lemma (Etapa 10)
+  assert.deepEqual(sortWords(plan.newWords.map((n) => n.word)), sortWords(words.map(upgradeWord)));
 });
 
 test('ida y vuelta en JSON de 1.000 palabras con caracteres especiales', () => {
@@ -144,7 +145,8 @@ test('ida y vuelta en JSON de 1.000 palabras con caracteres especiales', () => {
   assert.equal(JSON.parse(text).format, 'app-frances-vocabulario');
   assert.equal(JSON.parse(text).exportedAt, '2026-11-23T10:00:00.000Z');
   const plan = planImport(readImport(text, 'v.json').rows, []);
-  assert.deepEqual(sortWords(plan.newWords.map((n) => n.word)), sortWords(words));
+  // Al importar, cada palabra recibe lang y lemma (Etapa 10)
+  assert.deepEqual(sortWords(plan.newWords.map((n) => n.word)), sortWords(words.map(upgradeWord)));
 });
 
 test('la exportación no incluye datos internos (id, fechas)', () => {

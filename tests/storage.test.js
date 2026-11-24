@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createWordStore, StorageError, STORAGE_KEY } from '../js/lib/storage.js';
+import { lemmaOf } from '../js/lib/words.js';
 
 // Imita localStorage en memoria; failWith hace que el próximo setItem lance ese error
 class MemoryStorage {
@@ -40,7 +41,7 @@ test('la primera carga guarda la lista inicial con fechas', async () => {
   assert.equal(corruptBackupKey, null);
   assert.deepEqual(words.map((w) => w.id), ['seed-chat', 'seed-etre']);
   assert.equal(words[0].createdAt, NOW.toISOString());
-  assert.equal(saved(backend).schemaVersion, 1);
+  assert.equal(saved(backend).schemaVersion, 2);
   assert.equal(saved(backend).words.length, 2);
 });
 
@@ -202,4 +203,152 @@ test('watchExternalChanges ignora cambios de otras claves', async () => {
   target.dispatchEvent(storageEvent('otra-clave'));
   await new Promise((resolve) => setTimeout(resolve, 0));
   assert.equal(changes, 0);
+});
+
+// --- Etapa 10: palabras versión 2 (lang y lemma) y migración desde la versión 1 ---
+const V1_WORDS = [
+  {
+    id: 'w-ecole', fr: "l'école", es: 'la escuela', exampleFr: 'L’école est fermée.', exampleEs: 'La escuela está cerrada.',
+    category: 'Casa', gender: 'f', needsReview: false, createdAt: '2026-10-01T09:00:00.000Z', updatedAt: '2026-10-02T09:00:00.000Z',
+  },
+  {
+    id: 'w-peu', fr: 'un peu', es: 'un poco', exampleFr: '', exampleEs: '', category: '', gender: null,
+    needsReview: true, createdAt: '2026-10-03T09:00:00.000Z', updatedAt: '2026-10-03T09:00:00.000Z',
+  },
+];
+// Texto v1 con formato propio, para comprobar que la copia es idéntica letra por letra
+const V1_RAW = JSON.stringify({ schemaVersion: 1, words: V1_WORDS }, null, 2);
+const V1_COPY_KEY = `app-frances-v1-${NOW.toISOString()}`;
+const v1Keys = (backend) => [...backend.data.keys()].filter((key) => key.startsWith('app-frances-v1-'));
+const upgraded = (word) => ({ ...word, lang: 'fr', lemma: lemmaOf(word.fr, word.gender) });
+
+// Almacenamiento que cuenta las escrituras y puede fallar en la escritura número failAt (1, 2, …)
+class CountingStorage extends MemoryStorage {
+  constructor(initial, failAt = null) {
+    super(initial);
+    this.writes = 0;
+    this.failAt = failAt;
+  }
+  setItem(key, value) {
+    this.writes += 1;
+    if (this.writes === this.failAt) throw Object.assign(new Error('lleno'), { name: 'QuotaExceededError' });
+    super.setItem(key, value);
+  }
+}
+
+test('migra v1 a v2 sin cambiar ids ni otros campos', async () => {
+  const backend = new MemoryStorage({ [STORAGE_KEY]: V1_RAW });
+  const store = makeStore(backend);
+  const result = await store.load();
+  assert.equal(result.corruptBackupKey, null);
+  assert.equal(result.migrationError, null);
+  assert.deepEqual(result.words, V1_WORDS.map(upgraded));
+  assert.equal(result.words[0].lemma, 'école');
+  assert.equal(result.words[1].lemma, 'un peu');
+  assert.deepEqual(saved(backend), { schemaVersion: 2, words: V1_WORDS.map(upgraded) });
+  assert.deepEqual(store.getWords(), V1_WORDS.map(upgraded));
+});
+
+test('migrar conserva también campos que la app no conoce', async () => {
+  const words = [{ ...V1_WORDS[0], extra: { a: 1 } }];
+  const backend = new MemoryStorage({ [STORAGE_KEY]: JSON.stringify({ schemaVersion: 1, words }) });
+  const result = await makeStore(backend).load();
+  assert.deepEqual(result.words, words.map(upgraded));
+});
+
+test('guarda la copia v1 intacta en app-frances-v1-…', async () => {
+  const backend = new MemoryStorage({ [STORAGE_KEY]: V1_RAW });
+  await makeStore(backend).load();
+  assert.deepEqual(v1Keys(backend), [V1_COPY_KEY]);
+  assert.equal(backend.getItem(V1_COPY_KEY), V1_RAW);
+});
+
+test('no vuelve a migrar un documento v2', async () => {
+  const backend = new MemoryStorage({ [STORAGE_KEY]: V1_RAW });
+  await makeStore(backend).load();
+  const afterFirst = backend.getItem(STORAGE_KEY);
+
+  const counting = new CountingStorage(Object.fromEntries(backend.data));
+  const result = await makeStore(counting, { now: () => LATER }).load();
+  assert.equal(counting.writes, 0, 'no escribe nada');
+  assert.equal(counting.getItem(STORAGE_KEY), afterFirst);
+  assert.deepEqual(v1Keys(counting), [V1_COPY_KEY], 'no hace otra copia v1');
+  assert.equal(result.migrationError, null);
+  assert.deepEqual(result.words, V1_WORDS.map(upgraded));
+});
+
+test('migra 1000 palabras', async () => {
+  const many = Array.from({ length: 1000 }, (_, i) => ({
+    id: `w${i}`, fr: i % 2 ? `le mot${i}` : `mot${i} é`, es: `palabra ${i}`, exampleFr: '', exampleEs: '', category: `c${i % 10}`,
+    gender: i % 2 ? 'm' : null, needsReview: false, createdAt: NOW.toISOString(), updatedAt: NOW.toISOString(),
+  }));
+  const raw = JSON.stringify({ schemaVersion: 1, words: many });
+  const backend = new MemoryStorage({ [STORAGE_KEY]: raw });
+  const result = await makeStore(backend).load();
+  assert.equal(result.migrationError, null);
+  assert.equal(result.words.length, 1000);
+  assert.deepEqual(saved(backend).words, many.map(upgraded));
+  assert.equal(saved(backend).words[1].lemma, 'mot1');
+  assert.equal(saved(backend).words[2].lemma, 'mot2 é');
+  assert.equal(backend.getItem(V1_COPY_KEY), raw);
+});
+
+test('si guardar falla, lo guardado sigue en v1 y load devuelve las palabras migradas y migrationError', async () => {
+  // Falla la copia v1: no se intenta guardar la versión 2
+  const first = new CountingStorage({ [STORAGE_KEY]: V1_RAW }, 1);
+  const store = makeStore(first);
+  const result = await store.load();
+  assert.ok(result.migrationError instanceof StorageError);
+  assert.equal(result.migrationError.code, 'quota');
+  assert.equal(result.corruptBackupKey, null);
+  assert.deepEqual(result.words, V1_WORDS.map(upgraded));
+  assert.deepEqual(store.getWords(), V1_WORDS.map(upgraded));
+  assert.equal(first.writes, 1, 'no intenta más escrituras');
+  assert.equal(first.getItem(STORAGE_KEY), V1_RAW);
+  assert.deepEqual(v1Keys(first), []);
+
+  // Falla guardar la versión 2: lo guardado sigue siendo la v1 (la copia extra no molesta)
+  const second = new CountingStorage({ [STORAGE_KEY]: V1_RAW }, 2);
+  const other = await makeStore(second).load();
+  assert.ok(other.migrationError instanceof StorageError);
+  assert.equal(other.migrationError.code, 'quota');
+  assert.deepEqual(other.words, V1_WORDS.map(upgraded));
+  assert.equal(second.getItem(STORAGE_KEY), V1_RAW);
+  assert.equal(second.getItem(V1_COPY_KEY), V1_RAW);
+});
+
+test('un documento sin schemaVersion se trata como v1', async () => {
+  const raw = JSON.stringify({ words: V1_WORDS });
+  const backend = new MemoryStorage({ [STORAGE_KEY]: raw });
+  const result = await makeStore(backend).load();
+  assert.equal(result.migrationError, null);
+  assert.deepEqual(result.words, V1_WORDS.map(upgraded));
+  assert.deepEqual(saved(backend), { schemaVersion: 2, words: V1_WORDS.map(upgraded) });
+  assert.equal(backend.getItem(V1_COPY_KEY), raw);
+});
+
+test('la lista inicial se siembra en v2', async () => {
+  const backend = new MemoryStorage();
+  const result = await makeStore(backend).load();
+  assert.equal(result.migrationError, null);
+  assert.equal(saved(backend).schemaVersion, 2);
+  for (const word of saved(backend).words) {
+    assert.equal(word.lang, 'fr', word.id);
+    assert.equal(word.lemma, lemmaOf(word.fr, word.gender), word.id);
+  }
+  assert.equal(saved(backend).words[0].lemma, 'chat');
+  assert.deepEqual(result.words, saved(backend).words);
+  assert.deepEqual(v1Keys(backend), [], 'sembrar no hace copia v1');
+});
+
+test('saveWord guarda lang y lemma, y los recalcula al editar', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  await store.load();
+  const created = await store.saveWord({ fr: 'L’école', es: 'la escuela', gender: 'f' });
+  assert.equal(created.word.lang, 'fr');
+  assert.equal(created.word.lemma, 'école');
+  const edited = await store.saveWord({ ...SEED[1], fr: 'Manger', es: 'comer' }, 'seed-etre');
+  assert.equal(edited.word.lemma, 'manger');
+  assert.equal(saved(backend).words.find((w) => w.id === 'seed-etre').lemma, 'manger');
 });

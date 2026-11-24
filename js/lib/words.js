@@ -29,6 +29,19 @@ export function searchKey(text) {
     .toLowerCase().replace(/’/g, "'");
 }
 
+// Forma base para detectar duplicadas: minúsculas, NFC y apóstrofo recto. Solo si tiene género
+// (sustantivo) pierde un artículo inicial; sin género queda entera («un peu», «s'appeler»).
+// Sin APIs del navegador: el Worker también la usa.
+export function lemmaOf(fr, gender) {
+  const key = normalizeFrenchWord(fr).toLowerCase();
+  return gender ? key.replace(/^(?:(?:le|la|les|un|une|des) |l')/, '') : key;
+}
+
+// Palabra de la versión 1 → versión 2: agrega idioma y forma base sin tocar nada más
+export function upgradeWord(word) {
+  return { ...word, lang: 'fr', lemma: lemmaOf(word.fr, word.gender) };
+}
+
 function cleanWord(input) {
   const word = {};
   for (const field of TEXT_FIELDS) word[field] = normalizeText(input[field]);
@@ -36,6 +49,8 @@ function cleanWord(input) {
   const gender = input.gender === '' || input.gender == null ? null : input.gender;
   word.gender = gender;
   word.needsReview = Boolean(input.needsReview);
+  word.lang = input.lang ?? 'fr';
+  word.lemma = lemmaOf(word.fr, gender);
   return word;
 }
 
@@ -51,6 +66,7 @@ export function validateWord(input, existingWords = [], ownId = null) {
   if (!word.es) errors.es = 'Escribe la traducción al español.';
   if (word.exampleFr && !word.exampleEs) errors.exampleEs = 'Falta la traducción del ejemplo.';
   if (word.exampleEs && !word.exampleFr) errors.exampleFr = 'Falta el ejemplo en francés.';
+  if (word.lang !== 'fr') errors.lang = 'Idioma no admitido.';
 
   if (word.gender !== null && word.gender !== 'm' && word.gender !== 'f') {
     errors.gender = 'El género debe ser masculino, femenino o sin género.';
