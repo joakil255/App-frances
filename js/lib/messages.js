@@ -32,6 +32,9 @@ export function storageMessage(error) {
 // Título y texto en una sola frase (para errores dentro de una ventana)
 export const joined = ({ title, text }) => `${title} ${text}`;
 
+// Motivo cuando el teléfono no deja leer el archivo elegido (p. ej. ya no está disponible)
+export const FILE_UNREADABLE = 'No se pudo abrir el archivo. Vuelve a elegirlo.';
+
 export function importFailed(fileName, reason) {
   return { title: `No se pudo importar «${fileName}».`, text: reason };
 }

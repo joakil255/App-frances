@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { MESSAGES, storageMessage, importFailed, fileTooLarge } from '../js/lib/messages.js';
+import { MESSAGES, storageMessage, importFailed, fileTooLarge, FILE_UNREADABLE } from '../js/lib/messages.js';
 import { StorageError } from '../js/lib/storage.js';
 
 const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'restoreFailed',
@@ -56,6 +56,10 @@ test('storageMessage elige el mensaje según el error', () => {
   assert.deepEqual(storageMessage(new StorageError('quota')), MESSAGES.storageQuota);
   assert.deepEqual(storageMessage(new StorageError('unavailable')), MESSAGES.storageUnavailable);
   assert.deepEqual(storageMessage(new Error('otro')), MESSAGES.storageUnavailable);
+});
+
+test('motivo cuando el teléfono no deja abrir el archivo', () => {
+  assert.equal(FILE_UNREADABLE, 'No se pudo abrir el archivo. Vuelve a elegirlo.');
 });
 
 test('importFailed y fileTooLarge', () => {

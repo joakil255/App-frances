@@ -13,10 +13,12 @@ class MemoryStorage {
   constructor() {
     this.data = new Map();
     this.failOn = null;
+    this.failAfter = null; // tras fallar failOn, también falla la escritura siguiente
   }
   getItem(key) { return this.data.has(key) ? this.data.get(key) : null; }
   setItem(key, value) {
-    if (this.failOn === key) {
+    if (this.failOn === key || this.failAfter === 'now') {
+      this.failAfter = this.failAfter === 'armed' ? 'now' : null;
       this.failOn = null;
       throw Object.assign(new Error('lleno'), { name: 'QuotaExceededError' });
     }
@@ -134,6 +136,15 @@ test('una copia con datos rotos por dentro se rechaza', async () => {
     'ajustes inválidos': (d) => { d.study.settings.newPerDay = 500; },
     'sin historial': (d) => { delete d.study.history; },
     'palabra sin español': (d) => { d.words[0].es = ''; },
+    'repasos negativos': (d) => { d.study.cards['w1:fr-es'].sm2.reps = -1; },
+    'repasos con decimales': (d) => { d.study.cards['w1:fr-es'].sm2.reps = 0.5; },
+    'intervalo negativo': (d) => { d.study.cards['w1:fr-es'].sm2.interval = -3; },
+    'facilidad fuera de 1,3–3,0': (d) => { d.study.cards['w1:fr-es'].sm2.ease = 9; },
+    'id de tarjeta que no corresponde a su palabra': (d) => {
+      const card = d.study.cards['w1:fr-es'];
+      delete d.study.cards['w1:fr-es'];
+      d.study.cards['otra:fr-es'] = { ...card, id: 'otra:fr-es' };
+    },
   };
   for (const [name, change] of Object.entries(cases)) {
     assert.equal((await mutate(change)).fatal, DAMAGED, name);
@@ -157,6 +168,26 @@ test('una copia hecha por la app se restaura aunque el historial tenga respuesta
   const studyStore = createStudyStore(backend, { now: () => NOW });
   await studyStore.load();
   assert.deepEqual(studyStore.getState(), original.studyStore.getState());
+});
+
+test('una palabra con el carácter de reemplazo «\uFFFD» no impide guardar ni restaurar la copia', async () => {
+  const original = await sampleStores();
+  await original.wordStore.saveWord({ fr: `le caf${FFFD}`, es: 'el café', exampleFr: '', exampleEs: '', category: '', gender: 'm', needsReview: false });
+  const read = readBackup(backupOf(original));
+  assert.equal(read.fatal, null);
+  const backend = new MemoryStorage();
+  restoreBackup(backend, read.backup);
+  const wordStore = createWordStore(backend, { initialWords: [], now: () => NOW });
+  await wordStore.load();
+  assert.deepEqual(wordStore.getWords(), original.wordStore.getWords());
+});
+
+test('si también falla la vuelta atrás, se informa del error original (falta de espacio)', async () => {
+  const { backend } = await sampleStores();
+  const { backup } = readBackup(backupOf(await sampleStores()));
+  backend.failOn = STUDY_KEY;
+  backend.failAfter = 'armed';
+  assert.throws(() => restoreBackup(backend, backup), (error) => error instanceof StorageError && error.code === 'quota');
 });
 
 test('una copia vacía (sin palabras ni historial) es válida', () => {

@@ -5,6 +5,7 @@
 import { validateWord, duplicateKey } from './words.js';
 import { STORAGE_KEY, toStorageError } from './storage.js';
 import { STUDY_KEY, validateSettings } from './study-storage.js';
+import { cardIdOf } from './scheduler.js';
 
 export const BACKUP_FORMAT = 'app-frances-copia';
 export const BACKUP_VERSION = 1;
@@ -28,12 +29,15 @@ const isText = (value) => typeof value === 'string' && value.length > 0;
 const isDate = (value) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
 const isDateOrNull = (value) => value === null || isDate(value);
 const isNumber = (value) => typeof value === 'number' && Number.isFinite(value);
+const isCount = (value) => Number.isInteger(value) && value >= 0;
 const isObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 
 export function buildBackup({ words, study, now }) {
   const { cards, history, settings } = study;
   const data = { format: BACKUP_FORMAT, version: BACKUP_VERSION, createdAt: now.toISOString(), words, study: { cards, history, settings } };
-  return `${JSON.stringify(data, null, 2)}\n`;
+  // El carácter de reemplazo se escribe como escape JSON: es el mismo texto al leerlo, y así
+  // readBackup no lo confunde con un archivo mal codificado
+  return `${JSON.stringify(data, null, 2).replace(/\uFFFD/g, '\\ufffd')}\n`;
 }
 
 export function backupFileName(now) {
@@ -58,10 +62,13 @@ function validWords(words) {
 
 function validCard(card, key) {
   if (!isObject(card) || card.id !== key || !isText(card.wordId) || !DIRECTIONS.includes(card.direction)) return false;
+  if (card.id !== cardIdOf(card.wordId, card.direction)) return false;
   if (!isDateOrNull(card.introducedOn)) return false;
   if (card.lastReviewedAt !== null && typeof card.lastReviewedAt !== 'string') return false;
   const { sm2, leitner } = card;
-  if (!isObject(sm2) || !['reps', 'interval', 'ease', 'lapses'].every((k) => isNumber(sm2[k])) || !isDateOrNull(sm2.due)) return false;
+  // Números que el programador de repasos puede usar: enteros no negativos y facilidad de 1,3 a 3,0
+  if (!isObject(sm2) || !['reps', 'interval', 'lapses'].every((k) => isCount(sm2[k])) || !isDateOrNull(sm2.due)) return false;
+  if (!isNumber(sm2.ease) || sm2.ease < 1.3 || sm2.ease > 3) return false;
   return isObject(leitner) && Number.isInteger(leitner.box) && leitner.box >= 0 && leitner.box <= 5 && isDateOrNull(leitner.due);
 }
 
@@ -108,8 +115,12 @@ export function restoreBackup(backend, backup) {
   try {
     backend.setItem(STUDY_KEY, JSON.stringify({ schemaVersion: SCHEMA_VERSION, ...study }));
   } catch (error) {
-    if (previousWords === null) backend.removeItem(STORAGE_KEY);
-    else backend.setItem(STORAGE_KEY, previousWords);
+    try {
+      if (previousWords === null) backend.removeItem(STORAGE_KEY);
+      else backend.setItem(STORAGE_KEY, previousWords);
+    } catch {
+      // si ni siquiera se puede volver atrás, se informa del error original
+    }
     throw toStorageError(error);
   }
 }

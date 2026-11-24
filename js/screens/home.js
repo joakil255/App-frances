@@ -1,7 +1,7 @@
 // Inicio: guardar y restaurar la copia de seguridad completa.
 // Restaurar reemplaza todo tras confirmar; después la app se recarga para leer los datos nuevos.
 import { buildBackup, backupFileName, readBackup, restoreBackup, MAX_BACKUP_BYTES } from '../lib/backup.js';
-import { MESSAGES, storageMessage, fileTooLarge } from '../lib/messages.js';
+import { MESSAGES, storageMessage, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const RESTORED_KEY = 'app-frances-restored';
@@ -78,7 +78,14 @@ export function initHome({ wordStore, studyStore, backend, now = () => new Date(
       showNotice(fileTooLarge(10));
       return;
     }
-    const read = readBackup(await file.text());
+    let text;
+    try {
+      text = await file.text();
+    } catch {
+      showNotice({ title: MESSAGES.restoreFailed.title, text: FILE_UNREADABLE });
+      return;
+    }
+    const read = readBackup(text);
     if (read.fatal) {
       showNotice({ title: MESSAGES.restoreFailed.title, text: read.fatal });
       return;

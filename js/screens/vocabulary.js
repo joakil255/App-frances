@@ -4,7 +4,7 @@ import { filterWords, categoriesOf } from '../lib/words.js';
 import { exportJson, exportCsv, exportFileName, readImport, planImport, MAX_IMPORT_BYTES } from '../lib/transfer.js';
 import { loadDeck, A1_DECK_NAME } from '../lib/deck.js';
 import { StorageError } from '../lib/storage.js';
-import { MESSAGES, storageMessage, joined, importFailed, fileTooLarge } from '../lib/messages.js';
+import { MESSAGES, storageMessage, joined, importFailed, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
 import { RATES } from '../lib/speech.js';
 import { playFrench } from './voice.js';
 
@@ -314,7 +314,15 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       showNotice(title, text);
       return;
     }
-    const read = readImport(await file.text(), file.name);
+    let text;
+    try {
+      text = await file.text();
+    } catch {
+      const { title, text: reason } = importFailed(file.name, FILE_UNREADABLE);
+      showNotice(title, reason);
+      return;
+    }
+    const read = readImport(text, file.name);
     if (read.fatal) {
       const { title, text } = importFailed(file.name, read.fatal);
       showNotice(title, text);
