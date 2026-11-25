@@ -37,7 +37,7 @@ function saveQuizLang(quizLang) {
   }
 }
 
-export function initReader({ textStore, wordCard, fetch, isOnline, hostname, getCode, synth, onBeforeSpeak }) {
+export function initReader({ textStore, wordCard, fetch, isOnline, hostname, getCode, synth, onBeforeSpeak, loadNotice = null }) {
   const url = storyUrl(hostname);
   const heading = $('#screen-reader h1');
   const notice = $('#reader-notice');
@@ -87,6 +87,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
   let visible = false; // la pantalla Leer está a la vista
   let playTicket = 0; // cada pedido de lectura lleva un número: uno que llega tarde se ignora
   let deleteReturn = null; // botón que abrió la ventana de borrar
+  let pendingNotice = loadNotice; // aviso de la carga (datos dañados o sin acceso): se muestra una vez
 
   // --- Avisos ---
   function showNotice({ title, text: detail }) {
@@ -418,21 +419,24 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     setGenerating(true);
     newDialog.close();
 
-    const code = getCode();
-    const sent = code
-      ? await sendStory({ url, code, body: { lang: 'fr', level, topic, quizLang }, fetch, isOnline: isOnline() })
-      : { ok: false, error: 'unauthorized' };
     let added = null;
-    if (sent.ok) {
-      added = await guarded(() => textStore.addText(textFromStory(sent.result, { level, topic, quizLang })));
-      if (added && !added.ok) {
-        showNotice(chatMessage('bad_output')); // la historia no pasó la validación: no se guarda
-        added = null;
+    try {
+      const code = getCode();
+      const sent = code
+        ? await sendStory({ url, code, body: { lang: 'fr', level, topic, quizLang }, fetch, isOnline: isOnline() })
+        : { ok: false, error: 'unauthorized' };
+      if (sent.ok) {
+        added = await guarded(() => textStore.addText(textFromStory(sent.result, { level, topic, quizLang })));
+        if (added && !added.ok) {
+          showNotice(chatMessage('bad_output')); // la historia no pasó la validación: no se guarda
+          added = null;
+        }
+      } else {
+        showNotice(chatMessage(sent.error));
       }
-    } else {
-      showNotice(chatMessage(sent.error));
+    } finally {
+      setGenerating(false);
     }
-    setGenerating(false);
     if (added) newForm.reset();
     // Solo se abre si sigues en la biblioteca; si no, la historia queda en la lista
     if (added && visible && text === null) location.hash = `#/leer/${added.text.id}`;
@@ -444,6 +448,10 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
       visible = true;
       stopReading();
       clearNotice();
+      if (pendingNotice) {
+        showNotice(pendingNotice);
+        pendingNotice = null;
+      }
       if (id === null) {
         text = null;
         story.hidden = true;

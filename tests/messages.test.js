@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { MESSAGES, storageMessage, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
+import { MESSAGES, storageMessage, textsLoadNotice, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
 import { StorageError } from '../js/lib/storage.js';
 
 const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'corruptTexts', 'restoreFailed',
@@ -207,4 +207,12 @@ test('storyLimit tiene su texto exacto y story_limit lo usa', () => {
     text: 'Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.',
   });
   assert.deepEqual(chatMessage('story_limit'), MESSAGES.storyLimit);
+});
+
+test('textsLoadNotice avisa de datos dañados o de un error de lectura, y calla si todo salió bien', () => {
+  assert.equal(textsLoadNotice({ corruptBackupKey: null }), null);
+  assert.equal(textsLoadNotice(), null);
+  assert.equal(textsLoadNotice({ corruptBackupKey: 'app-frances-texts-corrupt-x' }), MESSAGES.corruptTexts);
+  assert.equal(textsLoadNotice({ error: new StorageError('quota') }), MESSAGES.storageQuota);
+  assert.equal(textsLoadNotice({ error: new StorageError('unavailable') }), MESSAGES.storageUnavailable);
 });

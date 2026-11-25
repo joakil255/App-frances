@@ -19,6 +19,7 @@ import { initChatVoice } from './screens/chat-voice.js';
 import { createLookupCache } from './lib/lookup-cache.js';
 import { initWordCard } from './screens/word-card.js';
 import { initReader } from './screens/reader.js';
+import { textsLoadNotice } from './lib/messages.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -92,7 +93,8 @@ const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
 const studyStore = createStudyStore(backend);
 const textStore = createTextStore(backend);
-const textsLoaded = textStore.load();
+// Si falla la lectura, la app sigue (Inicio no depende de las historias) y Leer lo avisa
+const textsLoaded = textStore.load().catch((error) => ({ texts: [], corruptBackupKey: null, error }));
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
@@ -164,8 +166,9 @@ if (currentId === 'chat') onChatShown();
 
 // Leer: biblioteca y lector (las historias ya están en memoria tras textStore.load())
 let reader = null;
-textsLoaded.then(() => {
+textsLoaded.then((loaded) => {
   reader = initReader({
+    loadNotice: textsLoadNotice(loaded),
     textStore,
     wordCard,
     fetch: window.fetch.bind(window),
@@ -178,6 +181,11 @@ textsLoaded.then(() => {
   onReaderShown = (moveFocus) => reader.onShow(routeParam(location.hash), moveFocus);
   onReaderHidden = () => reader.onHide();
   if (currentId === 'reader') onReaderShown(false);
+  // Si otra pestaña cambia las historias, se vuelven a leer y Leer se redibuja
+  // (una historia borrada allá te devuelve a la biblioteca)
+  textStore.watchExternalChanges(window, () => {
+    if (currentId === 'reader') onReaderShown(false);
+  });
 });
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando

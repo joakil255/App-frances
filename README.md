@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Palabras, Estudiar, Quiz y Progreso). Funcionan **Inicio** (tu copia de seguridad), **Palabras** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas) y **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas).
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene siete pantallas (Inicio, Palabras, Estudiar, Quiz, Progreso, Conversar y Leer). Funcionan **Inicio** (tu copia de seguridad), **Palabras** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas), **Conversar** (chatear en francés con Claude) y **Leer** (historias cortas con cuestionario).
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -310,7 +310,7 @@ Cambia el sistema (o el navegador) a tema oscuro. La app pasa a fondo azul noche
 
 1. Con la app instalada y abierta al menos una vez, **cierra la app** del todo (desde la vista de apps recientes).
 2. Activa el **modo avión**.
-3. Abre la app desde el icono. Debe abrir normal y navegar entre las cinco pantallas.
+3. Abre la app desde el icono. Debe abrir normal y navegar entre las siete pantallas.
 4. Desactiva el modo avión.
 
 En el computador puedes comprobar lo mismo: en Chrome, `F12` → **Application** → **Service workers** → marca **Offline** y recarga; en Firefox, menú **≡** → **Más herramientas** → **Trabajar sin conexión**.
@@ -425,7 +425,7 @@ Si no aparece, cierra y vuelve a abrir la app: GitHub Pages puede tardar hasta 1
 ## Estructura
 
 ```
-index.html              página única con las cinco pantallas
+index.html              página única con las siete pantallas
 sw.js                   service worker (caché para usar sin conexión)
 manifest.webmanifest    datos de instalación de la PWA
 css/styles.css          estilos (valores de DESIGN.md)

@@ -97,6 +97,12 @@ export function storageMessage(error) {
   return error instanceof StorageError && error.code === 'quota' ? MESSAGES.storageQuota : MESSAGES.storageUnavailable;
 }
 
+// Aviso al cargar las historias: de un error de lectura o de datos dañados (null si todo bien)
+export function textsLoadNotice({ error = null, corruptBackupKey = null } = {}) {
+  if (error) return storageMessage(error);
+  return corruptBackupKey ? MESSAGES.corruptTexts : null;
+}
+
 // Título y texto en una sola frase (para errores dentro de una ventana)
 export const joined = ({ title, text }) => `${title} ${text}`;
 
