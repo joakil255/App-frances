@@ -76,7 +76,7 @@
   "idea": [
     {
       "id": "i1",
-      "text": "El adjetivo es la palabra que dice cómo es algo: grande, rojo, chileno. En francés se ajusta al sustantivo que acompaña, igual que en español: toma su género (masculino o femenino) y su número (uno o varios). Para saber el género, mira la palabra que va antes: un, le → masculino; une, la → femenino. Con l' y con les no se ve, así que aprende cada sustantivo con un o une (un hôtel, une chemise). La forma del diccionario es la masculina en singular: petit. En general, para el femenino se agrega -e (petite), para el plural se agrega -s (petits) y para el femenino plural, -es (petites). Si el adjetivo ya termina en -e, en femenino queda igual: un livre rouge, une voiture rouge; en plural sí lleva -s: des voitures rouges. Algunos doblan la última consonante en femenino: bon → bonne, gentil → gentille, chilien → chilienne. Después de être pasa lo mismo: ma sœur est petite, mes voisins sont gentils.",
+      "text": "El adjetivo es la palabra que dice cómo es algo: grande, rojo, chileno. En francés se ajusta al sustantivo que acompaña, igual que en español: toma su género (masculino o femenino) y su número (uno o varios). Para saber el género, mira la palabra que va antes: un, le → masculino; une, la → femenino. Con l', les, des y mes no se ve, y tampoco con mon delante de vocal (mon amie es femenino); así que aprende cada sustantivo con un o une (un hôtel, une chemise). La forma del diccionario es la masculina en singular: petit. En general, para el femenino se agrega -e (petite), para el plural se agrega -s (petits) y para el femenino plural, -es (petites). Si el adjetivo ya termina en -e, en femenino queda igual: un livre rouge, une voiture rouge; en plural sí lleva -s: des voitures rouges. Algunos doblan la última consonante en femenino: bon → bonne, gentil → gentille, chilien → chilienne. Después de être pasa lo mismo: ma sœur est petite, mes voisins sont gentils.",
       "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-adjectif", "bdl-feminin"],
       "review": false
     },
@@ -85,7 +85,7 @@
       "text": "¿Antes o después del sustantivo? Los colores y las nacionalidades van después, como en español: une voiture rouge, un pantalon bleu, une amie chilienne. Pero hay unos pocos adjetivos cortos y muy frecuentes que normalmente van antes: grand, petit, bon, jeune, joli y mauvais. Por ejemplo: une grande maison, une petite maison, un bon café, une jeune femme. Ojo: en español decimos «una casa grande», con el adjetivo después; en francés lo natural es une grande maison. Algunos cambian de sentido según el lugar, como en español: un grand homme es un gran hombre (importante), y un homme grand es un hombre alto. Hay más adjetivos que a veces van antes; los verás más adelante.",
       "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-adjectif", "bdl-grand-gros", "bdl-feminin", "bdl-adjectifs-antepose"],
       "review": true,
-      "reviewNote": "Sin fuente para la lista como regla: solo la BDL dice que grand va «généralement devant le nom». Para petit, bon, jeune, joli y mauvais las fuentes solo dan ejemplos delante del sustantivo (Niveau A2, p. 109: Un petit livre intéressant; Inventaire, p. 62: La jeune femme; p. 65: une bonne idée; BDL: la jolie et sympathique Émilie, de mauvais souvenirs), pero ninguna dice que vayan «normalmente» antes. Mauvais no aparece en los ejemplos A1 del Inventaire."
+      "reviewNote": "Sin fuente para la lista como regla: solo la BDL dice que grand va «généralement devant le nom». Para petit, bon, jeune, joli y mauvais las fuentes solo dan ejemplos delante del sustantivo (Niveau A2, p. 109: Un petit livre intéressant; Inventaire, p. 62: La jeune femme; p. 65: une bonne idée; BDL: la jolie et sympathique Émilie, de mauvais souvenirs), pero ninguna dice que vayan «normalmente» antes. Mauvais no aparece en los ejemplos A1 del Inventaire. Tampoco hay fuente que diga que los colores van después: solo ejemplos (Niveau A2, p. 109: Un ballon rouge; Inventaire, p. 63: un T-shirt noir; p. 67: un pantalon bleu)."
     }
   ],
   "pattern": [
@@ -115,7 +115,7 @@
       "id": "t3",
       "source": "Los autos rojos",
       "target": "Les voitures rouges",
-      "note": "En español rojo cambia a roja. En francés rouge ya termina en -e, así que es igual en masculino y en femenino. En plural lleva -s, como en español.",
+      "note": "En español rojo cambia a roja. En francés rouge ya termina en -e, así que es igual en masculino y en femenino. Ojo: voiture es femenino (une voiture), aunque auto sea masculino en español; con rouge da lo mismo. En plural lleva -s, como en español.",
       "sourceIds": ["bdl-feminin", "inventaire-f"],
       "review": false
     },
@@ -160,7 +160,8 @@
       "right": "Elle a une voiture rouge.",
       "explanation": "Los colores van después del sustantivo, como en español: une voiture rouge.",
       "sourceIds": ["niveau-a2", "inventaire-f"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente para la regla: ninguna fuente leída dice que los colores vayan después del sustantivo; solo hay ejemplos (Niveau A2, p. 109: Un ballon rouge; Inventaire, p. 63: un T-shirt noir; p. 67: un pantalon bleu)."
     },
     {
       "id": "p4",
@@ -180,16 +181,20 @@
       "answers": ["Elle a une voiture rouge."],
       "rule": "Los colores van después del sustantivo: une voiture rouge.",
       "sourceIds": ["niveau-a2", "inventaire-f"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente para la regla: ninguna fuente leída dice que los colores vayan después del sustantivo; solo hay ejemplos (Niveau A2, p. 109: Un ballon rouge; Inventaire, p. 63: un T-shirt noir; p. 67: un pantalon bleu)."
     },
     {
       "id": "x2",
       "type": "order",
-      "prompt": "Ordena las palabras: «Tengo una casa pequeña».",
-      "tiles": ["maison", "petite", "J'ai", "une"],
-      "answers": ["J'ai une petite maison.", "J'ai une maison petite."],
-      "rule": "Primero el sujeto y el verbo (J'ai), y después el artículo con el sustantivo y su adjetivo: une petite maison.",
-      "sourceIds": ["niveau-a2", "bdl-adjectifs-antepose"],
+      "prompt": "Ordena las palabras en el orden más natural en francés: «Tengo una casa grande».",
+      "tiles": ["maison", "grande", "J'ai", "une"],
+      "answers": ["J'ai une grande maison."],
+      "mistakes": [
+        { "answer": "J'ai une maison grande.", "explanation": "No es un error de gramática, pero lo habitual es une grande maison: grand va normalmente antes del sustantivo." }
+      ],
+      "rule": "Primero el sujeto y el verbo (J'ai), y después une + grande + maison: grand va normalmente antes del sustantivo.",
+      "sourceIds": ["bdl-grand-gros", "niveau-a2", "inventaire-f"],
       "review": false
     },
     {
@@ -200,7 +205,8 @@
       "answers": ["J'ai deux chats noirs."],
       "rule": "El color va después del sustantivo, y como chats es plural, lleva -s: deux chats noirs.",
       "sourceIds": ["niveau-a2", "inventaire-f"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente para la regla: ninguna fuente leída dice que los colores vayan después del sustantivo; solo hay ejemplos (Niveau A2, p. 109: Un ballon rouge; Inventaire, p. 63: un T-shirt noir; p. 67: un pantalon bleu)."
     },
     {
       "id": "x4",
@@ -330,7 +336,8 @@
       ],
       "focus": "Adjetivos junto al sustantivo: colores después y petit / grand antes, con concordancia",
       "sourceIds": ["niveau-a2", "inventaire-f", "bdl-feminin"],
-      "review": false
+      "review": true,
+      "reviewNote": "El foco repite reglas sin fuente que las enuncie: que los colores van después y que petit va antes (ver i2). Solo para grand dice la BDL que va «généralement devant le nom»."
     }
   ]
 }
