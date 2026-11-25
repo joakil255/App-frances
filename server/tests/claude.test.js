@@ -234,6 +234,14 @@ test('las instrucciones de historia cambian con el nivel y el idioma de las preg
   assert.equal(buildStoryPrompt('A1.1', 'es').includes('{'), false);
 });
 
+// El modelo no cuenta palabras con exactitud: se le pide una meta con margen sobre el mínimo del servidor
+test('las instrucciones de historia piden una longitud con margen sobre el mínimo', () => {
+  const prompt = buildStoryPrompt('A2', 'fr');
+  assert.ok(prompt.includes('Unas 150 palabras'));
+  assert.ok(prompt.includes('nunca menos de 110'));
+  assert.equal(prompt.includes('Entre 80 y 300 palabras'), false);
+});
+
 test('story normaliza una salida válida', async () => {
   const out = await adapterWith(async () => json(200, textBody(goodStory))).story(storyInput);
   assert.deepEqual(out, goodStory);
