@@ -9,6 +9,9 @@ export const TEXT_LEVELS = ['A1.1', 'A1.2', 'A2'];
 export const QUIZ_LANGS = ['es', 'fr'];
 const TEXT_LANGS = ['fr'];
 const TEXT_STATUSES = ['review', 'approved'];
+export const SUPPORT_LANGS = ['es'];
+export const MAX_SENTENCES = 60;
+export const MAX_SENTENCE_LETTERS = 600;
 const QUESTION_COUNT = 4;
 const TITLE_MAX = 80;
 const BODY_MAX = 3000;
@@ -39,6 +42,23 @@ function questionError(q, bodyKey) {
   if (!bodyKey.includes(evidenceKey(q.evidence))) return 'La evidencia no está en el texto.';
   return null;
 }
+
+const stripSpaces = (value) => value.normalize('NFC').replace(/\s+/g, '');
+
+// Las frases, unidas y sin ningún espacio, deben ser el texto sin ningún espacio
+export function sentencesMatchBody(sentences, body) {
+  return stripSpaces(sentences.join('')) === stripSpaces(body);
+}
+
+// true si la historia o su traducción siguen pendientes de revisar
+export const needsReview = (text) => text.status === 'review' || text.translation?.status === 'review';
+
+const sentenceListOk = (list) => Array.isArray(list) && list.length >= 1 && list.length <= MAX_SENTENCES
+  && list.every((s) => isString(s) && letters(s) > 0 && letters(s) <= MAX_SENTENCE_LETTERS);
+
+// Recorta los bordes de cada frase; lo que no sea lista queda igual para que validateText lo rechace
+const trimAll = (list) => (Array.isArray(list) ? list.map((s) => (isString(s) ? s.normalize('NFC').trim() : s)) : list);
+const cleanTranslation = (t) => (t && typeof t === 'object' ? { ...t, sentences: trimAll(t.sentences) } : t);
 
 function quizResultError(result) {
   if (result === null) return null;
@@ -75,6 +95,18 @@ export function validateText(text) {
     const bodyKey = evidenceKey(isString(text.body) ? text.body : '');
     const found = quiz.questions.map((q) => questionError(q, bodyKey)).findIndex((e) => e !== null);
     if (found !== -1) errors.quiz = `Pregunta ${found + 1}: ${questionError(quiz.questions[found], bodyKey)}`;
+  }
+
+  if (text.sentences !== undefined) {
+    if (!sentenceListOk(text.sentences) || !isString(text.body) || !sentencesMatchBody(text.sentences, text.body)) {
+      errors.sentences = 'Las frases no coinciden con el texto.';
+    }
+  }
+  if (text.translation !== undefined) {
+    const t = text.translation;
+    const valid = t && typeof t === 'object' && SUPPORT_LANGS.includes(t.lang) && TEXT_STATUSES.includes(t.status)
+      && Array.isArray(text.sentences) && sentenceListOk(t.sentences) && t.sentences.length === text.sentences.length;
+    if (!valid) errors.translation = 'La traducción no es válida.';
   }
 
   if (quizResultError(text.quizResult ?? null)) errors.quizResult = 'El resultado no es válido.';
@@ -162,6 +194,8 @@ export function createTextStore(backend, { makeId = () => crypto.randomUUID(), n
         createdAt: stamp,
         updatedAt: stamp,
       };
+      if (input?.sentences !== undefined) text.sentences = trimAll(input.sentences);
+      if (input?.translation !== undefined) text.translation = cleanTranslation(input.translation);
       const { ok, errors } = validateText(text);
       if (!ok) return { ok: false, errors };
       persist([text, ...texts]);
@@ -169,7 +203,34 @@ export function createTextStore(backend, { makeId = () => crypto.randomUUID(), n
     },
 
     async approve(id) {
-      return update(id, { status: 'approved' });
+      const translation = store.getText(id)?.translation;
+      return update(id, translation ? { status: 'approved', translation: { ...translation, status: 'approved' } } : { status: 'approved' });
+    },
+
+    // Agrega frases y traducción a una historia. La traducción nueva queda en revisión.
+    // Devuelve null (sin guardar) si el id no existe o el resultado no valida.
+    async addTranslation(id, { sentences, translation }) {
+      const existing = store.getText(id);
+      if (!existing) return null;
+      const candidate = { ...existing, sentences: trimAll(sentences), translation: cleanTranslation(translation) };
+      if (!validateText(candidate).ok) return null;
+      return update(id, { sentences: candidate.sentences, translation: candidate.translation });
+    },
+
+    async approveTranslation(id) {
+      const translation = store.getText(id)?.translation;
+      if (!translation) return null;
+      return update(id, { translation: { ...translation, status: 'approved' } });
+    },
+
+    async discardTranslation(id) {
+      const existing = store.getText(id);
+      if (!existing) return null;
+      const updated = { ...existing, updatedAt: now().toISOString() };
+      delete updated.sentences;
+      delete updated.translation;
+      persist(texts.map((t) => (t.id === id ? updated : t)));
+      return updated;
     },
 
     async markRead(id) {
