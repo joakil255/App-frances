@@ -247,11 +247,21 @@ test('las instrucciones de historia piden una longitud con margen sobre el míni
 test('las instrucciones de historia piden un solo tiempo en A2 y preguntas sin mezclar idiomas', () => {
   assert.ok(buildStoryPrompt('A2', 'fr').includes('Mantén un mismo tiempo en todo el relato'));
   assert.equal(buildStoryPrompt('A1.2', 'es').includes('Mantén un mismo tiempo'), false);
+  // La explicación siempre va en español, sin mezclar francés
   for (const quizLang of ['es', 'fr']) {
-    const prompt = buildStoryPrompt('A1.2', quizLang);
-    assert.ok(prompt.includes('sin palabras francesas salvo citas del texto'));
-    assert.ok(prompt.includes('cada opción debe responder gramaticalmente a su pregunta'));
+    assert.ok(buildStoryPrompt('A1.2', quizLang).includes('La explicación va solo en español, sin palabras francesas salvo citas del texto'));
   }
+  // Preguntas en español: el modelo copiaba palabras del texto en las opciones; un ejemplo explícito lo corrige
+  const es = buildStoryPrompt('A1.2', 'es');
+  assert.ok(es.includes('Las preguntas y sus opciones van solo en español'));
+  assert.ok(es.includes('«Manzanas rojas», no «Pommes rouges»'));
+  assert.equal(es.includes('Las preguntas y sus opciones van en francés'), false);
+  // Preguntas en francés: la regla del español no debe aplicarse (traducía las opciones al español)
+  const fr = buildStoryPrompt('A1.2', 'fr');
+  assert.ok(fr.includes('Las preguntas y sus opciones van en francés correcto y natural (no en español)'));
+  assert.ok(fr.includes('cada opción debe responder gramaticalmente a su pregunta'));
+  assert.equal(fr.includes('Manzanas rojas'), false);
+  assert.equal(fr.includes('Las preguntas y sus opciones van solo en español'), false);
 });
 
 test('story normaliza una salida válida', async () => {

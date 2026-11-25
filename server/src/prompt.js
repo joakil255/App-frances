@@ -108,16 +108,23 @@ Campos de la salida:
   - "answer": el índice de la opción correcta, empezando en 0;
   - "explanation": explicación breve en español de por qué es correcta;
   - "evidence": una frase copiada exactamente, letra por letra, del texto de "body" que respalda la respuesta.
-- Lo que escribas en español (preguntas, opciones o explicación) va solo en español, sin palabras francesas salvo citas del texto entre comillas.
-- Si las preguntas van en francés, escríbelas en francés correcto y natural; cada opción debe responder gramaticalmente a su pregunta.`;
+- La explicación va solo en español, sin palabras francesas salvo citas del texto entre comillas.
+{quizLangRule}`;
 
 const QUIZ_LANG_NAMES = { es: 'español', fr: 'francés' };
+
+// Regla de idioma de preguntas y opciones: sin la del español, en francés el modelo traducía las opciones
+const QUIZ_LANG_RULES = {
+  es: '- Las preguntas y sus opciones van solo en español, sin palabras francesas salvo citas del texto entre comillas. Traduce al español lo que tomes del texto: por ejemplo, la opción es «Manzanas rojas», no «Pommes rouges».',
+  fr: '- Las preguntas y sus opciones van en francés correcto y natural (no en español); cada opción debe responder gramaticalmente a su pregunta.',
+};
 
 export function buildStoryPrompt(level, quizLang) {
   return STORY_INSTRUCTIONS
     .replaceAll('{level}', level)
     .replaceAll('{pastTense}', level === 'A2' ? ' y también el passé composé. Mantén un mismo tiempo en todo el relato: la historia ocurre en presente y el passé composé solo cuenta lo que pasó antes (por ejemplo, «Hier, elle a acheté un livre.»)' : '')
-    .replaceAll('{quizLangName}', QUIZ_LANG_NAMES[quizLang] ?? QUIZ_LANG_NAMES.es);
+    .replaceAll('{quizLangName}', QUIZ_LANG_NAMES[quizLang] ?? QUIZ_LANG_NAMES.es)
+    .replaceAll('{quizLangRule}', QUIZ_LANG_RULES[quizLang] ?? QUIZ_LANG_RULES.es);
 }
 
 export const STORY_SCHEMA = {
