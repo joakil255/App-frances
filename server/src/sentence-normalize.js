@@ -12,7 +12,7 @@ const hasKeys = (object, keys) => {
 };
 // Igual que normalizeAnswer de la app: minúsculas, apóstrofo recto, sin puntuación ni espacios de más
 const PUNCTUATION = /[.,;:!?¿¡«»"“”…()]/g;
-function sameWords(text) {
+function wordsKey(text) {
   return text.normalize('NFC').toLowerCase().replace(/[’‘ʼ]/g, "'").replace(PUNCTUATION, ' ')
     .replace(/\s+/g, ' ').replace(/ ?' ?/g, "'").trim();
 }
@@ -34,7 +34,7 @@ export function normalizeSentence(raw, sentence) {
     if (!isText(original) || !isText(corrected) || !isCleanText(explanation) || !KINDS.includes(kind)) throw bad();
     if (original.trim() === '' || !text.includes(straighten(original))) throw bad();
     // Solo puntuación o mayúsculas no es un error de A1: se descarta
-    if (sameWords(original) !== sameWords(corrected)) errors.push({ original, corrected, kind, explanation });
+    if (wordsKey(original) !== wordsKey(corrected)) errors.push({ original, corrected, kind, explanation });
   }
   if (errors.length === 0) return { correct: true, corrected: sentence, errors, suggestion: raw.suggestion };
   if (raw.corrected.trim() === '') throw bad();
