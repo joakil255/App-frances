@@ -94,7 +94,8 @@
       "id": "i1",
       "text": "Aller (ir) y faire (hacer) son verbos irregulares: no siguen el modelo de parler, así que se aprenden de memoria, en bloque con el sujeto. Aller: je vais, tu vas, il / elle va, nous allons, vous allez, ils / elles vont. Faire: je fais, tu fais, il / elle fait, nous faisons, vous faites, ils / elles font. Ojo con vous faites: no se dice «vous faisez». Con aller dices adónde vas; recuerda la lección 3: à + le = au, y con la y l' no se juntan: je vais au cinéma, à la piscine, à l'école.",
       "sourceIds": ["bdl-terminaisons", "bdl-faire", "inventaire-d", "inventaire-f", "niveau-a2", "oqlf-contracte"],
-      "review": false
+      "review": true,
+      "reviewNote": "Límite A1-A2 en la parte de au (repasa la lección 3): el referencial A2 (p. 108) marca au y aux en negrita como agregado de A2; el Inventaire los da en A1."
     },
     {
       "id": "i2",

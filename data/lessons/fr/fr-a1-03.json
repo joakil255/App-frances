@@ -84,7 +84,8 @@
       "id": "i2",
       "text": "À y de se juntan con le y con les, como en español a + el = al: à + le = au, à + les = aux, de + le = du, de + les = des. Con la y con l' no se juntan: à la, à l', de la, de l'. Por ejemplo: je vais au cinéma, à la piscine, à l'école. Después de una negación (ne… pas), un, une y des se vuelven de, o d' delante de vocal: je n'ai pas de voiture. Con être no cambian: ce n'est pas un livre. Después de beaucoup (mucho) y un peu (un poco) también va de sin artículo: beaucoup d'amis, un peu de sucre.",
       "sourceIds": ["oqlf-contracte", "niveau-a2", "inventaire-d", "inventaire-f", "bdl-negation", "bdl-determinants"],
-      "review": false
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire pone à, au, de en A1 (preposiciones de lugar); el referencial A2 (p. 108) marca au, aux, du, des en negrita como agregado de A2."
     },
     {
       "id": "i3",
