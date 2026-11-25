@@ -28,6 +28,7 @@ function makeEnv(overrides = {}) {
     DAILY_LIMIT: '100',
     LOOKUP_LIMIT: '200',
     STORY_LIMIT: '5',
+    SENTENCE_LIMIT: '50',
     ALLOWED_ORIGINS: `${ORIGIN},http://127.0.0.1:8000`,
     ANTHROPIC_API_KEY: 'clave-de-prueba',
     ACCESS_CODE: 'codigo-de-prueba',
@@ -53,6 +54,11 @@ function makeProviders(behavior) {
         return behavior(input);
       },
       async story(input) {
+        state.calls += 1;
+        state.received.push(input);
+        return behavior(input);
+      },
+      async sentence(input) {
         state.calls += 1;
         state.received.push(input);
         return behavior(input);
@@ -367,4 +373,80 @@ test('/story con salida inválida → 502 bad_output; ProviderError config → 5
 test('/story sin STORY_LIMIT → 500 config', async () => {
   const { response } = await run(storyRequest(), makeEnv({ STORY_LIMIT: undefined }));
   assert.equal(response.status, 500);
+});
+
+// --- /sentence ---
+const sentenceOut = {
+  correct: false,
+  corrected: 'Je suis allée au café.',
+  errors: [{ original: 'suis allé', corrected: 'suis allée', kind: 'grammar', explanation: 'Concordancia.' }],
+  suggestion: '',
+};
+const sentenceBody = { lang: 'fr', explainLang: 'es', level: 'A1', situation: 'En el café', focus: 'le passé composé', sentence: 'Je suis allé au café.' };
+const sentenceRequest = (options = {}) => chatRequest({ path: '/sentence', body: sentenceBody, ...options });
+
+test('OPTIONS /sentence responde como /chat', async () => {
+  const request = new Request('https://worker.example/sentence', { method: 'OPTIONS', headers: { origin: ORIGIN } });
+  const { response } = await run(request);
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get('access-control-allow-methods'), 'POST');
+});
+
+test('/sentence sin código → 401 y con otro origen → 403', async () => {
+  assert.equal((await run(sentenceRequest({ code: null }))).response.status, 401);
+  assert.equal((await run(sentenceRequest({ origin: 'https://malo.example' }))).response.status, 403);
+});
+
+test('/sentence con cuerpo inválido → 400 sin llamar al proveedor ni contar', async () => {
+  const { response, body, state, env } = await run(sentenceRequest({ body: { ...sentenceBody, level: 'A1.2' } }), makeEnv(), makeProviders(() => sentenceOut));
+  assert.equal(response.status, 400);
+  assert.deepEqual(body, { error: 'invalid_input' });
+  assert.equal(state.calls, 0);
+  assert.equal(env.CHAT_KV.store.has('sentence:2026-11-23'), false);
+});
+
+test('/sentence responde 200 con el resultado y remainingSentences; solo sube sentence:', async () => {
+  const { response, body, state, env } = await run(sentenceRequest(), makeEnv(), makeProviders(() => sentenceOut));
+  assert.equal(response.status, 200);
+  assert.deepEqual(body, { ...sentenceOut, remainingSentences: 49 });
+  assert.deepEqual(state.received[0], sentenceBody);
+  assert.equal(env.CHAT_KV.store.get('sentence:2026-11-23'), '1');
+  assert.equal(env.CHAT_KV.store.has('count:2026-11-23'), false);
+});
+
+test('la llamada 51 del día → 429 sentence_limit sin llamar al proveedor; los otros contadores no cambian', async () => {
+  const env = makeEnv({ CHAT_KV: makeKv({ 'sentence:2026-11-23': '50', 'count:2026-11-23': '3', 'lookup:2026-11-23': '7', 'story:2026-11-23': '2' }) });
+  const { response, body, state } = await run(sentenceRequest(), env, makeProviders(() => sentenceOut));
+  assert.equal(response.status, 429);
+  assert.deepEqual(body, { error: 'sentence_limit' });
+  assert.equal(state.calls, 0);
+  assert.equal(env.CHAT_KV.store.get('sentence:2026-11-23'), '50');
+  assert.equal(env.CHAT_KV.store.get('count:2026-11-23'), '3');
+  assert.equal(env.CHAT_KV.store.get('lookup:2026-11-23'), '7');
+  assert.equal(env.CHAT_KV.store.get('story:2026-11-23'), '2');
+});
+
+test('los otros límites agotados no bloquean /sentence', async () => {
+  const env = makeEnv({ CHAT_KV: makeKv({ 'count:2026-11-23': '100', 'lookup:2026-11-23': '200', 'story:2026-11-23': '5' }) });
+  const { response } = await run(sentenceRequest(), env, makeProviders(() => sentenceOut));
+  assert.equal(response.status, 200);
+});
+
+test('/sentence: ProviderError bad_output → 502; config → 500; error raro → 502 unavailable', async () => {
+  const cases = [
+    [() => { throw new ProviderError('bad_output'); }, 502, 'bad_output'],
+    [() => { throw new ProviderError('config'); }, 500, 'config'],
+    [() => { throw new Error('boom'); }, 502, 'unavailable'],
+  ];
+  for (const [behavior, status, error] of cases) {
+    const { response, body } = await run(sentenceRequest(), makeEnv(), makeProviders(behavior));
+    assert.equal(response.status, status);
+    assert.deepEqual(body, { error });
+  }
+});
+
+test('/sentence sin SENTENCE_LIMIT → 500 config', async () => {
+  const { response, body } = await run(sentenceRequest(), makeEnv({ SENTENCE_LIMIT: undefined }));
+  assert.equal(response.status, 500);
+  assert.deepEqual(body, { error: 'config' });
 });

@@ -3,7 +3,7 @@ import { ProviderError } from './errors.js';
 const isText = (value) => typeof value === 'string';
 
 // Texto comparable: minúsculas, apóstrofo recto, sin espacios ni .!? al final
-function comparable(text) {
+export function comparable(text) {
   return text.toLowerCase().replace(/[’ʼ]/g, "'").trim().replace(/[.!?]+$/, '').trim();
 }
 
