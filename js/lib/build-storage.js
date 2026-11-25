@@ -29,8 +29,17 @@ function validCard(card, key) {
   return false;
 }
 
+const isDateOrNullStr = (v) => v === null || typeof v === 'string';
+
+// Una entrada mal formada rompería recordAttempt, así que se rechaza al leer
+function validLesson(lesson) {
+  if (!isObject(lesson) || !isDateOrNullStr(lesson.startedAt) || !isDateOrNullStr(lesson.completedAt) || !isObject(lesson.exercises)) return false;
+  return Object.values(lesson.exercises).every((e) => isObject(e) && isCount(e.fails) && isDateOrNullStr(e.lastCorrectAt));
+}
+
 export function validateBuildDoc(doc) {
   if (!isObject(doc) || !isObject(doc.progress) || !isObject(doc.cards)) return false;
+  if (!Object.values(doc.progress).every(validLesson)) return false;
   return Object.entries(doc.cards).every(([key, card]) => validCard(card, key));
 }
 

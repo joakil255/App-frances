@@ -171,6 +171,17 @@ test('validateBuildDoc rechaza formas incorrectas', () => {
   assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, kind: 'otro' } } }), false);
 });
 
+test('validateBuildDoc rechaza progreso mal formado', () => {
+  const ok = { startedAt: TODAY, completedAt: null, exercises: { e1: { fails: 0, lastCorrectAt: null } } };
+  assert.equal(validateBuildDoc({ progress: { l: ok }, cards: {} }), true);
+  const bad = [
+    5, null, [], { ...ok, startedAt: 3 }, { ...ok, completedAt: undefined }, { ...ok, exercises: [] },
+    { ...ok, exercises: { e1: 7 } }, { ...ok, exercises: { e1: { fails: -1, lastCorrectAt: null } } },
+    { ...ok, exercises: { e1: { fails: 1.5, lastCorrectAt: null } } }, { ...ok, exercises: { e1: { fails: 0, lastCorrectAt: 4 } } },
+  ];
+  for (const entry of bad) assert.equal(validateBuildDoc({ progress: { l: entry }, cards: {} }), false, JSON.stringify(entry));
+});
+
 test('watchExternalChanges recarga con su clave o con null', async () => {
   const { store, backend } = await makeStore();
   const listeners = [];

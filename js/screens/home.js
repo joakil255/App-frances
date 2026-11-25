@@ -24,7 +24,7 @@ function textEl(tag, text) {
   return node;
 }
 
-export function initHome({ wordStore, studyStore, textStore, backend, now = () => new Date() }) {
+export function initHome({ wordStore, studyStore, textStore, buildStore, backend, now = () => new Date() }) {
   const notice = $('#home-notice');
   const status = $('#home-status');
   const fileInput = $('#backup-file');
@@ -44,14 +44,14 @@ export function initHome({ wordStore, studyStore, textStore, backend, now = () =
   }
   const current = () => {
     const { cards, history, settings } = studyStore.getState();
-    return { words: wordStore.getWords(), texts: textStore.getTexts(), study: { cards, history, settings } };
+    return { words: wordStore.getWords(), texts: textStore.getTexts(), build: buildStore.getState(), study: { cards, history, settings } };
   };
 
   // --- Guardar copia ---
   $('#backup-save').addEventListener('click', () => {
     clearMessages();
-    const { words, study, texts } = current();
-    const text = buildBackup({ words, study, texts, now: now() });
+    const { words, study, texts, build } = current();
+    const text = buildBackup({ words, study, texts, build, now: now() });
     // Solo se descarga una copia que se pueda restaurar
     if (readBackup(text).fatal) {
       showNotice(MESSAGES.backupUnverified);

@@ -7,6 +7,7 @@ import { INITIAL_WORDS } from './data/initial-words.js';
 import { initVocabulary } from './screens/vocabulary.js';
 import { createStudyStore } from './lib/study-storage.js';
 import { createTextStore } from './lib/texts.js';
+import { createBuildStore } from './lib/build-storage.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
@@ -95,6 +96,9 @@ const studyStore = createStudyStore(backend);
 const textStore = createTextStore(backend);
 // Si falla la lectura, la app sigue (Inicio no depende de las historias) y Leer lo avisa
 const textsLoaded = textStore.load().catch((error) => ({ texts: [], corruptBackupKey: null, error }));
+const buildStore = createBuildStore(backend);
+// Igual que las historias: si falla la lectura, Inicio sigue funcionando
+const buildLoaded = buildStore.load().catch((error) => ({ corruptBackupKey: null, error }));
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
@@ -102,7 +106,7 @@ initVocabulary({ store: wordStore, synth })
   .then(() => initStudy({ wordStore, studyStore, synth }))
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
-    textsLoaded.then(() => initHome({ wordStore, studyStore, textStore, backend })),
+    Promise.all([textsLoaded, buildLoaded]).then(() => initHome({ wordStore, studyStore, textStore, buildStore, backend })),
   ]));
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
