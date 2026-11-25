@@ -1,6 +1,6 @@
-# Etapa 15 — Traducción en Leer: diseño
+# Etapa 15 — Traducción en Leer: diseño (aprobado)
 
-> **Estado:** borrador para aprobar. No hay código. Las decisiones las tomó el usuario el 25/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir).
+> **Estado:** **aprobado por el usuario el 25/11/2026**, junto con el permiso para la prueba real. No hay código. Las decisiones las tomó el usuario el 25/11/2026, salvo las marcadas como **decisión del diseño** (propuestas que el usuario puede corregir).
 
 ## Intención
 
