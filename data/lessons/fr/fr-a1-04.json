@@ -76,7 +76,8 @@
       "id": "i2",
       "text": "Lo difícil está en la escritura: je parle, tu parles, il parle e ils parlent suenan igual. La e final, la s de tu y el -nt de ils normalmente no se pronuncian, pero sí se escriben. Solo nous parlons y vous parlez suenan distinto. Por eso, al escribir, mira el sujeto y ponle su terminación, aunque no se oiga. Con ils y elles, delante de vocal se oye una z de enlace: il aime y ils aiment se distinguen solo por ese sonido. Y como en la lección 1, delante de vocal o de h muda je se vuelve j': j'aime, j'habite, j'écoute.",
       "sourceIds": ["bdl-muettes", "bdl-radical", "niveau-a2", "bdl-elision"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente: que nous parlons y vous parlez suenan distinto de las otras formas (que -ons y -ez se oyen) no está escrito en las fuentes leídas; es conocimiento propio de la lengua."
     }
   ],
   "pattern": [
@@ -90,7 +91,7 @@
       "id": "t1",
       "source": "Hablo, hablas, habla, hablan.",
       "target": "Je parle, tu parles, il parle, ils parlent.",
-      "note": "En español cada forma suena distinta. En francés estas cuatro suenan igual: la diferencia está en la escritura y en el sujeto, que por eso no se omite.",
+      "note": "En español cada forma suena distinta. En francés estas cuatro suenan igual: la diferencia está en la escritura y en el sujeto, que en francés siempre se dice.",
       "sourceIds": ["bdl-terminaisons", "bdl-muettes", "niveau-a2"],
       "review": false
     },

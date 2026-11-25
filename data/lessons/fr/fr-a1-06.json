@@ -62,13 +62,15 @@
       "id": "i1",
       "text": "Para una pregunta de sí o no hay dos formas sencillas, y en las dos el orden sujeto + verbo no cambia. 1) Con la entonación, igual que en español: la frase queda igual y la voz sube al final. Al escribir, solo agregas el signo: Tu parles français ? 2) Con est-ce que delante de la frase: Est-ce que tu parles français ? Est-ce que no se traduce; solo avisa que viene una pregunta. Delante de vocal se vuelve est-ce qu': Est-ce qu'il pleut ? Existe una tercera forma que da vuelta el sujeto y el verbo (Parles-tu français ?). En esta lección no la usamos, salvo en unas fórmulas fijas que se aprenden como bloque: Comment allez-vous ? Quel âge as-tu ? Quelle heure est-il ? Quel temps fait-il ? Ojo con la escritura: el francés no usa ¿ al principio. Antes de ? algunos textos dejan un espacio pequeño y otros lo pegan a la palabra; aquí escribimos un espacio normal (Tu parles français ?), y al corregir la puntuación no cuenta.",
       "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-interrogative", "bdl-elision", "bdl-espacement"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente: que en la pregunta con entonación la voz sube al final no está en las fuentes leídas. La BDL solo dice que el signo ? marca por escrito «l'intonation particulière», y el Niveau A2 (p. 109) solo dice «intonation»."
     },
     {
       "id": "i2",
       "text": "Para pedir información se usa una palabra interrogativa: qui (quién), où (dónde), quand (cuándo), comment (cómo), combien (cuánto), pourquoi (por qué) y quel / quelle (qué o cuál, delante de un sustantivo o con être). Quel concuerda con el sustantivo: quel âge (âge es masculino), quelle heure (heure es femenino). La palabra puede ir al final (Tu habites où ?), al principio (Où tu habites ?) o al principio con est-ce que (Où est-ce que tu habites ?). En las tres, el sujeto se dice y va delante del verbo. Si qui es el sujeto, va directo con el verbo: Qui parle français ? Combien va con de delante del sustantivo, sin artículo: Combien d'enfants vous avez ?",
       "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-elision"],
-      "review": false
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire pone palabra interrogativa + est-ce que en A1 clave; el referencial A2 (p. 109) la marca en negrita como agregado de A2."
     }
   ],
   "pattern": [
@@ -142,7 +144,8 @@
       "right": "Quelle heure est-il ?",
       "explanation": "Heure es femenino (une heure): quelle. Quel y quelle suenan igual; la diferencia solo se ve al escribir.",
       "sourceIds": ["inventaire-f", "niveau-a2"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente: que quel y quelle suenan igual no está escrito en las fuentes leídas; es conocimiento propio de la lengua."
     },
     {
       "id": "p4",
@@ -187,12 +190,13 @@
     {
       "id": "x4",
       "type": "gap",
-      "prompt": "Completa con est-ce que: «¿Está lloviendo?».",
+      "prompt": "Completa con est-ce que + il: «¿Está lloviendo?».",
       "before": "",
-      "after": "il pleut ?",
-      "answers": ["Est-ce qu'"],
+      "after": " pleut ?",
+      "answers": ["Est-ce qu'il"],
       "mistakes": [
-        { "answer": "Est-ce que", "explanation": "Delante de vocal (il), que pierde la e y se une con apóstrofo: est-ce qu'il." }
+        { "answer": "Est-ce que il", "explanation": "Delante de vocal (il), que pierde la e y se une con apóstrofo: est-ce qu'il." },
+        { "answer": "Est-ce qu'", "explanation": "Falta el sujeto il: Est-ce qu'il pleut ?" }
       ],
       "rule": "Delante de vocal, est-ce que se vuelve est-ce qu': Est-ce qu'il pleut ?",
       "sourceIds": ["bdl-elision", "inventaire-f"],
@@ -210,7 +214,8 @@
       ],
       "rule": "Quel concuerda con el sustantivo: quel con masculino, quelle con femenino.",
       "sourceIds": ["inventaire-f", "niveau-a2"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente: que quel y quelle suenan igual no está escrito en las fuentes leídas; es conocimiento propio de la lengua."
     },
     {
       "id": "x6",
