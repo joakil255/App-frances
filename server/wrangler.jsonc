@@ -9,6 +9,7 @@
 		"DAILY_LIMIT": "100",
 		"LOOKUP_LIMIT": "200",
 		"STORY_LIMIT": "5",
+		"SENTENCE_LIMIT": "50",
 		"ALLOWED_ORIGINS": "https://joakil255.github.io,http://127.0.0.1:8000,http://localhost:8000"
 	},
 	"kv_namespaces": [

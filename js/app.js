@@ -7,6 +7,7 @@ import { INITIAL_WORDS } from './data/initial-words.js';
 import { initVocabulary } from './screens/vocabulary.js';
 import { createStudyStore } from './lib/study-storage.js';
 import { createTextStore } from './lib/texts.js';
+import { createBuildStore } from './lib/build-storage.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
@@ -19,7 +20,9 @@ import { initChatVoice } from './screens/chat-voice.js';
 import { createLookupCache } from './lib/lookup-cache.js';
 import { initWordCard } from './screens/word-card.js';
 import { initReader } from './screens/reader.js';
-import { textsLoadNotice } from './lib/messages.js';
+import { initBuild } from './screens/build.js';
+import { loadLessons } from './lib/lessons.js';
+import { textsLoadNotice, buildLoadNotice } from './lib/messages.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -28,6 +31,10 @@ let onChatHidden = () => {}; // corta el micrófono al salir de Conversar
 let currentParam = null; // el <id> de «#/leer/<id>»
 let onReaderShown = () => {}; // lo completa initReader
 let onReaderHidden = () => {}; // corta la voz al salir de Leer
+let onBuildShown = () => {}; // lo completa initBuild
+let onBuildHidden = () => {};
+let home = null; // lo completa initHome
+let loadedLessons = null; // las lecciones, cuando lleguen (la tarjeta de Inicio las usa)
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -53,6 +60,9 @@ function showScreen(id, moveFocus) {
   else if (previousId === 'chat') onChatHidden();
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
+  if (id === 'home') home?.refresh();
+  if (id === 'build') onBuildShown(moveFocus);
+  else if (previousId === 'build') onBuildHidden();
 }
 
 function handleRoute(isFirstLoad) {
@@ -68,6 +78,8 @@ function handleRoute(isFirstLoad) {
   if (id !== currentId) showScreen(id, !isFirstLoad);
   // De la biblioteca a una historia (o de una historia a otra) la pantalla sigue siendo Leer
   else if (id === 'reader' && paramChanged) onReaderShown(true);
+  // De la lista a una lección (o de una lección a otra) la pantalla sigue siendo Construir
+  else if (id === 'build' && paramChanged) onBuildShown(true);
 }
 
 window.addEventListener('hashchange', () => handleRoute(false));
@@ -95,6 +107,9 @@ const studyStore = createStudyStore(backend);
 const textStore = createTextStore(backend);
 // Si falla la lectura, la app sigue (Inicio no depende de las historias) y Leer lo avisa
 const textsLoaded = textStore.load().catch((error) => ({ texts: [], corruptBackupKey: null, error }));
+const buildStore = createBuildStore(backend);
+// Igual que las historias: si falla la lectura, Inicio sigue funcionando
+const buildLoaded = buildStore.load().catch((error) => ({ corruptBackupKey: null, error }));
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
@@ -102,7 +117,9 @@ initVocabulary({ store: wordStore, synth })
   .then(() => initStudy({ wordStore, studyStore, synth }))
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
-    textsLoaded.then(() => initHome({ wordStore, studyStore, textStore, backend })),
+    Promise.all([textsLoaded, buildLoaded]).then(() => {
+      home = initHome({ wordStore, studyStore, textStore, buildStore, backend, getLessons: () => loadedLessons });
+    }),
   ]));
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
@@ -187,6 +204,30 @@ textsLoaded.then((loaded) => {
     if (currentId === 'reader') onReaderShown(false);
   });
 });
+
+// Construir frases: las lecciones vienen de data/lessons (guardadas sin conexión).
+// Si el índice no se puede leer, la pantalla lo avisa e Inicio sigue funcionando.
+const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
+Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
+  loadedLessons = lessons;
+  home?.refresh();
+  const build = initBuild({
+    loadNotice: buildLoadNotice(loaded),
+    buildStore,
+    studyStore,
+    lessons,
+    synth,
+    fetch: window.fetch.bind(window),
+    isOnline,
+    hostname: location.hostname,
+    getCode: () => chatStore.loadCode(),
+  });
+  onBuildShown = (moveFocus) => build.onShow(routeParam(location.hash), moveFocus);
+  onBuildHidden = () => build.onHide();
+  if (currentId === 'build') onBuildShown(false);
+});
+// Si otra pestaña cambia el progreso o las tarjetas de frases, la tarjeta de Inicio se actualiza
+buildStore.watchExternalChanges(window, () => home?.refresh());
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

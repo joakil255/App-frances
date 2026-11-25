@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v21';
+const CACHE_VERSION = 'v22';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -35,6 +35,9 @@ const PRECACHE_URLS = [
   'js/lib/queue.js',
   'js/lib/study-storage.js',
   'js/lib/answer-check.js',
+  'js/lib/lessons.js',
+  'js/lib/build-storage.js',
+  'js/lib/build-review.js',
   'js/lib/quiz.js',
   'js/lib/stats.js',
   'js/lib/deck.js',
@@ -43,11 +46,14 @@ const PRECACHE_URLS = [
   'js/lib/chat.js',
   'js/lib/lookup.js',
   'js/lib/story.js',
+  'js/lib/sentence.js',
   'js/lib/sentence-player.js',
   'js/lib/reading-quiz.js',
   'js/lib/lookup-cache.js',
   'js/lib/recognition.js',
   'js/lib/voice-settings.js',
+  'js/lib/sentence-check.js',
+  'js/lib/exercise-ui.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
@@ -58,9 +64,18 @@ const PRECACHE_URLS = [
   'js/screens/chat-voice.js',
   'js/screens/word-card.js',
   'js/screens/reader.js',
+  'js/screens/build.js',
+  'js/screens/build-free.js',
   'js/data/initial-words.js',
   'js/update.js',
   'data/a1-deck.json',
+  'data/lessons/fr/index.json',
+  'data/lessons/fr/fr-a1-01.json',
+  'data/lessons/fr/fr-a1-02.json',
+  'data/lessons/fr/fr-a1-03.json',
+  'data/lessons/fr/fr-a1-04.json',
+  'data/lessons/fr/fr-a1-05.json',
+  'data/lessons/fr/fr-a1-06.json',
   'fonts/barlow-semi-condensed-500.woff2',
   'fonts/barlow-semi-condensed-700.woff2',
   'fonts/source-serif-4.woff2',

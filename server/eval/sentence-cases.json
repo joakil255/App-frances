@@ -1,0 +1,101 @@
+[
+  {
+    "situation": "En un café",
+    "focus": "la frase básica y la elisión (je + vocal: j'aime)",
+    "sentence": "Je aime le café.",
+    "expect": "error",
+    "accepted": [
+      "J'aime le café."
+    ]
+  },
+  {
+    "situation": "Presentarte",
+    "focus": "être, avoir, c'est e il y a (la edad va con avoir)",
+    "sentence": "Je suis 20 ans.",
+    "expect": "error",
+    "accepted": [
+      "J'ai 20 ans."
+    ]
+  },
+  {
+    "situation": "Ir al mercado",
+    "focus": "los artículos y las contracciones (au, aux, du, des)",
+    "sentence": "Je vais à le marché.",
+    "expect": "error",
+    "accepted": [
+      "Je vais au marché."
+    ]
+  },
+  {
+    "situation": "Hablar de lo que haces",
+    "focus": "los verbos en -er en presente",
+    "sentence": "Nous mangez une pomme.",
+    "expect": "error",
+    "accepted": [
+      "Nous mangeons une pomme."
+    ]
+  },
+  {
+    "situation": "Hablar de gustos",
+    "focus": "la negación con ne ... pas (n' delante de vocal)",
+    "sentence": "Je ne aime pas le thé.",
+    "expect": "error",
+    "accepted": [
+      "Je n'aime pas le thé."
+    ]
+  },
+  {
+    "situation": "Preguntar por una persona",
+    "focus": "las preguntas con est-ce que",
+    "sentence": "Est-ce que il parle français ?",
+    "expect": "error",
+    "accepted": [
+      "Est-ce qu'il parle français ?"
+    ]
+  },
+  {
+    "situation": "Le cuentas a un amigo qué comes y qué tomas en el desayuno.",
+    "focus": "Du / de la / de l' para una cantidad de algo que no se cuenta",
+    "sentence": "Je mange pain.",
+    "expect": "error",
+    "accepted": [
+      "Je mange du pain."
+    ]
+  },
+  {
+    "situation": "En un café",
+    "focus": "la frase básica y la elisión (je + vocal: j'aime)",
+    "sentence": "J'aime le café.",
+    "expect": "correct"
+  },
+  {
+    "situation": "Ir al mercado",
+    "focus": "los artículos y las contracciones (au, aux, du, des)",
+    "sentence": "Je vais au marché.",
+    "expect": "correct"
+  },
+  {
+    "situation": "Preguntar por una persona",
+    "focus": "las preguntas con est-ce que",
+    "sentence": "Est-ce que tu parles français ?",
+    "expect": "correct"
+  },
+  {
+    "situation": "Presentarte",
+    "focus": "être, avoir, c'est e il y a (la edad va con avoir)",
+    "sentence": "Je mange une pomme.",
+    "expect": "correct-suggest"
+  },
+  {
+    "situation": "Hablar de lo que haces",
+    "focus": "los verbos en -er en presente",
+    "sentence": "Je suis content.",
+    "expect": "correct-suggest"
+  },
+  {
+    "situation": "Hablar de gustos",
+    "focus": "la negación con ne ... pas (n' delante de vocal)",
+    "sentence": "J'aime le thé.",
+    "expect": "correct-suggest"
+  }
+]

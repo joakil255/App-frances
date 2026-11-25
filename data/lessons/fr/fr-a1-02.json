@@ -1,0 +1,298 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-02",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Être, avoir, c'est, il y a",
+  "areas": ["grammar", "syntax"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49, 52",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-66",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "106, 108",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-cest",
+      "title": "Banque de dépannage linguistique: «C'EST et CE SONT : accord et emploi»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21603"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Être (ser y estar) y avoir (tener) son dos verbos que usarás todo el tiempo. Sus formas son irregulares, así que se aprenden de memoria y en bloque con el sujeto: je suis, tu es, il / elle est, nous sommes, vous êtes, ils / elles sont; j'ai, tu as, il / elle a, nous avons, vous avez, ils / elles ont. Ser y estar son el mismo verbo en francés: Je suis de Santiago (soy de Santiago) y Je suis à la maison (estoy en la casa). Como en español, la edad, el hambre, la sed y el frío van con avoir: j'ai vingt ans, j'ai faim, j'ai soif, j'ai froid.",
+      "sourceIds": ["inventaire-d", "niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Para presentar algo o a alguien («es…»), el francés usa c'est (ce + est, unidos con apóstrofo): C'est un livre. C'est Marie. Con un plural se escribe ce sont: Ce sont mes amis. (En el habla informal también se oye c'est con plural, pero la forma cuidada es ce sont.) Para preguntar: Qui est-ce ? (¿quién es?) y Qu'est-ce que c'est ? (¿qué es?). «Hay» se dice il y a, un bloque de tres palabras que no cambia aunque lo que sigue sea plural: il y a un chat, il y a deux chats. No lo confundas con il a (él tiene).",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-cest", "bdl-elision"],
+      "review": false
+    }
+  ],
+  "pattern": [
+    { "label": "Sujeto + être", "options": ["je suis", "tu es", "il / elle est", "nous sommes", "vous êtes", "ils / elles sont"] },
+    { "label": "Sujeto + avoir", "options": ["j'ai", "tu as", "il / elle a", "nous avons", "vous avez", "ils / elles ont"] },
+    { "label": "Presentar", "options": ["C'est…", "Ce sont…", "Il y a…"] },
+    { "label": "Preguntar", "options": ["Qui est-ce ?", "Qu'est-ce que c'est ?"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Tengo veinte años.",
+      "target": "J'ai vingt ans.",
+      "note": "Igual que en español, la edad va con avoir (tener). No olvides ans al final.",
+      "sourceIds": ["inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Soy de Santiago. Estoy en la casa.",
+      "target": "Je suis de Santiago. Je suis à la maison.",
+      "note": "Ser y estar se dicen igual: être. El bloque je suis sirve para los dos.",
+      "sourceIds": ["inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Es un libro.",
+      "target": "C'est un livre.",
+      "note": "En español «es» va solo. En francés el verbo necesita su sujeto: ce, que se une con est y queda c'est.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "t4",
+      "source": "Hay un problema.",
+      "target": "Il y a un problème.",
+      "note": "«Hay» es un bloque de tres palabras: il y a. Con plural no cambia: il y a deux problèmes.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "J'ai vingt ans.", "translation": "Tengo veinte años.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Je suis de Santiago.", "translation": "Soy de Santiago.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e3", "text": "Qui est-ce ? C'est ma sœur.", "translation": "¿Quién es? Es mi hermana.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Qu'est-ce que c'est ? C'est un cahier.", "translation": "¿Qué es? Es un cuaderno.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e5", "text": "Il y a cinq personnes dans ma famille.", "translation": "Hay cinco personas en mi familia.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "Pierre et Jeanne, ce sont mes parents.", "translation": "Pierre y Jeanne son mis papás.", "sourceIds": ["inventaire-f"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Est un livre.",
+      "right": "C'est un livre.",
+      "explanation": "Como en la lección 1, el verbo necesita su sujeto. «Es un…» se dice c'est un…",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Il a un problème.",
+      "right": "Il y a un problème.",
+      "explanation": "Il a un problème quiere decir «él tiene un problema». Para «hay un problema», no olvides la y: il y a.",
+      "sourceIds": ["niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Ils sont deux enfants.",
+      "right": "Ils ont deux enfants.",
+      "explanation": "Ils ont (tienen) e ils sont (son, están) suenan parecido. Para «tienen dos hijos» es ils ont, de avoir.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «¿Quién es? Es mi hermana».",
+      "tiles": ["sœur", "Qui", "C'est", "est-ce", "ma"],
+      "answers": ["Qui est-ce ? C'est ma sœur."],
+      "rule": "Para preguntar por una persona: Qui est-ce ? Para responder: C'est + la persona.",
+      "sourceIds": ["inventaire-d", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Hay un gato en la casa».",
+      "tiles": ["un", "a", "maison", "Il", "dans", "y", "chat", "la"],
+      "answers": ["Il y a un chat dans la maison.", "Dans la maison, il y a un chat."],
+      "rule": "«Hay» es el bloque il y a, siempre en ese orden: il + y + a.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Mi hermano tiene doce años».",
+      "tiles": ["a", "douze", "frère", "ans", "Mon"],
+      "answers": ["Mon frère a douze ans."],
+      "rule": "Quién + avoir + la edad + ans: Mon frère + a + douze ans.",
+      "sourceIds": ["inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa: «Tengo veinte años».",
+      "before": "",
+      "after": " vingt ans.",
+      "answers": ["J'ai"],
+      "mistakes": [
+        { "answer": "Je suis", "explanation": "La edad va con avoir, igual que «tengo»: j'ai vingt ans." },
+        { "answer": "Je ai", "explanation": "Ai empieza con vocal: je pierde la e y se une con apóstrofo, j'ai." }
+      ],
+      "rule": "La edad va con avoir: j'ai + la edad + ans.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con la forma que se escribe: «Pierre y Jeanne son mis papás».",
+      "before": "Pierre et Jeanne, ",
+      "after": " mes parents.",
+      "answers": ["ce sont"],
+      "mistakes": [
+        { "answer": "c'est", "explanation": "En el habla informal se oye, pero con un plural (mes parents) la forma cuidada es ce sont." },
+        { "answer": "sont", "explanation": "Falta el sujeto: ce sont." }
+      ],
+      "rule": "Para presentar algo en plural se escribe ce sont.",
+      "sourceIds": ["bdl-cest", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa: «Hay dos gatos en la casa».",
+      "before": "",
+      "after": " deux chats dans la maison.",
+      "answers": ["Il y a"],
+      "mistakes": [
+        { "answer": "Il a", "explanation": "Il a quiere decir «él tiene». Para «hay» se dice il y a." },
+        { "answer": "Il y ont", "explanation": "Il y a no cambia, aunque lo que sigue esté en plural: il y a deux chats." }
+      ],
+      "rule": "«Hay» se dice il y a, con singular y con plural.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con avoir: «¿Tienen hijos?».",
+      "before": "Vous ",
+      "after": " des enfants ?",
+      "answers": ["avez"],
+      "mistakes": [
+        { "answer": "êtes", "explanation": "Êtes es de être (ser, estar). Para tener se usa avoir: vous avez." },
+        { "answer": "avons", "explanation": "Avons va con nous. Con vous es avez." }
+      ],
+      "rule": "Avoir con vous: vous avez.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «¿Qué es? Es un cuaderno».",
+      "wrong": "Qu'est-ce que c'est ? Est un cahier.",
+      "answers": ["Qu'est-ce que c'est ? C'est un cahier."],
+      "mistakes": [
+        { "answer": "Qu'est-ce que c'est ? Est un cahier.", "explanation": "Falta el sujeto: «es un…» se dice c'est un…" },
+        { "answer": "Qu'est-ce que c'est ? Ce est un cahier.", "explanation": "Delante de est, ce pierde la e y se une con apóstrofo: c'est." }
+      ],
+      "rule": "Para presentar una cosa: c'est + la cosa.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase. Quieres decir «Tienen dos hijos».",
+      "wrong": "Ils sont deux enfants.",
+      "answers": ["Ils ont deux enfants.", "Elles ont deux enfants."],
+      "mistakes": [
+        { "answer": "Ils sont deux enfants.", "explanation": "Ils sont es «son» o «están». Para «tienen» es ils ont, de avoir." }
+      ],
+      "rule": "Tener es avoir: ils ont, elles ont.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase. Quieres decir «Tengo frío».",
+      "wrong": "Je suis froid.",
+      "answers": ["J'ai froid.", "Moi, j'ai froid."],
+      "mistakes": [
+        { "answer": "Je suis froid.", "explanation": "Como en español «tengo frío», la sensación de frío va con avoir: j'ai froid." },
+        { "answer": "Je ai froid.", "explanation": "Ai empieza con vocal: je pierde la e y se une con apóstrofo, j'ai." }
+      ],
+      "rule": "El hambre, la sed y el frío van con avoir: j'ai faim, j'ai soif, j'ai froid.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Le muestras a un amigo francés una foto de tu familia. Dile quién es una persona y cuántos años tiene.",
+      "models": [
+        "C'est ma sœur. Elle a vingt ans.",
+        "C'est mon frère, il a douze ans.",
+        "Ce sont mes parents. Ils ont cinquante ans."
+      ],
+      "focus": "Presentar con c'est / ce sont y decir la edad con avoir",
+      "sourceIds": ["inventaire-f", "bdl-cest"],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Describe tu pieza: di qué cosas hay.",
+      "models": [
+        "Il y a un lit et une table.",
+        "Dans ma chambre, il y a un lit et une chaise."
+      ],
+      "focus": "Il y a + un / une",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-01",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "La frase básica",
+  "areas": ["syntax", "grammar", "spelling"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "52",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-65",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "108-110",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-cest",
+      "title": "Banque de dépannage linguistique: «C'EST et CE SONT : accord et emploi»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21603"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "En francés, la frase se arma con bloques en un orden fijo: primero quién hace algo (el sujeto: je, tu, il, elle, nous, vous, ils, elles), después la acción (el verbo) y al final el resto (el complemento: qué, dónde, con quién). En español puedes decir «hablo francés» sin «yo». En francés, cuando cuentas algo, el sujeto va delante del verbo: Je parle français. Sin sujeto, «Parle français» es una orden («¡Habla francés!»). Ojo con je: delante de una vocal o de una h muda (la de habiter) pierde la e y se une a la palabra siguiente con un apóstrofo, sin espacio: j'aime, j'habite, j'ai.",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Para destacar a una persona («yo, en cambio…»), el francés suma un pronombre tónico, que es la forma fuerte del pronombre: moi, toi, lui, elle, nous, vous, eux, elles. No reemplaza al sujeto: va antes, con una coma, y el sujeto sigue en su lugar: Moi, je parle français. El tónico también va solo o después de palabras como et, avec y chez: et toi ? (¿y tú?), avec moi (conmigo), chez moi (en mi casa), c'est moi (soy yo).",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-cest"],
+      "review": false
+    }
+  ],
+  "pattern": [
+    { "label": "Para destacar (opcional)", "options": ["Moi,", "Lui,", "Elle,"] },
+    { "label": "Sujeto", "options": ["je", "j'", "il", "elle"] },
+    { "label": "Verbo", "options": ["parle", "aime", "habite", "travaille"] },
+    { "label": "Complemento", "options": ["français", "le café", "à Santiago", "avec moi"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Hablo francés.",
+      "target": "Je parle français.",
+      "note": "En español el verbo basta. En francés el bloque es sujeto + verbo: je parle.",
+      "sourceIds": ["niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Me gusta el café.",
+      "target": "J'aime le café.",
+      "note": "En español el café es el que «gusta». En francés tú eres el sujeto: j'aime + lo que te gusta.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Yo hablo francés, ¿y tú?",
+      "target": "Moi, je parle français, et toi ?",
+      "note": "Para destacar «yo», no cambias je por moi: agregas moi delante y dejas je. Después de et va toi, no tu.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Je parle français.", "translation": "Hablo francés.", "sourceIds": ["niveau-a2"], "review": false },
+    { "id": "e2", "text": "Moi, j'aime le café.", "translation": "A mí me gusta el café.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e3", "text": "Elle habite à Lyon.", "translation": "Ella vive en Lyon.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Tu viens avec moi ?", "translation": "¿Vienes conmigo?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e5", "text": "J'habite à Santiago, et toi ?", "translation": "Vivo en Santiago, ¿y tú?", "sourceIds": ["inventaire-f", "bdl-elision"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Parle français.",
+      "right": "Je parle français.",
+      "explanation": "Sin je, la frase es una orden («¡Habla francés!»). Para contar lo que haces, pon el sujeto delante del verbo.",
+      "sourceIds": ["niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Je aime le café.",
+      "right": "J'aime le café.",
+      "explanation": "Delante de vocal, je pierde la e y se une con apóstrofo: j'aime.",
+      "sourceIds": ["bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Moi parle français.",
+      "right": "Moi, je parle français.",
+      "explanation": "Moi no reemplaza a je. Si quieres destacar, usa los dos: Moi, je…",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Hablo francés».",
+      "tiles": ["français", "Je", "parle"],
+      "answers": ["Je parle français."],
+      "rule": "Primero el sujeto (je), después el verbo (parle) y al final el complemento (français).",
+      "sourceIds": ["niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella vive en Lyon».",
+      "tiles": ["à", "habite", "Lyon", "Elle"],
+      "answers": ["Elle habite à Lyon."],
+      "rule": "Sujeto + verbo + dónde: Elle + habite + à Lyon.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Yo trabajo en Santiago, ¿y tú?», destacando el «yo».",
+      "tiles": ["toi", "travaille", "Moi", "à", "je", "Santiago", "et"],
+      "answers": ["Moi, je travaille à Santiago, et toi ?"],
+      "rule": "El tónico moi va delante y je sigue en su lugar: Moi, je travaille… Después de et va toi.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con je + habite: «Vivo en Santiago».",
+      "before": "",
+      "after": " à Santiago.",
+      "answers": ["J'habite"],
+      "mistakes": [
+        { "answer": "Je habite", "explanation": "Habite empieza con h muda, que se comporta como una vocal: je pierde la e y se une con apóstrofo, j'habite." },
+        { "answer": "J habite", "explanation": "Falta el apóstrofo: j'habite, todo junto." }
+      ],
+      "rule": "Delante de vocal o de h muda, je se vuelve j': j'habite.",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa: «Vivo en Santiago, ¿y tú?».",
+      "before": "J'habite à Santiago, et ",
+      "after": " ?",
+      "answers": ["toi"],
+      "mistakes": [
+        { "answer": "tu", "explanation": "Tu solo va delante de un verbo (tu habites). Después de et, sin verbo, va el tónico: et toi ?" }
+      ],
+      "rule": "Después de et, sin verbo, va el pronombre tónico: et toi ?",
+      "sourceIds": ["inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa: «¿Vienes conmigo?».",
+      "before": "Tu viens avec ",
+      "after": " ?",
+      "answers": ["moi"],
+      "mistakes": [
+        { "answer": "je", "explanation": "Je solo va delante de un verbo. Después de avec va el tónico: avec moi (conmigo)." },
+        { "answer": "mi", "explanation": "En francés no hay «mí». Después de avec se dice moi: avec moi." },
+        { "answer": "mí", "explanation": "En francés no hay «mí». Después de avec se dice moi: avec moi." }
+      ],
+      "rule": "Después de avec, chez o et va el pronombre tónico: avec moi.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "fix",
+      "prompt": "Corrige la frase. Quieres decir «Hablo español y francés».",
+      "wrong": "Parle espagnol et français.",
+      "answers": [
+        "Je parle espagnol et français.",
+        "Moi, je parle espagnol et français.",
+        "Je parle l'espagnol et le français.",
+        "Moi, je parle l'espagnol et le français."
+      ],
+      "mistakes": [
+        { "answer": "Parle espagnol et français.", "explanation": "Sin sujeto es una orden («¡Habla español y francés!»). Pon je delante: Je parle…" },
+        { "answer": "Moi parle espagnol et français.", "explanation": "Moi no reemplaza a je. Pon je delante del verbo: Je parle…" }
+      ],
+      "rule": "Cuando cuentas algo, el sujeto va delante del verbo: Je parle…",
+      "sourceIds": ["niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Me gusta el chocolate».",
+      "wrong": "Je aime le chocolat.",
+      "answers": ["J'aime le chocolat.", "Moi, j'aime le chocolat."],
+      "mistakes": [
+        { "answer": "Je aime le chocolat.", "explanation": "Aime empieza con vocal: je pierde la e y se une con apóstrofo, j'aime." },
+        { "answer": "J aime le chocolat.", "explanation": "Falta el apóstrofo: j'aime, todo junto." }
+      ],
+      "rule": "Delante de vocal, je se vuelve j': j'aime.",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Yo vivo en Lyon, ¿y tú?».",
+      "wrong": "Moi, j'habite à Lyon, et tu ?",
+      "answers": ["Moi, j'habite à Lyon, et toi ?", "J'habite à Lyon, et toi ?"],
+      "mistakes": [
+        { "answer": "Moi, j'habite à Lyon, et tu ?", "explanation": "Después de et, sin verbo, no va tu sino el tónico: et toi ?" }
+      ],
+      "rule": "Después de et, sin verbo, va el pronombre tónico: et toi ?",
+      "sourceIds": ["inventaire-f"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Conoces a alguien en un café de París. Dile dónde vives y qué idioma hablas, y pregúntale lo mismo con «et toi ?».",
+      "models": [
+        "J'habite à Santiago et je parle espagnol, et toi ?",
+        "Moi, j'habite à Santiago, et toi ?",
+        "Je parle espagnol et français, et toi ?"
+      ],
+      "focus": "Sujeto + verbo + complemento, j' delante de vocal y el tónico en «et toi ?»",
+      "sourceIds": ["inventaire-f", "niveau-a2", "bdl-elision"],
+      "review": false
+    }
+  ]
+}

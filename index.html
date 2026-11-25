@@ -27,6 +27,7 @@
         <li><a class="nav-link line-progress" href="#/progreso"><span class="line-dot" aria-hidden="true"></span>Progreso</a></li>
         <li><a class="nav-link line-chat" href="#/conversar"><span class="line-dot" aria-hidden="true"></span>Conversar</a></li>
         <li><a class="nav-link line-reader" href="#/leer"><span class="line-dot" aria-hidden="true"></span>Leer</a></li>
+        <li class="nav-desktop-only"><a class="nav-link line-build" href="#/construir"><span class="line-dot" aria-hidden="true"></span>Construir frases</a></li>
       </ul>
     </nav>
 
@@ -35,6 +36,17 @@
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Inicio</h1>
         <p class="empty"><span lang="fr">Bonjour.</span> Aquí verás cada día lo que te toca repasar.</p>
         <div id="home-notice" class="notice" role="alert" hidden></div>
+
+        <!-- Construir frases: próxima lección y repaso de hoy (se rellena con textContent) -->
+        <div class="home-build line-build">
+          <h2 class="progress-title home-build-title"><span class="line-dot" aria-hidden="true"></span>Construir frases</h2>
+          <p id="home-build-next" hidden></p>
+          <p id="home-build-due">Repaso: 0 pendientes hoy</p>
+          <div class="study-actions">
+            <button type="button" class="button button-primary" id="home-build-continue">Seguir lección</button>
+            <button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar (0)</button>
+          </div>
+        </div>
 
         <!-- Copia de seguridad: todo en un archivo (se rellena con textContent) -->
         <div class="backup">
@@ -413,6 +425,145 @@
           <p id="chat-remaining" class="hint chat-remaining" role="status" hidden></p>
         </form>
       </section>
+
+      <!-- Construir frases: lecciones y práctica. Todo el contenido se pinta con textContent desde js/screens/build.js -->
+      <section id="screen-build" class="screen line-build" hidden>
+        <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Construir frases</h1>
+        <div id="build-notice" class="notice" role="alert" hidden></div>
+
+        <!-- Lista de lecciones (#/construir) -->
+        <div id="build-index">
+          <button type="button" class="button button-primary build-review-start" id="build-review-start" aria-disabled="true">Repasar (0)</button>
+          <ol id="build-list" class="build-list" aria-label="Lecciones"></ol>
+        </div>
+
+        <!-- Repaso (#/construir/repaso): usa la misma tarjeta de ejercicio que Practicar -->
+        <div id="build-review" class="build-review" hidden>
+          <p id="build-review-empty" class="build-done" tabindex="-1" hidden>No tienes nada que repasar hoy. Los ejercicios que falles 2 veces aparecerán aquí.</p>
+          <p id="build-review-done" class="build-done" tabindex="-1" hidden>Terminaste el repaso.</p>
+        </div>
+
+        <!-- Lección (#/construir/<id>) -->
+        <article id="build-lesson" class="build-lesson" aria-labelledby="build-title" hidden>
+          <p id="build-number" class="build-number"></p>
+          <h2 id="build-title" class="build-title" tabindex="-1"></h2>
+          <p id="build-meta" class="reader-meta"></p>
+
+          <div class="build-part">
+            <h3 class="build-heading">La idea</h3>
+            <div id="build-idea" lang="es"></div>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">El bloque</h3>
+            <ul id="build-pattern" class="build-pattern"></ul>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">Cómo pensarlo</h3>
+            <ul id="build-think" class="build-rows"></ul>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">Ejemplos</h3>
+            <ul id="build-examples" class="build-rows"></ul>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">Trampa común</h3>
+            <ul id="build-pitfalls" class="build-rows"></ul>
+          </div>
+
+          <div class="build-part">
+            <h3 class="build-heading">Practicar</h3>
+            <button type="button" class="button button-primary" id="build-start">Practicar</button>
+            <p id="build-done" class="build-done" tabindex="-1" hidden>Terminaste la práctica de esta lección.</p>
+            <div id="build-exercise" class="build-card" hidden>
+              <p class="reader-quiz-count"><span id="build-count"></span><span class="tag-review" id="build-ex-review" hidden>REVISAR</span></p>
+              <p id="build-ex-review-note" class="hint build-note" hidden></p>
+              <p id="build-prompt" class="build-prompt" tabindex="-1"></p>
+
+              <!-- order: tocar una ficha la mueve; nada se arrastra -->
+              <div id="build-order" class="build-order" hidden>
+                <p id="build-placed-label" class="build-zone">Tu frase</p>
+                <ul id="build-placed" class="build-tiles build-placed" aria-labelledby="build-placed-label" lang="fr"></ul>
+                <p id="build-tiles-label" class="build-zone">Fichas</p>
+                <ul id="build-tiles" class="build-tiles" aria-labelledby="build-tiles-label" lang="fr"></ul>
+                <button type="button" class="button button-secondary" id="build-clear">Borrar todo</button>
+                <p id="build-order-live" class="visually-hidden" aria-live="polite"></p>
+              </div>
+
+              <!-- gap y fix: un campo y la fila de acentos -->
+              <div id="build-write" class="build-write" hidden>
+                <p id="build-sentence" class="build-sentence" lang="fr"></p>
+                <div class="field">
+                  <label for="build-answer">Tu respuesta</label>
+                  <input type="text" id="build-answer" lang="fr" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
+                </div>
+                <div class="build-accents" role="group" aria-label="Letras con acento" lang="fr">
+                <button type="button" class="build-accent" data-letter="à" aria-label="Insertar à">à</button>
+                <button type="button" class="build-accent" data-letter="â" aria-label="Insertar â">â</button>
+                <button type="button" class="build-accent" data-letter="ç" aria-label="Insertar ç">ç</button>
+                <button type="button" class="build-accent" data-letter="é" aria-label="Insertar é">é</button>
+                <button type="button" class="build-accent" data-letter="è" aria-label="Insertar è">è</button>
+                <button type="button" class="build-accent" data-letter="ê" aria-label="Insertar ê">ê</button>
+                <button type="button" class="build-accent" data-letter="ë" aria-label="Insertar ë">ë</button>
+                <button type="button" class="build-accent" data-letter="î" aria-label="Insertar î">î</button>
+                <button type="button" class="build-accent" data-letter="ï" aria-label="Insertar ï">ï</button>
+                <button type="button" class="build-accent" data-letter="ô" aria-label="Insertar ô">ô</button>
+                <button type="button" class="build-accent" data-letter="ù" aria-label="Insertar ù">ù</button>
+                <button type="button" class="build-accent" data-letter="û" aria-label="Insertar û">û</button>
+                <button type="button" class="build-accent" data-letter="œ" aria-label="Insertar œ">œ</button>
+                </div>
+              </div>
+
+              <button type="button" class="button button-primary build-button" id="build-check">Comprobar</button>
+              <div id="build-feedback" class="quiz-feedback build-feedback" hidden>
+                <p id="build-verdict" class="quiz-feedback-title" tabindex="-1"></p>
+                <p id="build-explanation" lang="es"></p>
+                <div class="build-expected">
+                  <p id="build-expected"></p>
+                  <button type="button" class="button button-secondary" id="build-listen">Escuchar</button>
+                </div>
+                <p id="build-typed"></p>
+              </div>
+              <p id="build-status" class="build-status" role="status"></p>
+              <button type="button" class="button button-primary build-button" id="build-next" hidden>Siguiente</button>
+              <button type="button" class="button button-secondary build-button" id="build-remove" hidden>Quitar del repaso</button>
+            </div>
+
+            <!-- Frase libre: una situación por vez, después de los ejercicios -->
+            <div id="build-free" class="build-card build-free" hidden>
+              <p class="reader-quiz-count"><span id="build-free-count"></span><span class="tag-review" id="build-free-review" hidden>REVISAR</span></p>
+              <p id="build-free-review-note" class="hint build-note" hidden></p>
+              <p id="build-free-situation" class="build-prompt" tabindex="-1"></p>
+              <div class="field">
+                <label for="build-free-answer">Tu frase en francés</label>
+                <textarea id="build-free-answer" rows="3" maxlength="300" lang="fr" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-describedby="build-free-help"></textarea>
+                <p id="build-free-help" class="hint build-free-help">Si tu frase no coincide con un modelo, se envía a Claude (Anthropic) para corregirla.</p>
+              </div>
+              <button type="button" class="button button-primary build-button" id="build-free-check">Comprobar</button>
+              <div id="build-free-error" class="notice" role="alert" hidden></div>
+              <div id="build-free-result" class="quiz-feedback build-feedback" hidden>
+                <p id="build-free-verdict" class="quiz-feedback-title" tabindex="-1"></p>
+                <p id="build-free-detail" hidden></p>
+                <ul id="build-free-errors" class="build-free-errors" hidden></ul>
+                <div id="build-free-suggestion" class="build-suggestion" hidden>
+                  <p class="build-suggestion-title">Sugerencia</p>
+                  <p id="build-free-suggestion-text"></p>
+                </div>
+                <div class="build-models">
+                  <p class="build-models-title">Respuestas modelo</p>
+                  <ul id="build-free-models" class="build-models-list" lang="fr"></ul>
+                </div>
+              </div>
+              <p id="build-free-status" class="build-status" role="status"></p>
+              <button type="button" class="button button-primary build-button" id="build-free-next" hidden>Siguiente</button>
+            </div>
+          </div>
+
+          <div class="build-part">
+            <h3 class="build-heading">Fuentes</h3>
+            <ul id="build-sources" class="build-sources"></ul>
+          </div>
+        </article>
+      </section>
     </main>
   </div>
 
@@ -618,6 +769,15 @@
     </div>
   </dialog>
 
+  <!-- Confirmación para quitar una frase propia del repaso -->
+  <dialog id="build-confirm-remove" class="dialog" aria-labelledby="build-remove-title">
+    <h2 id="build-remove-title" class="dialog-title">¿Quitar esta frase de tu repaso?</h2>
+    <p>No se puede deshacer.</p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Quitar</button>
+    </div>
+  </dialog>
   <!-- Tarjeta de una palabra de Claude (se rellena con textContent). En el móvil es una hoja abajo. -->
   <dialog id="word-card" class="dialog word-card line-chat" aria-labelledby="word-card-title">
     <div class="word-card-body">

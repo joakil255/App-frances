@@ -476,3 +476,127 @@ test('la ventana de borrar una historia pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Borrar<\/button>/);
 });
+
+test('el enlace de Construir frases va en un <li> solo para computador', () => {
+  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  assert.match(nav, /<li class="nav-desktop-only"><a [^>]*href="#\/construir"[^>]*>/);
+  assert.equal((nav.match(/<li>/g) ?? []).length, 7);
+});
+
+// --- Pantalla Construir frases (Etapa 12) ---
+const build = html.match(/<section id="screen-build"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+test('Construir es su propia sección con su línea y el título enfocable', () => {
+  assert.match(html, /<section id="screen-build" class="screen line-build" hidden>/);
+  assert.match(build, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Construir frases<\/h1>/);
+});
+
+test('el enlace #/construir de la barra lleva la clase que lo oculta en el móvil', () => {
+  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  assert.match(nav, /<li class="nav-desktop-only"><a class="nav-link line-build" href="#\/construir">/);
+});
+
+test('Construir tiene aviso, zona de estado y la región que anuncia las fichas', () => {
+  assert.match(build, /<div id="build-notice" class="notice" role="alert" hidden><\/div>/);
+  const status = tagWithId(build, 'build-status');
+  assert.ok(status, 'falta #build-status');
+  assert.ok(status.includes('role="status"'), '#build-status sin role="status"');
+  const live = tagWithId(build, 'build-order-live');
+  assert.ok(live, 'falta #build-order-live');
+  assert.ok(live.includes('aria-live="polite"'), '#build-order-live sin aria-live="polite"');
+  assert.ok(tagWithId(build, 'build-list'), 'falta la lista #build-list');
+});
+
+test('la lección tiene su título enfocable y las secciones en orden', () => {
+  assert.match(build, /<h2 id="build-title" [^>]*tabindex="-1"[^>]*><\/h2>/);
+  const titles = [...build.matchAll(/<h3 [^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]);
+  assert.deepEqual(titles, ['La idea', 'El bloque', 'Cómo pensarlo', 'Ejemplos', 'Trampa común', 'Practicar', 'Fuentes']);
+});
+
+test('la práctica tiene sus botones, el contador, el enunciado enfocable y el fin', () => {
+  for (const text of ['Practicar', 'Comprobar', 'Siguiente', 'Borrar todo']) {
+    assert.ok(buttonWithText(build, text), `falta el botón «${text}»`);
+  }
+  assert.ok(tagWithId(build, 'build-count'), 'falta #build-count');
+  assert.match(build, /<p id="build-prompt" [^>]*tabindex="-1"[^>]*><\/p>/);
+  assert.match(build, /<p id="build-verdict" [^>]*tabindex="-1"[^>]*><\/p>/);
+  assert.match(build, /<p id="build-done" [^>]*tabindex="-1"[^>]*>Terminaste la práctica de esta lección\.<\/p>/);
+});
+
+test('el ejercicio order tiene las zonas «Tu frase» y «Fichas» con su nombre', () => {
+  for (const [list, label, text] of [['build-placed', 'build-placed-label', 'Tu frase'], ['build-tiles', 'build-tiles-label', 'Fichas']]) {
+    assert.match(build, new RegExp(`id="${label}"[^>]*>${text}<`));
+    const tag = tagWithId(build, list);
+    assert.ok(tag, `falta #${list}`);
+    assert.ok(tag.includes(`aria-labelledby="${label}"`), `#${list} sin aria-labelledby`);
+  }
+});
+
+test('el campo de gap y fix escribe en francés sin corregir ni completar, con su etiqueta', () => {
+  const input = tagWithId(build, 'build-answer');
+  assert.ok(input, 'falta #build-answer');
+  for (const attr of ['type="text"', 'lang="fr"', 'autocomplete="off"', 'autocorrect="off"', 'autocapitalize="off"', 'spellcheck="false"']) {
+    assert.ok(input.includes(attr), `#build-answer sin ${attr}`);
+  }
+  assert.ok(hasLabelFor('build-answer'), 'falta label de build-answer');
+});
+
+test('la fila de acentos tiene un botón por letra con su nombre «Insertar …»', () => {
+  for (const letter of ['à', 'â', 'ç', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ù', 'û', 'œ']) {
+    assert.match(build, new RegExp(`<button type="button" [^>]*data-letter="${letter}" aria-label="Insertar ${letter}"[^>]*>${letter}</button>`));
+  }
+});
+
+// --- Frase libre, repaso e Inicio (Etapa 12, Tarea 11) ---
+test('la situación tiene un campo de varias líneas en francés, sin autocorrección y con su etiqueta', () => {
+  const field = tagWithId(build, 'build-free-answer');
+  assert.ok(field, 'falta #build-free-answer');
+  assert.ok(field.startsWith('<textarea '), '#build-free-answer no es un <textarea>');
+  for (const attr of ['lang="fr"', 'autocomplete="off"', 'autocorrect="off"', 'autocapitalize="off"', 'spellcheck="false"', 'aria-describedby="build-free-help"']) {
+    assert.ok(field.includes(attr), `#build-free-answer sin ${attr}`);
+  }
+  assert.ok(hasLabelFor('build-free-answer'), 'falta label de build-free-answer');
+  assert.match(build, /<p id="build-free-help" [^>]*>Si tu frase no coincide con un modelo, se envía a Claude \(Anthropic\) para corregirla\.<\/p>/);
+});
+
+test('la situación tiene su enunciado, Comprobar, el resultado enfocable y los recuadros', () => {
+  assert.ok(tagWithId(build, 'build-free-count'), 'falta #build-free-count');
+  assert.ok(tagWithId(build, 'build-free-situation'), 'falta #build-free-situation');
+  assert.match(build, /<button type="button" [^>]*id="build-free-check"[^>]*>Comprobar<\/button>/);
+  assert.match(build, /<button type="button" [^>]*id="build-free-next"[^>]*hidden>Siguiente<\/button>/);
+  assert.match(build, /<p id="build-free-verdict" [^>]*tabindex="-1"[^>]*><\/p>/);
+  assert.match(build, /id="build-free-errors"/);
+  assert.match(build, /<p class="build-suggestion-title">Sugerencia<\/p>/);
+  assert.match(build, /<p class="build-models-title">Respuestas modelo<\/p>/);
+  assert.match(build, /<ul id="build-free-models" [^>]*lang="fr"[^>]*><\/ul>/);
+  assert.match(build, /<div id="build-free-error" class="notice" role="alert" hidden><\/div>/);
+  const status = tagWithId(build, 'build-free-status');
+  assert.ok(status?.includes('role="status"'), '#build-free-status sin role="status"');
+});
+
+test('el repaso tiene «Repasar», el vacío, el fin y el botón «Quitar del repaso»', () => {
+  assert.match(build, /<button type="button" [^>]*id="build-review-start"[^>]*>Repasar \(0\)<\/button>/);
+  assert.match(build, /<p id="build-review-empty" [^>]*tabindex="-1"[^>]*>No tienes nada que repasar hoy\. Los ejercicios que falles 2 veces aparecerán aquí\.<\/p>/);
+  assert.match(build, /<p id="build-review-done" [^>]*tabindex="-1"[^>]*>Terminaste el repaso\.<\/p>/);
+  assert.match(build, /<button type="button" [^>]*id="build-remove"[^>]*hidden>Quitar del repaso<\/button>/);
+});
+
+test('la ventana de quitar una frase del repaso pide confirmación', () => {
+  const dialog = html.match(/<dialog id="build-confirm-remove" class="dialog" aria-labelledby="build-remove-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta <dialog id="build-confirm-remove">');
+  assert.match(dialog, /<h2 id="build-remove-title" class="dialog-title">¿Quitar esta frase de tu repaso\?<\/h2>/);
+  assert.match(dialog, /<p>No se puede deshacer\.<\/p>/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Quitar<\/button>/);
+});
+
+test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la copia de seguridad', () => {
+  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
+  assert.ok(card, 'falta la tarjeta .home-build');
+  assert.match(card, /<h2 [^>]*>[\s\S]*Construir frases<\/h2>/);
+  assert.ok(tagWithId(card, 'home-build-next'), 'falta #home-build-next');
+  assert.match(card, /<p id="home-build-due"[^>]*>Repaso: 0 pendientes hoy<\/p>/);
+  assert.match(card, /<button type="button" class="button button-primary" id="home-build-continue">Seguir lección<\/button>/);
+  assert.match(card, /<button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar \(0\)<\/button>/);
+  assert.ok(home.indexOf('home-build') < home.indexOf('Copia de seguridad'), 'la tarjeta va sobre la copia de seguridad');
+});

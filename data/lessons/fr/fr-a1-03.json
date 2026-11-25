@@ -1,0 +1,355 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-03",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Los artículos",
+  "areas": ["grammar", "spelling"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "51-52",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-66",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "103, 107-108",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-determinants",
+      "title": "Banque de dépannage linguistique: «Les déterminants : mode d'emploi»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24332/la-grammaire/la-grammaire-actuelle/les-classes-de-mots-et-les-groupes/les-determinants"
+    },
+    {
+      "id": "oqlf-contracte",
+      "title": "Grand dictionnaire terminologique (Vitrine linguistique): ficha «déterminant contracté»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "ficha en línea, consultada el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/fiche-gdt/fiche/26506951/determinant-contracte"
+    },
+    {
+      "id": "bdl-du",
+      "title": "Banque de dépannage linguistique: «DU et DÛ : distinguer ces homophones»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/21501/la-grammaire/les-homophones-grammaticaux/les-homophones-du-et-du"
+    },
+    {
+      "id": "bdl-negation",
+      "title": "Banque de dépannage linguistique: «DE : emploi dans une phrase négative»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23514/la-grammaire/les-determinants/determinants-indefinis/de-dans-une-phrase-negative"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "En francés casi todo sustantivo lleva una palabra delante, casi siempre un artículo. El artículo muestra si es masculino o femenino, singular o plural. El definido (el, la, los, las) es le, la, les; delante de vocal o de h muda, le y la se vuelven l': l'eau, l'hôtel. El indefinido (un, una, unos, unas) es un, une, des. Ojo: con un plural que se cuenta (niños, amigos), donde el español no pone nada, el francés suele poner des: «hay niños» se dice il y a des enfants. El género no siempre coincide con el español (le lait, la leche; la mer, el mar), así que aprende cada sustantivo con su artículo.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-determinants", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "À y de se juntan con le y con les, como en español a + el = al: à + le = au, à + les = aux, de + le = du, de + les = des. Con la y con l' no se juntan: à la, à l', de la, de l'. Por ejemplo: je vais au cinéma, à la piscine, à l'école. Después de una negación (ne… pas), un, une y des se vuelven de, o d' delante de vocal: je n'ai pas de voiture. Con être no cambian: ce n'est pas un livre. Después de beaucoup (mucho) y un peu (un poco) también va de sin artículo: beaucoup d'amis, un peu de sucre.",
+      "sourceIds": ["oqlf-contracte", "niveau-a2", "inventaire-d", "inventaire-f", "bdl-negation", "bdl-determinants"],
+      "review": false
+    },
+    {
+      "id": "i3",
+      "text": "Para una cantidad de algo que no se cuenta (pan, agua, café), el francés usa el partitivo, un artículo para hablar de una cantidad sin decir cuánta: du (masculino), de la (femenino) y de l' (delante de vocal). Je mange du pain. Je bois de l'eau. En español no se pone nada: «como pan», «tomo agua». Con ne… pas, también se vuelven de: il n'y a pas de pain.",
+      "sourceIds": ["niveau-a2", "inventaire-d", "inventaire-f", "bdl-du", "bdl-negation"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
+    }
+  ],
+  "pattern": [
+    { "label": "Definido", "options": ["le", "la", "l'", "les"] },
+    { "label": "Indefinido", "options": ["un", "une", "des"] },
+    { "label": "à / de + artículo", "options": ["au", "à la", "à l'", "aux", "du", "de la", "de l'", "des"] },
+    { "label": "Cantidad", "options": ["pas de", "beaucoup de", "un peu de"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Hay niños en el parque.",
+      "target": "Il y a des enfants dans le parc.",
+      "note": "Con un plural que se cuenta (niños, amigos), donde el español no pone artículo, el francés suele poner des.",
+      "sourceIds": ["inventaire-f", "bdl-determinants"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Voy al cine.",
+      "target": "Je vais au cinéma.",
+      "note": "Igual que a + el = al en español, en francés à + le = au.",
+      "sourceIds": ["oqlf-contracte", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Como pan y tomo agua.",
+      "target": "Je mange du pain et je bois de l'eau.",
+      "note": "Para una cantidad de algo que no se cuenta, el francés pone du, de la o de l'; el español no pone nada.",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-du"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
+    },
+    {
+      "id": "t4",
+      "source": "No tengo auto.",
+      "target": "Je n'ai pas de voiture.",
+      "note": "Después de ne… pas, un, une y des se vuelven de.",
+      "sourceIds": ["bdl-negation", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "J'aime la mer et le soleil.", "translation": "Me gustan el mar y el sol.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Je vais au cinéma avec des amis.", "translation": "Voy al cine con amigos.", "sourceIds": ["inventaire-f", "oqlf-contracte"], "review": false },
+    {
+      "id": "e3",
+      "text": "Le matin, je bois du café avec du lait.",
+      "translation": "En la mañana tomo café con leche.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
+    },
+    { "id": "e4", "text": "Il n'y a pas de pain.", "translation": "No hay pan.", "sourceIds": ["bdl-negation"], "review": false },
+    { "id": "e5", "text": "J'ai beaucoup d'amis.", "translation": "Tengo muchos amigos.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "Les enfants sont à l'école.", "translation": "Los niños están en el colegio.", "sourceIds": ["inventaire-f", "bdl-elision"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Je vais à le cinéma.",
+      "right": "Je vais au cinéma.",
+      "explanation": "À + le se juntan en au, igual que a + el = al en español.",
+      "sourceIds": ["oqlf-contracte", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "La eau est froide.",
+      "right": "L'eau est froide.",
+      "explanation": "Delante de vocal, le y la se vuelven l'.",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "J'ai beaucoup des amis.",
+      "right": "J'ai beaucoup d'amis.",
+      "explanation": "Después de beaucoup va solo de (d' delante de vocal), sin artículo.",
+      "sourceIds": ["inventaire-f", "bdl-determinants"],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Je n'ai pas une voiture.",
+      "right": "Je n'ai pas de voiture.",
+      "explanation": "En una negación simple, un, une y des se vuelven de: pas de voiture.",
+      "sourceIds": ["bdl-negation", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Voy al cine con amigos».",
+      "tiles": ["amis", "au", "Je", "avec", "cinéma", "vais", "des"],
+      "answers": ["Je vais au cinéma avec des amis.", "Avec des amis, je vais au cinéma."],
+      "rule": "À + le = au: au cinéma. Y con un plural que se cuenta, donde el español no pone artículo, el francés suele poner des: des amis.",
+      "sourceIds": ["oqlf-contracte", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Hay muchos restaurantes en la ciudad».",
+      "tiles": ["restaurants", "Il", "de", "en", "beaucoup", "a", "ville", "y"],
+      "answers": ["Il y a beaucoup de restaurants en ville.", "En ville, il y a beaucoup de restaurants."],
+      "rule": "Después de beaucoup va de sin artículo: beaucoup de restaurants.",
+      "sourceIds": ["inventaire-f", "inventaire-d"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "gap",
+      "prompt": "Completa: «Voy al cine».",
+      "before": "Je vais ",
+      "after": " cinéma.",
+      "answers": ["au"],
+      "mistakes": [
+        { "answer": "à le", "explanation": "À + le se juntan: au cinéma." },
+        { "answer": "à la", "explanation": "Cinéma es masculino (le cinéma). À + le = au." }
+      ],
+      "rule": "À + le = au.",
+      "sourceIds": ["oqlf-contracte", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa: «Los niños están en el colegio».",
+      "before": "Les enfants sont ",
+      "after": "école.",
+      "answers": ["à l'"],
+      "mistakes": [
+        { "answer": "au", "explanation": "Au no va delante de vocal. Le se vuelve l' y queda à l'école." },
+        { "answer": "à le", "explanation": "Delante de vocal, le se vuelve l': à l'école." },
+        { "answer": "à la", "explanation": "Delante de vocal, la se vuelve l': à l'école." }
+      ],
+      "rule": "Delante de vocal, le y la se vuelven l', y à no se junta: à l'école.",
+      "sourceIds": ["bdl-elision", "inventaire-f", "oqlf-contracte"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con el artículo: «Me gusta el mar».",
+      "before": "J'aime ",
+      "after": " mer.",
+      "answers": ["la"],
+      "mistakes": [
+        { "answer": "le", "explanation": "Mer es femenino en francés: la mer, aunque en español sea «el mar»." }
+      ],
+      "rule": "El género no siempre coincide con el español: la mer.",
+      "sourceIds": ["inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa: «No tengo auto».",
+      "before": "Je n'ai pas ",
+      "after": " voiture.",
+      "answers": ["de"],
+      "mistakes": [
+        { "answer": "une", "explanation": "Después de ne… pas, une se vuelve de: pas de voiture." },
+        { "answer": "d'", "explanation": "D' solo va delante de vocal. Voiture empieza con consonante: de." }
+      ],
+      "rule": "Después de ne… pas, un, une y des se vuelven de.",
+      "sourceIds": ["bdl-negation", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa: «En la mañana tomo café» (café en general, sin decir cuánto).",
+      "before": "Le matin, je bois ",
+      "after": " café.",
+      "answers": ["du"],
+      "mistakes": [
+        { "answer": "de le", "explanation": "De + le se juntan: du café." },
+        { "answer": "de", "explanation": "Sin negación, para una cantidad de café se usa du." },
+        { "answer": "un", "explanation": "Je bois un café también es correcto, pero quiere decir «tomo un café» (una taza). Para café en general, sin decir cuánto, se usa du." }
+      ],
+      "rule": "Para una cantidad de algo masculino que no se cuenta: du.",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-du"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ella les habla a los niños».",
+      "wrong": "Elle parle à les enfants.",
+      "answers": ["Elle parle aux enfants.", "Elle, elle parle aux enfants."],
+      "mistakes": [
+        { "answer": "Elle parle à les enfants.", "explanation": "À + les se juntan: aux enfants." }
+      ],
+      "rule": "À + les = aux.",
+      "sourceIds": ["oqlf-contracte", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Tengo muchos libros».",
+      "wrong": "J'ai beaucoup des livres.",
+      "answers": ["J'ai beaucoup de livres.", "Moi, j'ai beaucoup de livres."],
+      "mistakes": [
+        { "answer": "J'ai beaucoup des livres.", "explanation": "Después de beaucoup va de sin artículo: beaucoup de livres." },
+        { "answer": "J'ai beaucoup livres.", "explanation": "Falta de: beaucoup de livres." }
+      ],
+      "rule": "Después de beaucoup va de sin artículo.",
+      "sourceIds": ["inventaire-f", "bdl-determinants"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «No hay leche».",
+      "wrong": "Il n'y a pas du lait.",
+      "answers": ["Il n'y a pas de lait."],
+      "mistakes": [
+        { "answer": "Il n'y a pas du lait.", "explanation": "Después de ne… pas, du se vuelve de: pas de lait." },
+        { "answer": "Il n'y a pas de le lait.", "explanation": "Después de ne… pas va de solo, sin artículo: pas de lait." }
+      ],
+      "rule": "Después de ne… pas, un, une, des, du, de la y de l' se vuelven de.",
+      "sourceIds": ["bdl-negation"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Le cuentas a un amigo qué comes y qué tomas en el desayuno.",
+      "models": [
+        "Le matin, je mange du pain et je bois du café.",
+        "Je bois du thé avec du lait.",
+        "Le matin, je mange du pain et je bois de l'eau."
+      ],
+      "focus": "Du / de la / de l' para una cantidad de algo que no se cuenta",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-du"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
+    },
+    {
+      "id": "s2",
+      "situation": "Le cuentas a alguien adónde vas esta semana.",
+      "models": [
+        "Je vais au cinéma et à la piscine.",
+        "Je vais au marché et à la plage.",
+        "Je vais au parc avec des amis."
+      ],
+      "focus": "À + artículo: au, à la, à l', aux",
+      "sourceIds": ["oqlf-contracte", "inventaire-f"],
+      "review": false
+    }
+  ]
+}

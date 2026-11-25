@@ -20,3 +20,28 @@ test('la consulta pide que el nombre propio conserve su mayúscula en baseWithAr
   const { buildLookupPrompt } = await import('../src/prompt.js');
   assert.match(buildLookupPrompt(), /"baseWithArticle" el nombre con su mayúscula/);
 });
+
+test('las instrucciones de frases llevan el nivel, la regla de suggestion y el esquema cerrado', async () => {
+  const { buildSentencePrompt, SENTENCE_SCHEMA } = await import('../src/prompt.js');
+  const prompt = buildSentencePrompt('A2');
+  assert.ok(prompt.includes('A2'));
+  assert.ok(!prompt.includes('{level}'));
+  assert.match(prompt, /"suggestion"/);
+  assert.match(prompt, /nunca pongas en "errors"/i);
+  assert.equal(SENTENCE_SCHEMA.additionalProperties, false);
+  assert.deepEqual([...SENTENCE_SCHEMA.required].sort(), ['corrected', 'errors', 'suggestion']);
+  const item = SENTENCE_SCHEMA.properties.errors.items;
+  assert.equal(item.additionalProperties, false);
+  assert.deepEqual([...item.required].sort(), ['corrected', 'explanation', 'kind', 'original']);
+  assert.deepEqual(item.properties.kind.enum, ['grammar', 'syntax', 'spelling']);
+});
+
+test('las instrucciones de frases dicen qué hacer si falta una palabra y que no se marquen mayúsculas ni puntuación', async () => {
+  const { buildSentencePrompt } = await import('../src/prompt.js');
+  const prompt = buildSentencePrompt('A1.2');
+  assert.match(prompt, /falta una palabra/i);
+  assert.match(prompt, /«mange pain»/);
+  assert.match(prompt, /«mange du pain»/);
+  assert.match(prompt, /nunca dejes "original" vacío/i);
+  assert.match(prompt, /no marques como error las mayúsculas ni la puntuación/i);
+});

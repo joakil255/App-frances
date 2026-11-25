@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene siete pantallas (Inicio, Palabras, Estudiar, Quiz, Progreso, Conversar y Leer). Funcionan **Inicio** (tu copia de seguridad), **Palabras** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas), **Conversar** (chatear en francés con Claude) y **Leer** (historias cortas con cuestionario).
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene ocho pantallas (Inicio, Palabras, Estudiar, Quiz, Progreso, Conversar, Leer y Construir frases). Funcionan **Inicio** (tu copia de seguridad y la tarjeta de Construir frases), **Palabras** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas), **Conversar** (chatear en francés con Claude), **Leer** (historias cortas con cuestionario) y **Construir frases** (lecciones para armar frases, con repaso).
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -234,6 +234,32 @@ Historias cortas en francés escritas por Claude a tu nivel, para leer y escucha
 - **Tus datos:** el nivel, el tema y el idioma de las preguntas se envían a Anthropic. Las historias se guardan en el teléfono y **sí** entran en la copia de seguridad.
 - El gesto «atrás» de Android vuelve de una historia a la biblioteca.
 
+## Construir frases
+
+Lecciones cortas para armar frases en francés, con ejercicios que la app corrige sola (sin conexión y sin Claude) y, al final de cada lección, una frase libre que corrige Claude. En el computador está en la barra de la izquierda («Construir frases»); en el celular la barra no tiene espacio para un octavo botón, así que se abre desde la tarjeta **«Construir frases»** de Inicio.
+
+- **En Inicio:** la tarjeta dice la próxima lección («Próxima lección: …», o «Terminaste todas las lecciones») y cuántas frases te toca repasar hoy («Repaso: N pendientes hoy»). **Seguir lección** abre la próxima lección y **Repasar (N)** abre el repaso (no hace nada si N es 0).
+
+- **Lista:** una fila por lección («Lección 1», «Lección 2»…), con sus áreas (Gramática, Sintaxis, Ortografía) y su estado: «Nueva», «En curso: X/Y» (ejercicios que ya acertaste alguna vez) o «Terminada». «Tiene partes REVISAR» avisa que algo de la lección todavía no tiene una fuente segura.
+- **Lección:** en este orden, «La idea», «El bloque» (las piezas de la frase), «Cómo pensarlo» (del español al francés), «Ejemplos» (cada uno con **Escuchar**), «Trampa común», «Practicar» y «Fuentes». Lo que está en REVISAR lleva la etiqueta escrita y su nota.
+- **Practicar:** un ejercicio por vez («Ejercicio X/Y»), en el orden de la lección. **Comprobar** dice «Correcto.» o «No es correcta.», explica la regla y muestra «La respuesta es: …»; si fallaste, «Tu respuesta:» marca las palabras que cambian, faltan o sobran. Luego **Siguiente**.
+  - **Ordenar:** toca las fichas en el orden correcto; pasan a «Tu frase». Toca una ficha de «Tu frase» para devolverla, o **Borrar todo**. No hay que arrastrar nada: funciona con el teclado (Tab y Enter) y con TalkBack.
+  - **Completar y corregir:** escribe en el campo. Debajo hay una fila con las letras con acento (à â ç é è ê ë î ï ô ù û œ) que escribe la letra donde está el cursor.
+  - Los acentos cuentan según «Exigir acentos» del Quiz. Si solo te falta un acento, ves «Ojo con el acento: …» con la frase bien escrita (también cuando cuenta como correcta).
+  - Un ejercicio que fallas vuelve **una vez** al final de esa práctica. Si lo fallas **dos veces** (seguidas o en días distintos) aparece «Este ejercicio irá a tu repaso.».
+  - La lección queda «Terminada» cuando acertaste cada ejercicio al menos una vez.
+- **Frase libre:** al terminar los ejercicios (o al abrir una lección ya terminada) aparece una situación («Situación 1/2»): escribe una frase en francés y toca **Comprobar**.
+  - Si coincide con una respuesta modelo, la app dice «Correcta.» sin enviar nada.
+  - Si no coincide, **se envía a Claude (Anthropic)** por tu servidor, con el mismo código de acceso de Conversar (si no lo guardaste, la app dice «Falta tu código de acceso.»: escríbelo primero en Conversar). El botón dice «Revisando…» mientras espera.
+  - Claude responde «Correcta.» o «Corregida: …», con cada error (lo que escribiste → lo correcto, su tipo, Gramática, Sintaxis u Ortografía, y la explicación), una «Sugerencia» aparte si la frase no responde a la situación o no usa el patrón de la lección, y las «Respuestas modelo».
+  - Si hubo errores: «Agregamos esta frase a tu repaso.».
+  - **Sin conexión** no se envía nada: ves «Necesitas conexión para que Claude revise tu frase.» y las respuestas modelo para comparar. Hay un límite de 50 correcciones al día.
+- **Repaso (`#/construir/repaso`, o «Repasar (N)» arriba de la lista):** los ejercicios que fallaste dos veces y las frases que corrigió Claude, con la repetición espaciada que elegiste en los ajustes de Estudiar. Cada tarjeta aparece por primera vez **al día siguiente**. Funciona como Practicar, con «Repaso: X/Y».
+  - Una frase tuya aparece como «Corrige tu frase», con la etiqueta REVISAR (la corrección es de Claude y puede equivocarse). Si crees que está mal, **Quitar del repaso** la borra después de confirmar.
+  - Si no hay nada: «No tienes nada que repasar hoy. Los ejercicios que falles 2 veces aparecerán aquí.».
+- **Sin conexión:** las lecciones vienen con la app, así que se leen, se practican y se repasan sin internet. Solo la corrección de la frase libre necesita conexión.
+- **Tus datos:** el progreso se guarda en el teléfono (clave `app-frances-build`) y entra en la copia de seguridad. Si no hay espacio, la app lo avisa y la práctica sigue sin guardar.
+
 ## Servidor de conversación
 
 La app no guarda ninguna clave. Habla con un servidor pequeño propio (un *Worker* de Cloudflare, carpeta `server/`) que guarda la clave de Anthropic, revisa el código de acceso, cuenta los mensajes del día y llama a Claude.
@@ -266,6 +292,8 @@ Todos los comandos se escriben **dentro de la carpeta `server/`** (`cd server`).
 - **Ver el contador de hoy:** `npx wrangler kv key get --binding CHAT_KV --remote "count:AAAA-MM-DD"` (fecha de Chile).
 - **Cambiar el código de acceso:** repite el paso 6; en el teléfono, la app te pedirá el código nuevo.
 - **Prueba de las 10 frases** (cuesta unos centavos y envía las frases a Anthropic): `npm run eval --prefix server`.
+- **Corrección de frases (`/sentence`):** la frase libre de Construir frases va a la ruta `/sentence` del mismo servidor, con el mismo código de acceso. Tiene su propio contador diario, `SENTENCE_LIMIT` en `server/wrangler.jsonc` (50 al día), aparte de `DAILY_LIMIT`, `LOOKUP_LIMIT` y `STORY_LIMIT`. Para cambiarlo, edítalo y vuelve a publicar. El contador de hoy se ve con `npx wrangler kv key get --binding CHAT_KV --remote "sentence:AAAA-MM-DD"`.
+- **Prueba de las 13 frases de Construir** (**cuesta dinero** y envía las frases a Anthropic; córrela solo cuando decidas pagarla, y nadie debe correrla sin tu permiso): `cd server && node eval/compare-sentence.mjs`. Usa la clave de `ANTHROPIC_API_KEY` o de `~/.config/app-frances/anthropic.key`. Al final dice si se cumple el criterio: 7 errores encontrados y corregidos (uno es una palabra que falta), 6 frases correctas sin errores inventados, 2 de 3 sugerencias y cero rechazos.
 
 ## Iconos
 
@@ -437,8 +465,10 @@ js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
 js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
 js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
-js/screens/home.js      pantalla Inicio (guardar y restaurar la copia de seguridad)
+js/screens/home.js      pantalla Inicio (tarjeta Construir frases y copia de seguridad)
 js/screens/reader.js    pantalla Leer (biblioteca, lector con voz por frases y cuestionario)
+js/screens/build.js     pantalla Construir frases (lista, lección, práctica y repaso)
+js/screens/build-free.js frase libre de Construir (modelos y corrección de Claude)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV

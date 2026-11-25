@@ -1,0 +1,322 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-06",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Preguntas simples",
+  "areas": ["syntax"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-66",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "109",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-interrogative",
+      "title": "Banque de dépannage linguistique: «Phrase interrogative et emploi du point d'interrogation»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23383/la-ponctuation/point-dinterrogation/phrase-interrogative-et-emploi-du-point-dinterrogation"
+    },
+    {
+      "id": "bdl-espacement",
+      "title": "Banque de dépannage linguistique: «Espacement avant et après les signes de ponctuation et les symboles»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/22039/la-typographie/espacement/espacement-avant-et-apres-les-signes-de-ponctuation-et-les-symboles"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Para una pregunta de sí o no hay dos formas sencillas, y en las dos el orden sujeto + verbo no cambia. 1) Con la entonación, igual que en español: la frase queda igual y la voz sube al final. Al escribir, solo agregas el signo: Tu parles français ? 2) Con est-ce que delante de la frase: Est-ce que tu parles français ? Est-ce que no se traduce; solo avisa que viene una pregunta. Delante de vocal se vuelve est-ce qu': Est-ce qu'il pleut ? Existe una tercera forma que da vuelta el sujeto y el verbo (Parles-tu français ?). En esta lección no la usamos, salvo en unas fórmulas fijas que se aprenden como bloque: Comment allez-vous ? Quel âge as-tu ? Quelle heure est-il ? Quel temps fait-il ? Ojo con la escritura: el francés no usa ¿ al principio. Antes de ? algunos textos dejan un espacio pequeño y otros lo pegan a la palabra; aquí escribimos un espacio normal (Tu parles français ?), y al corregir la puntuación no cuenta.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-interrogative", "bdl-elision", "bdl-espacement"],
+      "review": true,
+      "reviewNote": "Sin fuente: que en la pregunta con entonación la voz sube al final no está en las fuentes leídas. La BDL solo dice que el signo ? marca por escrito «l'intonation particulière», y el Niveau A2 (p. 109) solo dice «intonation»."
+    },
+    {
+      "id": "i2",
+      "text": "Para pedir información se usa una palabra interrogativa: qui (quién), où (dónde), quand (cuándo), comment (cómo), combien (cuánto), pourquoi (por qué) y quel / quelle (qué o cuál, delante de un sustantivo o con être). Quel concuerda con el sustantivo: quel âge (âge es masculino), quelle heure (heure es femenino). La palabra puede ir al final (Tu habites où ?), al principio (Où tu habites ?) o al principio con est-ce que (Où est-ce que tu habites ?). En las tres, el sujeto se dice y va delante del verbo. Si qui es el sujeto, va directo con el verbo: Qui parle français ? Combien va con de delante del sustantivo, sin artículo: Combien d'enfants vous avez ?",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-elision"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire pone palabra interrogativa + est-ce que en A1 clave; el referencial A2 (p. 109) la marca en negrita como agregado de A2."
+    }
+  ],
+  "pattern": [
+    { "label": "Sí o no", "options": ["Tu parles… ?", "Est-ce que tu parles… ?", "Est-ce qu'il… ?"] },
+    { "label": "Palabra interrogativa", "options": ["qui", "où", "quand", "comment", "combien", "pourquoi", "quel / quelle"] },
+    { "label": "Dónde va", "options": ["Tu habites où ?", "Où tu habites ?", "Où est-ce que tu habites ?"] },
+    { "label": "Fórmulas fijas", "options": ["Comment allez-vous ?", "Quel âge as-tu ?", "Quelle heure est-il ?", "Quel temps fait-il ?"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "¿Hablas francés?",
+      "target": "Est-ce que tu parles français ?",
+      "note": "En español solo cambia la entonación. En francés también puedes hacer eso (Tu parles français ?) o poner est-ce que delante, sin cambiar nada más.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "¿Dónde vives?",
+      "target": "Tu habites où ?",
+      "note": "En español la palabra interrogativa va al principio y el sujeto suele omitirse. En francés puede ir al final o al principio (Où tu habites ?, Où est-ce que tu habites ?), y tu siempre se dice.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "¿Cuántos años tienes?",
+      "target": "Quel âge as-tu ?",
+      "note": "Es una fórmula fija, con el verbo antes del sujeto: as-tu. También se dice Tu as quel âge ? Y aunque en español sea «la edad», âge es masculino: quel âge.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t4",
+      "source": "¿Cuántos hijos tienen?",
+      "target": "Combien d'enfants vous avez ?",
+      "note": "«Cuántos hijos» es combien de + sustantivo, sin artículo. Delante de vocal, de se vuelve d'.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Est-ce que tu aimes le chocolat ?", "translation": "¿Te gusta el chocolate?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Où est-ce que tu habites ?", "translation": "¿Dónde vives?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e3", "text": "Tu arrives quand ?", "translation": "¿Cuándo llegas?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Qui parle français ?", "translation": "¿Quién habla francés?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e5", "text": "Comment allez-vous ?", "translation": "¿Cómo está usted?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "Est-ce qu'il pleut ? Non, il ne pleut pas.", "translation": "¿Está lloviendo? No, no está lloviendo.", "sourceIds": ["inventaire-f", "bdl-elision"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Est-ce que il pleut ?",
+      "right": "Est-ce qu'il pleut ?",
+      "explanation": "Delante de vocal, que pierde la e y se une con apóstrofo: est-ce qu'il.",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Où est-ce que habites ?",
+      "right": "Où est-ce que tu habites ?",
+      "explanation": "Como en la lección 1, el sujeto no se omite. Después de est-ce que va el sujeto y luego el verbo: est-ce que tu habites.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Quel heure est-il ?",
+      "right": "Quelle heure est-il ?",
+      "explanation": "Heure es femenino (une heure): quelle. Quel y quelle suenan igual; la diferencia solo se ve al escribir.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": true,
+      "reviewNote": "Sin fuente: que quel y quelle suenan igual no está escrito en las fuentes leídas; es conocimiento propio de la lengua."
+    },
+    {
+      "id": "p4",
+      "wrong": "Combien enfants vous avez ?",
+      "right": "Combien d'enfants vous avez ?",
+      "explanation": "Combien va con de delante del sustantivo, y delante de vocal de se vuelve d': combien d'enfants.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «¿Hablas francés?», con est-ce que.",
+      "tiles": ["parles", "que", "tu", "Est-ce", "français"],
+      "answers": ["Est-ce que tu parles français ?"],
+      "rule": "Est-ce que va delante, y después la frase normal: sujeto + verbo + complemento.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «¿Cuándo trabajas?».",
+      "tiles": ["travailles", "Quand", "que", "tu", "est-ce"],
+      "answers": ["Quand est-ce que tu travailles ?"],
+      "rule": "Palabra interrogativa + est-ce que + sujeto + verbo: Quand est-ce que tu travailles ?",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «¿Cuándo llegas?».",
+      "tiles": ["arrives", "quand", "Tu"],
+      "answers": ["Tu arrives quand ?", "Quand tu arrives ?"],
+      "rule": "Sin est-ce que, la palabra interrogativa va al final o al principio, y el orden sujeto + verbo no cambia: Tu arrives quand ?",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con est-ce que + il: «¿Está lloviendo?».",
+      "before": "",
+      "after": " pleut ?",
+      "answers": ["Est-ce qu'il"],
+      "mistakes": [
+        { "answer": "Est-ce que il", "explanation": "Delante de vocal (il), que pierde la e y se une con apóstrofo: est-ce qu'il." },
+        { "answer": "Est-ce qu'", "explanation": "Falta el sujeto il: Est-ce qu'il pleut ?" }
+      ],
+      "rule": "Delante de vocal, est-ce que se vuelve est-ce qu': Est-ce qu'il pleut ?",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa: «¿Qué hora es?».",
+      "before": "",
+      "after": " heure est-il ?",
+      "answers": ["Quelle"],
+      "mistakes": [
+        { "answer": "Quel", "explanation": "Heure es femenino (une heure): quelle heure. Suenan igual, pero se escriben distinto." }
+      ],
+      "rule": "Quel concuerda con el sustantivo: quel con masculino, quelle con femenino.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": true,
+      "reviewNote": "Sin fuente: que quel y quelle suenan igual no está escrito en las fuentes leídas; es conocimiento propio de la lengua."
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa: «¿Cuántos hijos tienen?».",
+      "before": "Combien ",
+      "after": "enfants vous avez ?",
+      "answers": ["d'"],
+      "mistakes": [
+        { "answer": "de", "explanation": "Enfants empieza con vocal: de pierde la e y se une con apóstrofo, combien d'enfants." },
+        { "answer": "des", "explanation": "Después de combien va de solo, sin artículo. Delante de vocal: combien d'enfants." }
+      ],
+      "rule": "Combien + de + sustantivo, sin artículo; d' delante de vocal.",
+      "sourceIds": ["inventaire-f", "bdl-elision"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con la palabra interrogativa: «¿Dónde vives?».",
+      "before": "",
+      "after": " est-ce que tu habites ?",
+      "answers": ["Où"],
+      "mistakes": [
+        { "answer": "Qui", "explanation": "Qui es «quién». Para «dónde» se usa où." },
+        { "answer": "Quand", "explanation": "Quand es «cuándo». Para «dónde» se usa où." },
+        { "answer": "Comment", "explanation": "Comment es «cómo». Para «dónde» se usa où." }
+      ],
+      "rule": "Où (dónde) + est-ce que + sujeto + verbo.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «¿Te gusta el chocolate?».",
+      "wrong": "Est-ce que aimes-tu le chocolat ?",
+      "answers": [
+        "Est-ce que tu aimes le chocolat ?",
+        "Tu aimes le chocolat ?",
+        "Aimes-tu le chocolat ?"
+      ],
+      "mistakes": [
+        { "answer": "Est-ce que aimes-tu le chocolat ?", "explanation": "Con est-ce que no se da vuelta nada: va el sujeto y después el verbo. Est-ce que tu aimes le chocolat ?" },
+        { "answer": "Est-ce que aimes le chocolat ?", "explanation": "Falta el sujeto: est-ce que tu aimes le chocolat ?" }
+      ],
+      "rule": "Después de est-ce que, la frase sigue su orden normal: sujeto + verbo.",
+      "sourceIds": ["inventaire-f", "niveau-a2", "bdl-interrogative"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «¿Cuántos años tienes?».",
+      "wrong": "Quelle âge as-tu ?",
+      "answers": [
+        "Quel âge as-tu ?",
+        "Tu as quel âge ?",
+        "Quel âge tu as ?",
+        "Quel âge est-ce que tu as ?"
+      ],
+      "mistakes": [
+        { "answer": "Quelle âge as-tu ?", "explanation": "Âge es masculino (un âge), aunque en español sea «la edad»: quel âge." },
+        { "answer": "Tu as quelle âge ?", "explanation": "Âge es masculino (un âge): quel âge." },
+        { "answer": "Quelle âge tu as ?", "explanation": "Âge es masculino (un âge): quel âge." }
+      ],
+      "rule": "Quel concuerda con el sustantivo: âge es masculino, quel âge.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «¿Dónde vive ella?».",
+      "wrong": "Où est-ce que elle habite ?",
+      "answers": [
+        "Où est-ce qu'elle habite ?",
+        "Elle habite où ?",
+        "Où elle habite ?",
+        "Où habite-t-elle ?"
+      ],
+      "mistakes": [
+        { "answer": "Où est-ce que elle habite ?", "explanation": "Delante de vocal (elle), que pierde la e y se une con apóstrofo: est-ce qu'elle." }
+      ],
+      "rule": "Delante de vocal, est-ce que se vuelve est-ce qu': Où est-ce qu'elle habite ?",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Conoces a alguien en una fiesta en Lyon. Hazle dos o tres preguntas: dónde vive, qué idiomas habla, dónde trabaja.",
+      "models": [
+        "Où est-ce que tu habites ? Tu parles anglais ?",
+        "Tu habites où ? Est-ce que tu parles espagnol ?",
+        "Est-ce que tu parles anglais ? Où est-ce que tu travailles ?"
+      ],
+      "focus": "Preguntas con entonación, con est-ce que y con palabras interrogativas, sin dar vuelta el sujeto y el verbo",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    }
+  ]
+}

@@ -18,6 +18,8 @@ export const MESSAGES = Object.freeze({
     'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.'),
   corruptTexts: message('Tus historias guardadas estaban dañadas.',
     'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.'),
+  corruptBuild: message('Tu progreso de frases estaba dañado.',
+    'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.'),
   restoreFailed: message('No se pudo restaurar la copia.', ''),
   backupUnverified: message('No se guardó la copia.',
     'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Palabras mientras tanto.'),
@@ -52,6 +54,14 @@ export const MESSAGES = Object.freeze({
     'Puedes seguir conversando; las consultas se reinician a medianoche, hora de Chile.'),
   storyLimit: message('Llegaste al límite de historias de hoy.',
     'Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.'),
+  sentenceLimit: message('Llegaste al límite de correcciones de hoy.',
+    'El límite se reinicia a medianoche, hora de Chile.'),
+  sentenceOffline: message('Necesitas conexión para que Claude revise tu frase.',
+    'Compara tu frase con las respuestas modelo.'),
+  sentenceNoCode: message('Falta tu código de acceso.',
+    'Escríbelo primero en Conversar; después vuelve aquí.'),
+  lessonsUnavailable: message('No se pudieron cargar las lecciones.',
+    'Abre la app con conexión una vez para guardarlas en el teléfono.'),
   micBlocked: message('El navegador no deja usar el micrófono.',
     'Permite el micrófono para este sitio en los ajustes del navegador (el candado junto a la dirección) y vuelve a tocar Hablar.'),
   micNoSpeech: message('No se oyó nada.',
@@ -84,6 +94,7 @@ const CHAT_KEYS = Object.freeze({
   refused: 'chatRefused',
   lookup_limit: 'lookupLimit',
   story_limit: 'storyLimit',
+  sentence_limit: 'sentenceLimit',
 });
 
 // Mensaje para un código de error del chat; los códigos desconocidos usan chatUnavailable
@@ -101,6 +112,12 @@ export function storageMessage(error) {
 export function textsLoadNotice({ error = null, corruptBackupKey = null } = {}) {
   if (error) return storageMessage(error);
   return corruptBackupKey ? MESSAGES.corruptTexts : null;
+}
+
+// Aviso al cargar el progreso de frases: igual que textsLoadNotice
+export function buildLoadNotice({ error = null, corruptBackupKey = null } = {}) {
+  if (error) return storageMessage(error);
+  return corruptBackupKey ? MESSAGES.corruptBuild : null;
 }
 
 // Título y texto en una sola frase (para errores dentro de una ventana)

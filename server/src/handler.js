@@ -7,6 +7,7 @@ import { validateLookupInput } from './lookup-validate.js';
 import { normalizeLookup } from './lookup-normalize.js';
 import { validateStoryInput } from './story-validate.js';
 import { normalizeStory } from './story-normalize.js';
+import { validateSentenceInput } from './sentence-validate.js';
 import { reserveMessage } from './limit.js';
 
 function jsonResponse(status, body, corsHeaders) {
@@ -40,7 +41,8 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
   const { pathname } = new URL(request.url);
   const isLookup = pathname === '/lookup';
   const isStory = pathname === '/story';
-  if ((pathname !== '/chat' && !isLookup && !isStory) || (request.method !== 'POST' && request.method !== 'OPTIONS')) {
+  const isSentence = pathname === '/sentence';
+  if ((pathname !== '/chat' && !isLookup && !isStory && !isSentence) || (request.method !== 'POST' && request.method !== 'OPTIONS')) {
     return jsonResponse(404, { error: 'not_found' }, cors);
   }
   if (request.method === 'OPTIONS') {
@@ -71,7 +73,11 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
   } catch {
     return jsonResponse(400, { error: 'invalid_input' }, cors);
   }
-  const input = isLookup ? validateLookupInput(body) : isStory ? validateStoryInput(body) : validateChatInput(body);
+  let input;
+  if (isLookup) input = validateLookupInput(body);
+  else if (isStory) input = validateStoryInput(body);
+  else if (isSentence) input = validateSentenceInput(body);
+  else input = validateChatInput(body);
   if (!input.ok) return jsonResponse(400, { error: 'invalid_input' }, cors);
 
   // 5) Límite diario (cuenta antes de llamar al proveedor)
@@ -79,11 +85,12 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
   try {
     if (isLookup) reservation = await reserveMessage(env.CHAT_KV, now(), config.lookupLimit, 'lookup');
     else if (isStory) reservation = await reserveMessage(env.CHAT_KV, now(), config.storyLimit, 'story');
+    else if (isSentence) reservation = await reserveMessage(env.CHAT_KV, now(), config.sentenceLimit, 'sentence');
     else reservation = await reserveMessage(env.CHAT_KV, now(), config.dailyLimit);
   } catch {
     return jsonResponse(502, { error: 'unavailable' }, cors);
   }
-  if (!reservation.ok) return jsonResponse(429, { error: isLookup ? 'lookup_limit' : isStory ? 'story_limit' : 'daily_limit' }, cors);
+  if (!reservation.ok) return jsonResponse(429, { error: isLookup ? 'lookup_limit' : isStory ? 'story_limit' : isSentence ? 'sentence_limit' : 'daily_limit' }, cors);
 
   // 6) Proveedor
   try {
@@ -95,6 +102,11 @@ export async function handleRequest(request, env, { providers = PROVIDERS, now =
     if (isStory) {
       const result = normalizeStory(await provider.story(input.value));
       return jsonResponse(200, { ...result, remainingStories: reservation.remaining }, cors);
+    }
+    if (isSentence) {
+      // El proveedor ya devuelve la salida validada (normalizeSentence)
+      const result = await provider.sentence(input.value);
+      return jsonResponse(200, { ...result, remainingSentences: reservation.remaining }, cors);
     }
     const { reply, corrections } = await provider.chat(input.value);
     return jsonResponse(200, { reply, corrections, remaining: reservation.remaining }, cors);
