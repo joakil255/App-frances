@@ -161,7 +161,7 @@
     },
     {
       "id": "p2",
-      "wrong": "Le eau est froide.",
+      "wrong": "La eau est froide.",
       "right": "L'eau est froide.",
       "explanation": "Delante de vocal, le y la se vuelven l'.",
       "sourceIds": ["bdl-elision", "inventaire-f"],

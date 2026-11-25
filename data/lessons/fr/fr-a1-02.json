@@ -277,7 +277,7 @@
       "models": [
         "C'est ma sœur. Elle a vingt ans.",
         "C'est mon frère, il a douze ans.",
-        "Ce sont mes parents."
+        "Ce sont mes parents. Ils ont cinquante ans."
       ],
       "focus": "Presentar con c'est / ce sont y decir la edad con avoir",
       "sourceIds": ["inventaire-f", "bdl-cest"],

@@ -64,8 +64,8 @@
     }
   ],
   "pattern": [
-    { "label": "Para destacar (opcional)", "options": ["Moi,", "Toi,", "Lui,", "Elle,"] },
-    { "label": "Sujeto", "options": ["je", "j'", "tu", "il", "elle", "nous", "vous", "ils", "elles"] },
+    { "label": "Para destacar (opcional)", "options": ["Moi,", "Lui,", "Elle,"] },
+    { "label": "Sujeto", "options": ["je", "j'", "il", "elle"] },
     { "label": "Verbo", "options": ["parle", "aime", "habite", "travaille"] },
     { "label": "Complemento", "options": ["français", "le café", "à Santiago", "avec moi"] }
   ],

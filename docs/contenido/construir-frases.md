@@ -56,8 +56,8 @@ Nivel A1. Áreas: sintaxis, gramática, ortografía.
 
 Bloques del patrón (sin fuente propia; se apoyan en las ideas):
 
-- **Para destacar (opcional):** `Moi,` `Toi,` `Lui,` `Elle,`
-- **Sujeto:** `je` `j'` `tu` `il` `elle` `nous` `vous` `ils` `elles`
+- **Para destacar (opcional):** `Moi,` `Lui,` `Elle,`
+- **Sujeto:** `je` `j'` `il` `elle`
 - **Verbo:** `parle` `aime` `habite` `travaille`
 - **Complemento:** `français` `le café` `à Santiago` `avec moi`
 
@@ -127,7 +127,7 @@ Bloques del patrón (sin fuente propia; se apoyan en las ideas):
 | x8 | Corregir | Qu'est-ce que c'est ? C'est un cahier. | Corrige la frase: «¿Qué es? Es un cuaderno». Frase con error: «Qu'est-ce que c'est ? Est un cahier.» Errores previstos: «Qu'est-ce que c'est ? Est un cahier.» → Falta el sujeto: «es un…» se dice c'est un… «Qu'est-ce que c'est ? Ce est un cahier.» → Delante de est, ce pierde la e y se une con apóstrofo: c'est. Regla: Para presentar una cosa: c'est + la cosa. | Inventaire D p. 49; Inventaire F p. 64; BDL «élision obligatoire» |  |
 | x9 | Corregir | Ils ont deux enfants. | Corrige la frase. Quieres decir «Tienen dos hijos». Frase con error: «Ils sont deux enfants.» También se acepta: «Elles ont deux enfants.» Errores previstos: «Ils sont deux enfants.» → Ils sont es «son» o «están». Para «tienen» es ils ont, de avoir. Regla: Tener es avoir: ils ont, elles ont. | Inventaire F p. 63; Niveau A2 p. 106 |  |
 | x10 | Corregir | J'ai froid. | Corrige la frase. Quieres decir «Tengo frío». Frase con error: «Je suis froid.» También se acepta: «Moi, j'ai froid.» Errores previstos: «Je suis froid.» → Como en español «tengo frío», la sensación de frío va con avoir: j'ai froid. «Je ai froid.» → Ai empieza con vocal: je pierde la e y se une con apóstrofo, j'ai. Regla: El hambre, la sed y el frío van con avoir: j'ai faim, j'ai soif, j'ai froid. | Inventaire F p. 63 (ont très froid); BDL «élision obligatoire» |  |
-| s1 | Situación | C'est ma sœur. Elle a vingt ans. | Le muestras a un amigo francés una foto de tu familia. Dile quién es una persona y cuántos años tiene. Patrón: Presentar con c'est / ce sont y decir la edad con avoir. Otros modelos: «C'est mon frère, il a douze ans.» «Ce sont mes parents.» | Inventaire F pp. 64, 66; BDL «C'EST et CE SONT» |  |
+| s1 | Situación | C'est ma sœur. Elle a vingt ans. | Le muestras a un amigo francés una foto de tu familia. Dile quién es una persona y cuántos años tiene. Patrón: Presentar con c'est / ce sont y decir la edad con avoir. Otros modelos: «C'est mon frère, il a douze ans.» «Ce sont mes parents. Ils ont cinquante ans.» | Inventaire F pp. 64, 66; BDL «C'EST et CE SONT» |  |
 | s2 | Situación | Il y a un lit et une table. | Describe tu pieza: di qué cosas hay. Patrón: Il y a + un / une. Otros modelos: «Dans ma chambre, il y a un lit et une chaise.» | Inventaire F p. 66; Niveau A2 p. 108 |  |
 
 Nada marcado REVISAR en esta lección.
@@ -159,7 +159,7 @@ Bloques del patrón (sin fuente propia; se apoyan en las ideas):
 | e5 | Ejemplo | J'ai beaucoup d'amis. | Tengo muchos amigos. | Inventaire F p. 65 (igual) |  |
 | e6 | Ejemplo | Les enfants sont à l'école. | Los niños están en el colegio. | Inventaire F p. 63 (à l'école); BDL «élision obligatoire» |  |
 | p1 | Trampa | Je vais au cinéma. | Error: «Je vais à le cinéma.» → À + le se juntan en au, igual que a + el = al en español. | OQLF, GDT «déterminant contracté»; Inventaire F p. 62 |  |
-| p2 | Trampa | L'eau est froide. | Error: «Le eau est froide.» → Delante de vocal, le y la se vuelven l'. | BDL «élision obligatoire»; Inventaire F p. 65 (L'eau est froide) |  |
+| p2 | Trampa | L'eau est froide. | Error: «La eau est froide.» → Delante de vocal, le y la se vuelven l'. | BDL «élision obligatoire»; Inventaire F p. 65 (L'eau est froide) |  |
 | p3 | Trampa | J'ai beaucoup d'amis. | Error: «J'ai beaucoup des amis.» → Después de beaucoup va solo de (d' delante de vocal), sin artículo. | Inventaire F p. 65; BDL «Les déterminants» |  |
 | p4 | Trampa | Je n'ai pas de voiture. | Error: «Je n'ai pas une voiture.» → En una negación simple, un, une y des se vuelven de: pas de voiture. | BDL «DE dans une phrase négative»; Inventaire F p. 65 |  |
 | x1 | Ordenar | Je vais au cinéma avec des amis. | Ordena las palabras: «Voy al cine con amigos». Fichas: «amis» «au» «Je» «avec» «cinéma» «vais» «des» También se acepta: «Avec des amis, je vais au cinéma.» Regla: À + le = au: au cinéma. Y con un plural que se cuenta, donde el español no pone artículo, el francés suele poner des: des amis. | OQLF, GDT «déterminant contracté»; Inventaire F pp. 62, 65 |  |
