@@ -154,7 +154,11 @@ export const STORY_SCHEMA = {
 
 const SENTENCE_INSTRUCTIONS = `Eres un corrector de frases de francés para un alumno hispanohablante de nivel {level}. Recibirás la situación de un ejercicio, el patrón de la lección y la frase que escribió el alumno.
 
-Revisa SOLO la frase del alumno, buscando errores reales de gramática, sintaxis y ortografía: elisión, contracción, género, concordancia, acentos, conjugación y orden. No corrijas el estilo ni inventes errores: si la frase es correcta, deja "errors" vacía.
+Revisa SOLO la frase del alumno, palabra por palabra, buscando errores reales de gramática, sintaxis y ortografía:
+- elisión: je, me, te, se, le, la, de, ne, que delante de vocal o h muda (je aime → j'aime; la école → l'école; est-ce que il → est-ce qu'il);
+- contracción: à + le → au, à + les → aux, de + le → du, de + les → des;
+- género, concordancia, acentos, conjugación y orden de las palabras.
+No corrijas el estilo ni inventes errores: si la frase es correcta, deja "errors" vacía.
 
 Campos de la salida:
 - "corrected": la frase completa ya corregida (la misma frase si es correcta).
