@@ -1,0 +1,336 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-07",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Los adjetivos",
+  "areas": ["grammar", "syntax", "spelling"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "51",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-67",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "106, 109",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-adjectif",
+      "title": "Banque de dépannage linguistique: «L'adjectif et le groupe adjectival : mode d'emploi»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24304/la-grammaire/la-grammaire-actuelle/les-classes-de-mots-et-les-groupes/ladjectif-et-le-groupe-adjectival"
+    },
+    {
+      "id": "bdl-feminin",
+      "title": "Banque de dépannage linguistique: «Formation de l'adjectif au féminin»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/25840/banque-de-depannage-linguistique/la-grammaire/ladjectif/formation-de-ladjectif-au-feminin"
+    },
+    {
+      "id": "bdl-grand-gros",
+      "title": "Banque de dépannage linguistique: «GRAND et GROS : nuances de sens»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/25193/le-vocabulaire/nuances-semantiques/difference-entre-grand-et-gros"
+    },
+    {
+      "id": "bdl-adjectifs-antepose",
+      "title": "Banque de dépannage linguistique: «Déterminant défini : répétition devant un nom précédé d'adjectifs»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24108/la-grammaire/les-determinants/determinants-definis/repetition-du-determinant-devant-un-nom-precede-de-plusieurs-adjectifs"
+    },
+    {
+      "id": "bdl-consonnes",
+      "title": "Banque de dépannage linguistique: «Consonnes finales muettes : généralités»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23737/lorthographe/problemes-lies-aux-consonnes/generalites-sur-les-consonnes-finales-muettes"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "El adjetivo es la palabra que dice cómo es algo: grande, rojo, chileno. En francés se ajusta al sustantivo que acompaña, igual que en español: toma su género (masculino o femenino) y su número (uno o varios). Para saber el género, mira la palabra que va antes: un, le → masculino; une, la → femenino. Con l' y con les no se ve, así que aprende cada sustantivo con un o une (un hôtel, une chemise). La forma del diccionario es la masculina en singular: petit. En general, para el femenino se agrega -e (petite), para el plural se agrega -s (petits) y para el femenino plural, -es (petites). Si el adjetivo ya termina en -e, en femenino queda igual: un livre rouge, une voiture rouge; en plural sí lleva -s: des voitures rouges. Algunos doblan la última consonante en femenino: bon → bonne, gentil → gentille, chilien → chilienne. Después de être pasa lo mismo: ma sœur est petite, mes voisins sont gentils.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-adjectif", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "¿Antes o después del sustantivo? Los colores y las nacionalidades van después, como en español: une voiture rouge, un pantalon bleu, une amie chilienne. Pero hay unos pocos adjetivos cortos y muy frecuentes que normalmente van antes: grand, petit, bon, jeune, joli y mauvais. Por ejemplo: une grande maison, une petite maison, un bon café, une jeune femme. Ojo: en español decimos «una casa grande», con el adjetivo después; en francés lo natural es une grande maison. Algunos cambian de sentido según el lugar, como en español: un grand homme es un gran hombre (importante), y un homme grand es un hombre alto. Hay más adjetivos que a veces van antes; los verás más adelante.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-adjectif", "bdl-grand-gros", "bdl-feminin", "bdl-adjectifs-antepose"],
+      "review": true,
+      "reviewNote": "Sin fuente para la lista como regla: solo la BDL dice que grand va «généralement devant le nom». Para petit, bon, jeune, joli y mauvais las fuentes solo dan ejemplos delante del sustantivo (Niveau A2, p. 109: Un petit livre intéressant; Inventaire, p. 62: La jeune femme; p. 65: une bonne idée; BDL: la jolie et sympathique Émilie, de mauvais souvenirs), pero ninguna dice que vayan «normalmente» antes. Mauvais no aparece en los ejemplos A1 del Inventaire."
+    }
+  ],
+  "pattern": [
+    { "label": "Concordancia", "options": ["petit", "petite", "petits", "petites"] },
+    { "label": "Ya termina en -e", "options": ["un livre rouge", "une voiture rouge", "des voitures rouges"] },
+    { "label": "Antes del sustantivo", "options": ["grand", "petit", "bon", "jeune", "joli", "mauvais"] },
+    { "label": "Después del sustantivo", "options": ["rouge", "noir", "vert", "chilien", "français"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Una casa grande",
+      "target": "Une grande maison",
+      "note": "En español grande va después y no cambia. En francés grand va normalmente antes del sustantivo, y en femenino lleva -e: une grande maison.",
+      "sourceIds": ["bdl-grand-gros", "bdl-feminin", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Una amiga chilena",
+      "target": "Une amie chilienne",
+      "note": "La nacionalidad va después, igual que en español. Lo distinto es la escritura: en femenino, chilien dobla la n: chilienne.",
+      "sourceIds": ["bdl-feminin", "bdl-adjectif", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Los autos rojos",
+      "target": "Les voitures rouges",
+      "note": "En español rojo cambia a roja. En francés rouge ya termina en -e, así que es igual en masculino y en femenino. En plural lleva -s, como en español.",
+      "sourceIds": ["bdl-feminin", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t4",
+      "source": "Es una buena idea",
+      "target": "C'est une bonne idée.",
+      "note": "Igual que en español, aquí el adjetivo va antes del sustantivo. Idée es femenino (une idée), y en femenino bon dobla la n: bonne.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "J'ai une petite maison.", "translation": "Tengo una casa pequeña.", "sourceIds": ["niveau-a2", "bdl-adjectifs-antepose"], "review": false },
+    { "id": "e2", "text": "Elle a une voiture rouge.", "translation": "Ella tiene un auto rojo.", "sourceIds": ["niveau-a2", "inventaire-f", "bdl-feminin"], "review": false },
+    { "id": "e3", "text": "Ma tante est gentille et mon oncle est drôle.", "translation": "Mi tía es amable y mi tío es divertido.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Les chemises sont vertes.", "translation": "Las camisas son verdes.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e5", "text": "J'ai une amie chilienne à Lyon.", "translation": "Tengo una amiga chilena en Lyon.", "sourceIds": ["bdl-feminin", "inventaire-f"], "review": false },
+    { "id": "e6", "text": "Anne travaille dans une grande entreprise.", "translation": "Anne trabaja en una empresa grande.", "sourceIds": ["inventaire-f"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Ma sœur est petit.",
+      "right": "Ma sœur est petite.",
+      "explanation": "Sœur es femenino (ma sœur), así que el adjetivo también: petite. Al oído ayuda: en petit la t no suena, y en petite sí.",
+      "sourceIds": ["inventaire-f", "bdl-feminin", "bdl-consonnes"],
+      "review": true,
+      "reviewNote": "Pronunciación sin fuente directa: la BDL dice que la consonante final muda del masculino se pronuncia en el femenino (chaud / chaude, blond / blonde), pero no nombra petit / petite."
+    },
+    {
+      "id": "p2",
+      "wrong": "J'ai deux chats noir.",
+      "right": "J'ai deux chats noirs.",
+      "explanation": "Chats es plural, así que el adjetivo también: noirs. Esa -s no suena, por eso es fácil olvidarla al escribir.",
+      "sourceIds": ["bdl-consonnes", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Elle a une rouge voiture.",
+      "right": "Elle a une voiture rouge.",
+      "explanation": "Los colores van después del sustantivo, como en español: une voiture rouge.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "L'hôtel est grande.",
+      "right": "L'hôtel est grand.",
+      "explanation": "En español «grande» sirve para los dos géneros, pero en francés grande es solo femenino. Hôtel es masculino (un hôtel): grand.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella tiene un auto rojo».",
+      "tiles": ["rouge", "a", "voiture", "Elle", "une"],
+      "answers": ["Elle a une voiture rouge."],
+      "rule": "Los colores van después del sustantivo: une voiture rouge.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Tengo una casa pequeña».",
+      "tiles": ["maison", "petite", "J'ai", "une"],
+      "answers": ["J'ai une petite maison.", "J'ai une maison petite."],
+      "rule": "Primero el sujeto y el verbo (J'ai), y después el artículo con el sustantivo y su adjetivo: une petite maison.",
+      "sourceIds": ["niveau-a2", "bdl-adjectifs-antepose"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Tengo dos gatos negros».",
+      "tiles": ["noirs", "chats", "J'ai", "deux"],
+      "answers": ["J'ai deux chats noirs."],
+      "rule": "El color va después del sustantivo, y como chats es plural, lleva -s: deux chats noirs.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con la forma correcta de petit: «Mi hermana es pequeña».",
+      "before": "Ma sœur est ",
+      "after": ".",
+      "answers": ["petite"],
+      "mistakes": [
+        { "answer": "petit", "explanation": "Sœur es femenino (ma sœur): el adjetivo también, petite." },
+        { "answer": "petites", "explanation": "Ma sœur es una sola persona: singular, sin -s. Petite." }
+      ],
+      "rule": "Después de être, el adjetivo toma el género y el número del sujeto: ma sœur est petite.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con la forma correcta de vert: «Las camisas son verdes». Chemise es femenino (une chemise).",
+      "before": "Les chemises sont ",
+      "after": ".",
+      "answers": ["vertes"],
+      "mistakes": [
+        { "answer": "verts", "explanation": "Chemise es femenino (une chemise): verte, y en plural, vertes." },
+        { "answer": "verte", "explanation": "Son varias camisas: falta la -s del plural, vertes." },
+        { "answer": "vert", "explanation": "Chemises es femenino y plural: vert + e + s = vertes." }
+      ],
+      "rule": "El adjetivo toma el género y el número del sustantivo: les chemises (femenino plural) → vertes.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con la forma correcta de bon: «Es una buena idea».",
+      "before": "C'est une ",
+      "after": " idée.",
+      "answers": ["bonne"],
+      "mistakes": [
+        { "answer": "bon", "explanation": "Idée es femenino (une idée): bonne." },
+        { "answer": "bone", "explanation": "En femenino, bon dobla la n: bonne." }
+      ],
+      "rule": "Bon concuerda con el sustantivo; en femenino es bonne, con doble n.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con la forma correcta de grand: «Mi hermano es alto».",
+      "before": "Mon frère est ",
+      "after": ".",
+      "answers": ["grand"],
+      "mistakes": [
+        { "answer": "grande", "explanation": "Frère es masculino (mon frère). En español «grande» sirve para los dos géneros, pero en francés grande es solo femenino: grand." },
+        { "answer": "grands", "explanation": "Mon frère es una sola persona: singular, sin -s. Grand." }
+      ],
+      "rule": "El adjetivo toma el género y el número del sujeto: mon frère (masculino singular) → grand.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Las lámparas son modernas».",
+      "wrong": "Les lampes sont moderne.",
+      "answers": ["Les lampes sont modernes."],
+      "mistakes": [
+        { "answer": "Les lampes sont moderne.", "explanation": "Lampes es plural: el adjetivo también, modernes." },
+        { "answer": "Les lampes sont modernees.", "explanation": "Moderne ya termina en -e: no se agrega otra. Solo falta la -s del plural: modernes." }
+      ],
+      "rule": "Los adjetivos que terminan en -e no cambian en femenino; en plural llevan -s: modernes.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Mis vecinos son amables». Voisin es masculino (un voisin).",
+      "wrong": "Mes voisins sont gentil.",
+      "answers": ["Mes voisins sont gentils."],
+      "mistakes": [
+        { "answer": "Mes voisins sont gentil.", "explanation": "Voisins es plural: gentils, con -s." },
+        { "answer": "Mes voisins sont gentilles.", "explanation": "Voisin es masculino (un voisin): gentils. Gentilles es el femenino plural." }
+      ],
+      "rule": "El adjetivo toma el género y el número del sujeto: mes voisins (masculino plural) → gentils.",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Tengo una amiga chilena».",
+      "wrong": "J'ai une amie chilien.",
+      "answers": ["J'ai une amie chilienne.", "Moi, j'ai une amie chilienne."],
+      "mistakes": [
+        { "answer": "J'ai une amie chilien.", "explanation": "Amie es femenino (une amie): chilienne." },
+        { "answer": "J'ai une amie chiliene.", "explanation": "En femenino, chilien dobla la n: chilienne." },
+        { "answer": "J'ai une chilienne amie.", "explanation": "La nacionalidad va después del sustantivo: une amie chilienne." }
+      ],
+      "rule": "Amie es femenino: chilien → chilienne, con doble n, y va después del sustantivo.",
+      "sourceIds": ["bdl-feminin", "bdl-adjectif", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Le muestras a un amigo francés una foto de tu familia. Describe a dos personas: cómo son.",
+      "models": [
+        "Ma sœur est petite et mon frère est grand.",
+        "Ma mère est jeune et gentille, et mon père est drôle.",
+        "Mon père est grand. Ma sœur est petite et jolie."
+      ],
+      "focus": "Être + adjetivo que concuerda con el sujeto: ma sœur est petite, mon frère est grand",
+      "sourceIds": ["inventaire-f", "bdl-feminin"],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Describe tu casa o tu pieza: cómo es y de qué color son una o dos cosas.",
+      "models": [
+        "J'ai une petite maison. La porte est rouge.",
+        "Dans ma chambre, il y a un lit bleu et une petite table.",
+        "J'habite dans une grande maison. Ma chambre est verte."
+      ],
+      "focus": "Adjetivos junto al sustantivo: colores después y petit / grand antes, con concordancia",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-feminin"],
+      "review": false
+    }
+  ]
+}
