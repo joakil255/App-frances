@@ -1160,6 +1160,21 @@ a.build-route-row[aria-current="step"] { background: var(--surface); border-colo
 
 .build-number { margin: 0; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
 
+/* Enlace de texto para volver o ver la ruta: subrayado (no solo color) y 44 px de alto para el dedo */
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  color: var(--text);
+  font: 600 var(--size-sm) var(--font-sign);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.home-build .home-build-all { margin: var(--space-2) 0 0; }
+.build-back { margin: 0 0 var(--space-2); }
+
 .build-lesson { margin-top: var(--space-5); }
 .build-title { margin: var(--space-1) 0 0; font: 600 1.5625rem/1.2 var(--font-text); overflow-wrap: anywhere; }
 .build-title:focus,
