@@ -10,6 +10,7 @@ const validEnv = {
   LOOKUP_LIMIT: '200',
   STORY_LIMIT: '5',
   SENTENCE_LIMIT: '50',
+  TRANSLATE_LIMIT: '10',
   ALLOWED_ORIGINS: 'https://joakil255.github.io,http://127.0.0.1:8000',
   ANTHROPIC_API_KEY: 'clave-de-prueba',
   ACCESS_CODE: 'codigo-de-prueba',
@@ -25,6 +26,7 @@ test('lee la configuración completa', () => {
   assert.equal(result.config.lookupLimit, 200);
   assert.equal(result.config.storyLimit, 5);
   assert.equal(result.config.sentenceLimit, 50);
+  assert.equal(result.config.translateLimit, 10);
   assert.equal(result.config.apiKey, 'clave-de-prueba');
   assert.equal(result.config.accessCode, 'codigo-de-prueba');
   assert.deepEqual(result.config.allowedOrigins, ['https://joakil255.github.io', 'http://127.0.0.1:8000']);
@@ -46,6 +48,9 @@ test('falta un secreto, una variable o el proveedor no existe → ok: false', ()
     { ...validEnv, SENTENCE_LIMIT: undefined },
     { ...validEnv, SENTENCE_LIMIT: 'cincuenta' },
     { ...validEnv, SENTENCE_LIMIT: '0' },
+    { ...validEnv, TRANSLATE_LIMIT: undefined },
+    { ...validEnv, TRANSLATE_LIMIT: 'diez' },
+    { ...validEnv, TRANSLATE_LIMIT: '0' },
   ];
   for (const env of cases) {
     assert.deepEqual(readConfig(env), { ok: false });
@@ -58,5 +63,6 @@ test('wrangler.jsonc permite 127.0.0.1 y localhost en el puerto 8000', async () 
   const origins = JSON.parse(text).vars.ALLOWED_ORIGINS.split(',');
   assert.equal(JSON.parse(text).vars.STORY_LIMIT, '5');
   assert.equal(JSON.parse(text).vars.SENTENCE_LIMIT, '50');
+  assert.equal(JSON.parse(text).vars.TRANSLATE_LIMIT, '10');
   assert.deepEqual(origins, ['https://joakil255.github.io', 'http://127.0.0.1:8000', 'http://localhost:8000']);
 });

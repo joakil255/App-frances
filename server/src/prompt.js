@@ -215,3 +215,20 @@ export const SENTENCE_SCHEMA = {
   required: ['corrected', 'errors', 'suggestion'],
   additionalProperties: false,
 };
+
+const TRANSLATE_INSTRUCTIONS = `Eres un traductor de francés a {supportLangName} para un alumno de nivel {level}. Recibirás frases francesas numeradas, una por línea.
+
+Devuelve en "translations" exactamente una traducción por frase, en el mismo orden, sin saltarte ni unir ninguna. Cada traducción es natural y fiel a su frase, en texto plano: sin números, notas, explicaciones, HTML ni Markdown.`;
+
+export function buildTranslatePrompt(level, supportLang) {
+  return TRANSLATE_INSTRUCTIONS
+    .replaceAll('{level}', level)
+    .replaceAll('{supportLangName}', SUPPORT_LANG_NAMES[supportLang] ?? SUPPORT_LANG_NAMES.es);
+}
+
+export const TRANSLATE_SCHEMA = {
+  type: 'object',
+  properties: { translations: { type: 'array', items: { type: 'string' } } },
+  required: ['translations'],
+  additionalProperties: false,
+};

@@ -29,6 +29,7 @@ function makeEnv(overrides = {}) {
     LOOKUP_LIMIT: '200',
     STORY_LIMIT: '5',
     SENTENCE_LIMIT: '50',
+    TRANSLATE_LIMIT: '10',
     ALLOWED_ORIGINS: `${ORIGIN},http://127.0.0.1:8000`,
     ANTHROPIC_API_KEY: 'clave-de-prueba',
     ACCESS_CODE: 'codigo-de-prueba',
@@ -59,6 +60,11 @@ function makeProviders(behavior) {
         return behavior(input);
       },
       async sentence(input) {
+        state.calls += 1;
+        state.received.push(input);
+        return behavior(input);
+      },
+      async translate(input) {
         state.calls += 1;
         state.received.push(input);
         return behavior(input);
@@ -451,4 +457,44 @@ test('/sentence sin SENTENCE_LIMIT → 500 config', async () => {
   const { response, body } = await run(sentenceRequest(), makeEnv({ SENTENCE_LIMIT: undefined }));
   assert.equal(response.status, 500);
   assert.deepEqual(body, { error: 'config' });
+});
+
+// --- /translate ---
+const translateBody = { lang: 'fr', level: 'A1.2', supportLang: 'es', sentences: ['Léa habite à Lyon.', 'Elle aime le café.'] };
+const translateOut = ['Léa vive en Lyon.', 'Le gusta el café.'];
+const translateRequest = (options = {}) => chatRequest({ path: '/translate', body: translateBody, ...options });
+
+test('/translate responde 200 con las traducciones y remainingTranslations; solo sube translate:', async () => {
+  const { response, body, state, env } = await run(translateRequest(), makeEnv(), makeProviders(() => translateOut));
+  assert.equal(response.status, 200);
+  assert.deepEqual(body, { translations: translateOut, remainingTranslations: 9 });
+  assert.deepEqual(state.received[0], translateBody);
+  assert.equal(env.CHAT_KV.store.get('translate:2026-11-23'), '1');
+  assert.equal(env.CHAT_KV.store.has(KEY), false);
+});
+
+test('la traducción número 11 del día → 429 translate_limit; /story y /lookup siguen', async () => {
+  const env = makeEnv({ CHAT_KV: makeKv({ 'translate:2026-11-23': '10' }) });
+  const limited = await run(translateRequest(), env, makeProviders(() => translateOut));
+  assert.equal(limited.response.status, 429);
+  assert.deepEqual(limited.body, { error: 'translate_limit' });
+  assert.equal(limited.state.calls, 0);
+  assert.equal((await run(storyRequest(), env, makeProviders(() => storyOut))).response.status, 200);
+  assert.equal((await run(chatRequest({ path: '/lookup', body: lookupBody }), env, makeProviders(() => lookupOut))).response.status, 200);
+});
+
+test('/translate con cuerpo inválido → 400 sin llamar al proveedor ni contar', async () => {
+  const { response, body, state, env } = await run(translateRequest({ body: { ...translateBody, sentences: [] } }), makeEnv(), makeProviders(() => translateOut));
+  assert.equal(response.status, 400);
+  assert.deepEqual(body, { error: 'invalid_input' });
+  assert.equal(state.calls, 0);
+  assert.equal(env.CHAT_KV.store.has('translate:2026-11-23'), false);
+});
+
+test('/translate con largo distinto → 502 bad_output; sin TRANSLATE_LIMIT → 500 config', async () => {
+  const bad = await run(translateRequest(), makeEnv(), makeProviders(() => ['solo una']));
+  assert.equal(bad.response.status, 502);
+  assert.deepEqual(bad.body, { error: 'bad_output' });
+  const { response } = await run(translateRequest(), makeEnv({ TRANSLATE_LIMIT: undefined }));
+  assert.equal(response.status, 500);
 });

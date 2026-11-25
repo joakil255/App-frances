@@ -7,11 +7,12 @@ import Anthropic, {
   RateLimitError,
 } from '@anthropic-ai/sdk';
 import { ProviderError } from '../errors.js';
-import { LOOKUP_SCHEMA, OUTPUT_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, buildSystemPrompt } from '../prompt.js';
+import { LOOKUP_SCHEMA, OUTPUT_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA, TRANSLATE_SCHEMA, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, buildSystemPrompt, buildTranslatePrompt } from '../prompt.js';
 import { normalizeOutput } from '../normalize.js';
 import { normalizeLookup } from '../lookup-normalize.js';
 import { normalizeStory } from '../story-normalize.js';
 import { normalizeSentence } from '../sentence-normalize.js';
+import { normalizeTranslation } from '../translate-normalize.js';
 
 const MAX_TOKENS = 4000;
 const SPEND_LIMIT_CODES = ['enforced_spend_limit_reached', 'contract_spend_limit_reached'];
@@ -97,5 +98,15 @@ export function createClaudeAdapter({ apiKey, model, effort, fetch, maxRetries =
     return normalizeSentence(raw, text);
   }
 
-  return { chat, lookup, story, sentence };
+  async function translate({ level, supportLang, sentences }) {
+    const content = sentences.map((text, index) => `${index + 1}. ${text}`).join('\n');
+    const raw = await requestJson({
+      system: buildTranslatePrompt(level, supportLang),
+      messages: [{ role: 'user', content }],
+      schema: TRANSLATE_SCHEMA,
+    });
+    return normalizeTranslation(raw, sentences.length);
+  }
+
+  return { chat, lookup, story, sentence, translate };
 }

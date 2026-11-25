@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClaudeAdapter } from '../src/providers/claude.js';
 import { PROVIDERS } from '../src/providers/index.js';
-import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, LOOKUP_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA } from '../src/prompt.js';
+import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, LOOKUP_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA, TRANSLATE_SCHEMA, buildTranslatePrompt } from '../src/prompt.js';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -349,4 +349,23 @@ test('sentence traduce los errores HTTP igual que chat', async () => {
   assert.equal(await sentenceCodeOf(async () => json(401, errBody('authentication_error'))), 'auth');
   assert.equal(await sentenceCodeOf(async () => json(429, errBody('rate_limit_error'))), 'rate_limit');
   assert.equal(await sentenceCodeOf(async () => json(500, errBody('api_error'))), 'unavailable');
+});
+
+test('translate envía las frases numeradas y devuelve el arreglo', async () => {
+  let sent;
+  const fetch = async (url, init) => {
+    sent = JSON.parse(init.body);
+    return json(200, textBody({ translations: ['Léa vive en Lyon.', 'Le gusta el café.'] }));
+  };
+  const result = await adapterWith(fetch).translate({ level: 'A1.2', supportLang: 'es', sentences: ['Léa habite à Lyon.', 'Elle aime le café.'] });
+  assert.deepEqual(result, ['Léa vive en Lyon.', 'Le gusta el café.']);
+  assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: TRANSLATE_SCHEMA });
+  assert.equal(sent.system, buildTranslatePrompt('A1.2', 'es'));
+  assert.ok(sent.system.includes('español') && sent.system.includes('A1.2'));
+  assert.equal(sent.messages[0].content, '1. Léa habite à Lyon.\n2. Elle aime le café.');
+});
+
+test('translate con largo distinto → bad_output', async () => {
+  const fetch = async () => json(200, textBody({ translations: ['a'] }));
+  await assert.rejects(adapterWith(fetch).translate({ level: 'A1.2', supportLang: 'es', sentences: ['a', 'b'] }), { code: 'bad_output' });
 });
