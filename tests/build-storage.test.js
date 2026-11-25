@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createBuildStore, validateBuildDoc, BUILD_KEY } from '../js/lib/build-storage.js';
+import { createBuildStore, validateBuildDoc, migrateBuildDoc, BUILD_KEY } from '../js/lib/build-storage.js';
 import { StorageError } from '../js/lib/storage.js';
 import { review } from '../js/lib/scheduler.js';
 
@@ -202,4 +202,146 @@ test('watchExternalChanges recarga con su clave o con null', async () => {
   assert.ok(store.getState().progress.l);
   await listeners[0]({ key: null });
   assert.equal(calls, 2);
+});
+
+// --- Etapa 14: lastPractice y versión 2 ---
+const stored = (backend) => JSON.parse(backend.getItem(BUILD_KEY));
+const practiceOf = (store) => store.getState().progress['fr-a1-01'].lastPractice;
+
+test('una carga vacía guarda la versión 2', async () => {
+  const { backend } = await makeStore();
+  assert.deepEqual(stored(backend), { schemaVersion: 2, progress: {}, cards: {} });
+});
+
+test('recordPractice guarda lastPractice con la fecha de hoy y lo reemplaza al repetir', async () => {
+  const { store, backend } = await makeStore();
+  attempt(store, true);
+  store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 7, total: 9, today: TODAY });
+  assert.deepEqual(practiceOf(store), { firstTry: 7, total: 9, date: TODAY });
+  store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 9, total: 9, today: '2026-11-27' });
+  assert.deepEqual(practiceOf(store), { firstTry: 9, total: 9, date: '2026-11-27' });
+  // Lo guardado es lo mismo y no toca los ejercicios
+  assert.deepEqual(stored(backend).progress['fr-a1-01'].lastPractice, { firstTry: 9, total: 9, date: '2026-11-27' });
+  assert.equal(store.getState().progress['fr-a1-01'].exercises.x3.lastCorrectAt, TODAY);
+  const again = createBuildStore(backend, { now: () => NOW });
+  assert.equal((await again.load()).corruptBackupKey, null);
+  assert.deepEqual(again.getState(), store.getState());
+});
+
+test('recordPractice en una lección sin progreso crea su entrada', async () => {
+  const { store } = await makeStore();
+  store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 0, total: 3, today: TODAY });
+  assert.deepEqual(store.getState().progress['fr-a1-01'], {
+    startedAt: TODAY, completedAt: null, exercises: {}, lastPractice: { firstTry: 0, total: 3, date: TODAY },
+  });
+});
+
+test('si recordPractice no puede guardar lanza StorageError y la memoria no cambia', async () => {
+  const { store, backend } = await makeStore();
+  store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 2, total: 3, today: TODAY });
+  const before = store.getState();
+  const saved = backend.getItem(BUILD_KEY);
+  backend.failWith = quotaError();
+  assert.throws(() => store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 3, total: 3, today: TOMORROW }),
+    (e) => e instanceof StorageError && e.code === 'quota');
+  assert.deepEqual(store.getState(), before);
+  assert.equal(backend.getItem(BUILD_KEY), saved);
+});
+
+test('recordPractice no guarda un resultado imposible (dañaría todo el progreso)', async () => {
+  const { store, backend } = await makeStore();
+  const saved = backend.getItem(BUILD_KEY);
+  for (const bad of [{ firstTry: 4, total: 3 }, { firstTry: 0, total: 0 }, { firstTry: -1, total: 3 }, { firstTry: 1.5, total: 3 }]) {
+    store.recordPractice({ lessonId: 'fr-a1-01', ...bad, today: TODAY });
+  }
+  store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 1, total: 3, today: '25/11/2026' });
+  assert.deepEqual(store.getState().progress, {});
+  assert.equal(backend.getItem(BUILD_KEY), saved);
+});
+
+const v1Doc = () => ({
+  schemaVersion: 1,
+  progress: { 'fr-a1-01': { startedAt: '2026-11-20', completedAt: '2026-11-21', exercises: { e1: { fails: 2, lastCorrectAt: '2026-11-21' } } } },
+  cards: {
+    'ex:fr-a1-01:e1': {
+      id: 'ex:fr-a1-01:e1', kind: 'exercise', lessonId: 'fr-a1-01', exerciseId: 'e1', createdAt: '2026-11-20T10:00:00.000Z',
+      introducedOn: '2026-11-20', lastReviewedAt: null,
+      sm2: { reps: 0, interval: 0, ease: 2.5, lapses: 0, due: '2026-11-21' }, leitner: { box: 0, due: '2026-11-21' },
+    },
+  },
+});
+
+test('un documento v1 se carga, se guarda como v2 y conserva progreso y tarjetas', async () => {
+  const old = v1Doc();
+  const backend = new MemoryStorage({ [BUILD_KEY]: JSON.stringify(old) });
+  const store = createBuildStore(backend, { now: () => NOW });
+  assert.deepEqual(await store.load(), { corruptBackupKey: null, migrationError: null });
+  assert.deepEqual(store.getState(), { progress: old.progress, cards: old.cards });
+  assert.deepEqual(stored(backend), { ...old, schemaVersion: 2 });
+  assert.deepEqual([...backend.data.keys()], [BUILD_KEY]); // sin copias aparte
+});
+
+test('si no se puede guardar la migración, avisa con migrationError y sigue con los datos en memoria', async () => {
+  const raw = JSON.stringify(v1Doc());
+  const backend = new MemoryStorage({ [BUILD_KEY]: raw });
+  backend.failWith = quotaError();
+  const store = createBuildStore(backend, { now: () => NOW });
+  const { corruptBackupKey, migrationError } = await store.load();
+  assert.equal(corruptBackupKey, null);
+  assert.ok(migrationError instanceof StorageError);
+  assert.equal(migrationError.code, 'quota');
+  assert.deepEqual(store.getState(), { progress: v1Doc().progress, cards: v1Doc().cards });
+  assert.equal(backend.getItem(BUILD_KEY), raw); // lo guardado sigue en v1, intacto
+  // El siguiente guardado ya escribe la versión 2 con todo
+  store.recordPractice({ lessonId: 'fr-a1-01', firstTry: 1, total: 1, today: TODAY });
+  assert.equal(stored(backend).schemaVersion, 2);
+  assert.deepEqual(stored(backend).cards, v1Doc().cards);
+});
+
+test('un documento v2 se carga sin reescribirse', async () => {
+  const doc = { ...v1Doc(), schemaVersion: 2 };
+  doc.progress['fr-a1-01'].lastPractice = { firstTry: 8, total: 10, date: TODAY };
+  const raw = JSON.stringify(doc);
+  const backend = new MemoryStorage({ [BUILD_KEY]: raw });
+  backend.failWith = quotaError(); // si intentara escribir, fallaría
+  const store = createBuildStore(backend, { now: () => NOW });
+  assert.deepEqual(await store.load(), { corruptBackupKey: null, migrationError: null });
+  assert.deepEqual(store.getState().progress['fr-a1-01'].lastPractice, { firstTry: 8, total: 10, date: TODAY });
+  assert.equal(backend.getItem(BUILD_KEY), raw);
+});
+
+test('un documento de una versión desconocida y mayor se trata como dañado', async () => {
+  const raw = JSON.stringify({ ...v1Doc(), schemaVersion: 3 });
+  const backend = new MemoryStorage({ [BUILD_KEY]: raw });
+  const store = createBuildStore(backend, { now: () => NOW });
+  const { corruptBackupKey, migrationError } = await store.load();
+  assert.equal(corruptBackupKey, `${BUILD_KEY}-corrupt-${NOW.toISOString()}`);
+  assert.equal(migrationError, null);
+  assert.equal(backend.getItem(corruptBackupKey), raw);
+  assert.deepEqual(store.getState(), { progress: {}, cards: {} });
+});
+
+test('validateBuildDoc acepta lastPractice ausente o bien formado y rechaza el resto', () => {
+  const entry = { startedAt: TODAY, completedAt: TODAY, exercises: {} };
+  const docWith = (lastPractice) => ({ progress: { l: { ...entry, lastPractice } }, cards: {} });
+  assert.equal(validateBuildDoc({ progress: { l: entry }, cards: {} }), true);
+  for (const good of [{ firstTry: 0, total: 1, date: TODAY }, { firstTry: 10, total: 10, date: TODAY }, { firstTry: 3, total: 500, date: '2026-01-31' }]) {
+    assert.equal(validateBuildDoc(docWith(good)), true, JSON.stringify(good));
+  }
+  const bad = [
+    null, 5, 'x', [], {}, { firstTry: 11, total: 10, date: TODAY }, { firstTry: 0, total: 0, date: TODAY },
+    { firstTry: 1, total: 3, date: '25/11/2026' }, { firstTry: 1, total: 3, date: '2026-13-01' }, { firstTry: 1, total: 3, date: '2026-02-30' },
+    { firstTry: 1, total: 3, date: null }, { firstTry: -1, total: 3, date: TODAY }, { firstTry: 1.5, total: 3, date: TODAY },
+    { firstTry: '1', total: 3, date: TODAY }, { firstTry: 1, total: 3 }, { total: 3, date: TODAY },
+  ];
+  for (const lastPractice of bad) assert.equal(validateBuildDoc(docWith(lastPractice)), false, JSON.stringify(lastPractice));
+});
+
+test('migrateBuildDoc devuelve la versión 2 sin otros cambios y sin tocar el original', () => {
+  const old = v1Doc();
+  const copyOfOld = structuredClone(old);
+  assert.deepEqual(migrateBuildDoc(old), { ...copyOfOld, schemaVersion: 2 });
+  assert.deepEqual(old, copyOfOld);
+  // La parte de una copia de seguridad v4 no trae schemaVersion
+  assert.deepEqual(migrateBuildDoc({ progress: {}, cards: {} }), { schemaVersion: 2, progress: {}, cards: {} });
 });

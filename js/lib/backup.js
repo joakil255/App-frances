@@ -7,16 +7,16 @@ import { STORAGE_KEY, toStorageError } from './storage.js';
 import { STUDY_KEY, validateSettings } from './study-storage.js';
 import { cardIdOf } from './scheduler.js';
 import { TEXTS_KEY, validateText } from './texts.js';
-import { BUILD_KEY, validateBuildDoc } from './build-storage.js';
+import { BUILD_KEY, validateBuildDoc, migrateBuildDoc } from './build-storage.js';
 
 export const BACKUP_FORMAT = 'app-frances-copia';
-export const BACKUP_VERSION = 4;
+export const BACKUP_VERSION = 5;
 export const MAX_BACKUP_BYTES = 10 * 1024 * 1024;
 const WORDS_FORMAT = 'app-frances-vocabulario';
 const SCHEMA_VERSION = 2; // palabras con lang y lemma
 const STUDY_SCHEMA_VERSION = 1;
 const TEXTS_SCHEMA_VERSION = 1;
-const BUILD_SCHEMA_VERSION = 1;
+const BUILD_SCHEMA_VERSION = 2; // con lastPractice
 
 const DIRECTIONS = ['fr-es', 'es-fr'];
 
@@ -106,15 +106,17 @@ export function readBackup(text) {
   if (isObject(data) && data.format === WORDS_FORMAT) return failed(BACKUP_ERRORS.wordList);
   if (!isObject(data) || data.format !== BACKUP_FORMAT) return failed(BACKUP_ERRORS.notBackup);
   if (isNumber(data.version) && data.version > BACKUP_VERSION) return failed(BACKUP_ERRORS.newer);
-  // Se leen la versión 1 (sin lang ni lemma), la 2 (sin historias), la 3 (sin frases) y la 4
-  if (![1, 2, 3, BACKUP_VERSION].includes(data.version) || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
+  // Se leen la versión 1 (sin lang ni lemma), la 2 (sin historias), la 3 (sin frases), la 4 (frases v1) y la 5
+  if (![1, 2, 3, 4, BACKUP_VERSION].includes(data.version) || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
     || !validWords(data.words) || !validStudy(data.study)
-    || (data.version >= 3 && !validTexts(data.texts)) || (data.version === BACKUP_VERSION && !validateBuildDoc(data.build))) {
+    || (data.version >= 3 && !validTexts(data.texts)) || (data.version >= 4 && !validateBuildDoc(data.build))) {
     return failed(BACKUP_ERRORS.damaged);
   }
   const { cards, history, settings } = data.study;
   const texts = data.version >= 3 ? data.texts : null; // null = la copia no traía historias
-  const build = data.version === BACKUP_VERSION ? { progress: data.build.progress, cards: data.build.cards } : null; // null = sin frases
+  // null = sin frases; las de una v4 se pasan a la versión 2 (no cambia ningún dato)
+  const buildDoc = data.version === 4 ? migrateBuildDoc(data.build) : data.build;
+  const build = data.version >= 4 ? { progress: buildDoc.progress, cards: buildDoc.cards } : null;
   return {
     fatal: null,
     // lang y lemma se recalculan siempre: no se confía en lo que traiga el archivo

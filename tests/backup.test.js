@@ -9,7 +9,7 @@ import { newCard, review, cardIdOf } from '../js/lib/scheduler.js';
 import { buildQueue } from '../js/lib/queue.js';
 import { lemmaOf } from '../js/lib/words.js';
 import { TEXTS_KEY, GENERATED_SOURCE } from '../js/lib/texts.js';
-import { BUILD_KEY } from '../js/lib/build-storage.js';
+import { BUILD_KEY, createBuildStore } from '../js/lib/build-storage.js';
 
 // localStorage en memoria; failOn hace fallar la próxima escritura de esa clave
 class MemoryStorage {
@@ -66,7 +66,7 @@ const backupOf = ({ wordStore, studyStore }) => {
 
 test('constantes de la copia', () => {
   assert.equal(BACKUP_FORMAT, 'app-frances-copia');
-  assert.equal(BACKUP_VERSION, 4);
+  assert.equal(BACKUP_VERSION, 5);
   assert.equal(MAX_BACKUP_BYTES, 10 * 1024 * 1024);
 });
 
@@ -95,7 +95,7 @@ test('el archivo tiene formato, versión, fecha y sangría de 2 espacios', async
   const text = backupOf(await sampleStores());
   const data = JSON.parse(text);
   assert.equal(data.format, 'app-frances-copia');
-  assert.equal(data.version, 4);
+  assert.equal(data.version, 5);
   assert.equal(data.createdAt, AT);
   assert.ok(text.endsWith('\n') && text.includes('\n  "format"'));
   assert.deepEqual(Object.keys(data.study).sort(), ['cards', 'history', 'settings']);
@@ -120,7 +120,7 @@ test('archivos que no son una copia válida se rechazan con su motivo', async ()
     'Este archivo es una lista de palabras: impórtalo en Palabras con «Importar».');
   assert.equal(readBackup(JSON.stringify({ format: 'otra-app' })).fatal, 'Este archivo no es una copia de seguridad de la app.');
   assert.equal(readBackup('null').fatal, 'Este archivo no es una copia de seguridad de la app.');
-  assert.equal((await mutate((d) => { d.version = 5; })).fatal,
+  assert.equal((await mutate((d) => { d.version = 6; })).fatal,
     'La copia es de una versión más nueva de la app. Actualiza la app y vuelve a intentarlo.');
   const bad = readBackup('esto no es JSON');
   assert.equal(bad.backup, null);
@@ -248,9 +248,9 @@ async function v1Backup() {
   return data;
 }
 
-test('buildBackup escribe version 4 y palabras con lang y lemma', async () => {
+test('buildBackup escribe version 5 y palabras con lang y lemma', async () => {
   const data = JSON.parse(backupOf(await sampleStores()));
-  assert.equal(data.version, 4);
+  assert.equal(data.version, 5);
   for (const word of data.words) {
     assert.equal(word.lang, 'fr');
     assert.equal(word.lemma, lemmaOf(word.fr, word.gender));
@@ -328,20 +328,20 @@ const makeStory = (over = {}) => ({
   updatedAt: AT,
   ...over,
 });
-const v4Data = async (texts = [makeStory(), makeStory({ id: 't2', title: "L'été à la mer" })]) => JSON.parse(buildBackup({
+const v5Data = async (texts = [makeStory(), makeStory({ id: 't2', title: "L'été à la mer" })]) => JSON.parse(buildBackup({
   words: (await sampleStores()).wordStore.getWords(), study: emptyStudy, texts, now: NOW,
 }));
 
-test('buildBackup v4 incluye las historias', async () => {
-  const data = await v4Data();
-  assert.equal(data.version, 4);
+test('buildBackup v5 incluye las historias', async () => {
+  const data = await v5Data();
+  assert.equal(data.version, 5);
   assert.equal(data.texts.length, 2);
   assert.equal(data.texts[1].title, "L'été à la mer");
 });
 
 test('readBackup lee v1 y v2 con texts y build null (no traían historias ni frases)', async () => {
   for (const version of [1, 2]) {
-    const data = await v4Data();
+    const data = await v5Data();
     data.version = version;
     delete data.texts;
     delete data.build;
@@ -354,15 +354,15 @@ test('readBackup lee v1 y v2 con texts y build null (no traían historias ni fra
   }
 });
 
-test('readBackup lee v4 con historias y las cuenta', async () => {
-  const read = readBackup(JSON.stringify(await v4Data()));
+test('readBackup lee v5 con historias y las cuenta', async () => {
+  const read = readBackup(JSON.stringify(await v5Data()));
   assert.equal(read.fatal, null);
   assert.equal(read.backup.texts.length, 2);
   assert.equal(read.summary.texts, 2);
-  assert.equal(readBackup(JSON.stringify(await v4Data([]))).backup.texts.length, 0);
+  assert.equal(readBackup(JSON.stringify(await v5Data([]))).backup.texts.length, 0);
 });
 
-test('v4 con historias inválidas o sin historias está dañada; v5 es más nueva', async () => {
+test('v5 con historias inválidas o sin historias está dañada; v6 es más nueva', async () => {
   const cases = {
     'sin texts': (d) => { delete d.texts; },
     'texts no es lista': (d) => { d.texts = {}; },
@@ -373,16 +373,16 @@ test('v4 con historias inválidas o sin historias está dañada; v5 es más nuev
     'elemento que no es objeto': (d) => { d.texts[0] = 5; },
   };
   for (const [name, change] of Object.entries(cases)) {
-    const data = await v4Data();
+    const data = await v5Data();
     change(data);
     assert.equal(readBackup(JSON.stringify(data)).fatal, DAMAGED, name);
   }
-  const data = await v4Data();
-  data.version = 5;
+  const data = await v5Data();
+  data.version = 6;
   assert.match(readBackup(JSON.stringify(data)).fatal, /más nueva/);
 });
 
-test('restaurar una v4 reemplaza palabras, progreso e historias, con ida y vuelta idéntica', async () => {
+test('restaurar una v5 reemplaza palabras, progreso e historias, con ida y vuelta idéntica', async () => {
   const texts = [makeStory(), makeStory({ id: 't2', title: "L'été à la mer" })];
   const original = await sampleStores();
   const { cards, history, settings: s } = original.studyStore.getState();
@@ -396,7 +396,7 @@ test('restaurar una v4 reemplaza palabras, progreso e historias, con ida y vuelt
 });
 
 test('restaurar una copia sin historias no toca las historias guardadas', async () => {
-  const data = await v4Data();
+  const data = await v5Data();
   data.version = 2;
   delete data.texts;
   delete data.build;
@@ -411,7 +411,7 @@ test('restaurar una copia sin historias no toca las historias guardadas', async 
 });
 
 test('si falla escribir las historias, se deshacen palabras y progreso (con datos previos o sin ellos)', async () => {
-  const { backup } = readBackup(JSON.stringify(await v4Data()));
+  const { backup } = readBackup(JSON.stringify(await v5Data()));
   const previous = await sampleStores();
   const before = { words: previous.backend.getItem(STORAGE_KEY), study: previous.backend.getItem(STUDY_KEY) };
   previous.backend.setItem(TEXTS_KEY, '{"schemaVersion":1,"texts":[]}');
@@ -427,8 +427,8 @@ test('si falla escribir las historias, se deshacen palabras y progreso (con dato
   assert.deepEqual([...fresh.data.keys()], []);
 });
 
-test('si falla escribir el progreso en una v4, las historias no se tocan y las palabras se deshacen', async () => {
-  const { backup } = readBackup(JSON.stringify(await v4Data()));
+test('si falla escribir el progreso en una v5, las historias no se tocan y las palabras se deshacen', async () => {
+  const { backup } = readBackup(JSON.stringify(await v5Data()));
   const backend = new MemoryStorage({});
   backend.failOn = STUDY_KEY;
   assert.throws(() => restoreBackup(backend, backup), StorageError);
@@ -463,27 +463,27 @@ const sampleBuild = () => ({
     },
   },
 });
-const v4WithBuild = async (build = sampleBuild()) => JSON.parse(buildBackup({
+const v5WithBuild = async (build = sampleBuild()) => JSON.parse(buildBackup({
   words: [], study: emptyStudy, texts: [], build, now: NOW,
 }));
 
-test('v4 guarda las frases y la ida y vuelta es idéntica', async () => {
+test('v5 guarda las frases y la ida y vuelta es idéntica', async () => {
   const build = sampleBuild();
-  const data = await v4WithBuild(build);
-  assert.equal(data.version, 4);
+  const data = await v5WithBuild(build);
+  assert.equal(data.version, 5);
   assert.deepEqual(data.build, build);
   const read = readBackup(JSON.stringify(data));
   assert.equal(read.fatal, null);
   assert.deepEqual(read.backup.build, build);
   const backend = new MemoryStorage({});
   restoreBackup(backend, read.backup);
-  assert.deepEqual(JSON.parse(backend.getItem(BUILD_KEY)), { schemaVersion: 1, ...build });
+  assert.deepEqual(JSON.parse(backend.getItem(BUILD_KEY)), { schemaVersion: 2, ...build });
   const again = readBackup(buildBackup({ words: [], study: emptyStudy, texts: [], build: JSON.parse(backend.getItem(BUILD_KEY)), now: NOW }));
   assert.deepEqual(again.backup.build, build);
 });
 
 test('una v3 se lee con build null y restaurarla deja intacto app-frances-build', async () => {
-  const data = await v4WithBuild();
+  const data = await v5WithBuild();
   data.version = 3;
   delete data.build;
   const read = readBackup(JSON.stringify(data));
@@ -499,7 +499,7 @@ test('una v3 se lee con build null y restaurarla deja intacto app-frances-build'
   assert.equal(empty.getItem(BUILD_KEY), null);
 });
 
-test('una v4 con frases inválidas o sin ellas está dañada', async () => {
+test('una v4 o una v5 con frases inválidas o sin ellas está dañada', async () => {
   const cases = {
     'sin build': (d) => { delete d.build; },
     'build no es objeto': (d) => { d.build = []; },
@@ -510,15 +510,24 @@ test('una v4 con frases inválidas o sin ellas está dañada', async () => {
       d.build.cards['own:1'] = { id: 'own:1', kind: 'own', situation: 's', original: 'a', corrected: 'b', errors: [null], createdAt, introducedOn: null, lastReviewedAt: null, sm2, leitner };
     },
   };
-  for (const [name, change] of Object.entries(cases)) {
-    const data = await v4WithBuild();
-    change(data);
-    assert.equal(readBackup(JSON.stringify(data)).fatal, DAMAGED, name);
+  for (const version of [4, 5]) {
+    for (const [name, change] of Object.entries(cases)) {
+      const data = await v5WithBuild();
+      data.version = version;
+      change(data);
+      assert.equal(readBackup(JSON.stringify(data)).fatal, DAMAGED, `v${version}: ${name}`);
+    }
+  }
+  // El resultado de la última práctica también se valida
+  for (const lastPractice of [{ firstTry: 4, total: 3, date: TODAY }, { firstTry: 0, total: 0, date: TODAY }, { firstTry: 1, total: 3, date: '25/11/2026' }]) {
+    const data = await v5WithBuild();
+    data.build.progress['fr-a1-01'].lastPractice = lastPractice;
+    assert.equal(readBackup(JSON.stringify(data)).fatal, DAMAGED, JSON.stringify(lastPractice));
   }
 });
 
 test('si falla escribir las frases, se deshacen las cuatro claves', async () => {
-  const { backup } = readBackup(JSON.stringify(await v4WithBuild()));
+  const { backup } = readBackup(JSON.stringify(await v5WithBuild()));
   const previous = await sampleStores();
   const old = { words: previous.backend.getItem(STORAGE_KEY), study: previous.backend.getItem(STUDY_KEY) };
   previous.backend.setItem(TEXTS_KEY, '{"schemaVersion":1,"texts":[]}');
@@ -533,4 +542,75 @@ test('si falla escribir las frases, se deshacen las cuatro claves', async () => 
   fresh.failOn = BUILD_KEY;
   assert.throws(() => restoreBackup(fresh, backup), StorageError);
   assert.deepEqual([...fresh.data.keys()], []);
+});
+
+// --- Etapa 14: copia v5 con el resultado de la última práctica y lectura de copias v4 ---
+const buildWithPractice = () => {
+  const build = sampleBuild();
+  build.progress['fr-a1-01'].completedAt = '2026-05-03';
+  build.progress['fr-a1-01'].lastPractice = { firstTry: 8, total: 10, date: '2026-05-03' };
+  build.progress['fr-a1-02'] = { startedAt: '2026-05-04', completedAt: null, exercises: {} };
+  return build;
+};
+
+test('una v5 hace ida y vuelta con lastPractice y se restaura como schemaVersion 2', async () => {
+  const build = buildWithPractice();
+  const data = await v5WithBuild(build);
+  assert.equal(data.version, 5);
+  assert.deepEqual(data.build.progress['fr-a1-01'].lastPractice, { firstTry: 8, total: 10, date: '2026-05-03' });
+  const read = readBackup(JSON.stringify(data));
+  assert.equal(read.fatal, null);
+  assert.deepEqual(read.backup.build, build);
+  const backend = new MemoryStorage({});
+  restoreBackup(backend, read.backup);
+  assert.deepEqual(JSON.parse(backend.getItem(BUILD_KEY)), { schemaVersion: 2, ...build });
+  // El almacén lo carga tal cual, sin migrar ni dar por dañado
+  const store = createBuildStore(backend, { now: () => NOW });
+  assert.deepEqual(await store.load(), { corruptBackupKey: null, migrationError: null });
+  assert.deepEqual(store.getState(), build);
+});
+
+test('una v4 hecha antes de la Etapa 14 se lee y su build queda en v2 sin perder nada', async () => {
+  const data = await v5WithBuild();
+  data.version = 4; // así la escribía la app: build v1, sin lastPractice
+  const read = readBackup(JSON.stringify(data));
+  assert.equal(read.fatal, null);
+  assert.deepEqual(read.backup.build, sampleBuild());
+  assert.deepEqual(read.backup.texts, []);
+  const backend = new MemoryStorage({});
+  backend.setItem(BUILD_KEY, JSON.stringify({ schemaVersion: 2, ...buildWithPractice() }));
+  restoreBackup(backend, read.backup);
+  assert.deepEqual(JSON.parse(backend.getItem(BUILD_KEY)), { schemaVersion: 2, ...sampleBuild() });
+  const store = createBuildStore(backend, { now: () => NOW });
+  assert.deepEqual(await store.load(), { corruptBackupKey: null, migrationError: null });
+  assert.deepEqual(store.getState(), sampleBuild());
+  // Y la ventana de restaurar avisa de que se reemplazan las frases
+  assert.match(restoreWarning(read.backup), /tus historias y tus frases\./);
+});
+
+test('el aviso de restaurar nombra las frases en una v4 y en una v5', async () => {
+  for (const version of [4, 5]) {
+    const data = await v5WithBuild();
+    data.version = version;
+    assert.equal(restoreWarning(readBackup(JSON.stringify(data)).backup),
+      'Se reemplazarán tus palabras, tu progreso, tus historias y tus frases. No se puede deshacer. Si quieres conservarlos, guarda antes una copia.',
+      `v${version}`);
+  }
+});
+
+test('si falla escribir las frases de una v4, se deshacen las cuatro claves', async () => {
+  const data = await v5WithBuild();
+  data.version = 4;
+  const { backup } = readBackup(JSON.stringify(data));
+  const previous = await sampleStores();
+  const old = { words: previous.backend.getItem(STORAGE_KEY), study: previous.backend.getItem(STUDY_KEY) };
+  const mineBuild = JSON.stringify({ schemaVersion: 2, ...buildWithPractice() });
+  previous.backend.setItem(TEXTS_KEY, '{"schemaVersion":1,"texts":[]}');
+  previous.backend.setItem(BUILD_KEY, mineBuild);
+  previous.backend.failOn = BUILD_KEY;
+  assert.throws(() => restoreBackup(previous.backend, backup), StorageError);
+  assert.equal(previous.backend.getItem(STORAGE_KEY), old.words);
+  assert.equal(previous.backend.getItem(STUDY_KEY), old.study);
+  assert.equal(previous.backend.getItem(TEXTS_KEY), '{"schemaVersion":1,"texts":[]}');
+  assert.equal(previous.backend.getItem(BUILD_KEY), mineBuild);
 });
