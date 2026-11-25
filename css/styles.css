@@ -729,6 +729,20 @@ main {
 .backup .study-actions { margin-top: 0; }
 .restore-text { white-space: pre-line; }
 
+/* --- Inicio: tarjeta «Construir frases» (DESIGN.md, Etapa 12): una correspondencia a la línea turquesa --- */
+.home-build {
+  margin-top: var(--space-6);
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  background: var(--surface);
+  border: 2px solid var(--divider);
+  border-left: 8px solid var(--line);
+  border-radius: var(--radius);
+}
+.home-build-title { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); }
+.home-build p { margin: 0 0 var(--space-3); overflow-wrap: anywhere; }
+#home-build-next { font-weight: 600; }
+.home-build .study-actions { margin-top: 0; }
+
 /* --- Conversar (DESIGN.md, Etapa 8) --- */
 /* Texto solo para lectores de pantalla */
 .visually-hidden {
@@ -1086,11 +1100,13 @@ p.word-card-es { color: var(--text-muted); }
 .build-title:focus,
 .build-prompt:focus,
 .build-done:focus,
-#build-verdict:focus { outline: none; } /* reciben el foco para que se lean; no son interactivos */
+#build-verdict:focus,
+#build-free-verdict:focus { outline: none; } /* reciben el foco para que se lean; no son interactivos */
 /* Que la barra de abajo no tape lo que recibe el foco */
 #screen-build [tabindex="-1"],
 #screen-build button,
-#screen-build input { scroll-margin: var(--space-4) 0 calc(var(--nav-height) + var(--space-4)); }
+#screen-build input,
+#screen-build textarea { scroll-margin: var(--space-4) 0 calc(var(--nav-height) + var(--space-4)); }
 .build-part { margin-top: var(--space-6); }
 .build-heading { margin: 0 0 var(--space-3); font: 700 1.25rem/1.2 var(--font-sign); }
 .build-part p { overflow-wrap: anywhere; }
@@ -1186,6 +1202,40 @@ p.word-card-es { color: var(--text-muted); }
   font-weight: 700;
 }
 .build-diff-extra span[lang] { text-decoration: line-through; }
+/* Frase libre: la situación en su propia tarjeta, después de los ejercicios */
+.build-free { margin-top: var(--space-4); }
+.field textarea#build-free-answer { font-size: 1.1rem; }
+.build-free-help { margin: var(--space-1) 0 0; }
+.build-feedback.is-info { border-left-color: var(--plaque); } /* sin conexión: ni bien ni mal */
+.build-feedback.is-info .quiz-feedback-title { color: var(--text); }
+/* Cada error es una estación sobre la vía turquesa: original → corregido y, debajo, tipo y explicación */
+.build-free-errors { margin: var(--space-3) 0; padding: 0 0 0 var(--space-3); list-style: none; border-left: 4px solid var(--line); }
+.build-free-error { padding: var(--space-1) 0 var(--space-2); }
+.build-free-error .build-fix { margin: 0 0 var(--space-1); }
+.build-kind { font: 700 var(--size-sm) var(--font-sign); }
+.build-free-explanation { color: var(--text-muted); font-size: var(--size-sm); }
+/* La sugerencia va aparte (raya discontinua): no es un error */
+.build-suggestion { margin: var(--space-3) 0; padding: var(--space-3); border: 2px dashed var(--field-border); border-radius: var(--radius); }
+.build-feedback .build-suggestion p:last-child { margin-bottom: 0; }
+.build-suggestion-title,
+.build-models-title { margin: 0 0 var(--space-1); font: 700 var(--size-base) var(--font-sign); }
+.build-models { margin-top: var(--space-3); }
+.build-models-list { margin: 0; padding-left: var(--space-5); }
+.build-models-list li { margin-bottom: var(--space-1); overflow-wrap: anywhere; }
+
+/* Repaso: «Repasar (N)» sobre la lista; el vacío y el fin como el fin de la práctica */
+.build-review-start { margin: var(--space-5) 0 0; }
+.build-review { margin-top: var(--space-5); }
+/* «Revisando…» y «Repasar (0)»: desactivados con aria-disabled, como «Escribiendo…» en Leer */
+#build-free-check[aria-disabled="true"],
+#build-review-start[aria-disabled="true"],
+#home-build-review[aria-disabled="true"] {
+  background: var(--surface);
+  color: var(--text-muted);
+  border-color: var(--divider);
+  cursor: default;
+}
+
 .build-status:empty { display: none; }
 .build-status {
   margin: var(--space-3) 0 0;

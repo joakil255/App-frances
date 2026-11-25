@@ -546,3 +546,57 @@ test('la fila de acentos tiene un botón por letra con su nombre «Insertar …�
     assert.match(build, new RegExp(`<button type="button" [^>]*data-letter="${letter}" aria-label="Insertar ${letter}"[^>]*>${letter}</button>`));
   }
 });
+
+// --- Frase libre, repaso e Inicio (Etapa 12, Tarea 11) ---
+test('la situación tiene un campo de varias líneas en francés, sin autocorrección y con su etiqueta', () => {
+  const field = tagWithId(build, 'build-free-answer');
+  assert.ok(field, 'falta #build-free-answer');
+  assert.ok(field.startsWith('<textarea '), '#build-free-answer no es un <textarea>');
+  for (const attr of ['lang="fr"', 'autocomplete="off"', 'autocorrect="off"', 'autocapitalize="off"', 'spellcheck="false"', 'aria-describedby="build-free-help"']) {
+    assert.ok(field.includes(attr), `#build-free-answer sin ${attr}`);
+  }
+  assert.ok(hasLabelFor('build-free-answer'), 'falta label de build-free-answer');
+  assert.match(build, /<p id="build-free-help" [^>]*>Si tu frase no coincide con un modelo, se envía a Claude \(Anthropic\) para corregirla\.<\/p>/);
+});
+
+test('la situación tiene su enunciado, Comprobar, el resultado enfocable y los recuadros', () => {
+  assert.ok(tagWithId(build, 'build-free-count'), 'falta #build-free-count');
+  assert.ok(tagWithId(build, 'build-free-situation'), 'falta #build-free-situation');
+  assert.match(build, /<button type="button" [^>]*id="build-free-check"[^>]*>Comprobar<\/button>/);
+  assert.match(build, /<button type="button" [^>]*id="build-free-next"[^>]*hidden>Siguiente<\/button>/);
+  assert.match(build, /<p id="build-free-verdict" [^>]*tabindex="-1"[^>]*><\/p>/);
+  assert.match(build, /id="build-free-errors"/);
+  assert.match(build, /<p class="build-suggestion-title">Sugerencia<\/p>/);
+  assert.match(build, /<p class="build-models-title">Respuestas modelo<\/p>/);
+  assert.match(build, /<ul id="build-free-models" [^>]*lang="fr"[^>]*><\/ul>/);
+  assert.match(build, /<div id="build-free-error" class="notice" role="alert" hidden><\/div>/);
+  const status = tagWithId(build, 'build-free-status');
+  assert.ok(status?.includes('role="status"'), '#build-free-status sin role="status"');
+});
+
+test('el repaso tiene «Repasar», el vacío, el fin y el botón «Quitar del repaso»', () => {
+  assert.match(build, /<button type="button" [^>]*id="build-review-start"[^>]*>Repasar \(0\)<\/button>/);
+  assert.match(build, /<p id="build-review-empty" [^>]*tabindex="-1"[^>]*>No tienes nada que repasar hoy\. Los ejercicios que falles 2 veces aparecerán aquí\.<\/p>/);
+  assert.match(build, /<p id="build-review-done" [^>]*tabindex="-1"[^>]*>Terminaste el repaso\.<\/p>/);
+  assert.match(build, /<button type="button" [^>]*id="build-remove"[^>]*hidden>Quitar del repaso<\/button>/);
+});
+
+test('la ventana de quitar una frase del repaso pide confirmación', () => {
+  const dialog = html.match(/<dialog id="build-confirm-remove" class="dialog" aria-labelledby="build-remove-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta <dialog id="build-confirm-remove">');
+  assert.match(dialog, /<h2 id="build-remove-title" class="dialog-title">¿Quitar esta frase de tu repaso\?<\/h2>/);
+  assert.match(dialog, /<p>No se puede deshacer\.<\/p>/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Quitar<\/button>/);
+});
+
+test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la copia de seguridad', () => {
+  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
+  assert.ok(card, 'falta la tarjeta .home-build');
+  assert.match(card, /<h2 [^>]*>[\s\S]*Construir frases<\/h2>/);
+  assert.ok(tagWithId(card, 'home-build-next'), 'falta #home-build-next');
+  assert.match(card, /<p id="home-build-due"[^>]*>Repaso: 0 pendientes hoy<\/p>/);
+  assert.match(card, /<button type="button" class="button button-primary" id="home-build-continue">Seguir lección<\/button>/);
+  assert.match(card, /<button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar \(0\)<\/button>/);
+  assert.ok(home.indexOf('home-build') < home.indexOf('Copia de seguridad'), 'la tarjeta va sobre la copia de seguridad');
+});

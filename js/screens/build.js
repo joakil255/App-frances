@@ -1,8 +1,11 @@
-// Pantalla «Construir frases»: lista de lecciones, lección y práctica de ejercicios cerrados.
-// Todo el texto de las lecciones se pinta con textContent.
+// Pantalla «Construir frases»: lista de lecciones, lección, práctica de ejercicios cerrados
+// y repaso (#/construir/repaso), que usa la misma tarjeta. La frase libre está en build-free.js.
+// Todo el texto de las lecciones y de Claude se pinta con textContent.
 import { checkExercise, createTileBoard } from '../lib/sentence-check.js';
 import { insertAt } from '../lib/exercise-ui.js';
-import { lessonStatus } from '../lib/build-review.js';
+import { lessonStatus, buildReviewQueue } from '../lib/build-review.js';
+import { findExercise } from '../lib/lessons.js';
+import { initFreeSentence } from './build-free.js';
 import { localDate } from '../lib/dates.js';
 import { RATES, speak, loadVoices, pickFrenchVoice } from '../lib/speech.js';
 import { MESSAGES, storageMessage } from '../lib/messages.js';
@@ -42,10 +45,26 @@ function reviewNote(item) {
   ])];
 }
 
-export function initBuild({ buildStore, studyStore, lessons, synth, now = () => new Date() }) {
+// La tarjeta propia del repaso es un ejercicio «fix» hecho con la corrección de Claude
+function ownExercise(card) {
+  return {
+    id: card.id, type: 'fix', prompt: 'Corrige tu frase', wrong: card.original, answers: [card.corrected], mistakes: [],
+    rule: card.errors.map((error) => error.explanation).join(' '),
+    review: true, reviewNote: 'La corrección es de Claude.',
+  };
+}
+
+export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnline, hostname, getCode, now = () => new Date() }) {
   const heading = $('#screen-build h1');
   const notice = $('#build-notice');
+  const indexEl = $('#build-index');
   const list = $('#build-list');
+  const reviewStart = $('#build-review-start');
+  const reviewEl = $('#build-review');
+  const reviewEmpty = $('#build-review-empty');
+  const reviewDone = $('#build-review-done');
+  const removeButton = $('#build-remove');
+  const removeDialog = $('#build-confirm-remove');
   const lessonEl = $('#build-lesson');
   const titleEl = $('#build-title');
   const startButton = $('#build-start');
@@ -74,7 +93,12 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
   const nextButton = $('#build-next');
 
   let lesson = null; // la lección abierta
-  let practice = null; // { queue, index, requeued, board, expected, checked }
+  // { review, queue: [{ exercise, cardId }], index, requeued, board, expected, checked }; review = repaso
+  let practice = null;
+  const free = initFreeSentence({ buildStore, studyStore, fetch, isOnline, hostname, getCode, now, focusOn });
+  const algorithm = () => studyStore.getState().settings.algorithm;
+  const today = () => localDate(now());
+  const dueQueue = () => buildReviewQueue({ cards: buildStore.getState().cards, lessons: lessons ?? [], algorithm: algorithm(), today: today() });
   let utterance = null; // se guarda hasta que termine (Chrome pierde onend si se recoge)
 
   // --- Avisos ---
@@ -133,7 +157,14 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
   }
   function renderList() {
     list.replaceChildren(...(lessons ?? []).map((entry, i) => itemNode(entry, i + 1)));
+    const due = dueQueue().length;
+    reviewStart.textContent = `Repasar (${due})`;
+    if (due === 0) reviewStart.setAttribute('aria-disabled', 'true');
+    else reviewStart.removeAttribute('aria-disabled');
   }
+  reviewStart.addEventListener('click', () => {
+    if (reviewStart.getAttribute('aria-disabled') !== 'true') location.hash = '#/construir/repaso';
+  });
 
   // --- Lección ---
   function listenButton(text, describedBy) {
@@ -181,8 +212,10 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
     $('#build-sources').replaceChildren(...lesson.sources.map(sourceNode));
   }
 
-  // --- Práctica ---
-  const current = () => practice.queue[practice.index];
+  // --- Práctica y repaso ---
+  const currentItem = () => practice.queue[practice.index];
+  const current = () => currentItem().exercise;
+  const keyOf = (item) => item.cardId ?? item.exercise.id;
 
   function tileItem(item, onClick) {
     const button = el('button', { className: 'build-tile', text: item.text, attrs: { type: 'button' } });
@@ -234,7 +267,8 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
   function showExercise() {
     const ex = current();
     practice.checked = false;
-    countEl.textContent = `Ejercicio ${practice.index + 1}/${practice.queue.length}`;
+    countEl.textContent = `${practice.review ? 'Repaso:' : 'Ejercicio'} ${practice.index + 1}/${practice.queue.length}`;
+    removeButton.hidden = !currentItem().cardId?.startsWith('own:'); // solo las frases propias se quitan
     exReview.hidden = !ex.review;
     exReviewNote.hidden = !ex.review;
     exReviewNote.textContent = ex.review ? ex.reviewNote : '';
@@ -260,7 +294,8 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
 
   function startPractice() {
     stopVoice();
-    practice = { queue: [...lesson.exercises], index: 0, requeued: new Set(), board: null, checked: false, expected: '' };
+    free.hide();
+    practice = { review: false, queue: lesson.exercises.map((exercise) => ({ exercise, cardId: null })), index: 0, requeued: new Set(), board: null, checked: false, expected: '' };
     startButton.hidden = true;
     doneEl.hidden = true;
     card.hidden = false;
@@ -281,14 +316,18 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
     });
   }
 
-  // Guarda el intento; si no se puede, avisa y la práctica sigue sin guardar
+  // Guarda el intento (o la respuesta del repaso); si no se puede, avisa y la práctica sigue sin guardar
   function record(ex, correct) {
-    const today = localDate(now());
+    const day = today();
     try {
-      const { cardCreated } = buildStore.recordAttempt({ lessonId: lesson.id, exerciseId: ex.id, correct, today });
+      if (practice.review) {
+        buildStore.reviewCard(currentItem().cardId, correct, day, now().toISOString());
+        return;
+      }
+      const { cardCreated } = buildStore.recordAttempt({ lessonId: lesson.id, exerciseId: ex.id, correct, today: day });
       if (cardCreated) status.textContent = 'Este ejercicio irá a tu repaso.';
       if (correct && lessonStatus(lesson, buildStore.getState().progress[lesson.id]).state === 'done') {
-        buildStore.completeLesson(lesson.id, today);
+        buildStore.completeLesson(lesson.id, day);
       }
     } catch (error) {
       if (!(error instanceof StorageError)) throw error;
@@ -308,9 +347,10 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
     practice.expected = result.expected;
     record(ex, result.correct);
     // Un fallo vuelve una sola vez al final de esta práctica
-    if (!result.correct && !practice.requeued.has(ex.id)) {
-      practice.requeued.add(ex.id);
-      practice.queue.push(ex);
+    const item = currentItem();
+    if (!result.correct && !practice.requeued.has(keyOf(item))) {
+      practice.requeued.add(keyOf(item));
+      practice.queue.push(item);
     }
 
     feedback.classList.toggle('is-correct', result.correct);
@@ -332,20 +372,61 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
   });
   $('#build-listen').addEventListener('click', () => say(practice.expected));
 
-  nextButton.addEventListener('click', () => {
-    stopVoice();
-    practice.index += 1;
+  // Muestra el ejercicio en practice.index o, si ya no quedan, el fin
+  function showCurrentOrEnd() {
     if (practice.index < practice.queue.length) {
       showExercise();
       focusOn(prompt);
       return;
     }
-    // Fin de la práctica: se puede volver a practicar
+    const wasReview = practice.review;
     practice = null;
     card.hidden = true;
+    if (wasReview) {
+      reviewDone.hidden = false;
+      focusOn(reviewDone);
+      return;
+    }
+    // Fin de la práctica: se puede volver a practicar y vienen las situaciones
     startButton.hidden = false;
     doneEl.hidden = false;
+    free.show(lesson);
     focusOn(doneEl);
+  }
+  nextButton.addEventListener('click', () => {
+    stopVoice();
+    practice.index += 1;
+    showCurrentOrEnd();
+  });
+
+  // --- Quitar una frase propia del repaso (con confirmación) ---
+  let removeReturn = null; // a dónde vuelve el foco si se cancela
+  removeButton.addEventListener('click', () => {
+    removeReturn = removeButton;
+    removeDialog.showModal();
+  });
+  removeDialog.addEventListener('click', (event) => {
+    if (event.target.closest('[data-action="close"]')) removeDialog.close();
+    if (!event.target.closest('[data-action="confirm"]')) return;
+    const { cardId } = currentItem();
+    try {
+      buildStore.removeCard(cardId);
+    } catch (error) {
+      if (!(error instanceof StorageError)) throw error;
+      removeDialog.close();
+      showNotice(storageMessage(error));
+      return;
+    }
+    removeReturn = null; // el foco lo lleva la tarjeta siguiente
+    removeDialog.close();
+    stopVoice();
+    // Sale de la cola (también si volvía al final) y sigue con la siguiente
+    practice.queue = practice.queue.filter((item, i) => i < practice.index || item.cardId !== cardId);
+    showCurrentOrEnd();
+  });
+  removeDialog.addEventListener('close', () => {
+    removeReturn?.focus();
+    removeReturn = null;
   });
 
   function resetPractice() {
@@ -353,6 +434,30 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
     card.hidden = true;
     doneEl.hidden = true;
     startButton.hidden = false;
+    doneEl.after(card); // vuelve a su lugar en «Practicar»
+  }
+
+  // Repaso: las tarjetas vencidas hoy, con su ejercicio o la frase propia
+  function startReview(moveFocus) {
+    const cards = buildStore.getState().cards;
+    const queue = dueQueue().map((cardId) => {
+      const saved = cards[cardId];
+      const exercise = saved.kind === 'own' ? ownExercise(saved) : findExercise(lessons ?? [], saved.lessonId, saved.exerciseId);
+      return { exercise, cardId };
+    });
+    reviewEl.prepend(card);
+    reviewDone.hidden = true;
+    reviewEmpty.hidden = queue.length > 0;
+    if (queue.length === 0) {
+      practice = null;
+      card.hidden = true;
+      if (moveFocus) reviewEmpty.focus();
+      return;
+    }
+    practice = { review: true, queue, index: 0, requeued: new Set(), board: null, checked: false, expected: '' };
+    card.hidden = false;
+    showExercise();
+    if (moveFocus) focusOn(prompt);
   }
 
   return {
@@ -360,26 +465,36 @@ export function initBuild({ buildStore, studyStore, lessons, synth, now = () => 
     onShow(param, moveFocus = true) {
       stopVoice();
       clearNotice();
+      free.hide();
       if (lessons === null) showNotice(MESSAGES.storageUnavailable); // no se pudo leer el índice
-      if (param === null) {
-        lesson = null;
-        resetPractice();
+      lesson = null;
+      resetPractice();
+      if (param === 'repaso') {
+        indexEl.hidden = true;
         lessonEl.hidden = true;
-        list.hidden = false;
+        reviewEl.hidden = false;
+        startReview(moveFocus);
+        return;
+      }
+      reviewEl.hidden = true;
+      if (param === null) {
+        lessonEl.hidden = true;
+        indexEl.hidden = false;
         renderList();
         if (moveFocus) heading.focus();
         return;
       }
       const number = (lessons ?? []).findIndex((entry) => entry.id === param && entry.lesson);
       if (number === -1) {
-        location.replace('#/construir'); // id desconocido (o «repaso», que llega después): vuelve a la lista
+        location.replace('#/construir'); // id desconocido: vuelve a la lista
         return;
       }
       lesson = lessons[number].lesson;
-      resetPractice();
-      list.hidden = true;
+      indexEl.hidden = true;
       lessonEl.hidden = false;
       renderLesson(number + 1);
+      // Una lección ya terminada muestra sus situaciones sin volver a practicar
+      if (lessonStatus(lesson, buildStore.getState().progress[lesson.id]).state === 'done') free.show(lesson);
       if (moveFocus) titleEl.focus();
     },
     onHide() {

@@ -37,6 +37,17 @@
         <p class="empty"><span lang="fr">Bonjour.</span> Aquí verás cada día lo que te toca repasar.</p>
         <div id="home-notice" class="notice" role="alert" hidden></div>
 
+        <!-- Construir frases: próxima lección y repaso de hoy (se rellena con textContent) -->
+        <div class="home-build line-build">
+          <h2 class="progress-title home-build-title"><span class="line-dot" aria-hidden="true"></span>Construir frases</h2>
+          <p id="home-build-next" hidden></p>
+          <p id="home-build-due">Repaso: 0 pendientes hoy</p>
+          <div class="study-actions">
+            <button type="button" class="button button-primary" id="home-build-continue">Seguir lección</button>
+            <button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar (0)</button>
+          </div>
+        </div>
+
         <!-- Copia de seguridad: todo en un archivo (se rellena con textContent) -->
         <div class="backup">
           <h2 class="progress-title backup-title">Copia de seguridad</h2>
@@ -421,7 +432,16 @@
         <div id="build-notice" class="notice" role="alert" hidden></div>
 
         <!-- Lista de lecciones (#/construir) -->
-        <ol id="build-list" class="build-list" aria-label="Lecciones"></ol>
+        <div id="build-index">
+          <button type="button" class="button button-primary build-review-start" id="build-review-start" aria-disabled="true">Repasar (0)</button>
+          <ol id="build-list" class="build-list" aria-label="Lecciones"></ol>
+        </div>
+
+        <!-- Repaso (#/construir/repaso): usa la misma tarjeta de ejercicio que Practicar -->
+        <div id="build-review" class="build-review" hidden>
+          <p id="build-review-empty" class="build-done" tabindex="-1" hidden>No tienes nada que repasar hoy. Los ejercicios que falles 2 veces aparecerán aquí.</p>
+          <p id="build-review-done" class="build-done" tabindex="-1" hidden>Terminaste el repaso.</p>
+        </div>
 
         <!-- Lección (#/construir/<id>) -->
         <article id="build-lesson" class="build-lesson" aria-labelledby="build-title" hidden>
@@ -505,6 +525,36 @@
               </div>
               <p id="build-status" class="build-status" role="status"></p>
               <button type="button" class="button button-primary build-button" id="build-next" hidden>Siguiente</button>
+              <button type="button" class="button button-secondary build-button" id="build-remove" hidden>Quitar del repaso</button>
+            </div>
+
+            <!-- Frase libre: una situación por vez, después de los ejercicios -->
+            <div id="build-free" class="build-card build-free" hidden>
+              <p class="reader-quiz-count"><span id="build-free-count"></span><span class="tag-review" id="build-free-review" hidden>REVISAR</span></p>
+              <p id="build-free-review-note" class="hint build-note" hidden></p>
+              <p id="build-free-situation" class="build-prompt" tabindex="-1"></p>
+              <div class="field">
+                <label for="build-free-answer">Tu frase en francés</label>
+                <textarea id="build-free-answer" rows="3" maxlength="300" lang="fr" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-describedby="build-free-help"></textarea>
+                <p id="build-free-help" class="hint build-free-help">Si tu frase no coincide con un modelo, se envía a Claude (Anthropic) para corregirla.</p>
+              </div>
+              <button type="button" class="button button-primary build-button" id="build-free-check">Comprobar</button>
+              <div id="build-free-error" class="notice" role="alert" hidden></div>
+              <div id="build-free-result" class="quiz-feedback build-feedback" hidden>
+                <p id="build-free-verdict" class="quiz-feedback-title" tabindex="-1"></p>
+                <p id="build-free-detail" hidden></p>
+                <ul id="build-free-errors" class="build-free-errors" hidden></ul>
+                <div id="build-free-suggestion" class="build-suggestion" hidden>
+                  <p class="build-suggestion-title">Sugerencia</p>
+                  <p id="build-free-suggestion-text"></p>
+                </div>
+                <div class="build-models">
+                  <p class="build-models-title">Respuestas modelo</p>
+                  <ul id="build-free-models" class="build-models-list" lang="fr"></ul>
+                </div>
+              </div>
+              <p id="build-free-status" class="build-status" role="status"></p>
+              <button type="button" class="button button-primary build-button" id="build-free-next" hidden>Siguiente</button>
             </div>
           </div>
 
@@ -720,6 +770,14 @@
   </dialog>
 
   <!-- Tarjeta de una palabra de Claude (se rellena con textContent). En el móvil es una hoja abajo. -->
+  <dialog id="build-confirm-remove" class="dialog" aria-labelledby="build-remove-title">
+    <h2 id="build-remove-title" class="dialog-title">¿Quitar esta frase de tu repaso?</h2>
+    <p>No se puede deshacer.</p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Quitar</button>
+    </div>
+  </dialog>
   <dialog id="word-card" class="dialog word-card line-chat" aria-labelledby="word-card-title">
     <div class="word-card-body">
       <h2 id="word-card-title" class="detail-fr" lang="fr" tabindex="-1"></h2>

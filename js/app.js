@@ -33,6 +33,8 @@ let onReaderShown = () => {}; // lo completa initReader
 let onReaderHidden = () => {}; // corta la voz al salir de Leer
 let onBuildShown = () => {}; // lo completa initBuild
 let onBuildHidden = () => {};
+let home = null; // lo completa initHome
+let loadedLessons = null; // las lecciones, cuando lleguen (la tarjeta de Inicio las usa)
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -58,6 +60,7 @@ function showScreen(id, moveFocus) {
   else if (previousId === 'chat') onChatHidden();
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
+  if (id === 'home') home?.refresh();
   if (id === 'build') onBuildShown(moveFocus);
   else if (previousId === 'build') onBuildHidden();
 }
@@ -114,7 +117,9 @@ initVocabulary({ store: wordStore, synth })
   .then(() => initStudy({ wordStore, studyStore, synth }))
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
-    Promise.all([textsLoaded, buildLoaded]).then(() => initHome({ wordStore, studyStore, textStore, buildStore, backend })),
+    Promise.all([textsLoaded, buildLoaded]).then(() => {
+      home = initHome({ wordStore, studyStore, textStore, buildStore, backend, getLessons: () => loadedLessons });
+    }),
   ]));
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
@@ -204,6 +209,8 @@ textsLoaded.then((loaded) => {
 // Si el índice no se puede leer, la pantalla lo avisa e Inicio sigue funcionando.
 const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
 Promise.all([lessonsLoaded, buildLoaded]).then(([lessons]) => {
+  loadedLessons = lessons;
+  home?.refresh();
   const build = initBuild({
     buildStore,
     studyStore,
@@ -218,6 +225,8 @@ Promise.all([lessonsLoaded, buildLoaded]).then(([lessons]) => {
   onBuildHidden = () => build.onHide();
   if (currentId === 'build') onBuildShown(false);
 });
+// Si otra pestaña cambia el progreso o las tarjetas de frases, la tarjeta de Inicio se actualiza
+buildStore.watchExternalChanges(window, () => home?.refresh());
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

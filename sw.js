@@ -65,6 +65,7 @@ const PRECACHE_URLS = [
   'js/screens/word-card.js',
   'js/screens/reader.js',
   'js/screens/build.js',
+  'js/screens/build-free.js',
   'js/data/initial-words.js',
   'js/update.js',
   'data/a1-deck.json',
