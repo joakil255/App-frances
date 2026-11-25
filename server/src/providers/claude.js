@@ -77,10 +77,10 @@ export function createClaudeAdapter({ apiKey, model, effort, fetch, maxRetries =
     return normalizeLookup(raw);
   }
 
-  async function story({ level, topic, quizLang }) {
+  async function story({ level, topic, quizLang, supportLang }) {
     const content = topic ? `Tema: ${topic}` : 'Tema: libre';
     const raw = await requestJson({
-      system: buildStoryPrompt(level, quizLang),
+      system: buildStoryPrompt(level, quizLang, supportLang),
       messages: [{ role: 'user', content }],
       schema: STORY_SCHEMA,
     });

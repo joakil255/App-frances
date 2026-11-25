@@ -307,6 +307,7 @@ const storyQuestion = {
 const storyOut = {
   title: 'Marie à Paris',
   body: Array(5).fill(storySentence).join(' '),
+  sentences: Array(5).fill({ text: storySentence, translation: 'Marie vive en París con su gato negro y le gusta mucho el café de la mañana.' }),
   questions: [storyQuestion, storyQuestion, storyQuestion, storyQuestion],
 };
 const storyBody = { lang: 'fr', level: 'A1.2', topic: 'la plage', quizLang: 'es' };
@@ -336,7 +337,8 @@ test('/story responde 200 con la historia y remainingStories; solo sube story:',
   const { response, body, state, env } = await run(storyRequest(), makeEnv(), makeProviders(() => storyOut));
   assert.equal(response.status, 200);
   assert.deepEqual(body, { ...storyOut, remainingStories: 4 });
-  assert.deepEqual(state.received[0], storyBody);
+  assert.deepEqual(state.received[0], { ...storyBody, supportLang: 'es' });
+  assert.ok(body.body && body.sentences.length === 5);
   assert.equal(env.CHAT_KV.store.get('story:2026-11-23'), '1');
   assert.equal(env.CHAT_KV.store.size, 1);
 });

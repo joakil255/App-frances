@@ -1,3 +1,4 @@
+import { SUPPORT_LANG_NAMES } from './story-validate.js';
 export const LEVELS = ['A1.1', 'A1.2'];
 
 const INSTRUCTIONS = `Eres un compañero de conversación para practicar francés. El alumno habla español y tiene nivel {level}. Tutéalo siempre (usa «tu», nunca «vous»).
@@ -101,13 +102,15 @@ Reglas de la historia:
 
 Campos de la salida:
 - "title": título corto en francés, sin Markdown.
-- "body": la historia.
+- "sentences": la historia, en orden, una sola frase por elemento. Cada elemento tiene:
+  - "text": la frase en francés;
+  - "translation": su traducción natural y fiel al {supportLangName}, sin notas ni explicaciones.
 - "questions": exactamente 4 preguntas de comprensión escritas en {quizLangName}, que se puedan responder con el texto. Cada una con:
   - "question": la pregunta;
   - "options": 3 o 4 opciones distintas, con una sola correcta y distractores creíbles;
   - "answer": el índice de la opción correcta, empezando en 0;
   - "explanation": explicación breve en español de por qué es correcta;
-  - "evidence": una frase copiada exactamente, letra por letra, del texto de "body" que respalda la respuesta.
+  - "evidence": una frase copiada exactamente, letra por letra, del texto de "sentences" que respalda la respuesta.
 - La explicación va solo en español, sin palabras francesas salvo citas del texto entre comillas.
 {quizLangRule}`;
 
@@ -119,10 +122,11 @@ const QUIZ_LANG_RULES = {
   fr: '- Las preguntas y sus opciones van en francés correcto y natural (no en español); cada opción debe responder gramaticalmente a su pregunta.',
 };
 
-export function buildStoryPrompt(level, quizLang) {
+export function buildStoryPrompt(level, quizLang, supportLang) {
   return STORY_INSTRUCTIONS
     .replaceAll('{level}', level)
     .replaceAll('{pastTense}', level === 'A2' ? ' y también el passé composé. Mantén un mismo tiempo en todo el relato: la historia ocurre en presente y el passé composé solo cuenta lo que pasó antes (por ejemplo, «Hier, elle a acheté un livre.»)' : '')
+    .replaceAll('{supportLangName}', SUPPORT_LANG_NAMES[supportLang] ?? SUPPORT_LANG_NAMES.es)
     .replaceAll('{quizLangName}', QUIZ_LANG_NAMES[quizLang] ?? QUIZ_LANG_NAMES.es)
     .replaceAll('{quizLangRule}', QUIZ_LANG_RULES[quizLang] ?? QUIZ_LANG_RULES.es);
 }
@@ -131,7 +135,15 @@ export const STORY_SCHEMA = {
   type: 'object',
   properties: {
     title: { type: 'string' },
-    body: { type: 'string' },
+    sentences: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: { text: { type: 'string' }, translation: { type: 'string' } },
+        required: ['text', 'translation'],
+        additionalProperties: false,
+      },
+    },
     questions: {
       type: 'array',
       items: {
@@ -148,7 +160,7 @@ export const STORY_SCHEMA = {
       },
     },
   },
-  required: ['title', 'body', 'questions'],
+  required: ['title', 'sentences', 'questions'],
   additionalProperties: false,
 };
 

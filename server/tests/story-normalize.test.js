@@ -5,6 +5,8 @@ import { ProviderError } from '../src/errors.js';
 
 // 100 palabras en 5 frases
 const sentence = 'Marie habite à Paris avec son chat noir et elle aime beaucoup le café du matin.';
+const translation = 'Marie vive en París con su gato negro y le gusta mucho el café de la mañana.';
+const pairs = (n, text = sentence) => Array.from({ length: n }, () => ({ text, translation }));
 const BODY = Array(5).fill(sentence).join(' ');
 const makeQuestion = (overrides = {}) => ({
   question: '¿Dónde vive Marie?',
@@ -16,22 +18,35 @@ const makeQuestion = (overrides = {}) => ({
 });
 const makeStory = (overrides = {}) => ({
   title: 'Marie à Paris',
-  body: BODY,
+  sentences: pairs(5),
   questions: [makeQuestion(), makeQuestion(), makeQuestion(), makeQuestion()],
   ...overrides,
 });
 const bad = (raw) => assert.throws(() => normalizeStory(raw), (error) => error instanceof ProviderError && error.code === 'bad_output');
 const withQuestion = (overrides) => makeStory({ questions: [makeQuestion(overrides), makeQuestion(), makeQuestion(), makeQuestion()] });
 
-test('acepta una historia válida y devuelve title, body y questions', () => {
+const withTexts = (texts) => texts.map((text) => ({ text, translation }));
+const evidenceQuestions = (evidence) => [0, 1, 2, 3].map(() => makeQuestion({ evidence }));
+
+test('acepta una historia válida y devuelve title, body, sentences y questions', () => {
   const story = normalizeStory(makeStory());
-  assert.deepEqual(Object.keys(story), ['title', 'body', 'questions']);
+  assert.deepEqual(Object.keys(story), ['title', 'body', 'sentences', 'questions']);
+  assert.equal(story.body, BODY);
+  assert.deepEqual(story.sentences, pairs(5));
   assert.equal(story.questions.length, 4);
 });
 
 test('rechaza lo que no es objeto o le faltan campos', () => {
   for (const raw of [null, [], 'x', undefined]) bad(raw);
-  bad({ title: 'a', body: BODY });
+  bad({ title: 'a', sentences: pairs(5) });
+});
+
+test('sentences debe ser un arreglo de pares con text y translation', () => {
+  bad(makeStory({ sentences: BODY }));
+  bad(makeStory({ sentences: undefined }));
+  bad(makeStory({ sentences: [...pairs(4), null] }));
+  bad(makeStory({ sentences: [...pairs(4), 'texto'] }));
+  bad(makeStory({ sentences: [...pairs(4), { text: sentence }] }));
 });
 
 test('título vacío o de más de 80 letras', () => {
@@ -40,48 +55,54 @@ test('título vacío o de más de 80 letras', () => {
   assert.ok(normalizeStory(makeStory({ title: 'é'.repeat(80) })));
 });
 
-test('exactamente 80 y 300 palabras con 4 frases son válidas', () => {
-  const make = (n) => {
-    const filler = Array(n - 3).fill('mot').join(' ');
-    return `Un. Deux. Trois. ${filler}.`;
-  };
-  assert.ok(normalizeStory(makeStory({ body: make(80), questions: [0, 1, 2, 3].map(() => makeQuestion({ evidence: 'Deux' })) })));
-  assert.ok(normalizeStory(makeStory({ body: make(300), questions: [0, 1, 2, 3].map(() => makeQuestion({ evidence: 'Deux' })) })));
-  bad(makeStory({ body: make(79) }));
-  bad(makeStory({ body: make(301) }));
+test('de 4 a 60 pares: 3 y 61 se rechazan, 4 y 60 valen', () => {
+  // Frases largas para que el rechazo de 3 pares sea por el conteo y no por las palabras
+  const long = Array(30).fill('mot').join(' ');
+  bad(makeStory({ sentences: pairs(3, long) }));
+  assert.ok(normalizeStory(makeStory({ sentences: pairs(4, long), questions: evidenceQuestions('mot mot') })));
+  const short = 'Je vois un chat noir.';
+  bad(makeStory({ sentences: pairs(61, short), questions: evidenceQuestions('Je vois') }));
+  assert.ok(normalizeStory(makeStory({ sentences: pairs(60, short), questions: evidenceQuestions('Je vois') })));
+});
+
+test('text vacío; translation vacía, de 600 o de 601 letras', () => {
+  bad(makeStory({ sentences: [...pairs(4), { text: '  ', translation }] }));
+  bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: '' }] }));
+  bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: '   ' }] }));
+  bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'é'.repeat(601) }] }));
+  assert.ok(normalizeStory(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'é'.repeat(600) }] })));
+});
+
+test('translation con HTML o Markdown se rechaza', () => {
+  bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'El <b>gato</b>' }] }));
+  bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'El **gato**' }] }));
+});
+
+test('exactamente 80 y 300 palabras son válidas', () => {
+  const make = (n) => withTexts(['Un.', 'Deux.', 'Trois.', `${Array(n - 3).fill('mot').join(' ')}.`]);
+  assert.ok(normalizeStory(makeStory({ sentences: make(80), questions: evidenceQuestions('Deux') })));
+  assert.ok(normalizeStory(makeStory({ sentences: make(300), questions: evidenceQuestions('Deux') })));
+  bad(makeStory({ sentences: make(79) }));
+  bad(makeStory({ sentences: make(301) }));
 });
 
 test('más de 3000 letras', () => {
-  const body = `Un. Deux. Trois. Quatre. ${'a'.repeat(3000)}`;
-  bad(makeStory({ body }));
+  bad(makeStory({ sentences: withTexts(['Un.', 'Deux.', 'Trois.', `Quatre ${'a'.repeat(3000)}.`]) }));
 });
 
-test('menos de 4 frases', () => {
-  const body = Array(100).fill('mot').join(' ') + '. Fin. Oui.';
-  bad(makeStory({ body, questions: [0, 1, 2, 3].map(() => makeQuestion({ evidence: 'Fin' })) }));
+test('rechaza HTML en el texto de una frase', () => {
+  bad(makeStory({ sentences: withTexts([...Array(4).fill(sentence), sentence.replace('chat', '<b>chat</b>')]) }));
+  bad(makeStory({ sentences: withTexts([...Array(4).fill(sentence), '<br>']) }));
 });
 
-test('cuenta frases con ! ? … y «...», también con acentos', () => {
-  const filler = Array(90).fill('été').join(' ');
-  const body = `Où es-tu? Je suis là! Ça va... Très bien… ${filler}`;
-  assert.ok(normalizeStory(makeStory({ body, questions: [0, 1, 2, 3].map(() => makeQuestion({ evidence: 'Je suis là' })) })));
-  // «...» cuenta como un solo final, no como tres frases
-  const three = `Où es-tu... Je suis là... Ça va... ${filler}`;
-  bad(makeStory({ body: three }));
-});
-
-test('rechaza HTML', () => {
-  bad(makeStory({ body: BODY.replace('chat', '<b>chat</b>') }));
-  bad(makeStory({ body: `${BODY} <br>` }));
-});
-
-test('rechaza Markdown: ** __ ` # y viñetas', () => {
-  bad(makeStory({ body: BODY.replace('chat', '**chat**') }));
-  bad(makeStory({ body: BODY.replace('chat', '__chat__') }));
-  bad(makeStory({ body: BODY.replace('chat', '`chat`') }));
-  bad(makeStory({ body: `# Titre\n${BODY}` }));
-  bad(makeStory({ body: `${BODY}\n- un élément` }));
-  bad(makeStory({ body: `${BODY}\n* un élément` }));
+test('rechaza Markdown: ** __ ` # y viñetas en el texto', () => {
+  const withBad = (text) => makeStory({ sentences: withTexts([...Array(4).fill(sentence), text]) });
+  bad(withBad(sentence.replace('chat', '**chat**')));
+  bad(withBad(sentence.replace('chat', '__chat__')));
+  bad(withBad(sentence.replace('chat', '`chat`')));
+  bad(withBad(`# Titre\n${sentence}`));
+  bad(withBad(`${sentence}\n- un élément`));
+  bad(withBad(`${sentence}\n* un élément`));
 });
 
 test('el título tampoco admite HTML ni Markdown', () => {
@@ -122,8 +143,11 @@ test('evidence ausente del texto o vacía', () => {
 });
 
 test('evidence con otra mayúscula o apóstrofo tipográfico es válida', () => {
-  const body = BODY.replace('Marie habite', "Marie d'habite");
-  assert.ok(normalizeStory(makeStory({ body, questions: [0, 1, 2, 3].map(() => makeQuestion({ evidence: 'MARIE D’HABITE à paris' })) })));
-  const typographic = BODY.replace('Marie habite', 'Marie d’habite');
-  assert.ok(normalizeStory(makeStory({ body: typographic, questions: [0, 1, 2, 3].map(() => makeQuestion({ evidence: "marie d'habite" })) })));
+  const sentences = (word) => withTexts(Array(5).fill(sentence.replace('Marie habite', `Marie ${word}`)));
+  assert.ok(normalizeStory(makeStory({ sentences: sentences("d'habite"), questions: evidenceQuestions('MARIE D’HABITE à paris') })));
+  assert.ok(normalizeStory(makeStory({ sentences: sentences('d’habite'), questions: evidenceQuestions("marie d'habite") })));
+});
+
+test('la evidence debe estar en el body unido, no solo en una traducción', () => {
+  bad(withQuestion({ evidence: 'Marie vive en París' }));
 });

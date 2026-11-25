@@ -168,11 +168,11 @@ test('el esquema de consulta lista todo en required y permite gender null', () =
   assert.deepEqual([...LOOKUP_SCHEMA.required].sort(), Object.keys(LOOKUP_SCHEMA.properties).sort());
 });
 
-const storyInput = { lang: 'fr', level: 'A1.2', topic: 'le marché', quizLang: 'es' };
-const storyBody = Array.from({ length: 20 }, (_, i) => `Je vois un chat ${i} dans la maison.`).join(' ');
+const storyInput = { lang: 'fr', level: 'A1.2', topic: 'le marché', quizLang: 'es', supportLang: 'es' };
+const storySentences = Array.from({ length: 20 }, (_, i) => ({ text: `Je vois un chat ${i} dans la maison.`, translation: `Veo un gato ${i} en la casa.` }));
 const goodStory = {
   title: 'Mon chat',
-  body: storyBody,
+  sentences: storySentences,
   questions: Array.from({ length: 4 }, () => ({
     question: '¿Qué ve el narrador?',
     options: ['Un gato', 'Un perro', 'Un pájaro'],
@@ -202,7 +202,7 @@ test('story arma la petición con el esquema, el nivel, el idioma de las pregunt
   assert.equal(sent.model, 'claude-haiku-5-5');
   assert.equal(sent.output_config.effort, 'low');
   assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: STORY_SCHEMA });
-  assert.equal(sent.system, buildStoryPrompt('A1.2', 'es'));
+  assert.equal(sent.system, buildStoryPrompt('A1.2', 'es', 'es'));
   assert.ok(sent.system.includes('A1.2'));
   assert.ok(sent.system.includes('escritas en español'));
   assert.equal(sent.system.includes('escritas en francés'), false);
@@ -210,6 +210,12 @@ test('story arma la petición con el esquema, el nivel, el idioma de las pregunt
   assert.equal(sent.messages[0].role, 'user');
   assert.ok(sent.messages[0].content.includes('le marché'));
   assert.equal(sent.system.includes('le marché'), false);
+});
+
+test('story devuelve las frases emparejadas y el body unido', async () => {
+  const result = await adapterWith(async () => json(200, textBody(goodStory))).story(storyInput);
+  assert.deepEqual(result.sentences, storySentences);
+  assert.equal(result.body, storySentences.map((s) => s.text).join(' '));
 });
 
 test('story sin tema pide un tema libre', async () => {
@@ -266,7 +272,7 @@ test('las instrucciones de historia piden un solo tiempo en A2 y preguntas sin m
 
 test('story normaliza una salida válida', async () => {
   const out = await adapterWith(async () => json(200, textBody(goodStory))).story(storyInput);
-  assert.deepEqual(out, goodStory);
+  assert.deepEqual(out, { ...goodStory, body: storySentences.map((pair) => pair.text).join(' ') });
 });
 
 test('story rechaza una salida inválida como bad_output', async () => {
