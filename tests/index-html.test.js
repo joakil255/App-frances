@@ -504,7 +504,30 @@ test('Construir tiene aviso, zona de estado y la región que anuncia las fichas'
   const live = tagWithId(build, 'build-order-live');
   assert.ok(live, 'falta #build-order-live');
   assert.ok(live.includes('aria-live="polite"'), '#build-order-live sin aria-live="polite"');
-  assert.ok(tagWithId(build, 'build-list'), 'falta la lista #build-list');
+});
+
+// --- Índice de lecciones como ruta (Etapa 14) ---
+const buildIndex = build.match(/<div id="build-index"[^>]*>([\s\S]*?)<!-- Fin de la ruta -->/)?.[1] ?? '';
+
+test('la ruta tiene un <h2> y un <ol> por tramo (A1 y A2), unidos con aria-labelledby', () => {
+  assert.ok(tagWithId(buildIndex, 'build-route'), 'falta el contenedor #build-route');
+  for (const level of ['a1', 'a2']) {
+    const re = new RegExp(`<h2 id="build-level-${level}" class="build-level">${level.toUpperCase()}</h2>\\s*<ol id="build-route-${level}" class="build-route" aria-labelledby="build-level-${level}"></ol>`);
+    assert.match(buildIndex, re, `falta el tramo ${level.toUpperCase()}`);
+  }
+  assert.ok(buildIndex.indexOf('build-route-a1') < buildIndex.indexOf('build-route-a2'), 'A1 va antes que A2');
+  assert.ok(!build.includes('id="build-list"'), 'la lista vieja #build-list ya no existe');
+});
+
+test('arriba de la ruta: «Continuar», «Repasar (N)» y el texto sin pendientes', () => {
+  assert.match(buildIndex, /<button type="button" class="button button-primary" id="build-continue">Continuar<\/button>/);
+  assert.match(buildIndex, /<p id="build-all-done" class="build-all-done" hidden>Completaste todas las lecciones disponibles<\/p>/);
+  const route = buildIndex.indexOf('id="build-route"');
+  for (const id of ['build-continue', 'build-review-start', 'build-all-done']) {
+    const at = buildIndex.indexOf(`id="${id}"`);
+    assert.ok(at > -1 && at < route, `#${id} va arriba de la ruta`);
+  }
+  assert.ok(buildIndex.indexOf('id="build-continue"') < buildIndex.indexOf('id="build-review-start"'), '«Continuar» va antes que «Repasar»');
 });
 
 test('la lección tiene su título enfocable y las secciones en orden', () => {

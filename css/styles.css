@@ -82,6 +82,8 @@
   --success-text: #1D6B3F;
   /* Progreso (DESIGN.md, Etapa 5) */
   --chart-bar: #233A7A;
+  /* Índice de lecciones (DESIGN.md, Etapa 14): lecciones planificadas */
+  --text-planned: #5F6880;
 }
 
 /* --- Tokens: tema oscuro («andén de noche») --- */
@@ -109,6 +111,7 @@
     --emphasis: #FFFFFF;
     --success-text: #7FD3A3;
     --chart-bar: #9DB0E3;
+    --text-planned: #8F9BB8;
   }
 }
 
@@ -1073,26 +1076,88 @@ p.word-card-es { color: var(--text-muted); }
 .reader-quiz-score:focus { outline: none; }
 
 /* --- Construir frases (DESIGN.md, Etapa 12) --- */
-.build-list {
-  margin: var(--space-5) 0 0;
+/* Ruta de lecciones (Etapa 14): una línea de metro vertical por tramo, con una estación por lección */
+.build-index-actions { margin-top: var(--space-5); }
+.build-all-done { margin: var(--space-5) 0 0; font: 700 1.1rem/1.3 var(--font-sign); }
+.build-level { margin: var(--space-6) 0 var(--space-2); font: 700 1.25rem/1.2 var(--font-sign); }
+.build-route {
+  --station-y: 26px; /* centro de la estación desde arriba de la fila */
+  margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 2px solid var(--plaque);
 }
-.build-item a,
-.build-item-broken {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+.build-route > li { position: relative; }
+/* La vía: tramo que llega a la estación (::before) y tramo que sale (::after) */
+.build-route > li::before,
+.build-route > li::after {
+  content: '';
+  position: absolute;
+  left: 22px; /* centro de la columna de 44 px más el borde de 2 px de la fila */
+  border-left: 4px solid var(--line);
+}
+.build-route > li::before { top: 0; height: var(--station-y); }
+.build-route > li::after { top: var(--station-y); bottom: 0; }
+.build-route > li:first-child::before,
+.build-route > li:last-child::after { display: none; }
+/* El tramo planificado es discontinuo desde la última estación disponible */
+.build-route-planned::before,
+.build-route-planned::after,
+.build-route > li:has(+ .build-route-planned)::after { border-left-style: dashed; }
+
+.build-route-row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  column-gap: var(--space-2);
+  align-items: start;
   min-height: 56px;
   margin: 0;
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--divider);
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
   color: inherit;
   text-decoration: none;
 }
-.build-item-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
-.build-item-broken { flex-direction: column; align-items: flex-start; color: var(--text-muted); font-family: var(--font-sign); }
+/* La siguiente lección pendiente: recuadro con borde turquesa, como la frase que suena en Leer */
+a.build-route-row[aria-current="step"] { background: var(--surface); border-color: var(--line); }
+.build-route-text { min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.build-route-name { font-weight: 600; font-size: 1.1rem; line-height: 1.25; overflow-wrap: anywhere; }
+.build-route-number { color: var(--text-muted); font: 500 var(--size-base) var(--font-sign); }
+.build-route-state { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+/* «Tiene partes REVISAR»: la etiqueta de siempre (texto, no solo color) */
+.build-route-review { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+
+/* Estación: vacía (sin empezar), con punto (en curso), llena con ✓ (completada), punteada (planificada) */
+.build-station {
+  position: relative;
+  z-index: 1; /* sobre la vía */
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: #FFFFFF;
+  font: 700 14px/1 var(--font-sign);
+}
+.build-station-started::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.build-station-done { background: var(--line); }
+.build-station-planned { border-style: dotted; }
+.build-station-error { border-color: var(--text-muted); border-style: dashed; }
+
+/* Planificadas: texto atenuado que se sigue leyendo (≥ 4,5:1) */
+.build-route-planned { color: var(--text-planned); }
+.build-route-planned .build-route-name { font-weight: 400; }
+.build-route-planned .build-route-number,
+.build-route-planned .build-route-state { color: inherit; }
+
 .build-number { margin: 0; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
 
 .build-lesson { margin-top: var(--space-5); }
@@ -1223,8 +1288,7 @@ p.word-card-es { color: var(--text-muted); }
 .build-models-list { margin: 0; padding-left: var(--space-5); }
 .build-models-list li { margin-bottom: var(--space-1); overflow-wrap: anywhere; }
 
-/* Repaso: «Repasar (N)» sobre la lista; el vacío y el fin como el fin de la práctica */
-.build-review-start { margin: var(--space-5) 0 0; }
+/* Repaso: el vacío y el fin como el fin de la práctica */
 .build-review { margin-top: var(--space-5); }
 /* «Revisando…» y «Repasar (0)»: desactivados con aria-disabled, como «Escribiendo…» en Leer */
 #build-free-check[aria-disabled="true"],

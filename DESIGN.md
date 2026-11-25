@@ -224,7 +224,7 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
 
 **Barra:** el enlace **«Construir frases»** solo aparece en la barra de la izquierda (≥ 900 px). En el móvil se oculta con `display: none` (`.nav-desktop-only`) y la barra sigue con siete botones: medido a 360 px, el más estrecho mide 49,7 × 64 px, «Conversar» 58,2 px y ningún nombre se corta.
 
-- **Lista (`#/construir`):** como la biblioteca de Leer, con el borde superior `--plaque`. Cada fila: «Lección N» en Barlow 500 `--text-muted`, el título en Source Serif 600 y debajo, en Barlow 500 `--text-muted`, las áreas (Gramática, Sintaxis, Ortografía), el estado («Nueva», «En curso: X/Y», «Terminada») y «Tiene partes **REVISAR**» con la etiqueta de siempre. Toda la fila es un enlace a `#/construir/<id>`, con `›`. Una lección que no se pudo cargar no es enlace: «Lección N» y «Esta lección no se pudo cargar» en `--text-muted`.
+- **Lista (`#/construir`):** desde la Etapa 14 es la ruta de lecciones; ver «Índice de lecciones (Etapa 14)».
 - **Lección:** «Lección N», el título (Source Serif 600 de 26,6 px, enfocable) y el nivel y las áreas como en Leer. Las secciones son `h3` en Barlow 700 de 1,25 rem con 32 px de aire encima: «La idea», «El bloque», «Cómo pensarlo», «Ejemplos», «Trampa común», «Practicar» y «Fuentes».
   - **REVISAR:** la etiqueta de Leer seguida de su nota en texto pequeño `--text-muted`, justo debajo del elemento.
   - **El bloque:** cada grupo en un recuadro `--surface` con borde de 2 px `--divider` y **4 px turquesa arriba**; su nombre en Barlow 500 `--text-muted` y las piezas en francés (Source Serif 600) como **azulejos**: borde de 1 px `--field-border` y **sin esquinas redondas**, para que no parezcan botones (no se tocan).
@@ -247,8 +247,37 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
   - **Resultado:** el recuadro del Quiz, con el foco en su título: «Correcta.» (verde), «Corregida: …» (rojo, con la frase en francés) o, sin conexión, «Necesitas conexión para que Claude revise tu frase.» con la **franja azul `--plaque` y el título `--text`**, porque no es ni acierto ni error. Los errores son **estaciones sobre la vía turquesa** (raya izquierda de 4 px `--line`): lo que escribiste tachado → lo correcto (como Trampa común) y debajo, en texto pequeño, el tipo en Barlow 700 (Gramática, Sintaxis u Ortografía) y la explicación en `--text-muted`. La **Sugerencia** va en un recuadro aparte con **borde discontinuo** de 2 px `--field-border` (es un consejo, no un error), con su título en Barlow 700. Al final, «Respuestas modelo» en una lista en francés. Todo se pinta con `textContent`: un `<script>` de Claude se ve como texto.
   - Si hubo errores, «Agregamos esta frase a tu repaso.» en el aviso de repaso (`role="status"`). Los errores de envío (sin código de acceso, límite del día, servidor) van en un aviso `role="alert"` dentro de la tarjeta, junto al botón, y **Comprobar** sigue activo para reintentar. Con un resultado final, Comprobar se oculta y aparece **Siguiente** si quedan situaciones.
 - **Repaso (`#/construir/repaso`):** la misma tarjeta de práctica, que se muda a la vista del repaso, con «Repaso: X/Y». Las frases propias muestran **REVISAR** con «La corrección es de Claude.», «Corrige tu frase» y, debajo de los botones, **Quitar del repaso** (secundario, a todo el ancho en el móvil), que abre la ventana de confirmar de siempre: «¿Quitar esta frase de tu repaso?» / «No se puede deshacer.», **Cancelar** · **Quitar** (rojo). Cancelar devuelve el foco al botón; Quitar pasa a la tarjeta siguiente. Vacío o terminado: «No tienes nada que repasar hoy…» o «Terminaste el repaso.», con el estilo de «Terminaste la práctica…» y el foco.
-- **«Repasar (N)» en la lista:** botón primario sobre la lista de lecciones. Con N = 0 lleva `aria-disabled="true"`, se ve apagado (fondo `--surface`, texto `--text-muted`, borde `--divider`, como «Escribiendo…» en Leer) y no hace nada.
+- **«Repasar (N)» en la ruta:** botón secundario junto a **Continuar** (Etapa 14; antes era primario). Con N = 0 lleva `aria-disabled="true"`, se ve apagado (fondo `--surface`, texto `--text-muted`, borde `--divider`, como «Escribiendo…» en Leer) y no hace nada.
 - **Tarjeta de Inicio:** como la de la copia de seguridad (fondo `--surface`, borde 2 px `--divider`, radio 8 px), pero con la **franja izquierda turquesa** y, delante del título «Construir frases», el **punto turquesa de la línea**: es una «correspondencia» del metro hacia la línea de Construir, que en el móvil no está en la barra. Va sobre la copia de seguridad. «Próxima lección: …» en Source Serif 600 (o «Terminaste todas las lecciones», y entonces sin **Seguir lección**), «Repaso: N pendientes hoy» (1 pendiente en singular) y los botones **Seguir lección** (primario) y **Repasar (N)** (secundario, apagado con `aria-disabled` si N = 0). Medido a 360 px: los dos botones caben en una fila.
+
+## Índice de lecciones (Etapa 14)
+
+La lista de `#/construir` pasa a ser una **ruta**: una línea de metro vertical en turquesa (`--line-build`, `#178A8A`) con una estación por lección, como el texto de Leer. Es el elemento propio de la pantalla; lo demás se queda tranquilo.
+
+```
+[Continuar: Lección 7 · Los adjetivos] [Repasar (N)]
+A1
+ ✓━  Lección 6 · Preguntas simples
+ ┃   Completada · 9 de 9 a la primera · 24/11/2026
+ ◉━  Lección 7 · Los adjetivos     (recuadro turquesa: aria-current="step")
+ ┃   En curso: 4 de 10
+ ○━  Lección 9 · Querer, poder y deber
+ ┆   Sin empezar
+ ⁘   Lección 10 · Posesivos y demostrativos   (atenuada)
+     Próximamente
+A2 …
+```
+
+- **Arriba:** **Continuar: Lección N · Título** (primario) y **Repasar (N)** (secundario, apagado con `aria-disabled` si N = 0), en una fila que se parte en dos en el móvil (medido a 360 px: Continuar 279 × 44 px, Repasar 116 × 44 px). Sin pendientes, Continuar se oculta y aparece «Completaste todas las lecciones disponibles» en Barlow 700 de 1,1 rem.
+- **Tramos:** un `<h2>` («A1», «A2») en Barlow 700 de 1,25 rem, con 32 px de aire encima, y un `<ol>` por tramo con `aria-labelledby` hacia su título. Un tramo sin lecciones no se muestra.
+- **La vía:** cada fila dibuja dos tramos de 4 px (el que llega a su estación y el que sale), así la línea no pasa más allá de la primera ni de la última estación del tramo. El tramo de las planificadas es **discontinuo** (`dashed`), desde la salida de la última lección disponible.
+- **Fila:** columna de 44 px para la estación y el texto al lado, 12 px de relleno, al menos 56 px de alto. «Lección N · » en Barlow 500 `--text-muted`, el título en Source Serif 600 de 1,1 rem, y debajo el estado en Barlow 500 pequeño `--text-muted`. Los textos de estado son los de la Etapa 14 («Sin empezar», «En curso: X de Y», «Completada · F de T a la primera · DD/MM/AAAA», «Completada · DD/MM/AAAA», «Próximamente», «No se pudo cargar»): **el estado va siempre en texto** y la estación solo lo acompaña.
+- **REVISAR:** si la lección tiene algún elemento con `review: true`, la fila suma una línea más bajo el estado: «Tiene partes **REVISAR**», en Barlow 500 pequeño `--text-muted` con la etiqueta de siempre (`.tag-review`, texto y no solo color). Las áreas (Gramática, Sintaxis, Ortografía) solo se ven dentro de la lección.
+- **Estación** (`aria-hidden="true"`, 24 px, borde de 3 px turquesa, sobre la vía): completada, llena de turquesa con «✓» blanco (4,2:1, elemento gráfico); en curso, con un punto turquesa de 10 px; sin empezar, vacía (fondo `--bg`); planificada, con el borde **punteado** (`dotted`); no se pudo cargar, borde discontinuo `--text-muted`.
+- **Lecciones disponibles:** toda la fila es un enlace a `#/construir/<id>`, con el foco de siempre (anillo de 3 px `--focus`) y radio 8 px. La siguiente pendiente lleva `aria-current="step"` y se ve como la frase que suena en Leer: recuadro `--surface` con borde de 2 px turquesa (forma y color, nunca solo color).
+- **Lecciones planificadas:** la fila es un `<p>`, no un enlace ni un botón, y **sin** `aria-disabled` (no es un control). Texto atenuado con el token nuevo `--text-planned` y el título en Source Serif 400: se sigue leyendo. Una lección disponible que no se pudo cargar tampoco es enlace.
+- **Color nuevo `--text-planned`:** `#5F6880` en claro y `#8F9BB8` en oscuro (los mismos tonos que `--field-border`). Contraste: 5,4 sobre `--bg` y 5,6 sobre `--surface` en claro; 6,4 sobre `--bg` y 5,6 sobre `--surface` en oscuro, por encima del 4,5:1. Más tenue que `--text-muted` (7,4–7,7 en claro y 8,5–9,7 en oscuro). Una prueba de `tests/styles.test.js` lo comprueba, y otra que el tramo planificado sea discontinuo. El modelo de cada fila (número, estado, `href` solo en las que se abren, `current` solo en la siguiente, REVISAR) sale de funciones puras de `js/lib/lesson-route.js` (`routeRows`, `openableLesson`, `continueLabel`) con sus pruebas. La línea turquesa sigue en 4,0–4,3 sobre el fondo (≥ 3:1).
+- **Lector de pantalla:** cada enlace se lee «Lección 8 · Aller, faire y el futuro próximo Sin empezar, enlace» (con «Tiene partes REVISAR» al final si la lección lo lleva), y las planificadas como texto dentro de su elemento de lista, nunca como enlace.
 
 ## Icono
 

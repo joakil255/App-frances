@@ -2,7 +2,8 @@
 // Restaurar reemplaza todo tras confirmar; después la app se recarga para leer los datos nuevos.
 import { buildBackup, backupFileName, readBackup, restoreBackup, restoreWarning, MAX_BACKUP_BYTES } from '../lib/backup.js';
 import { MESSAGES, storageMessage, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
-import { countDueToday, lessonStatus } from '../lib/build-review.js';
+import { countDueToday } from '../lib/build-review.js';
+import { nextLesson } from '../lib/lesson-route.js';
 import { localDate } from '../lib/dates.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -26,7 +27,7 @@ function textEl(tag, text) {
   return node;
 }
 
-// getLessons: las lecciones cargadas ([{ id, lesson, error }]) o null si aún no llegan o no se pudieron leer
+// getLessons: las lecciones cargadas ([{ id, lang, level, title, status, lesson, error }]) o null si aún no llegan o no se pudieron leer
 export function initHome({ wordStore, studyStore, textStore, buildStore, backend, getLessons = () => null, now = () => new Date() }) {
   const notice = $('#home-notice');
   const status = $('#home-status');
@@ -67,8 +68,8 @@ export function initHome({ wordStore, studyStore, textStore, buildStore, backend
     if (due === 0) reviewButton.setAttribute('aria-disabled', 'true');
     else reviewButton.removeAttribute('aria-disabled');
 
-    const valid = (lessons ?? []).filter((entry) => entry.lesson);
-    const next = valid.find((entry) => lessonStatus(entry.lesson, progress[entry.id]).state !== 'done');
+    const valid = (lessons ?? []).filter((entry) => entry.status === 'available' && entry.lesson);
+    const next = nextLesson(lessons ?? [], progress);
     buildNext.hidden = valid.length === 0;
     buildNext.textContent = next ? `Próxima lección: ${next.lesson.title}` : 'Terminaste todas las lecciones';
     // Sin lecciones cargadas, «Seguir lección» lleva a la lista; con todas terminadas, no se muestra
