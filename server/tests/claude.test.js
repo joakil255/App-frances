@@ -239,7 +239,19 @@ test('las instrucciones de historia piden una longitud con margen sobre el míni
   const prompt = buildStoryPrompt('A2', 'fr');
   assert.ok(prompt.includes('Unas 150 palabras'));
   assert.ok(prompt.includes('nunca menos de 110'));
+  // Con frases cortas (unas 6 palabras en A1.1), 12 frases daban ~74 palabras: la meta de frases debe alcanzar la de palabras
+  assert.ok(prompt.includes('unas 20 frases cortas'));
   assert.equal(prompt.includes('Entre 80 y 300 palabras'), false);
+});
+
+test('las instrucciones de historia piden un solo tiempo en A2 y preguntas sin mezclar idiomas', () => {
+  assert.ok(buildStoryPrompt('A2', 'fr').includes('Mantén un mismo tiempo en todo el relato'));
+  assert.equal(buildStoryPrompt('A1.2', 'es').includes('Mantén un mismo tiempo'), false);
+  for (const quizLang of ['es', 'fr']) {
+    const prompt = buildStoryPrompt('A1.2', quizLang);
+    assert.ok(prompt.includes('sin palabras francesas salvo citas del texto'));
+    assert.ok(prompt.includes('cada opción debe responder gramaticalmente a su pregunta'));
+  }
 });
 
 test('story normaliza una salida válida', async () => {
