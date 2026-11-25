@@ -1,0 +1,322 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-05",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "La negación",
+  "areas": ["syntax", "spelling"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "50, 52",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-66",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "110",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-negation-gen",
+      "title": "Banque de dépannage linguistique: «Généralités sur la négation»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23905/la-syntaxe/la-negation-et-la-restriction/generalites-sur-la-negation"
+    },
+    {
+      "id": "bdl-pas-seul",
+      "title": "Banque de dépannage linguistique: «Emploi de pas seul»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23910/la-syntaxe/la-negation-et-la-restriction/emploi-de-pas-seul"
+    },
+    {
+      "id": "bdl-negation",
+      "title": "Banque de dépannage linguistique: «DE : emploi dans une phrase négative»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23514/la-grammaire/les-determinants/determinants-indefinis/de-dans-une-phrase-negative"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Para negar, el francés pone dos piezas alrededor del verbo: ne delante y pas detrás. Je parle → Je ne parle pas. Es como un sándwich: ne + verbo + pas. Delante de vocal o de h muda, ne se vuelve n': je n'aime pas, il n'habite pas. Para decir «nunca», cambias pas por jamais, en el mismo lugar: Il ne va jamais au théâtre. Con il y a, ne va antes de y: il n'y a pas. En la conversación el ne se omite a menudo («je parle pas»), pero al escribir hay que ponerlo: je ne parle pas.",
+      "sourceIds": ["bdl-negation-gen", "bdl-pas-seul", "bdl-elision", "inventaire-d", "inventaire-f", "niveau-a2", "bdl-negation"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Recuerda la lección 3: después de ne… pas, un, une y des se vuelven de, o d' delante de vocal: J'ai une voiture → Je n'ai pas de voiture. Con jamais pasa lo mismo: Je ne bois jamais de café le soir. Pero le, la y les no cambian: J'aime le sport → Je n'aime pas le sport. Y con être tampoco cambia nada: Ce n'est pas un problème.",
+      "sourceIds": ["bdl-negation", "niveau-a2", "inventaire-d", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "pattern": [
+    { "label": "Sujeto", "options": ["je", "tu", "il / elle", "nous", "vous", "ils / elles"] },
+    { "label": "Antes del verbo", "options": ["ne", "n'"] },
+    { "label": "Verbo", "options": ["parle", "aime", "travaille", "mange"] },
+    { "label": "Después del verbo", "options": ["pas", "jamais", "pas de", "jamais de"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "No hablo inglés.",
+      "target": "Je ne parle pas anglais.",
+      "note": "En español basta con «no» delante del verbo. En francés el verbo queda entre dos piezas: ne delante y pas detrás.",
+      "sourceIds": ["bdl-negation-gen", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Nunca voy al teatro.",
+      "target": "Je ne vais jamais au théâtre.",
+      "note": "En español «nunca» puede ir solo delante del verbo. En francés es ne + verbo + jamais, sin pas.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "No me gusta el deporte.",
+      "target": "Je n'aime pas le sport.",
+      "note": "Aime empieza con vocal: ne se vuelve n'. Y el artículo le no cambia: después de la negación, le, la y les se quedan igual.",
+      "sourceIds": ["inventaire-f", "bdl-elision", "bdl-negation"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Il ne travaille pas le samedi.", "translation": "No trabaja los sábados.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Je n'aime pas les légumes.", "translation": "No me gustan las verduras.", "sourceIds": ["inventaire-f", "bdl-elision"], "review": false },
+    { "id": "e3", "text": "Il ne va jamais au théâtre.", "translation": "Nunca va al teatro.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Je ne bois jamais de café le soir.", "translation": "Nunca tomo café en la noche.", "sourceIds": ["niveau-a2"], "review": false },
+    { "id": "e5", "text": "Elle n'habite pas à Paris.", "translation": "Ella no vive en París.", "sourceIds": ["bdl-elision", "bdl-negation-gen"], "review": false },
+    { "id": "e6", "text": "Ce n'est pas facile.", "translation": "No es fácil.", "sourceIds": ["niveau-a2"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Je ne parle anglais.",
+      "right": "Je ne parle pas anglais.",
+      "explanation": "Falta pas. Al escribir, la negación tiene dos piezas: ne delante del verbo y pas detrás.",
+      "sourceIds": ["bdl-negation-gen"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Je ne aime pas le sport.",
+      "right": "Je n'aime pas le sport.",
+      "explanation": "Delante de vocal, ne pierde la e y se une con apóstrofo: je n'aime.",
+      "sourceIds": ["bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Je ne jamais vais au théâtre.",
+      "right": "Je ne vais jamais au théâtre.",
+      "explanation": "Jamais va después del verbo, en el lugar de pas: je ne vais jamais.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Je n'aime pas de sport.",
+      "right": "Je n'aime pas le sport.",
+      "explanation": "Pas de reemplaza a un, une y des, no a le, la y les. Con aimer hablas del deporte en general y va le: je n'aime pas le sport.",
+      "sourceIds": ["bdl-negation", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «No hablo inglés».",
+      "tiles": ["anglais", "pas", "Je", "parle", "ne"],
+      "answers": ["Je ne parle pas anglais."],
+      "rule": "El verbo va entre ne y pas: je ne parle pas.",
+      "sourceIds": ["bdl-negation-gen", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella nunca come carne».",
+      "tiles": ["viande", "mange", "de", "Elle", "jamais", "ne"],
+      "answers": ["Elle ne mange jamais de viande."],
+      "rule": "Ne + verbo + jamais. Después de jamais, como después de pas, va de: jamais de viande.",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-negation"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Los domingos no trabajo».",
+      "tiles": ["travaille", "dimanche", "Le", "je", "pas", "ne"],
+      "answers": ["Le dimanche, je ne travaille pas.", "Je ne travaille pas le dimanche."],
+      "rule": "Ne y pas rodean el verbo: je ne travaille pas. «Los domingos» (le dimanche) puede ir al principio o al final.",
+      "sourceIds": ["inventaire-f", "bdl-negation-gen"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con ne + aimer: «No me gusta el té».",
+      "before": "Je ",
+      "after": " pas le thé.",
+      "answers": ["n'aime"],
+      "mistakes": [
+        { "answer": "ne aime", "explanation": "Aime empieza con vocal: ne pierde la e y se une con apóstrofo, n'aime." },
+        { "answer": "aime", "explanation": "Al escribir, falta ne delante del verbo. Como aime empieza con vocal, va n': je n'aime pas." }
+      ],
+      "rule": "Ne va delante del verbo, y delante de vocal se vuelve n': je n'aime pas.",
+      "sourceIds": ["bdl-elision", "bdl-pas-seul", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa: «No tengo hermanos».",
+      "before": "Je n'ai pas ",
+      "after": " frères.",
+      "answers": ["de"],
+      "mistakes": [
+        { "answer": "des", "explanation": "Después de ne… pas, des se vuelve de: pas de frères." },
+        { "answer": "d'", "explanation": "D' solo va delante de vocal. Frères empieza con consonante: de." }
+      ],
+      "rule": "Después de ne… pas, un, une y des se vuelven de.",
+      "sourceIds": ["bdl-negation", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con travailler: «Nunca trabaja los domingos».",
+      "before": "Il ",
+      "after": " le dimanche.",
+      "answers": ["ne travaille jamais"],
+      "mistakes": [
+        { "answer": "ne jamais travaille", "explanation": "Jamais va después del verbo, en el lugar de pas: il ne travaille jamais." },
+        { "answer": "travaille jamais", "explanation": "Al escribir, falta ne delante del verbo: il ne travaille jamais." },
+        { "answer": "ne travaille pas jamais", "explanation": "Jamais reemplaza a pas: no van juntos. Il ne travaille jamais." }
+      ],
+      "rule": "Para «nunca»: ne + verbo + jamais.",
+      "sourceIds": ["inventaire-f", "niveau-a2", "bdl-pas-seul"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa: «No es un problema».",
+      "before": "Ce n'est pas ",
+      "after": " problème.",
+      "answers": ["un"],
+      "mistakes": [
+        { "answer": "de", "explanation": "Con être el artículo no cambia: ce n'est pas un problème." },
+        { "answer": "le", "explanation": "Ce n'est pas le problème también es correcto, pero quiere decir «ese no es el problema». Para «un problema», un." }
+      ],
+      "rule": "Con être, un, une y des no se vuelven de: ce n'est pas un problème.",
+      "sourceIds": ["bdl-negation", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «No me gusta el deporte».",
+      "wrong": "Je n'aime pas de sport.",
+      "answers": ["Je n'aime pas le sport.", "Moi, je n'aime pas le sport."],
+      "mistakes": [
+        { "answer": "Je n'aime pas de sport.", "explanation": "Pas de reemplaza a un, une y des, no a le. Con aimer hablas del deporte en general y va le: je n'aime pas le sport." }
+      ],
+      "rule": "Le, la y les no cambian después de la negación.",
+      "sourceIds": ["inventaire-f", "bdl-negation"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase escrita: «No hablo alemán».",
+      "wrong": "Je parle pas allemand.",
+      "answers": [
+        "Je ne parle pas allemand.",
+        "Je ne parle pas l'allemand.",
+        "Moi, je ne parle pas allemand.",
+        "Moi, je ne parle pas l'allemand."
+      ],
+      "mistakes": [
+        { "answer": "Je parle pas allemand.", "explanation": "Así se oye en la conversación, pero al escribir la negación lleva ne: je ne parle pas." },
+        { "answer": "Je ne parle allemand.", "explanation": "Falta pas después del verbo: je ne parle pas." }
+      ],
+      "rule": "Al escribir, la negación tiene dos piezas: ne… pas.",
+      "sourceIds": ["bdl-pas-seul", "bdl-negation-gen"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Nunca vamos al cine».",
+      "wrong": "Nous ne jamais allons au cinéma.",
+      "answers": ["Nous n'allons jamais au cinéma.", "Nous, nous n'allons jamais au cinéma."],
+      "mistakes": [
+        { "answer": "Nous ne jamais allons au cinéma.", "explanation": "Jamais va después del verbo. Y como allons empieza con vocal, ne se vuelve n': nous n'allons jamais." },
+        { "answer": "Nous ne allons jamais au cinéma.", "explanation": "Allons empieza con vocal: ne pierde la e y se une con apóstrofo, n'allons." },
+        { "answer": "Nous n'allons pas jamais au cinéma.", "explanation": "Jamais reemplaza a pas: no van juntos. Nous n'allons jamais au cinéma." }
+      ],
+      "rule": "Ne (n' delante de vocal) + verbo + jamais.",
+      "sourceIds": ["inventaire-f", "bdl-elision", "niveau-a2"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Le cuentas a un amigo qué cosas no te gustan y qué no haces nunca.",
+      "models": [
+        "Je n'aime pas le sport.",
+        "Je ne mange jamais de viande.",
+        "Je n'aime pas les légumes et je ne bois jamais de café."
+      ],
+      "focus": "Ne… pas y ne… jamais alrededor del verbo; n' delante de vocal; pas de y jamais de",
+      "sourceIds": ["inventaire-f", "niveau-a2", "bdl-elision", "bdl-negation"],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Una compañera de trabajo francesa te pregunta si trabajas el fin de semana. Contéstale que no.",
+      "models": [
+        "Non, je ne travaille pas le samedi.",
+        "Non, je ne travaille jamais le dimanche.",
+        "Le samedi et le dimanche, je ne travaille pas."
+      ],
+      "focus": "Ne… pas y ne… jamais con el verbo travailler",
+      "sourceIds": ["inventaire-f", "bdl-negation-gen"],
+      "review": false
+    }
+  ]
+}

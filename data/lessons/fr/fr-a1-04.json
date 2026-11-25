@@ -1,0 +1,312 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-04",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Verbos en -er en presente",
+  "areas": ["grammar", "spelling"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones del nivel A1",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62, 64, 66-67",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "106",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-terminaisons",
+      "title": "Banque de dépannage linguistique: «Terminaison des verbes réguliers et irréguliers au présent de l'indicatif»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24213/la-grammaire/le-verbe/conjugaison/terminaison-des-verbes-reguliers-et-irreguliers-au-present-de-lindicatif"
+    },
+    {
+      "id": "bdl-radical",
+      "title": "Banque de dépannage linguistique: «Radical des verbes réguliers au présent de l'indicatif»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24212/la-grammaire/le-verbe/conjugaison/radical-des-verbes-reguliers-au-present-de-lindicatif"
+    },
+    {
+      "id": "bdl-muettes",
+      "title": "Banque de dépannage linguistique: «Consonnes finales muettes : généralités»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23737/lorthographe/problemes-lies-aux-consonnes/generalites-sur-les-consonnes-finales-muettes"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Muchos verbos frecuentes terminan en -er en infinitivo (la forma del diccionario): parler (hablar), aimer, habiter, travailler, écouter, manger. La mayoría se conjuga igual: quitas -er y agregas la terminación de cada persona: je parle, tu parles, il / elle parle, nous parlons, vous parlez, ils / elles parlent. Ojo con aller (ir): termina en -er, pero tiene su propia conjugación (je vais). Y algunos verbos cambian un poco al escribirse. Con nous, manger lleva una e antes de -ons (nous mangeons) y commencer cambia la c por ç (nous commençons): así la g y la c siguen sonando suaves, como en je mange y je commence.",
+      "sourceIds": ["bdl-terminaisons", "bdl-radical", "inventaire-d", "inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Lo difícil está en la escritura: je parle, tu parles, il parle e ils parlent suenan igual. La e final, la s de tu y el -nt de ils normalmente no se pronuncian, pero sí se escriben. Solo nous parlons y vous parlez suenan distinto. Por eso, al escribir, mira el sujeto y ponle su terminación, aunque no se oiga. Con ils y elles, delante de vocal se oye una z de enlace: il aime y ils aiment se distinguen solo por ese sonido. Y como en la lección 1, delante de vocal o de h muda je se vuelve j': j'aime, j'habite, j'écoute.",
+      "sourceIds": ["bdl-muettes", "bdl-radical", "niveau-a2", "bdl-elision"],
+      "review": false
+    }
+  ],
+  "pattern": [
+    { "label": "Sujeto", "options": ["je / j'", "tu", "il / elle", "nous", "vous", "ils / elles"] },
+    { "label": "Terminación", "options": ["-e", "-es", "-e", "-ons", "-ez", "-ent"] },
+    { "label": "Delante de vocal", "options": ["j'aime", "j'habite", "j'écoute"] },
+    { "label": "Con nous", "options": ["nous parlons", "nous mangeons", "nous commençons"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Hablo, hablas, habla, hablan.",
+      "target": "Je parle, tu parles, il parle, ils parlent.",
+      "note": "En español cada forma suena distinta. En francés estas cuatro suenan igual: la diferencia está en la escritura y en el sujeto, que por eso no se omite.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Ellas escuchan la radio.",
+      "target": "Elles écoutent la radio.",
+      "note": "El -ent no se pronuncia: écoutent suena como écoute. Lo que se oye es la z que une elles con la vocal de écoutent.",
+      "sourceIds": ["bdl-muettes", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Comemos en la casa.",
+      "target": "Nous mangeons à la maison.",
+      "note": "Con nous, manger guarda una e antes de -ons para que la g siga sonando suave, como en je mange.",
+      "sourceIds": ["bdl-radical"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Je travaille à Santiago.", "translation": "Trabajo en Santiago.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Tu parles bien français.", "translation": "Hablas bien francés.", "sourceIds": ["bdl-terminaisons"], "review": false },
+    { "id": "e3", "text": "Ils habitent à Toronto.", "translation": "Viven en Toronto.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Nous mangeons à la maison.", "translation": "Comemos en la casa.", "sourceIds": ["bdl-radical"], "review": false },
+    { "id": "e5", "text": "Marie joue au tennis.", "translation": "Marie juega tenis.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "J'étudie le français le soir.", "translation": "Estudio francés en la noche.", "sourceIds": ["inventaire-f", "bdl-elision"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Ils parle français.",
+      "right": "Ils parlent français.",
+      "explanation": "Con ils y elles se escribe -ent, aunque no suene: ils parlent.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Tu parle espagnol.",
+      "right": "Tu parles espagnol.",
+      "explanation": "Con tu se escribe -es. La s no suena, pero va: tu parles.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Nous mangons à midi.",
+      "right": "Nous mangeons à midi.",
+      "explanation": "Con nous, manger lleva una e antes de -ons. Sin ella, la g sonaría dura, como en «gol».",
+      "sourceIds": ["bdl-radical"],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Je écoute la radio.",
+      "right": "J'écoute la radio.",
+      "explanation": "Écoute empieza con vocal: je pierde la e y se une con apóstrofo, j'écoute.",
+      "sourceIds": ["bdl-elision"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ellos viven en Lyon».",
+      "tiles": ["à", "habitent", "Lyon", "Ils"],
+      "answers": ["Ils habitent à Lyon."],
+      "rule": "Sujeto + verbo + dónde. Con ils, el verbo termina en -ent: ils habitent.",
+      "sourceIds": ["bdl-terminaisons", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Los domingos comemos en la casa».",
+      "tiles": ["mangeons", "dimanche", "à", "Le", "nous", "maison", "la"],
+      "answers": [
+        "Le dimanche, nous mangeons à la maison.",
+        "Nous mangeons à la maison le dimanche.",
+        "Nous mangeons le dimanche à la maison."
+      ],
+      "rule": "Con nous, el verbo termina en -ons, y manger guarda la e: nous mangeons. «Los domingos» se dice le dimanche, al principio o al final.",
+      "sourceIds": ["bdl-radical", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ellas estudian francés en la noche».",
+      "tiles": ["le", "étudient", "le", "français", "Elles", "soir"],
+      "answers": ["Elles étudient le français le soir.", "Le soir, elles étudient le français."],
+      "rule": "Con elles, el verbo termina en -ent: elles étudient. «En la noche» se dice le soir, al principio o al final.",
+      "sourceIds": ["bdl-terminaisons", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con parler: «Hablas francés».",
+      "before": "Tu ",
+      "after": " français.",
+      "answers": ["parles"],
+      "mistakes": [
+        { "answer": "parle", "explanation": "Con tu se escribe -es: tu parles. Suena igual que parle, pero lleva s." },
+        { "answer": "parlez", "explanation": "Parlez va con vous. Con tu es parles." }
+      ],
+      "rule": "Con tu, los verbos en -er terminan en -es: tu parles.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con travailler: «Ellos trabajan los sábados».",
+      "before": "Ils ",
+      "after": " le samedi.",
+      "answers": ["travaillent"],
+      "mistakes": [
+        { "answer": "travaille", "explanation": "Con ils se escribe -ent: ils travaillent. Suena igual que travaille, pero se escribe distinto." },
+        { "answer": "travaillons", "explanation": "Travaillons va con nous. Con ils es travaillent." }
+      ],
+      "rule": "Con ils y elles, los verbos en -er terminan en -ent, aunque no suene.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con manger: «Comemos en la casa».",
+      "before": "Nous ",
+      "after": " à la maison.",
+      "answers": ["mangeons"],
+      "mistakes": [
+        { "answer": "mangons", "explanation": "Con nous, manger lleva una e antes de -ons: mangeons. Así la g sigue sonando suave." },
+        { "answer": "mangez", "explanation": "Mangez va con vous. Con nous es mangeons." }
+      ],
+      "rule": "Con nous, los verbos en -er terminan en -ons, y manger guarda la e: nous mangeons.",
+      "sourceIds": ["bdl-radical", "bdl-terminaisons"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con je + écouter: «Escucho la radio».",
+      "before": "",
+      "after": " la radio.",
+      "answers": ["J'écoute"],
+      "mistakes": [
+        { "answer": "Je écoute", "explanation": "Écoute empieza con vocal: je pierde la e y se une con apóstrofo, j'écoute." },
+        { "answer": "J'écoutes", "explanation": "La -s va con tu. Con je, el verbo termina en -e: j'écoute." }
+      ],
+      "rule": "Con je, los verbos en -er terminan en -e, y delante de vocal je se vuelve j': j'écoute.",
+      "sourceIds": ["bdl-elision", "bdl-terminaisons"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ellas hablan inglés».",
+      "wrong": "Elles parle anglais.",
+      "answers": [
+        "Elles parlent anglais.",
+        "Elles parlent l'anglais.",
+        "Elles, elles parlent anglais.",
+        "Elles, elles parlent l'anglais."
+      ],
+      "mistakes": [
+        { "answer": "Elles parle anglais.", "explanation": "Con elles se escribe -ent, aunque no suene: elles parlent." },
+        { "answer": "Elles parles anglais.", "explanation": "La -es va con tu. Con elles es -ent: elles parlent." }
+      ],
+      "rule": "Con ils y elles, los verbos en -er terminan en -ent.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ustedes trabajan mucho».",
+      "wrong": "Vous travaillent beaucoup.",
+      "answers": ["Vous travaillez beaucoup.", "Vous, vous travaillez beaucoup."],
+      "mistakes": [
+        { "answer": "Vous travaillent beaucoup.", "explanation": "-ent va con ils y elles. Con vous la terminación es -ez: vous travaillez." },
+        { "answer": "Vous travailler beaucoup.", "explanation": "Travailler, con r, es el infinitivo (la forma del diccionario). Suena igual, pero con vous se escribe -ez: vous travaillez." }
+      ],
+      "rule": "Con vous, los verbos en -er terminan en -ez: vous travaillez.",
+      "sourceIds": ["bdl-terminaisons", "bdl-muettes"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Comemos a mediodía».",
+      "wrong": "Nous mangons à midi.",
+      "answers": ["Nous mangeons à midi.", "À midi, nous mangeons."],
+      "mistakes": [
+        { "answer": "Nous mangons à midi.", "explanation": "Con nous, manger lleva una e antes de -ons: nous mangeons." }
+      ],
+      "rule": "Con nous, manger guarda la e: nous mangeons.",
+      "sourceIds": ["bdl-radical"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Le cuentas a un amigo francés qué hacen tú y tu familia: dónde viven, dónde trabajan o estudian y qué idiomas hablan.",
+      "models": [
+        "Je travaille à Santiago et ma sœur étudie à l'université.",
+        "Mes parents habitent à Santiago. Ils parlent espagnol.",
+        "Nous habitons à Santiago et nous parlons espagnol."
+      ],
+      "focus": "Verbos en -er en presente con la terminación de cada persona (-e, -es, -e, -ons, -ez, -ent)",
+      "sourceIds": ["bdl-terminaisons", "inventaire-f"],
+      "review": false
+    }
+  ]
+}
