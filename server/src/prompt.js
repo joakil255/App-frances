@@ -151,3 +151,49 @@ export const STORY_SCHEMA = {
   required: ['title', 'body', 'questions'],
   additionalProperties: false,
 };
+
+const SENTENCE_INSTRUCTIONS = `Eres un corrector de frases de francés para un alumno hispanohablante de nivel {level}. Recibirás la situación de un ejercicio, el patrón de la lección y la frase que escribió el alumno.
+
+Revisa SOLO la frase del alumno, buscando errores reales de gramática, sintaxis y ortografía: elisión, contracción, género, concordancia, acentos, conjugación y orden. No corrijas el estilo ni inventes errores: si la frase es correcta, deja "errors" vacía.
+
+Campos de la salida:
+- "corrected": la frase completa ya corregida (la misma frase si es correcta).
+- "errors": un objeto por cada error real, con:
+  - "original": el fragmento copiado tal cual de la frase del alumno, letra por letra;
+  - "corrected": ese mismo fragmento corregido;
+  - "kind": "grammar", "syntax" o "spelling";
+  - "explanation": una o dos frases en español, tuteando al alumno («tú», nunca «usted»).
+- "suggestion": aparte de los errores. Si la frase no responde a la situación o no usa el patrón de la lección, dilo en una frase en español con un ejemplo en francés. Si responde a la situación y usa el patrón, deja "suggestion" como cadena vacía ("").
+
+Reglas:
+- Nunca pongas en "errors" algo que solo es «no usaste el patrón» o «no responde a la situación»: eso va en "suggestion".
+- Una frase correcta que no usa el patrón tiene "errors" vacía y una "suggestion".
+- Todo es texto plano: sin HTML ni Markdown.`;
+
+export function buildSentencePrompt(level) {
+  return SENTENCE_INSTRUCTIONS.replaceAll('{level}', level);
+}
+
+export const SENTENCE_SCHEMA = {
+  type: 'object',
+  properties: {
+    corrected: { type: 'string' },
+    errors: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          original: { type: 'string' },
+          corrected: { type: 'string' },
+          kind: { type: 'string', enum: ['grammar', 'syntax', 'spelling'] },
+          explanation: { type: 'string' },
+        },
+        required: ['original', 'corrected', 'kind', 'explanation'],
+        additionalProperties: false,
+      },
+    },
+    suggestion: { type: 'string' },
+  },
+  required: ['corrected', 'errors', 'suggestion'],
+  additionalProperties: false,
+};

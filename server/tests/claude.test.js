@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClaudeAdapter } from '../src/providers/claude.js';
 import { PROVIDERS } from '../src/providers/index.js';
-import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, LOOKUP_SCHEMA, STORY_SCHEMA } from '../src/prompt.js';
+import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, LOOKUP_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA } from '../src/prompt.js';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -290,4 +290,57 @@ test('el esquema de historia lista todo en required y no admite campos extra', (
   const item = STORY_SCHEMA.properties.questions.items;
   assert.equal(item.additionalProperties, false);
   assert.deepEqual([...item.required].sort(), Object.keys(item.properties).sort());
+});
+
+const sentenceInput = {
+  lang: 'fr', explainLang: 'es', level: 'A1.2', situation: 'En un café', focus: 'elisión', sentence: 'Je aime le café.',
+};
+const goodSentence = {
+  corrected: "J'aime le café.",
+  errors: [{ original: 'Je aime', corrected: "J'aime", kind: 'spelling', explanation: "Je pierde la e delante de vocal: j'aime." }],
+  suggestion: '',
+};
+
+async function sentenceCodeOf(fetch) {
+  try {
+    await adapterWith(fetch).sentence(sentenceInput);
+  } catch (error) {
+    assert.equal(error.name, 'ProviderError');
+    return error.code;
+  }
+  assert.fail('debía fallar');
+}
+
+test('sentence arma la petición con el esquema, el nivel y las tres líneas', async () => {
+  let sent;
+  const fetch = async (url, init) => {
+    sent = JSON.parse(init.body);
+    return json(200, textBody(goodSentence));
+  };
+  await adapterWith(fetch).sentence(sentenceInput);
+  assert.equal(sent.output_config.effort, 'low');
+  assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: SENTENCE_SCHEMA });
+  assert.equal(sent.system, buildSentencePrompt('A1.2'));
+  assert.ok(sent.system.includes('A1.2'));
+  assert.equal(sent.messages.length, 1);
+  assert.equal(sent.messages[0].role, 'user');
+  assert.equal(sent.messages[0].content, 'Situación: En un café\nPatrón de la lección: elisión\nFrase del alumno: Je aime le café.');
+});
+
+test('sentence normaliza una salida válida', async () => {
+  const out = await adapterWith(async () => json(200, textBody(goodSentence))).sentence(sentenceInput);
+  assert.equal(out.correct, false);
+  assert.equal(out.corrected, "J'aime le café.");
+  assert.equal(out.errors.length, 1);
+});
+
+test('sentence rechaza un original que no está en la frase como bad_output', async () => {
+  const bad = { ...goodSentence, errors: [{ ...goodSentence.errors[0], original: 'Tu aimes' }] };
+  assert.equal(await sentenceCodeOf(async () => json(200, textBody(bad))), 'bad_output');
+});
+
+test('sentence traduce los errores HTTP igual que chat', async () => {
+  assert.equal(await sentenceCodeOf(async () => json(401, errBody('authentication_error'))), 'auth');
+  assert.equal(await sentenceCodeOf(async () => json(429, errBody('rate_limit_error'))), 'rate_limit');
+  assert.equal(await sentenceCodeOf(async () => json(500, errBody('api_error'))), 'unavailable');
 });
