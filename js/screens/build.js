@@ -1,9 +1,10 @@
-// Pantalla «Construir frases»: lista de lecciones, lección, práctica de ejercicios cerrados
+// Pantalla «Construir frases»: ruta de lecciones, lección, práctica de ejercicios cerrados
 // y repaso (#/construir/repaso), que usa la misma tarjeta. La frase libre está en build-free.js.
 // Todo el texto de las lecciones y de Claude se pinta con textContent.
 import { checkExercise, createTileBoard } from '../lib/sentence-check.js';
 import { insertAt } from '../lib/exercise-ui.js';
 import { lessonStatus, buildReviewQueue } from '../lib/build-review.js';
+import { routeRows, openableLesson, continueLabel, lessonNumber } from '../lib/lesson-route.js';
 import { findExercise } from '../lib/lessons.js';
 import { initFreeSentence } from './build-free.js';
 import { localDate } from '../lib/dates.js';
@@ -15,7 +16,6 @@ const $ = (selector, root = document) => root.querySelector(selector);
 
 const AREA_NAMES = { grammar: 'Gramática', syntax: 'Sintaxis', spelling: 'Ortografía' };
 const DIFF_NAMES = { changed: 'cambia', missing: 'falta', extra: 'sobra' };
-const REVIEW_PARTS = ['idea', 'think', 'examples', 'pitfalls', 'exercises', 'situations'];
 const BLANK = '…'; // hueco del ejercicio gap y palabra que falta en la diferencia
 
 function el(tag, { text, className, attrs = {} } = {}, children = []) {
@@ -33,9 +33,6 @@ function focusOn(node) {
   node.focus({ preventScroll: true });
   node.scrollIntoView({ block: 'nearest' });
 }
-
-const hasReview = (lesson) => REVIEW_PARTS.some((part) => lesson[part].some((item) => item.review));
-const stateText = ({ state, correct, total }) => ({ new: 'Nueva', started: `En curso: ${correct}/${total}`, done: 'Terminada' })[state];
 
 // «REVISAR» escrito (no solo color) y su nota
 function reviewNote(item) {
@@ -58,7 +55,8 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
   const heading = $('#screen-build h1');
   const notice = $('#build-notice');
   const indexEl = $('#build-index');
-  const list = $('#build-list');
+  const continueButton = $('#build-continue');
+  const allDone = $('#build-all-done');
   const reviewStart = $('#build-review-start');
   const reviewEl = $('#build-review');
   const reviewEmpty = $('#build-review-empty');
@@ -93,6 +91,7 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
   const nextButton = $('#build-next');
 
   let lesson = null; // la lección abierta
+  let continueHref = null; // a dónde lleva «Continuar»
   // { review, queue: [{ exercise, cardId }], index, requeued, board, expected, checked }; review = repaso
   let practice = null;
   const free = initFreeSentence({ buildStore, studyStore, fetch, isOnline, hostname, getCode, now, focusOn });
@@ -136,33 +135,51 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
     utterance = null;
   }
 
-  // --- Lista de lecciones ---
-  function itemNode(entry, number) {
-    const label = el('span', { className: 'build-number', text: `Lección ${number}` });
-    if (!entry.lesson) {
-      return el('li', { className: 'build-item' }, [el('p', { className: 'build-item-text build-item-broken' }, [
-        label, el('span', { text: 'Esta lección no se pudo cargar' }),
-      ])]);
-    }
-    const meta = el('span', { className: 'reader-item-meta' }, [
-      ...entry.lesson.areas.map((area) => el('span', { text: AREA_NAMES[area] })),
-      el('span', { text: stateText(lessonStatus(entry.lesson, buildStore.getState().progress[entry.id])) }),
+  // --- Ruta de lecciones: un tramo (A1, A2) por nivel, con una estación por lección ---
+  // Fila (de routeRows): estación (solo dibujo), «Lección N · Título», el estado en texto y, si hace falta, REVISAR
+  function routeItem(row) {
+    const text = el('span', { className: 'build-route-text' }, [
+      el('span', { className: 'build-route-name' }, [el('span', { className: 'build-route-number', text: `Lección ${row.number} · ` }), document.createTextNode(row.title)]),
+      el('span', { className: 'build-route-state', text: row.stateText }),
     ]);
-    if (hasReview(entry.lesson)) {
-      meta.append(el('span', {}, [document.createTextNode('Tiene partes '), el('span', { className: 'tag-review', text: 'REVISAR' })]));
+    if (row.hasReview) {
+      text.append(el('span', { className: 'build-route-review' }, [document.createTextNode('Tiene partes '), el('span', { className: 'tag-review', text: 'REVISAR' })]));
     }
-    return el('li', { className: 'build-item' }, [el('a', { attrs: { href: `#/construir/${entry.id}` } }, [
-      el('span', { className: 'build-item-text' }, [label, el('span', { className: 'reader-item-title', text: entry.lesson.title }), meta]),
-      el('span', { className: 'word-chevron', text: '›', attrs: { 'aria-hidden': 'true' } }),
-    ])]);
+    const children = [el('span', { className: `build-station build-station-${row.kind}`, text: row.kind === 'done' ? '✓' : '', attrs: { 'aria-hidden': 'true' } }), text];
+    // Sin href (planificadas y las que no se cargaron) la fila es texto, no un enlace
+    if (!row.href) {
+      return el('li', { className: row.kind === 'planned' ? 'build-route-planned' : undefined }, [el('p', { className: 'build-route-row' }, children)]);
+    }
+    const attrs = { href: row.href };
+    if (row.current) attrs['aria-current'] = 'step';
+    return el('li', {}, [el('a', { className: 'build-route-row', attrs }, children)]);
   }
   function renderList() {
-    list.replaceChildren(...(lessons ?? []).map((entry, i) => itemNode(entry, i + 1)));
+    const entries = lessons ?? [];
+    const { progress } = buildStore.getState();
+    const rows = routeRows(entries, progress);
+    for (const level of ['A1', 'A2']) {
+      const items = rows.filter((row) => row.level === level).map(routeItem);
+      const routeList = $(`#build-route-${level.toLowerCase()}`);
+      routeList.replaceChildren(...items);
+      // Un tramo sin lecciones no se muestra
+      routeList.hidden = items.length === 0;
+      $(`#build-level-${level.toLowerCase()}`).hidden = items.length === 0;
+    }
+    // Continuar: la siguiente pendiente; sin pendientes (y con alguna lección que se abre), el aviso de fin
+    const label = continueLabel(entries, progress);
+    continueButton.hidden = !label;
+    continueButton.textContent = label ?? 'Continuar';
+    continueHref = rows.find((row) => row.current)?.href ?? null;
+    allDone.hidden = Boolean(label) || !rows.some((row) => row.href);
     const due = dueQueue().length;
     reviewStart.textContent = `Repasar (${due})`;
     if (due === 0) reviewStart.setAttribute('aria-disabled', 'true');
     else reviewStart.removeAttribute('aria-disabled');
   }
+  continueButton.addEventListener('click', () => {
+    if (continueHref) location.hash = continueHref;
+  });
   reviewStart.addEventListener('click', () => {
     if (reviewStart.getAttribute('aria-disabled') !== 'true') location.hash = '#/construir/repaso';
   });
@@ -380,13 +397,22 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
       focusOn(prompt);
       return;
     }
-    const wasReview = practice.review;
+    const { review: wasReview, requeued } = practice;
     practice = null;
     card.hidden = true;
     if (wasReview) {
       reviewDone.hidden = false;
       focusOn(reviewDone);
       return;
+    }
+    // Práctica completa: se guarda su resultado. Cada ejercicio fallado al primer intento
+    // volvió una vez al final (requeued), así que los demás se acertaron a la primera.
+    const total = lesson.exercises.length;
+    try {
+      buildStore.recordPractice({ lessonId: lesson.id, firstTry: total - requeued.size, total, today: today() });
+    } catch (error) {
+      if (!(error instanceof StorageError)) throw error;
+      showNotice(storageMessage(error)); // el fin de la práctica se muestra igual
     }
     // Fin de la práctica: se puede volver a practicar y vienen las situaciones
     startButton.hidden = false;
@@ -490,15 +516,15 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
         if (moveFocus) heading.focus();
         return;
       }
-      const number = (lessons ?? []).findIndex((entry) => entry.id === param && entry.lesson);
-      if (number === -1) {
-        location.replace('#/construir'); // id desconocido: vuelve a la lista
+      const entry = openableLesson(lessons ?? [], param);
+      if (!entry) {
+        location.replace('#/construir'); // id desconocido, planificado o sin cargar: vuelve a la ruta
         return;
       }
-      lesson = lessons[number].lesson;
+      lesson = entry.lesson;
       indexEl.hidden = true;
       lessonEl.hidden = false;
-      renderLesson(number + 1);
+      renderLesson(lessonNumber(lessons, entry.id));
       // Una lección ya terminada muestra sus situaciones sin volver a practicar
       if (lessonStatus(lesson, buildStore.getState().progress[lesson.id]).state === 'done') free.show(lesson);
       if (moveFocus) titleEl.focus();

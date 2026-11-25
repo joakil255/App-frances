@@ -431,11 +431,20 @@
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Construir frases</h1>
         <div id="build-notice" class="notice" role="alert" hidden></div>
 
-        <!-- Lista de lecciones (#/construir) -->
+        <!-- Ruta de lecciones (#/construir): una línea de metro por tramo -->
         <div id="build-index">
-          <button type="button" class="button button-primary build-review-start" id="build-review-start" aria-disabled="true">Repasar (0)</button>
-          <ol id="build-list" class="build-list" aria-label="Lecciones"></ol>
-        </div>
+          <div class="study-actions build-index-actions">
+            <button type="button" class="button button-primary" id="build-continue">Continuar</button>
+            <button type="button" class="button button-secondary" id="build-review-start" aria-disabled="true">Repasar (0)</button>
+          </div>
+          <p id="build-all-done" class="build-all-done" hidden>Completaste todas las lecciones disponibles</p>
+          <div id="build-route">
+            <h2 id="build-level-a1" class="build-level">A1</h2>
+            <ol id="build-route-a1" class="build-route" aria-labelledby="build-level-a1"></ol>
+            <h2 id="build-level-a2" class="build-level">A2</h2>
+            <ol id="build-route-a2" class="build-route" aria-labelledby="build-level-a2"></ol>
+          </div>
+        </div><!-- Fin de la ruta -->
 
         <!-- Repaso (#/construir/repaso): usa la misma tarjeta de ejercicio que Practicar -->
         <div id="build-review" class="build-review" hidden>

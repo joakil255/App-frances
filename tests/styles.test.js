@@ -160,3 +160,27 @@ test('el aviso de Construir vacío no se quita del árbol de accesibilidad (role
   assert.ok(block, 'falta la regla .build-status:empty');
   assert.doesNotMatch(block, /display\s*:\s*none|visibility\s*:\s*hidden/);
 });
+
+// --- Índice de lecciones (Etapa 14): las planificadas van atenuadas pero se leen ---
+test('el texto atenuado de las lecciones planificadas se lee en claro y oscuro (≥ 4,5:1) y es más tenue que --text-muted', () => {
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    const planned = token(block, '--text-planned');
+    assert.ok(planned, `${theme}: falta --text-planned`);
+    for (const background of ['--bg', '--surface']) {
+      const bg = token(block, background);
+      assert.ok(contrast(planned, bg) >= 4.5, `${theme}: --text-planned ${planned} sobre ${background} ${bg}`);
+      assert.ok(contrast(planned, bg) < contrast(token(block, '--text-muted'), bg), `${theme}: --text-planned no se ve atenuado`);
+    }
+  }
+  const block = css.match(/\.build-route-planned\s*\{([^}]*)\}/)?.[1];
+  assert.ok(block, 'falta la regla .build-route-planned');
+  assert.match(block, /(?:^|;|\s)color:\s*var\(--text-planned\)/);
+});
+
+test('el tramo planificado de la ruta es una línea discontinua turquesa', () => {
+  // Reglas cuya lista de selectores incluye el tramo que llega a una estación planificada
+  const rules = [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^}]*)\}/g)]
+    .filter((m) => m[1].split(',').map((sel) => sel.trim()).includes('.build-route-planned::before'));
+  assert.ok(rules.length > 0, 'falta la regla .build-route-planned::before');
+  assert.ok(rules.some((m) => /border-left-style:\s*dashed/.test(m[2])), 'el tramo planificado no es discontinuo');
+});

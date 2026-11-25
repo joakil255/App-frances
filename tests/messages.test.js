@@ -8,7 +8,7 @@ const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStud
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
-  'micFailed', 'lookupLimit', 'corruptBuild', 'sentenceNoCode', 'lessonsUnavailable'];
+  'micFailed', 'lookupLimit', 'corruptBuild', 'buildMigrationFailed', 'sentenceNoCode', 'lessonsUnavailable'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -227,6 +227,17 @@ test('buildLoadNotice avisa si el progreso de frases estaba dañado o no se pudo
     title: 'Tu progreso de frases estaba dañado.',
     text: 'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
   });
+});
+
+test('buildLoadNotice avisa si no se pudo guardar la versión 2 del progreso de frases', () => {
+  assert.deepEqual(MESSAGES.buildMigrationFailed, {
+    title: 'No se pudo actualizar tu progreso de frases.',
+    text: 'La app sigue funcionando; vuelve a abrirla más tarde.',
+  });
+  assert.equal(buildLoadNotice({ corruptBackupKey: null, migrationError: new StorageError('quota') }), MESSAGES.buildMigrationFailed);
+  assert.equal(buildLoadNotice({ corruptBackupKey: null, migrationError: null }), null);
+  // Un error al leer pesa más: sin lectura no hay migración
+  assert.equal(buildLoadNotice({ error: new StorageError('unavailable'), migrationError: null }), MESSAGES.storageUnavailable);
 });
 
 test('sentenceNoCode y lessonsUnavailable tienen su texto exacto', () => {

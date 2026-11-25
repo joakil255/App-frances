@@ -3,6 +3,8 @@ import { normalizeAnswer } from './answer-check.js';
 
 export const LESSON_FORMAT = 'app-frances-leccion';
 export const INDEX_FORMAT = 'app-frances-lecciones';
+export const INDEX_VERSION = 2;
+export const LESSON_STATUSES = ['available', 'planned'];
 export const LESSON_LEVELS = ['A1', 'A2'];
 export const LESSON_AREAS = ['grammar', 'syntax', 'spelling'];
 export const EXERCISE_TYPES = ['order', 'gap', 'fix'];
@@ -158,26 +160,54 @@ export function findExercise(lessons, lessonId, exerciseId) {
 
 export const lessonsIndexUrl = (lang) => `data/lessons/${lang}/index.json`;
 
-// Carga el índice (si falla, lanza) y cada lección (si falla, queda marcada)
+// Revisa el índice v2: lista de { id, lang, level, title, status }
+export function validateLessonIndex(index) {
+  const errors = [];
+  if (!index || typeof index !== 'object') return { ok: false, errors: ['El índice no es un objeto.'] };
+  if (index.format !== INDEX_FORMAT) errors.push('format no es el de un índice.');
+  if (index.version !== INDEX_VERSION) errors.push(`version no es ${INDEX_VERSION}.`);
+  if (!isString(index.lang) || !LANG_CODE.test(index.lang)) errors.push('lang debe ser un código de 2 letras.');
+  if (!isList(index.lessons)) {
+    errors.push('lessons debe ser una lista.');
+    return { ok: false, errors };
+  }
+  const ids = new Set();
+  index.lessons.forEach((item, i) => {
+    if (!item || typeof item !== 'object') {
+      errors.push(`lessons[${i}]: elemento inválido.`);
+      return;
+    }
+    const name = isString(item.id) ? item.id : `lessons[${i}]`;
+    if (!isString(item.id) || !LESSON_ID.test(item.id)) errors.push(`${name}: id inválido (ej. fr-a1-01).`);
+    else if (ids.has(item.id)) errors.push(`${name}: id repetido.`);
+    else ids.add(item.id);
+    if (item.lang !== index.lang) errors.push(`${name}: lang distinto del índice.`);
+    if (!LESSON_LEVELS.includes(item.level)) errors.push(`${name}: level debe ser A1 o A2.`);
+    if (!isText(item.title)) errors.push(`${name}: falta title.`);
+    if (!LESSON_STATUSES.includes(item.status)) errors.push(`${name}: status desconocido.`);
+  });
+  return { ok: errors.length === 0, errors };
+}
+
+// Carga el índice (si falla, lanza) y cada lección disponible (si falla, queda marcada)
 export async function loadLessons({ fetch, lang }) {
   const response = await fetch(lessonsIndexUrl(lang));
   if (!response.ok) throw new Error('No se pudo leer el índice de lecciones.');
   const index = await response.json();
-  if (!index || index.format !== INDEX_FORMAT || index.version !== 1 || !isList(index.lessons)
-    || !index.lessons.every(isString)) {
-    throw new Error('El índice de lecciones no es válido.');
-  }
-  return Promise.all(index.lessons.map(async (id) => {
+  if (!validateLessonIndex(index).ok) throw new Error('El índice de lecciones no es válido.');
+  return Promise.all(index.lessons.map(async (item) => {
+    const base = { id: item.id, lang: item.lang, level: item.level, title: item.title, status: item.status };
+    if (item.status !== 'available') return { ...base, lesson: null, error: null };
     let data;
     try {
-      const res = await fetch(`data/lessons/${lang}/${id}.json`);
-      if (!res.ok) return { id, lesson: null, error: 'missing' };
+      const res = await fetch(`data/lessons/${lang}/${item.id}.json`);
+      if (!res.ok) return { ...base, lesson: null, error: 'missing' };
       data = await res.json();
     } catch (error) {
       // Sin conexión o archivo roto: no se distingue más
-      return { id, lesson: null, error: error instanceof SyntaxError ? 'invalid' : 'missing' };
+      return { ...base, lesson: null, error: error instanceof SyntaxError ? 'invalid' : 'missing' };
     }
-    const valid = validateLesson(data).ok && data.id === id;
-    return valid ? { id, lesson: data, error: null } : { id, lesson: null, error: 'invalid' };
+    const valid = validateLesson(data).ok && data.id === item.id && data.title === item.title && data.lang === item.lang;
+    return valid ? { ...base, lesson: data, error: null } : { ...base, lesson: null, error: 'invalid' };
   }));
 }

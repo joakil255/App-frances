@@ -20,6 +20,8 @@ export const MESSAGES = Object.freeze({
     'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.'),
   corruptBuild: message('Tu progreso de frases estaba dañado.',
     'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.'),
+  buildMigrationFailed: message('No se pudo actualizar tu progreso de frases.',
+    'La app sigue funcionando; vuelve a abrirla más tarde.'),
   restoreFailed: message('No se pudo restaurar la copia.', ''),
   backupUnverified: message('No se guardó la copia.',
     'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Palabras mientras tanto.'),
@@ -114,10 +116,12 @@ export function textsLoadNotice({ error = null, corruptBackupKey = null } = {}) 
   return corruptBackupKey ? MESSAGES.corruptTexts : null;
 }
 
-// Aviso al cargar el progreso de frases: igual que textsLoadNotice
-export function buildLoadNotice({ error = null, corruptBackupKey = null } = {}) {
+// Aviso al cargar el progreso de frases: igual que textsLoadNotice, y además si no se pudo
+// guardar la versión 2 (migrationError; el progreso sigue en memoria)
+export function buildLoadNotice({ error = null, corruptBackupKey = null, migrationError = null } = {}) {
   if (error) return storageMessage(error);
-  return corruptBackupKey ? MESSAGES.corruptBuild : null;
+  if (corruptBackupKey) return MESSAGES.corruptBuild;
+  return migrationError ? MESSAGES.buildMigrationFailed : null;
 }
 
 // Título y texto en una sola frase (para errores dentro de una ventana)

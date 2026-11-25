@@ -37,6 +37,14 @@ test('ex: de un ejercicio o lección borrados queda fuera; own entra', () => {
   assert.equal(countDueToday({ cards: Object.fromEntries(cards.map((c) => [c.id, c])), lessons, algorithm: 'sm2', today: TODAY }), 1);
 });
 
+test('Cola del repaso e Inicio: ignoran las planned', () => {
+  const planned = [{ id: 'fr-a1-10', status: 'planned', lesson: null, error: null }];
+  const cards = { 'ex:fr-a1-10:x1': mk('ex:fr-a1-10:x1', '2026-11-01') };
+  const args = { cards, lessons: planned, algorithm: 'sm2', today: TODAY };
+  assert.deepEqual(buildReviewQueue(args), []);
+  assert.equal(countDueToday(args), 0);
+});
+
 test('usa el algoritmo pedido', () => {
   const c = { ...mk('own:1', '2026-11-01'), leitner: { box: 1, due: '2026-12-01' } };
   assert.deepEqual(run([c], 'sm2'), ['own:1']);

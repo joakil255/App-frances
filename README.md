@@ -240,21 +240,28 @@ Lecciones cortas para armar frases en francés, con ejercicios que la app corrig
 
 - **En Inicio:** la tarjeta dice la próxima lección («Próxima lección: …», o «Terminaste todas las lecciones») y cuántas frases te toca repasar hoy («Repaso: N pendientes hoy»). **Seguir lección** abre la próxima lección y **Repasar (N)** abre el repaso (no hace nada si N es 0).
 
-- **Lista:** una fila por lección («Lección 1», «Lección 2»…), con sus áreas (Gramática, Sintaxis, Ortografía) y su estado: «Nueva», «En curso: X/Y» (ejercicios que ya acertaste alguna vez) o «Terminada». «Tiene partes REVISAR» avisa que algo de la lección todavía no tiene una fuente segura.
+- **La ruta (`#/construir`):** las 24 lecciones en orden, como una línea de metro vertical en dos tramos, **A1** y **A2**. Cada fila dice «Lección N · Título» y su estado en texto:
+  - «Sin empezar»;
+  - «En curso: X de Y» (ejercicios que ya acertaste alguna vez);
+  - «Completada · F de T a la primera · DD/MM/AAAA»: el resultado de tu última práctica completa (F son los ejercicios que acertaste al primer intento). Si vuelves a practicar una lección completada, al terminar se reemplaza por el nuevo resultado; si sales a medias, no cambia. Las lecciones completadas antes de la Etapa 14 dicen solo «Completada · DD/MM/AAAA»;
+  - «Próximamente»: lecciones que todavía no existen. Se ven atenuadas y no se pueden abrir (tampoco escribiendo su dirección: la app vuelve a la ruta).
+  - «Tiene partes REVISAR», debajo del estado, avisa que algo de la lección todavía no tiene una fuente segura (dentro de la lección cada parte lleva su etiqueta y su nota).
+  - La estación de cada lección acompaña al texto: llena con ✓ (completada), con un punto (en curso), vacía (sin empezar) o punteada (próximamente).
+  - Arriba, **Continuar: Lección N · Título** abre la primera lección pendiente (la misma que «Seguir lección» de Inicio), y en la ruta esa fila va resaltada. Si ya completaste todas, el botón desaparece y se lee «Completaste todas las lecciones disponibles». Al lado está **Repasar (N)**.
 - **Lección:** en este orden, «La idea», «El bloque» (las piezas de la frase), «Cómo pensarlo» (del español al francés), «Ejemplos» (cada uno con **Escuchar**), «Trampa común», «Practicar» y «Fuentes». Lo que está en REVISAR lleva la etiqueta escrita y su nota.
 - **Practicar:** un ejercicio por vez («Ejercicio X/Y»), en el orden de la lección. **Comprobar** dice «Correcto.» o «No es correcta.», explica la regla y muestra «La respuesta es: …»; si fallaste, «Tu respuesta:» marca las palabras que cambian, faltan o sobran. Luego **Siguiente**.
   - **Ordenar:** toca las fichas en el orden correcto; pasan a «Tu frase». Toca una ficha de «Tu frase» para devolverla, o **Borrar todo**. No hay que arrastrar nada: funciona con el teclado (Tab y Enter) y con TalkBack.
   - **Completar y corregir:** escribe en el campo. Debajo hay una fila con las letras con acento (à â ç é è ê ë î ï ô ù û œ) que escribe la letra donde está el cursor.
   - Los acentos cuentan según «Exigir acentos» del Quiz. Si solo te falta un acento, ves «Ojo con el acento: …» con la frase bien escrita (también cuando cuenta como correcta).
   - Un ejercicio que fallas vuelve **una vez** al final de esa práctica. Si lo fallas **dos veces** (seguidas o en días distintos) aparece «Este ejercicio irá a tu repaso.».
-  - La lección queda «Terminada» cuando acertaste cada ejercicio al menos una vez.
+  - La lección queda «Completada» cuando acertaste cada ejercicio al menos una vez.
 - **Frase libre:** al terminar los ejercicios (o al abrir una lección ya terminada) aparece una situación («Situación 1/2»): escribe una frase en francés y toca **Comprobar**.
   - Si coincide con una respuesta modelo, la app dice «Correcta.» sin enviar nada.
   - Si no coincide, **se envía a Claude (Anthropic)** por tu servidor, con el mismo código de acceso de Conversar (si no lo guardaste, la app dice «Falta tu código de acceso.»: escríbelo primero en Conversar). El botón dice «Revisando…» mientras espera.
   - Claude responde «Correcta.» o «Corregida: …», con cada error (lo que escribiste → lo correcto, su tipo, Gramática, Sintaxis u Ortografía, y la explicación), una «Sugerencia» aparte si la frase no responde a la situación o no usa el patrón de la lección, y las «Respuestas modelo».
   - Si hubo errores: «Agregamos esta frase a tu repaso.».
   - **Sin conexión** no se envía nada: ves «Necesitas conexión para que Claude revise tu frase.» y las respuestas modelo para comparar. Hay un límite de 50 correcciones al día.
-- **Repaso (`#/construir/repaso`, o «Repasar (N)» arriba de la lista):** los ejercicios que fallaste dos veces y las frases que corrigió Claude, con la repetición espaciada que elegiste en los ajustes de Estudiar. Cada tarjeta aparece por primera vez **al día siguiente**. Funciona como Practicar, con «Repaso: X/Y».
+- **Repaso (`#/construir/repaso`, o «Repasar (N)» arriba de la ruta):** los ejercicios que fallaste dos veces y las frases que corrigió Claude, con la repetición espaciada que elegiste en los ajustes de Estudiar. Cada tarjeta aparece por primera vez **al día siguiente**. Funciona como Practicar, con «Repaso: X/Y».
   - Una frase tuya aparece como «Corrige tu frase», con la etiqueta REVISAR (la corrección es de Claude y puede equivocarse). Si crees que está mal, **Quitar del repaso** la borra después de confirmar.
   - Si no hay nada: «No tienes nada que repasar hoy. Los ejercicios que falles 2 veces aparecerán aquí.».
 - **Sin conexión:** las lecciones vienen con la app, así que se leen, se practican y se repasan sin internet. Solo la corrección de la frase libre necesita conexión.
@@ -467,7 +474,7 @@ js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
 js/screens/home.js      pantalla Inicio (tarjeta Construir frases y copia de seguridad)
 js/screens/reader.js    pantalla Leer (biblioteca, lector con voz por frases y cuestionario)
-js/screens/build.js     pantalla Construir frases (lista, lección, práctica y repaso)
+js/screens/build.js     pantalla Construir frases (ruta, lección, práctica y repaso)
 js/screens/build-free.js frase libre de Construir (modelos y corrección de Claude)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
