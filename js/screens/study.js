@@ -192,6 +192,11 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     if (!session?.current) return;
     playFrench({ synth, text: session.current.word.fr, rate: RATES.normal, notice });
   }
+  // Lee la frase de ejemplo: no gira la tarjeta ni califica, y playFrench corta el audio anterior
+  function listenExample() {
+    if (!session?.current?.word.exampleFr) return;
+    playFrench({ synth, text: session.current.word.exampleFr, rate: RATES.normal, notice });
+  }
   // El francés se ve en el reverso siempre y en el anverso solo si la dirección es francés → español
   const frenchVisible = () => !back.hidden || session?.current?.item.direction === 'fr-es';
 
@@ -199,6 +204,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
   reveal.addEventListener('click', revealAnswer);
   for (const button of answerButtons) button.addEventListener('click', () => answer(button.dataset.answer));
   for (const button of screen.querySelectorAll('[data-listen]')) button.addEventListener('click', listen);
+  $('[data-listen-example]', back).addEventListener('click', listenExample);
   $('#study-back-to-summary').addEventListener('click', () => {
     renderSummary();
     $('#study-start').focus();
