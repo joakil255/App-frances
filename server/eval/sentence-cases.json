@@ -97,5 +97,32 @@
     "focus": "la negación con ne ... pas (n' delante de vocal)",
     "sentence": "J'aime le thé.",
     "expect": "correct-suggest"
+  },
+  {
+    "situation": "Hablas de tu hermana.",
+    "focus": "el adjetivo concuerda con el sujeto: ma sœur est petite (femenino)",
+    "sentence": "Ma sœur est petit.",
+    "expect": "error",
+    "accepted": [
+      "Ma sœur est petite."
+    ]
+  },
+  {
+    "situation": "Cuentas qué vas a comer hoy.",
+    "focus": "aller + infinitivo para el futuro próximo (je vais manger)",
+    "sentence": "Je vais mange une pomme.",
+    "expect": "error",
+    "accepted": [
+      "Je vais manger une pomme."
+    ]
+  },
+  {
+    "situation": "Le pides a un amigo que venga mañana.",
+    "focus": "pouvoir + infinitivo (tu peux venir)",
+    "sentence": "Tu peux viens demain ?",
+    "expect": "error",
+    "accepted": [
+      "Tu peux venir demain ?"
+    ]
   }
 ]
