@@ -97,5 +97,32 @@
     "focus": "la negación con ne ... pas (n' delante de vocal)",
     "sentence": "J'aime le thé.",
     "expect": "correct-suggest"
+  },
+  {
+    "situation": "Hablas de tu hermana.",
+    "focus": "el adjetivo concuerda con el sujeto: ma sœur est petite (femenino)",
+    "sentence": "Ma sœur est petit.",
+    "expect": "error",
+    "accepted": [
+      "Ma sœur est petite."
+    ]
+  },
+  {
+    "situation": "Un amigo te pregunta qué vas a hacer este fin de semana. Cuéntale dos planes y algo que no vas a hacer.",
+    "focus": "Aller + infinitivo para los planes, y ne… pas alrededor de aller para lo que no vas a hacer",
+    "sentence": "Je vais mange une pomme.",
+    "expect": "error",
+    "accepted": [
+      "Je vais manger une pomme."
+    ]
+  },
+  {
+    "situation": "Un amigo te invita al cine el sábado, pero no puedes. Dile que no puedes y qué tienes que hacer.",
+    "focus": "Je ne peux pas, y je dois + infinitivo para explicar por qué",
+    "sentence": "Tu peux viens demain ?",
+    "expect": "error",
+    "accepted": [
+      "Tu peux venir demain ?"
+    ]
   }
 ]

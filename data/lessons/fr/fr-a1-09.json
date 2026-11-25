@@ -1,0 +1,354 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-09",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Querer, poder y deber",
+  "areas": ["grammar", "syntax"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "50",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-67 (nivel A1), 67 y 69 (nivel A2), 74 (nivel B1)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "106, 108",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-terminaisons",
+      "title": "Banque de dépannage linguistique: «Terminaison des verbes réguliers et irréguliers au présent de l'indicatif»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24213/la-grammaire/le-verbe/conjugaison/terminaison-des-verbes-reguliers-et-irreguliers-au-present-de-lindicatif"
+    },
+    {
+      "id": "bdl-irreguliers",
+      "title": "Banque de dépannage linguistique: «Verbes réguliers et irréguliers : classification des verbes»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24654/la-grammaire/le-verbe/conjugaison/verbes-reguliers-et-irreguliers"
+    },
+    {
+      "id": "bdl-devoir",
+      "title": "Banque de dépannage linguistique: «Emploi des verbes devoir et se devoir»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/22441/la-grammaire/le-verbe/construction-et-sens-de-certains-verbes/emploi-des-verbes-devoir-et-se-devoir"
+    },
+    {
+      "id": "bdl-conditionnel",
+      "title": "Banque de dépannage linguistique: «Conditionnel : valeur modale»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24148/la-grammaire/le-verbe/temps-grammaticaux/conditionnel/valeur-modale-du-conditionnel"
+    },
+    {
+      "id": "bdl-conditionnel-formes",
+      "title": "Banque de dépannage linguistique: «Le conditionnel : formes et conjugaison»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24137/la-grammaire/le-verbe/conjugaison/formes-du-conditionnel"
+    },
+    {
+      "id": "bdl-place-negation",
+      "title": "Banque de dépannage linguistique: «Place du verbe avec ne… pas et ne pas»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23909/la-syntaxe/la-negation-et-la-restriction/place-du-verbe-avec-ne-pas-et-ne-pas"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Vouloir (querer), pouvoir (poder) y devoir (deber, tener que) son verbos irregulares y muy frecuentes. Se aprenden de memoria, en bloque con el sujeto. Vouloir: je veux, tu veux, il / elle veut, nous voulons, vous voulez, ils / elles veulent. Pouvoir: je peux, tu peux, il / elle peut, nous pouvons, vous pouvez, ils / elles peuvent. Devoir: je dois, tu dois, il / elle doit, nous devons, vous devez, ils / elles doivent. Ojo con la escritura: je veux, tu veux, je peux y tu peux terminan en -x, no en -s; con il / elle terminan en -t (il veut, il peut). Con nous y vous cambia la raíz: je peux, pero nous pouvons.",
+      "sourceIds": ["bdl-terminaisons", "bdl-irreguliers", "bdl-devoir", "inventaire-d", "inventaire-f", "niveau-a2"],
+      "review": true,
+      "reviewNote": "Sin fuente para nous voulons: ninguna fuente leída muestra esa forma. La BDL da las terminaciones de vouloir (-x, -x, -t en singular; -ons, -ez, -ent en plural), je veux e ils veulent, y el Niveau A2 (p. 108) da vous voulez, pero nous voulons no aparece escrito."
+    },
+    {
+      "id": "i2",
+      "text": "Después de estos tres verbos, el segundo verbo va en infinitivo, como en español: Je peux venir (puedo venir). Je veux aller à la piscine (quiero ir a la piscina). Devoir sirve para una obligación, como «tener que» o «deber»: Je dois faire un dessert (tengo que hacer un postre). Ojo: en español «tener que» lleva que; en francés, devoir va directo al infinitivo: je dois travailler. Para negar, ne… pas va alrededor del verbo conjugado, como en la lección 8: Je ne peux pas venir demain.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-devoir", "bdl-place-negation"],
+      "review": false
+    },
+    {
+      "id": "i3",
+      "text": "Para pedir algo con cortesía (en un café, una tienda o un hotel), el francés usa je voudrais, una forma suave de vouloir (se llama condicional). Es como «quisiera» o «me gustaría» en español: Je voudrais un café, s'il vous plaît. Va con un sustantivo con su artículo (je voudrais un café) o con un infinitivo (je voudrais réserver pour ce soir). Je veux también es francés correcto y sirve para decir lo que quieres (Je veux aller en Irlande), pero en un pedido suena más directo, menos suave. Con je, voudrais termina en -s.",
+      "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-conditionnel", "bdl-conditionnel-formes"],
+      "review": false
+    }
+  ],
+  "pattern": [
+    { "label": "Vouloir", "options": ["je veux", "tu veux", "il / elle veut", "nous voulons", "vous voulez", "ils / elles veulent"] },
+    { "label": "Pouvoir", "options": ["je peux", "tu peux", "il / elle peut", "nous pouvons", "vous pouvez", "ils / elles peuvent"] },
+    { "label": "Devoir", "options": ["je dois", "tu dois", "il / elle doit", "nous devons", "vous devez", "ils / elles doivent"] },
+    { "label": "+ infinitivo", "options": ["je peux venir", "je veux aller", "je dois travailler"] },
+    { "label": "Pedir con cortesía", "options": ["Je voudrais un café", "Je voudrais réserver", "s'il vous plaît"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Tengo que trabajar",
+      "target": "Je dois travailler.",
+      "note": "En español «tener que» lleva que. En francés, devoir va directo al infinitivo: je dois travailler.",
+      "sourceIds": ["bdl-devoir", "inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Quisiera un café, por favor",
+      "target": "Je voudrais un café, s'il vous plaît.",
+      "note": "Para pedir, en español suavizamos con «quisiera» o «me gustaría». En francés se suaviza igual, con je voudrais. Je veux un café también es correcto, pero suena más directo.",
+      "sourceIds": ["inventaire-f", "inventaire-d", "bdl-conditionnel"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "No puedo venir mañana",
+      "target": "Je ne peux pas venir demain.",
+      "note": "Como en español, el «no» va con el verbo conjugado: ne… pas alrededor de peux. Venir queda en infinitivo, después de pas.",
+      "sourceIds": ["inventaire-f", "bdl-place-negation"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Je peux faire un gâteau pour ton anniversaire.", "translation": "Puedo hacer una torta para tu cumpleaños.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Je dois faire un dessert.", "translation": "Tengo que hacer un postre.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e3", "text": "Je veux aller à la piscine aujourd'hui.", "translation": "Quiero ir a la piscina hoy.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Tu veux venir chez moi demain ?", "translation": "¿Quieres venir a mi casa mañana?", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e5", "text": "Je voudrais réserver pour ce soir, s'il vous plaît.", "translation": "Quisiera reservar para esta noche, por favor.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "Désolé, je ne peux pas.", "translation": "Lo siento, no puedo. (Si eres mujer, se escribe désolée.)", "sourceIds": ["inventaire-f"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Tu peux viens demain ?",
+      "right": "Tu peux venir demain ?",
+      "explanation": "Después de pouvoir, el segundo verbo va en infinitivo: venir. Solo se conjuga pouvoir (tu peux).",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "J'ai que travailler.",
+      "right": "Je dois travailler.",
+      "explanation": "«Tener que» no se traduce palabra por palabra con avoir y que. Para una obligación, usa devoir + infinitivo: je dois travailler.",
+      "sourceIds": ["bdl-devoir", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Je peus venir demain.",
+      "right": "Je peux venir demain.",
+      "explanation": "Con je y tu, pouvoir y vouloir terminan en -x: je peux, tu peux, je veux, tu veux.",
+      "sourceIds": ["bdl-terminaisons", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella tiene que trabajar el sábado».",
+      "tiles": ["travailler", "samedi", "Elle", "doit"],
+      "answers": ["Elle doit travailler samedi.", "Samedi, elle doit travailler."],
+      "rule": "Devoir conjugado (elle doit) + infinitivo (travailler), sin que.",
+      "sourceIds": ["bdl-devoir", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «No puedo venir mañana».",
+      "tiles": ["venir", "pas", "Je", "demain", "peux", "ne"],
+      "answers": ["Je ne peux pas venir demain.", "Demain, je ne peux pas venir."],
+      "mistakes": [
+        { "answer": "Je peux ne pas venir demain.", "explanation": "Esa frase existe, pero dice otra cosa: «puedo no venir mañana», porque ne pas va con venir. Para «no puedo venir», ne… pas rodea a peux: je ne peux pas venir." },
+        { "answer": "Demain, je peux ne pas venir.", "explanation": "Esa frase existe, pero dice otra cosa: «puedo no venir mañana», porque ne pas va con venir. Para «no puedo venir», ne… pas rodea a peux: je ne peux pas venir." }
+      ],
+      "rule": "Ne… pas rodea al verbo conjugado (peux), y el infinitivo va después de pas: je ne peux pas venir.",
+      "sourceIds": ["bdl-place-negation", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras para pedir con cortesía: «Quisiera un café, por favor».",
+      "tiles": ["café", "plaît", "voudrais", "s'il", "Je", "un", "vous"],
+      "answers": ["Je voudrais un café, s'il vous plaît.", "S'il vous plaît, je voudrais un café."],
+      "rule": "Je voudrais + sustantivo con su artículo (un café), y s'il vous plaît.",
+      "sourceIds": ["inventaire-f", "bdl-conditionnel"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con vouloir en presente: «¿Quieres ir al cine?».",
+      "before": "Tu ",
+      "after": " aller au cinéma ?",
+      "answers": ["veux"],
+      "mistakes": [
+        { "answer": "veut", "explanation": "Veut va con il / elle. Con tu: tu veux." },
+        { "answer": "veus", "explanation": "Con tu, vouloir termina en -x: tu veux." },
+        { "answer": "voudrais", "explanation": "Tu voudrais también es correcto y más suave, pero aquí se pide el presente: tu veux." }
+      ],
+      "rule": "Vouloir con tu: tu veux, con -x; después va el infinitivo (aller).",
+      "sourceIds": ["bdl-terminaisons", "inventaire-f", "bdl-conditionnel"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con pouvoir: «Ustedes pueden entrar».",
+      "before": "Vous ",
+      "after": " entrer.",
+      "answers": ["pouvez"],
+      "mistakes": [
+        { "answer": "peuvez", "explanation": "Con vous cambia la raíz de pouvoir: vous pouvez." },
+        { "answer": "pouvons", "explanation": "Pouvons va con nous. Con vous: pouvez." },
+        { "answer": "peuvent", "explanation": "Peuvent va con ils / elles. Con vous: pouvez." }
+      ],
+      "rule": "Pouvoir con vous: vous pouvez + infinitivo.",
+      "sourceIds": ["bdl-terminaisons", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con devoir: «Tenemos que estudiar».",
+      "before": "Nous ",
+      "after": " étudier.",
+      "answers": ["devons"],
+      "mistakes": [
+        { "answer": "doivons", "explanation": "Con nous cambia la raíz de devoir: nous devons." },
+        { "answer": "devez", "explanation": "Devez va con vous. Con nous: devons." },
+        { "answer": "doivent", "explanation": "Doivent va con ils / elles. Con nous: devons." }
+      ],
+      "rule": "Devoir con nous: nous devons + infinitivo.",
+      "sourceIds": ["bdl-devoir", "bdl-irreguliers"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con vouloir para pedir con cortesía en el mercado: «Quisiera un kilo de tomates, por favor».",
+      "before": "Je ",
+      "after": " un kilo de tomates, s'il vous plaît.",
+      "answers": ["voudrais"],
+      "mistakes": [
+        { "answer": "veux", "explanation": "Je veux también es francés correcto, pero suena más directo. Para pedir con cortesía, como pide el enunciado: je voudrais." },
+        { "answer": "voudrait", "explanation": "Con je, voudrais termina en -s. Voudrait es la forma de il / elle." }
+      ],
+      "rule": "Para pedir con cortesía: je voudrais + lo que pides.",
+      "sourceIds": ["inventaire-f", "bdl-conditionnel", "bdl-conditionnel-formes"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «¿Puedes venir mañana?».",
+      "wrong": "Tu peux viens demain ?",
+      "answers": [
+        "Tu peux venir demain ?",
+        "Est-ce que tu peux venir demain ?",
+        "Demain, tu peux venir ?",
+        "Peux-tu venir demain ?",
+        "Demain, est-ce que tu peux venir ?",
+        "Demain, peux-tu venir ?"
+      ],
+      "mistakes": [
+        { "answer": "Tu peux viens demain ?", "explanation": "Después de pouvoir, el segundo verbo va en infinitivo: venir. Solo se conjuga pouvoir (tu peux)." },
+        { "answer": "Tu peut venir demain ?", "explanation": "Con tu, pouvoir termina en -x: tu peux. Peut es para il / elle." }
+      ],
+      "rule": "Pouvoir conjugado (tu peux) + infinitivo (venir).",
+      "sourceIds": ["niveau-a2", "inventaire-f", "bdl-terminaisons"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase usando devoir: «Tengo que hacer un postre».",
+      "wrong": "J'ai que faire un dessert.",
+      "answers": ["Je dois faire un dessert.", "Moi, je dois faire un dessert."],
+      "mistakes": [
+        { "answer": "J'ai que faire un dessert.", "explanation": "«Tener que» no se traduce palabra por palabra con avoir y que. Para una obligación, usa devoir + infinitivo: je dois faire." },
+        { "answer": "Je dois que faire un dessert.", "explanation": "Devoir va directo al infinitivo, sin que: je dois faire." },
+        { "answer": "Je dois de faire un dessert.", "explanation": "Devoir va directo al infinitivo, sin de: je dois faire." },
+        { "answer": "J'ai à faire un dessert.", "explanation": "Esa forma también existe en francés, pero este ejercicio pide devoir: je dois faire un dessert." }
+      ],
+      "rule": "Para decir «tener que»: devoir conjugado + infinitivo, sin que: je dois faire.",
+      "sourceIds": ["bdl-devoir", "inventaire-f"],
+      "review": true,
+      "reviewNote": "Sin fuente: que J'ai à faire un dessert (avoir à + infinitivo) sea francés correcto, como dice uno de sus errores previstos, no aparece en las fuentes leídas. La regla del ejercicio (devoir + infinitivo para una obligación) sí está en la BDL «Emploi des verbes devoir et se devoir»."
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase. Estás en un café y pides con cortesía: «Quisiera un té, por favor».",
+      "wrong": "Je voudrait un thé, s'il vous plaît.",
+      "answers": [
+        "Je voudrais un thé, s'il vous plaît.",
+        "Moi, je voudrais un thé, s'il vous plaît.",
+        "S'il vous plaît, je voudrais un thé."
+      ],
+      "mistakes": [
+        { "answer": "Je voudrait un thé, s'il vous plaît.", "explanation": "Con je, voudrais termina en -s. Voudrait es la forma de il / elle." },
+        { "answer": "Je veux un thé, s'il vous plaît.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." },
+        { "answer": "S'il vous plaît, je veux un thé.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." },
+        { "answer": "Moi, je veux un thé, s'il vous plaît.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." }
+      ],
+      "rule": "Para pedir con cortesía: je voudrais, con -s al final.",
+      "sourceIds": ["bdl-conditionnel-formes", "bdl-conditionnel", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Estás en un café en Francia. Pide dos cosas con cortesía.",
+      "models": [
+        "Je voudrais un café et un croissant, s'il vous plaît.",
+        "Bonjour ! Je voudrais une pizza et un café, s'il vous plaît."
+      ],
+      "focus": "Je voudrais + sustantivo con su artículo, y s'il vous plaît",
+      "sourceIds": ["inventaire-f", "bdl-conditionnel"],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Un amigo te invita al cine el sábado, pero no puedes. Dile que no puedes y qué tienes que hacer.",
+      "models": [
+        "Merci, mais je ne peux pas. Je dois travailler samedi.",
+        "Je ne peux pas, je dois étudier samedi.",
+        "Désolé, je ne peux pas. Samedi, je dois faire un gâteau pour ma sœur."
+      ],
+      "focus": "Je ne peux pas, y je dois + infinitivo para explicar por qué",
+      "sourceIds": ["inventaire-f", "bdl-place-negation", "bdl-devoir"],
+      "review": false
+    }
+  ]
+}

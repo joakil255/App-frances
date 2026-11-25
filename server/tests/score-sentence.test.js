@@ -9,10 +9,10 @@ const err = { original: 'Je aime', corrected: "J'aime", kind: 'spelling', explan
 const withError = { correct: false, corrected: "J'aime le café.", errors: [err], suggestion: '' };
 const clean = { correct: true, corrected: 'Je mange.', errors: [], suggestion: '' };
 
-test('hay 13 casos: 7 con error (uno con una palabra que falta), 3 correctas y 3 correctas con sugerencia', () => {
-  assert.equal(cases.length, 13);
+test('hay 16 casos: 10 con error (uno con una palabra que falta), 3 correctas y 3 correctas con sugerencia', () => {
+  assert.equal(cases.length, 16);
   const count = (expect) => cases.filter((item) => item.expect === expect).length;
-  assert.deepEqual([count('error'), count('correct'), count('correct-suggest')], [7, 3, 3]);
+  assert.deepEqual([count('error'), count('correct'), count('correct-suggest')], [10, 3, 3]);
   for (const item of cases) {
     assert.ok(item.situation && item.focus && item.sentence);
     if (item.expect === 'error') assert.ok(item.accepted.length > 0);
@@ -27,6 +27,9 @@ test('hay 13 casos: 7 con error (uno con una palabra que falta), 3 correctas y 3
       ['Je ne aime pas le thé.', "Je n'aime pas le thé."],
       ['Est-ce que il parle français ?', "Est-ce qu'il parle français ?"],
       ['Je mange pain.', 'Je mange du pain.'],
+      ['Ma sœur est petit.', 'Ma sœur est petite.'],
+      ['Je vais mange une pomme.', 'Je vais manger une pomme.'],
+      ['Tu peux viens demain ?', 'Tu peux venir demain ?'],
     ],
   );
 });
@@ -76,6 +79,13 @@ test('criterio: falla con un rechazo, un error sin corregir o una correcta con e
   const b = allGood(); b[7] = { noInvented: false };
   assert.equal(meetsCriterion(b, 0), false);
   assert.equal(meetsCriterion(allGood().slice(1), 0), false);
+});
+
+test('criterio: falla si uno de los 3 errores de las lecciones 7 a 9 no se corrige', () => {
+  for (const index of [13, 14, 15]) {
+    const a = allGood(); a[index] = { errorFound: true, correctedOk: false };
+    assert.equal(meetsCriterion(a, 0), false);
+  }
 });
 
 test('criterio: acepta 2 de 3 sugerencias pero no 1', () => {
