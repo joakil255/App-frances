@@ -1,6 +1,6 @@
-# Etapa 13 — Lecciones 7 a 9 de Construir frases: diseño corto (borrador)
+# Etapa 13 — Lecciones 7 a 9 de Construir frases: diseño corto (aprobado)
 
-> **Estado:** **borrador, pendiente de aprobación del usuario.** No hay código. Las decisiones del usuario son del 25/11/2026. Lo marcado como **decisión del diseño** es una propuesta que el usuario puede corregir.
+> **Estado:** **aprobado por el usuario el 25/11/2026.** No hay código. Las decisiones del usuario son del 25/11/2026. Lo marcado como **decisión del diseño** es una propuesta que el usuario puede corregir.
 
 ## Intención
 Terminar la primera tanda de Construir frases (Etapa 12) con los temas A1 que faltan: adjetivos, verbos irregulares frecuentes, futuro próximo y la forma educada de pedir. La mecánica ya funciona en el teléfono; esta etapa es contenido.
