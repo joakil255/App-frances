@@ -476,3 +476,9 @@ test('la ventana de borrar una historia pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Borrar<\/button>/);
 });
+
+test('el enlace de Construir frases va en un <li> solo para computador', () => {
+  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  assert.match(nav, /<li class="nav-desktop-only"><a [^>]*href="#\/construir"[^>]*>/);
+  assert.equal((nav.match(/<li>/g) ?? []).length, 7);
+});

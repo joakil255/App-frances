@@ -7,6 +7,7 @@ export const SCREENS = [
   { id: 'progress', path: 'progreso', title: 'Progreso' },
   { id: 'chat', path: 'conversar', title: 'Conversar' },
   { id: 'reader', path: 'leer', title: 'Leer' },
+  { id: 'build', path: 'construir', title: 'Construir frases' },
 ];
 
 // Separa «#/leer/<id>» en la ruta («leer») y el id (sin cambiar mayúsculas)
@@ -15,8 +16,8 @@ function splitHash(hash) {
   return { path: path.toLowerCase(), param, extra };
 }
 
-// Solo el lector lleva un id en la dirección
-const PARAM_PATHS = ['leer'];
+// Solo el lector y Construir llevan un id (o «repaso») en la dirección
+const PARAM_PATHS = ['leer', 'construir'];
 
 // Convierte location.hash en el id de una pantalla.
 // Devuelve null si el hash es un ancla normal (p. ej. "#main") y no una pantalla.

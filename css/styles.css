@@ -190,6 +190,7 @@ main:focus { outline: none; } /* destino del enlace de salto, no es interactivo 
   list-style: none;
 }
 .nav-list li { flex: 1; }
+.nav-list .nav-desktop-only { display: none; } /* solo en la barra lateral */
 
 .nav-link {
   display: flex;
@@ -1081,6 +1082,7 @@ p.word-card-es { color: var(--text-muted); }
   }
 
   .nav-list { flex-direction: column; }
+  .nav-list .nav-desktop-only { display: block; }
 
   .nav-link {
     flex-direction: row;

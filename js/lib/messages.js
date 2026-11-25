@@ -52,6 +52,10 @@ export const MESSAGES = Object.freeze({
     'Puedes seguir conversando; las consultas se reinician a medianoche, hora de Chile.'),
   storyLimit: message('Llegaste al límite de historias de hoy.',
     'Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.'),
+  sentenceLimit: message('Llegaste al límite de correcciones de hoy.',
+    'El límite se reinicia a medianoche, hora de Chile.'),
+  sentenceOffline: message('Necesitas conexión para que Claude revise tu frase.',
+    'Compara tu frase con las respuestas modelo.'),
   micBlocked: message('El navegador no deja usar el micrófono.',
     'Permite el micrófono para este sitio en los ajustes del navegador (el candado junto a la dirección) y vuelve a tocar Hablar.'),
   micNoSpeech: message('No se oyó nada.',
@@ -84,6 +88,7 @@ const CHAT_KEYS = Object.freeze({
   refused: 'chatRefused',
   lookup_limit: 'lookupLimit',
   story_limit: 'storyLimit',
+  sentence_limit: 'sentenceLimit',
 });
 
 // Mensaje para un código de error del chat; los códigos desconocidos usan chatUnavailable

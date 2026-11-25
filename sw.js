@@ -46,6 +46,7 @@ const PRECACHE_URLS = [
   'js/lib/chat.js',
   'js/lib/lookup.js',
   'js/lib/story.js',
+  'js/lib/sentence.js',
   'js/lib/sentence-player.js',
   'js/lib/reading-quiz.js',
   'js/lib/lookup-cache.js',

@@ -216,3 +216,15 @@ test('textsLoadNotice avisa de datos dañados o de un error de lectura, y calla 
   assert.equal(textsLoadNotice({ error: new StorageError('quota') }), MESSAGES.storageQuota);
   assert.equal(textsLoadNotice({ error: new StorageError('unavailable') }), MESSAGES.storageUnavailable);
 });
+
+test('sentenceLimit y sentenceOffline tienen su texto exacto y sentence_limit lo usa', () => {
+  assert.deepEqual(MESSAGES.sentenceLimit, {
+    title: 'Llegaste al límite de correcciones de hoy.',
+    text: 'El límite se reinicia a medianoche, hora de Chile.',
+  });
+  assert.deepEqual(MESSAGES.sentenceOffline, {
+    title: 'Necesitas conexión para que Claude revise tu frase.',
+    text: 'Compara tu frase con las respuestas modelo.',
+  });
+  assert.deepEqual(chatMessage('sentence_limit'), MESSAGES.sentenceLimit);
+});

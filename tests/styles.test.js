@@ -132,3 +132,10 @@ test('el ▶ blanco de la frase que suena se ve sobre la línea marrón (≥ 3:1
   const brown = css.match(/\.line-reader \{ --line: (#[0-9A-Fa-f]{6}); \}/)?.[1];
   assert.ok(contrast(color, brown) >= 3, `${color} sobre ${brown}`);
 });
+
+test('.nav-desktop-only se oculta en móvil y se muestra desde 900 px', () => {
+  const at = css.indexOf('@media (min-width: 900px)');
+  assert.ok(at > 0);
+  assert.match(css.slice(0, at), /\.nav-list \.nav-desktop-only\s*\{\s*display:\s*none;/);
+  assert.match(css.slice(at), /\.nav-list \.nav-desktop-only\s*\{\s*display:\s*block;/);
+});
