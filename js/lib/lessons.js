@@ -77,7 +77,6 @@ function checkExercise(ex, name, errors) {
     return;
   }
 
-  if (ex.type === 'gap') checkTexts(ex, name, [], errors);
   if (ex.type === 'gap' && (!isString(ex.before) || !isString(ex.after))) errors.push(`${name}: faltan before y after.`);
   if (ex.type === 'fix') {
     if (!isText(ex.wrong)) errors.push(`${name}: falta wrong.`);

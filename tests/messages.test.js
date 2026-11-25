@@ -8,7 +8,7 @@ const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStud
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
-  'micFailed', 'lookupLimit', 'corruptBuild'];
+  'micFailed', 'lookupLimit', 'corruptBuild', 'sentenceNoCode', 'lessonsUnavailable'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -226,6 +226,17 @@ test('buildLoadNotice avisa si el progreso de frases estaba dañado o no se pudo
   assert.deepEqual(MESSAGES.corruptBuild, {
     title: 'Tu progreso de frases estaba dañado.',
     text: 'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
+  });
+});
+
+test('sentenceNoCode y lessonsUnavailable tienen su texto exacto', () => {
+  assert.deepEqual(MESSAGES.sentenceNoCode, {
+    title: 'Falta tu código de acceso.',
+    text: 'Escríbelo primero en Conversar; después vuelve aquí.',
+  });
+  assert.deepEqual(MESSAGES.lessonsUnavailable, {
+    title: 'No se pudieron cargar las lecciones.',
+    text: 'Abre la app con conexión una vez para guardarlas en el teléfono.',
   });
 });
 

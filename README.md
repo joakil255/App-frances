@@ -245,12 +245,12 @@ Lecciones cortas para armar frases en francés, con ejercicios que la app corrig
 - **Practicar:** un ejercicio por vez («Ejercicio X/Y»), en el orden de la lección. **Comprobar** dice «Correcto.» o «No es correcta.», explica la regla y muestra «La respuesta es: …»; si fallaste, «Tu respuesta:» marca las palabras que cambian, faltan o sobran. Luego **Siguiente**.
   - **Ordenar:** toca las fichas en el orden correcto; pasan a «Tu frase». Toca una ficha de «Tu frase» para devolverla, o **Borrar todo**. No hay que arrastrar nada: funciona con el teclado (Tab y Enter) y con TalkBack.
   - **Completar y corregir:** escribe en el campo. Debajo hay una fila con las letras con acento (à â ç é è ê ë î ï ô ù û œ) que escribe la letra donde está el cursor.
-  - Los acentos cuentan según «Exigir acentos» del Quiz.
+  - Los acentos cuentan según «Exigir acentos» del Quiz. Si solo te falta un acento, ves «Ojo con el acento: …» con la frase bien escrita (también cuando cuenta como correcta).
   - Un ejercicio que fallas vuelve **una vez** al final de esa práctica. Si lo fallas **dos veces** (seguidas o en días distintos) aparece «Este ejercicio irá a tu repaso.».
   - La lección queda «Terminada» cuando acertaste cada ejercicio al menos una vez.
 - **Frase libre:** al terminar los ejercicios (o al abrir una lección ya terminada) aparece una situación («Situación 1/2»): escribe una frase en francés y toca **Comprobar**.
   - Si coincide con una respuesta modelo, la app dice «Correcta.» sin enviar nada.
-  - Si no coincide, **se envía a Claude (Anthropic)** por tu servidor, con el mismo código de acceso de Conversar (si no lo guardaste, la app te lo avisa). El botón dice «Revisando…» mientras espera.
+  - Si no coincide, **se envía a Claude (Anthropic)** por tu servidor, con el mismo código de acceso de Conversar (si no lo guardaste, la app dice «Falta tu código de acceso.»: escríbelo primero en Conversar). El botón dice «Revisando…» mientras espera.
   - Claude responde «Correcta.» o «Corregida: …», con cada error (lo que escribiste → lo correcto, su tipo, Gramática, Sintaxis u Ortografía, y la explicación), una «Sugerencia» aparte si la frase no responde a la situación o no usa el patrón de la lección, y las «Respuestas modelo».
   - Si hubo errores: «Agregamos esta frase a tu repaso.».
   - **Sin conexión** no se envía nada: ves «Necesitas conexión para que Claude revise tu frase.» y las respuestas modelo para comparar. Hay un límite de 50 correcciones al día.
@@ -292,6 +292,8 @@ Todos los comandos se escriben **dentro de la carpeta `server/`** (`cd server`).
 - **Ver el contador de hoy:** `npx wrangler kv key get --binding CHAT_KV --remote "count:AAAA-MM-DD"` (fecha de Chile).
 - **Cambiar el código de acceso:** repite el paso 6; en el teléfono, la app te pedirá el código nuevo.
 - **Prueba de las 10 frases** (cuesta unos centavos y envía las frases a Anthropic): `npm run eval --prefix server`.
+- **Corrección de frases (`/sentence`):** la frase libre de Construir frases va a la ruta `/sentence` del mismo servidor, con el mismo código de acceso. Tiene su propio contador diario, `SENTENCE_LIMIT` en `server/wrangler.jsonc` (50 al día), aparte de `DAILY_LIMIT`, `LOOKUP_LIMIT` y `STORY_LIMIT`. Para cambiarlo, edítalo y vuelve a publicar. El contador de hoy se ve con `npx wrangler kv key get --binding CHAT_KV --remote "sentence:AAAA-MM-DD"`.
+- **Prueba de las 13 frases de Construir** (**cuesta dinero** y envía las frases a Anthropic; córrela solo cuando decidas pagarla, y nadie debe correrla sin tu permiso): `cd server && node eval/compare-sentence.mjs`. Usa la clave de `ANTHROPIC_API_KEY` o de `~/.config/app-frances/anthropic.key`. Al final dice si se cumple el criterio: 7 errores encontrados y corregidos (uno es una palabra que falta), 6 frases correctas sin errores inventados, 2 de 3 sugerencias y cero rechazos.
 
 ## Iconos
 

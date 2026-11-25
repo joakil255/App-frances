@@ -471,7 +471,7 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
         showNotice(pendingNotice);
         pendingNotice = null;
       } else if (lessons === null) {
-        showNotice(MESSAGES.storageUnavailable); // no se pudo leer el índice
+        showNotice(MESSAGES.lessonsUnavailable); // no se pudo leer el índice
       }
       lesson = null;
       resetPractice();

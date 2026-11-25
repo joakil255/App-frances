@@ -1236,7 +1236,8 @@ p.word-card-es { color: var(--text-muted); }
   cursor: default;
 }
 
-.build-status:empty { display: none; }
+/* Vacío se encoge sin desaparecer: así TalkBack sigue anunciando lo que se escriba */
+.build-status:empty { margin: 0; padding: 0; border: 0; }
 .build-status {
   margin: var(--space-3) 0 0;
   padding: var(--space-2) var(--space-3);

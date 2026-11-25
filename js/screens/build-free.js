@@ -162,7 +162,7 @@ export function initFreeSentence({ buildStore, studyStore, fetch, isOnline, host
     }
     const code = getCode();
     if (!code) {
-      showError(chatMessage('unauthorized')); // como Leer: el código se guarda en Conversar
+      showError(MESSAGES.sentenceNoCode); // el código se guarda en Conversar
       return;
     }
 

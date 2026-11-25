@@ -154,3 +154,9 @@ test('.nav-desktop-only se oculta en móvil y se muestra desde 900 px', () => {
   assert.match(css.slice(0, at), /\.nav-list \.nav-desktop-only\s*\{\s*display:\s*none;/);
   assert.match(css.slice(at), /\.nav-list \.nav-desktop-only\s*\{\s*display:\s*block;/);
 });
+
+test('el aviso de Construir vacío no se quita del árbol de accesibilidad (role="status")', () => {
+  const block = css.match(/\.build-status:empty\s*\{([^}]*)\}/)?.[1];
+  assert.ok(block, 'falta la regla .build-status:empty');
+  assert.doesNotMatch(block, /display\s*:\s*none|visibility\s*:\s*hidden/);
+});
