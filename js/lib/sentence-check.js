@@ -68,10 +68,10 @@ export function checkExercise(exercise, typed, { requireAccents }) {
   if (exact) return { correct: true, accentOnly: false, explanation: null, expected: exact.sentence, diff: exact.diff };
   const folded = candidates.find((c) => foldAccents(normalizeAnswer(c.sentence)) === foldAccents(typedKey));
   if (folded) {
-    const correct = !requireAccents;
+    // Con o sin acentos obligatorios, siempre se avisa del acento
     return {
-      correct, accentOnly: true, expected: folded.sentence, diff: folded.diff,
-      explanation: correct ? null : `Ojo con el acento: ${folded.sentence}`,
+      correct: !requireAccents, accentOnly: true, expected: folded.sentence, diff: folded.diff,
+      explanation: `Ojo con el acento: ${folded.sentence}`,
     };
   }
   const mistake = (exercise.mistakes ?? []).find((m) => normalizeAnswer(m.answer) === normalizeAnswer(text));

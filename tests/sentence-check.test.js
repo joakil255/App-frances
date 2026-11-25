@@ -26,7 +26,8 @@ test('checkExercise: correcta con apóstrofo tipográfico y sin acento', () => {
   const r = checkExercise(order, 'j’habite a lyon', { requireAccents: false });
   assert.equal(r.correct, true);
   assert.equal(r.accentOnly, true);
-  assert.equal(r.explanation, null);
+  // Según la especificación, también al acertar se avisa del acento
+  assert.equal(r.explanation, "Ojo con el acento: J'habite à Lyon.");
   const s = checkExercise(order, 'j’habite a lyon', { requireAccents: true });
   assert.equal(s.correct, false);
   assert.equal(s.accentOnly, true);
