@@ -353,7 +353,7 @@
       "answers": ["Il fait froid."],
       "mistakes": [
         { "answer": "Fait froid.", "explanation": "Al contar algo, el francés pone el sujeto delante del verbo, también para hablar del tiempo: il fait froid." },
-        { "answer": "Il est froid.", "explanation": "Para hablar del tiempo se usa faire: il fait froid." },
+        { "answer": "Il est froid.", "explanation": "Il est froid dice que algo está frío (la sopa, por ejemplo). Para el tiempo se dice il fait froid." },
         { "answer": "Il a froid.", "explanation": "Il a froid es «él tiene frío»: una persona, como en la lección 2. Para el tiempo: il fait froid." }
       ],
       "rule": "Para hablar del tiempo: il fait + adjetivo (il fait froid, il fait beau). Aquí il no es una persona, pero es obligatorio.",
