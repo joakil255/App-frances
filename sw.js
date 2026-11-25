@@ -49,6 +49,8 @@ const PRECACHE_URLS = [
   'js/lib/lookup-cache.js',
   'js/lib/recognition.js',
   'js/lib/voice-settings.js',
+  'js/lib/sentence-check.js',
+  'js/lib/exercise-ui.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
