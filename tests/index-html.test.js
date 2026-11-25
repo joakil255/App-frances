@@ -114,6 +114,19 @@ test('Estudiar tiene la tarjeta con anverso, reverso y botón de altavoz', () =>
   assert.match(card, /<button type="button" class="listen-button"[^>]*aria-label="Oír en francés"/);
 });
 
+test('el reverso tiene un botón para oír la frase de ejemplo, aparte del de la palabra', () => {
+  const back = study.match(/id="study-back"[\s\S]*?<\/article>/)?.[0];
+  assert.ok(back, 'falta #study-back');
+  const example = back.match(/<div class="study-example"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/)?.[1] ?? '';
+  const button = example.match(/<button [^>]*data-listen-example[^>]*>/)?.[0];
+  assert.ok(button, 'falta el botón data-listen-example dentro de la frase de ejemplo');
+  assert.match(button, /type="button"/);
+  assert.match(button, /class="listen-button"/);
+  assert.match(button, /aria-label="Oír la frase de ejemplo en francés"/);
+  // No debe confundirse con el botón de la palabra (atajo O) ni con las respuestas
+  assert.doesNotMatch(button, /data-listen(?!-example)|data-answer|aria-keyshortcuts/);
+});
+
 test('Estudiar tiene «Mostrar respuesta» y los cuatro botones de respuesta', () => {
   assert.match(study, /<button type="button"[^>]*id="study-reveal"[^>]*>\s*Mostrar respuesta/);
   const names = { again: 'Otra vez', hard: 'Difícil', good: 'Bien', easy: 'Fácil' };
