@@ -1,5 +1,5 @@
-// Tarjeta de una palabra de Claude en Conversar: qué significa en la frase, su forma base,
-// escucharla y guardarla en el vocabulario. Todo se pinta con textContent.
+// Tarjeta de una palabra (de Claude en Conversar o de una historia en Leer): qué significa en la frase,
+// su forma base, escucharla y guardarla en el vocabulario. Todo se pinta con textContent.
 import { lookupUrl, sendLookup, resolveLookup, findInVocabulary, wordFromLookup, isSavedTokenIn } from '../lib/lookup.js';
 import { chatMessage, storageMessage } from '../lib/messages.js';
 import { StorageError } from '../lib/storage.js';
@@ -44,6 +44,7 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
   const saveButton = $('[data-action="save"]', dialog);
 
   let current = null; // { token, result } de la palabra abierta
+  let opened = {}; // { root, category, needsReview } de quien abrió la tarjeta
   let request = 0; // una respuesta que llega tarde (de otra palabra o tras cerrar) se ignora
   let returnFocusTo = null;
   let saving = false;
@@ -93,10 +94,12 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
     return sendLookup({ url, code, body: { lang, word, sentence }, fetch, isOnline: isOnline() });
   }
 
-  async function open(token, buttonEl) {
+  // options: root = contenedor de las palabras que se subrayan; category y needsReview = cómo se guarda
+  async function open(token, buttonEl, options = {}) {
     beforeSpeak(); // corta el micrófono antes de abrir la tarjeta
     const id = ++request;
     current = null;
+    opened = options;
     returnFocusTo = buttonEl;
     title.textContent = token.text;
     info.hidden = true;
@@ -116,7 +119,7 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
     setStatus(outcome.result.contextTranslation, true);
     current = { token, result: outcome.result };
     showResult(outcome.result);
-    refresh(); // la consulta nueva puede subrayar otras formas de una palabra guardada
+    refresh(opened.root); // la consulta nueva puede subrayar otras formas de una palabra guardada
   }
 
   async function save() {
@@ -129,10 +132,11 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
     }
     saving = true;
     try {
-      const saved = await wordStore.saveWord(wordFromLookup(result, token.sentence));
+      const { category, needsReview } = opened;
+      const saved = await wordStore.saveWord(wordFromLookup(result, token.sentence, { category, needsReview }));
       if (saved.ok) {
         setSaveState('saved');
-        refresh();
+        refresh(opened.root);
       } else {
         showMessage({ title: Object.values(saved.errors).join(' '), text: '' }); // el error de la validación
       }
@@ -144,10 +148,11 @@ export function initWordCard({ wordStore, cache, fetch, isOnline, hostname, getC
     }
   }
 
-  // Subraya en todo el chat las palabras que ya están en el vocabulario (sin escribir nada al pintar)
-  function refresh() {
+  // Subraya dentro de root (el chat o el lector) las palabras que ya están en el vocabulario (sin escribir nada al pintar)
+  function refresh(root) {
+    if (!root) return;
     const savedLemmas = new Set(wordStore.getWords().filter((word) => word.lang === LANG).map((word) => word.lemma));
-    for (const button of document.querySelectorAll('#chat-log .chat-word')) {
+    for (const button of root.querySelectorAll('.chat-word')) {
       const { word, sentence } = button.dataset;
       const saved = isSavedTokenIn(savedLemmas, cache, LANG, word, sentence);
       button.classList.toggle('chat-word-saved', saved);

@@ -219,6 +219,21 @@ Toca cualquier palabra de una respuesta de Claude y se abre su tarjeta: qué sig
 - **Tus datos:** la palabra y su frase se envían a Anthropic, igual que tus mensajes.
 - Con «Escuchar primero», las palabras de una respuesta tapada se pueden tocar en cuanto tocas **Mostrar texto**.
 
+## Leer
+
+Historias cortas en francés escritas por Claude a tu nivel, para leer y escuchar frase por frase.
+
+- **Nueva historia:** eliges el nivel (A1.1, A1.2 o A2; por defecto A1.2), un tema si quieres y el idioma de las preguntas (Español o Francés; la app recuerda tu última elección). Mientras Claude escribe, el botón dice «Escribiendo…». Al terminar, la historia se abre sola.
+- **REVISAR:** cada historia nueva llega marcada **REVISAR** («Esta historia aún no está revisada.»), porque el francés lo escribió Claude. Léela y toca **Aprobar** si está bien o **Descartar** para borrarla. Una aprobada se borra con **Borrar historia**; las dos piden confirmación.
+- **Escuchar:** **Escuchar** lee la historia frase por frase y resalta la que suena; el mismo botón dice **Pausa** (termina la frase y se detiene) y **Seguir**. **Más lento** / **Normal** cambia la velocidad desde la frase siguiente. El botón **▶** de cada frase lee desde ahí. La voz se detiene al salir de la pantalla, al ocultar la app, al tocar una palabra y al usar el micrófono de Conversar.
+- **Palabras:** toca cualquier palabra para abrir su tarjeta, como en Conversar. **Guardar** la deja en Palabras con la categoría «Lectura» y la frase de la historia como ejemplo; si la historia todavía está en REVISAR, la palabra queda marcada «Pendiente de revisar». Las consultas cuentan en el límite de 200 al día.
+- **¿Lo entendiste?** Debajo del texto hay 4 preguntas. **Comprobar** dice si acertaste, explica en español y resalta en el texto la frase con la respuesta; luego **Siguiente**. Al final ves «Resultado: X de 4» y la biblioteca muestra «Preguntas: X/4» (repetir lo reemplaza).
+- **Marcar como leída** deja la marca «Leída» en la biblioteca.
+- **Sin conexión:** las historias guardadas se leen y tienen su cuestionario; se escuchan con la voz francesa instalada en el teléfono. Para pedir una nueva necesitas conexión.
+- **Límite: 5 historias al día**, contadas por el servidor aparte de los mensajes y las consultas. Se reinicia a medianoche, hora de Chile.
+- **Tus datos:** el nivel, el tema y el idioma de las preguntas se envían a Anthropic. Las historias se guardan en el teléfono y **sí** entran en la copia de seguridad.
+- El gesto «atrás» de Android vuelve de una historia a la biblioteca.
+
 ## Servidor de conversación
 
 La app no guarda ninguna clave. Habla con un servidor pequeño propio (un *Worker* de Cloudflare, carpeta `server/`) que guarda la clave de Anthropic, revisa el código de acceso, cuenta los mensajes del día y llama a Claude.
@@ -423,6 +438,7 @@ js/screens/voice.js     oír en francés con los mismos avisos en todas las pant
 js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
 js/screens/home.js      pantalla Inicio (guardar y restaurar la copia de seguridad)
+js/screens/reader.js    pantalla Leer (biblioteca, lector con voz por frases y cuestionario)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV

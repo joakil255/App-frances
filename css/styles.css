@@ -119,6 +119,7 @@
 .line-quiz { --line: #2FA36B; }
 .line-progress { --line: #E0663A; }
 .line-chat { --line: #D9478A; }
+.line-reader { --line: #A0703C; } /* marrón, como el lomo de un libro */
 
 /* --- Base --- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -896,6 +897,163 @@ p.word-card-es { color: var(--text-muted); }
   cursor: default;
 }
 
+/* --- Leer (DESIGN.md, Etapa 11) --- */
+.reader-library { margin-top: var(--space-5); }
+.reader-list:empty { display: none; }
+.reader-list {
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--plaque);
+}
+.reader-item a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 56px;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--divider);
+  color: inherit;
+  text-decoration: none;
+}
+.reader-item-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.reader-item-title { font-weight: 600; font-size: 1.1rem; line-height: 1.25; overflow-wrap: anywhere; }
+.reader-item-meta,
+.reader-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  color: var(--text-muted);
+  font: 500 var(--size-sm) var(--font-sign);
+}
+
+.reader-story { margin-top: var(--space-5); }
+.reader-title { margin: 0; font: 600 1.5625rem/1.2 var(--font-text); overflow-wrap: anywhere; }
+.reader-meta { margin: var(--space-2) 0 0; }
+.reader-review {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 2px solid var(--review);
+  border-radius: var(--radius);
+}
+.reader-review-text { margin: 0 0 var(--space-3); font: 500 var(--size-base) var(--font-sign); }
+.reader-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* «Escribiendo…» y «Leída»: desactivados con aria-disabled, como «Guardada» en la tarjeta */
+#reader-new[aria-disabled="true"],
+#reader-mark-read[aria-disabled="true"] {
+  background: var(--surface);
+  color: var(--text-muted);
+  border-color: var(--divider);
+  cursor: default;
+}
+.reader-source { margin: var(--space-3) 0 0; }
+
+/* Los botones de la voz quedan a la vista mientras se baja por el texto */
+.reader-player {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-2) 0;
+  background: var(--bg);
+  border-bottom: 2px solid var(--divider);
+}
+
+/* El texto es una línea de metro: cada frase es una estación (el botón ▶) sobre la línea marrón */
+.reader-text { position: relative; margin-top: var(--space-4); }
+.reader-text::before {
+  content: '';
+  position: absolute;
+  left: 22px; /* centro de las estaciones de 44 px (más el borde de la frase) */
+  top: var(--space-5);
+  bottom: var(--space-5);
+  width: 4px;
+  background: var(--line);
+}
+.reader-sentence {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-1);
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  line-height: 1.8;
+  scroll-margin: 80px 0 96px; /* que la barra fija de arriba y la de abajo no tapen la frase */
+}
+.reader-from {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: 50%; /* una estación, como los puntos de línea */
+  background: var(--bg);
+  color: var(--text);
+  font: 400 0.8rem/1 var(--font-sign);
+  cursor: pointer;
+}
+.reader-nowrap { white-space: nowrap; }
+.reader-words { flex: 1; min-width: 0; padding-top: 5px; overflow-wrap: anywhere; } /* primera línea a la altura de la estación */
+/* Frase que suena: recuadro con borde marrón y la estación llena (forma y color, nunca solo color) */
+.reader-sentence[aria-current="true"] { background: var(--surface); border-color: var(--line); }
+.reader-sentence[aria-current="true"] .reader-from { background: var(--line); color: #FFFFFF; }
+/* Frase con la respuesta del cuestionario: recuadro punteado de aviso */
+.reader-sentence.is-evidence {
+  background: var(--notice-bg);
+  color: var(--notice-text);
+  border: 2px dashed var(--notice-border);
+}
+
+/* Cuestionario de comprensión */
+.reader-end { margin-top: var(--space-5); }
+.reader-quiz { margin-top: var(--space-6); padding-top: var(--space-5); border-top: 2px solid var(--divider); }
+.reader-quiz-start { width: 100%; min-height: 56px; }
+.reader-quiz-card {
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 2px solid var(--plaque);
+  border-left: 8px solid var(--line);
+  border-radius: 10px;
+}
+.reader-quiz-count { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-2); color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.field > legend.reader-quiz-question { margin-bottom: var(--space-3); font: 600 1.1rem/1.35 var(--font-text); }
+.reader-quiz-options { display: grid; gap: var(--space-2); }
+.reader-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: 2px solid var(--secondary-text);
+  border-radius: var(--radius);
+  line-height: 1.3;
+  cursor: pointer;
+}
+.reader-option input { flex: none; width: 24px; height: 24px; margin: 0; accent-color: var(--plaque); }
+.reader-option:has(input:disabled) { cursor: default; }
+.reader-option.is-correct { border-color: var(--success-text); }
+.reader-option.is-wrong { border-color: var(--error-text); }
+.reader-quiz-button { width: 100%; margin-top: var(--space-4); }
+.reader-quiz-feedback { padding: var(--space-3) var(--space-4); }
+.reader-quiz-feedback p { margin: 0 0 var(--space-2); overflow-wrap: anywhere; }
+.reader-quiz-feedback p:last-child { margin-bottom: 0; }
+.reader-quiz-score { margin: 0 0 var(--space-3); font: 700 1.3rem/1.2 var(--font-sign); }
+/* Reciben el foco para que se lean; no son interactivos */
+.reader-title:focus,
+.reader-quiz-question:focus,
+#reader-quiz-verdict:focus,
+.reader-quiz-score:focus { outline: none; }
+
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {
   .layout {
@@ -944,6 +1102,8 @@ p.word-card-es { color: var(--text-muted); }
   .quiz-answer-actions { display: flex; }
   .quiz-next { width: auto; }
   .chat-send { flex: none; }
+  .reader-quiz-start,
+  .reader-quiz-button { width: auto; }
   /* En el computador la tarjeta es una ventana centrada, como las demás */
   .word-card {
     width: min(32rem, calc(100vw - 2 * var(--space-4)));

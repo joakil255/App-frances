@@ -26,7 +26,7 @@
         <li><a class="nav-link line-quiz" href="#/quiz"><span class="line-dot" aria-hidden="true"></span>Quiz</a></li>
         <li><a class="nav-link line-progress" href="#/progreso"><span class="line-dot" aria-hidden="true"></span>Progreso</a></li>
         <li><a class="nav-link line-chat" href="#/conversar"><span class="line-dot" aria-hidden="true"></span>Conversar</a></li>
-        <li><a class="nav-link line-chat" href="#/leer"><span class="line-dot" aria-hidden="true"></span>Leer</a></li>
+        <li><a class="nav-link line-reader" href="#/leer"><span class="line-dot" aria-hidden="true"></span>Leer</a></li>
       </ul>
     </nav>
 
@@ -306,9 +306,69 @@
         </div>
       </section>
 
-      <!-- Leer: pantalla provisional; el contenido llega en las tareas siguientes -->
-      <section id="screen-reader" class="screen line-chat" hidden>
+      <!-- Leer: biblioteca y lector. Las historias se pintan con textContent desde js/screens/reader.js -->
+      <section id="screen-reader" class="screen line-reader" hidden>
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Leer</h1>
+        <div id="reader-notice" class="notice" role="alert" hidden></div>
+        <p id="reader-status" class="visually-hidden" role="status"></p>
+
+        <!-- Biblioteca (#/leer) -->
+        <div id="reader-library" class="reader-library">
+          <button type="button" class="button button-primary" id="reader-new">Nueva historia</button>
+          <p id="reader-empty" class="empty">Aquí verás tus lecturas. Pide a Claude una historia a tu nivel.</p>
+          <ul id="reader-list" class="reader-list" aria-label="Tus lecturas"></ul>
+        </div>
+
+        <!-- Lector (#/leer/<id>) -->
+        <article id="reader-story" class="reader-story" aria-labelledby="reader-title" hidden>
+          <h2 id="reader-title" class="reader-title" lang="fr" tabindex="-1"></h2>
+          <p class="reader-meta"><span id="reader-level"></span><span id="reader-read-mark" hidden>Leída</span></p>
+          <div id="reader-review" class="reader-review" hidden>
+            <p class="reader-review-text"><span class="tag-review">REVISAR</span> <span>Esta historia aún no está revisada.</span></p>
+            <div class="reader-actions">
+              <button type="button" class="button button-primary" id="reader-approve">Aprobar</button>
+              <button type="button" class="button button-secondary" id="reader-discard">Descartar</button>
+            </div>
+          </div>
+          <p id="reader-source" class="hint reader-source"></p>
+
+          <!-- Los botones de la voz se quedan arriba solo mientras se lee el texto -->
+          <div class="reader-reading">
+            <div class="reader-player">
+              <button type="button" class="button button-primary" id="reader-play">Escuchar</button>
+              <button type="button" class="button button-secondary" id="reader-rate">Más lento</button>
+            </div>
+            <div id="reader-text" class="reader-text" lang="fr"></div>
+          </div>
+
+          <div class="reader-actions reader-end">
+            <button type="button" class="button button-secondary" id="reader-mark-read">Marcar como leída</button>
+            <button type="button" class="button button-secondary" id="reader-delete" hidden>Borrar historia</button>
+          </div>
+
+          <!-- Cuestionario de comprensión, debajo del texto -->
+          <div id="reader-quiz" class="reader-quiz">
+            <button type="button" class="button button-secondary reader-quiz-start" id="reader-quiz-start">¿Lo entendiste? Responder 4 preguntas</button>
+            <div id="reader-quiz-card" class="reader-quiz-card" hidden>
+              <p class="reader-quiz-count"><span id="reader-quiz-count"></span><span class="tag-review" id="reader-quiz-review" hidden>REVISAR</span></p>
+              <fieldset class="field reader-quiz-fieldset" id="reader-quiz-fieldset">
+                <legend id="reader-quiz-question" class="reader-quiz-question" tabindex="-1"></legend>
+                <div id="reader-quiz-options" class="reader-quiz-options"></div>
+              </fieldset>
+              <button type="button" class="button button-primary reader-quiz-button" id="reader-quiz-check">Comprobar</button>
+              <div id="reader-quiz-feedback" class="quiz-feedback reader-quiz-feedback" hidden>
+                <p id="reader-quiz-verdict" class="quiz-feedback-title" tabindex="-1"></p>
+                <p id="reader-quiz-explanation" lang="es"></p>
+                <p id="reader-quiz-evidence" class="reader-quiz-evidence"></p>
+              </div>
+              <button type="button" class="button button-primary reader-quiz-button" id="reader-quiz-next" hidden>Siguiente</button>
+            </div>
+            <div id="reader-quiz-result" class="reader-quiz-result" hidden>
+              <p id="reader-quiz-score" class="reader-quiz-score" tabindex="-1"></p>
+              <button type="button" class="button button-secondary" id="reader-quiz-retry">Volver a intentar</button>
+            </div>
+          </div>
+        </article>
       </section>
 
       <!-- Conversar: los mensajes se pintan con textContent desde js/screens/chat.js -->
@@ -514,6 +574,45 @@
         <button type="submit" class="button button-primary">Guardar y enviar</button>
       </div>
     </form>
+  </dialog>
+
+  <!-- Ventanas de la pantalla Leer -->
+  <dialog id="reader-new-dialog" class="dialog" aria-labelledby="reader-new-title">
+    <form method="dialog" novalidate>
+      <h2 id="reader-new-title" class="dialog-title">Nueva historia</h2>
+      <fieldset class="field">
+        <legend>Nivel</legend>
+        <div class="segmented">
+          <input type="radio" name="story-level" value="A1.1" id="reader-level-a11"><label for="reader-level-a11">A1.1</label>
+          <input type="radio" name="story-level" value="A1.2" id="reader-level-a12" checked><label for="reader-level-a12">A1.2</label>
+          <input type="radio" name="story-level" value="A2" id="reader-level-a2"><label for="reader-level-a2">A2</label>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label for="reader-topic">Tema (opcional)</label>
+        <input type="text" id="reader-topic" name="topic" maxlength="60" autocomplete="off">
+      </div>
+      <fieldset class="field">
+        <legend>Preguntas en:</legend>
+        <div class="segmented">
+          <input type="radio" name="quiz-lang" value="es" id="reader-quiz-es" checked><label for="reader-quiz-es">Español</label>
+          <input type="radio" name="quiz-lang" value="fr" id="reader-quiz-fr"><label for="reader-quiz-fr">Francés</label>
+        </div>
+      </fieldset>
+      <div class="dialog-actions">
+        <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+        <button type="submit" class="button button-primary">Escribir historia</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="reader-confirm-delete" class="dialog" aria-labelledby="reader-delete-title">
+    <h2 id="reader-delete-title" class="dialog-title">¿Borrar esta historia?</h2>
+    <p>No se puede deshacer.</p>
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" data-action="close">Cancelar</button>
+      <button type="button" class="button button-danger" data-action="confirm">Borrar</button>
+    </div>
   </dialog>
 
   <!-- Tarjeta de una palabra de Claude (se rellena con textContent). En el móvil es una hoja abajo. -->

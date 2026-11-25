@@ -110,3 +110,25 @@ test('la línea rosa de Conversar se ve sobre el fondo y la tarjeta (≥ 3:1)', 
     }
   }
 });
+
+// --- Leer (Etapa 11): la línea marrón dibuja la frase que suena y el subrayado de las palabras guardadas ---
+test('la línea marrón de Leer se ve sobre el fondo y la tarjeta (≥ 3:1) y es distinta de las demás', () => {
+  const brown = css.match(/\.line-reader \{ --line: (#[0-9A-Fa-f]{6}); \}/)?.[1];
+  assert.ok(brown, 'falta .line-reader');
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    for (const background of ['--surface', '--bg']) {
+      const bg = token(block, background);
+      assert.ok(contrast(brown, bg) >= 3, `${theme}: línea ${brown} sobre ${background} ${bg}`);
+    }
+  }
+  const others = [...css.matchAll(/\.line-(?!reader)[\w-]+ \{ --line: (#[0-9A-Fa-f]{6}); \}/g)].map((m) => m[1].toUpperCase());
+  assert.equal(others.length, 6);
+  assert.ok(!others.includes(brown.toUpperCase()), 'Leer repite el color de otra línea');
+});
+
+// El ▶ es un icono (su nombre va en aria-label): como elemento gráfico pide 3:1
+test('el ▶ blanco de la frase que suena se ve sobre la línea marrón (≥ 3:1)', () => {
+  const color = propertyOf('.reader-sentence[aria-current="true"] .reader-from', 'color');
+  const brown = css.match(/\.line-reader \{ --line: (#[0-9A-Fa-f]{6}); \}/)?.[1];
+  assert.ok(contrast(color, brown) >= 3, `${color} sobre ${brown}`);
+});

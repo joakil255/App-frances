@@ -391,3 +391,75 @@ test('la tarjeta de palabras tiene los botones Escuchar, Guardar y Cerrar', () =
   assert.match(dialog, /<button type="button" class="button button-primary word-card-save" data-action="save"[^>]*>Guardar<\/button>/);
   assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cerrar<\/button>/);
 });
+
+// --- Pantalla Leer (Etapa 11) ---
+const reader = html.match(/<section id="screen-reader"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const buttonWithText = (source, text) => new RegExp(`<button [^>]*>${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</button>`).test(source);
+
+test('la barra tiene el enlace «Leer» a #/leer con su propia línea', () => {
+  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  assert.match(nav, /<a class="nav-link line-reader" href="#\/leer"><span class="line-dot" aria-hidden="true"><\/span>Leer<\/a>/);
+});
+
+test('Leer es su propia sección con la línea marrón y el título enfocable', () => {
+  assert.match(html, /<section id="screen-reader" class="screen line-reader" hidden>/);
+  assert.match(reader, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Leer<\/h1>/);
+});
+
+test('Leer tiene aviso, zona de estado anunciable y la biblioteca vacía', () => {
+  assert.match(reader, /<div id="reader-notice" class="notice" role="alert" hidden><\/div>/);
+  const status = tagWithId(reader, 'reader-status');
+  assert.ok(status, 'falta #reader-status');
+  assert.ok(status.includes('role="status"'), '#reader-status sin role="status"');
+  assert.match(reader, /<p id="reader-empty" class="empty">Aquí verás tus lecturas\. Pide a Claude una historia a tu nivel\.<\/p>/);
+  assert.ok(tagWithId(reader, 'reader-list'), 'falta la lista #reader-list');
+});
+
+test('Leer tiene los botones con su texto exacto', () => {
+  for (const text of ['Nueva historia', 'Escuchar', 'Más lento', 'Marcar como leída', 'Aprobar', 'Descartar',
+    'Borrar historia', '¿Lo entendiste? Responder 4 preguntas', 'Comprobar', 'Siguiente', 'Volver a intentar']) {
+    assert.ok(buttonWithText(reader, text), `falta el botón «${text}»`);
+  }
+});
+
+test('el lector tiene el título de la historia enfocable, el aviso de REVISAR y el texto en francés', () => {
+  assert.match(reader, /<h2 id="reader-title" [^>]*lang="fr"[^>]*tabindex="-1"[^>]*><\/h2>/);
+  assert.match(reader, /<span [^>]*class="tag-review"[^>]*>REVISAR<\/span>/);
+  assert.match(reader, />Esta historia aún no está revisada\.</);
+  assert.match(reader, /<div id="reader-text" class="reader-text" lang="fr"><\/div>/);
+});
+
+test('el cuestionario pregunta con botones de opción dentro de un fieldset con leyenda', () => {
+  assert.match(reader, /<fieldset [^>]*id="reader-quiz-fieldset"[^>]*>\s*<legend id="reader-quiz-question"[^>]*><\/legend>/);
+  assert.ok(tagWithId(reader, 'reader-quiz-options'), 'falta #reader-quiz-options');
+});
+
+test('la ventana «Nueva historia» tiene nivel, tema y «Preguntas en:» con Español marcado', () => {
+  const dialog = html.match(/<dialog id="reader-new-dialog" class="dialog" aria-labelledby="reader-new-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta <dialog id="reader-new-dialog">');
+  assert.match(dialog, /<h2 id="reader-new-title" class="dialog-title">Nueva historia<\/h2>/);
+  assert.match(dialog, /<fieldset[^>]*>\s*<legend>Nivel<\/legend>/);
+  for (const [value, id] of [['A1.1', 'reader-level-a11'], ['A1.2', 'reader-level-a12'], ['A2', 'reader-level-a2']]) {
+    assert.match(dialog, new RegExp(`<input type="radio" name="story-level" value="${value.replace('.', '\\.')}" id="${id}"`));
+    assert.ok(hasLabelFor(id), `falta label de ${id}`);
+  }
+  assert.match(dialog, /value="A1\.2" id="reader-level-a12" checked>/);
+  const topic = tagWithId(dialog, 'reader-topic');
+  assert.ok(topic, 'falta #reader-topic');
+  assert.ok(topic.includes('maxlength="60"'), '#reader-topic sin maxlength="60"');
+  assert.match(html, /<label for="reader-topic">Tema \(opcional\)<\/label>/);
+  assert.match(dialog, /<fieldset[^>]*>\s*<legend>Preguntas en:<\/legend>/);
+  assert.match(dialog, /<input type="radio" name="quiz-lang" value="es" id="reader-quiz-es" checked><label for="reader-quiz-es">Español<\/label>/);
+  assert.match(dialog, /<input type="radio" name="quiz-lang" value="fr" id="reader-quiz-fr"><label for="reader-quiz-fr">Francés<\/label>/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="submit" class="button button-primary">Escribir historia<\/button>/);
+});
+
+test('la ventana de borrar una historia pide confirmación', () => {
+  const dialog = html.match(/<dialog id="reader-confirm-delete" class="dialog" aria-labelledby="reader-delete-title">([\s\S]*?)<\/dialog>/)?.[1];
+  assert.ok(dialog, 'falta <dialog id="reader-confirm-delete">');
+  assert.match(dialog, /<h2 id="reader-delete-title" class="dialog-title">¿Borrar esta historia\?<\/h2>/);
+  assert.match(dialog, /<p>No se puede deshacer\.<\/p>/);
+  assert.match(dialog, /<button type="button" class="button button-secondary" data-action="close">Cancelar<\/button>/);
+  assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Borrar<\/button>/);
+});

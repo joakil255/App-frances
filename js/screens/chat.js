@@ -133,6 +133,8 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore, 
   let beforeSpeak = () => {};
   let onBusy = () => {}; // avisa al micrófono de que se está enviando
   let coveredCount = 0; // para dar un id único a cada texto tapado
+  // Las palabras de Claude abren la tarjeta y se subrayan solo dentro del registro del chat
+  const openWord = (token, button) => wordCard.open(token, button, { root: log });
 
   // --- Avisos ---
   function showNotice({ title, text }) {
@@ -173,8 +175,8 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore, 
   // --- Conversación ---
   // Las respuestas del historial se muestran siempre
   function renderAll() {
-    log.replaceChildren(...turns.map((turn) => turnNode(turn, listen, wordCard.open)));
-    wordCard.refresh();
+    log.replaceChildren(...turns.map((turn) => turnNode(turn, listen, openWord)));
+    wordCard.refresh(log);
     updateEmpty();
   }
   function updateEmpty() {
@@ -237,12 +239,12 @@ export function initChat({ store, fetch, isOnline, hostname, synth, voiceStore, 
     const before = turns.length;
     turns = appendExchange(turns, message, result);
     const added = turns.slice(before);
-    const nodes = added.map((turn) => turnNode(turn, listen, wordCard.open));
+    const nodes = added.map((turn) => turnNode(turn, listen, openWord));
     // «Escuchar primero»: la respuesta se tapa y se lee sola; si no se puede oír, se muestra
     const reply = added.findIndex((turn) => turn.role === 'assistant');
     const reveal = listenFirstInput.checked && reply !== -1 ? coverReply(nodes[reply], `chat-reply-${++coveredCount}`) : null;
     log.append(...nodes);
-    wordCard.refresh();
+    wordCard.refresh(log);
     if (reveal) listen(added[reply].text, RATES.normal, reveal);
     updateEmpty();
     field.value = '';
