@@ -133,3 +133,11 @@ test('speak llama a onStart y onEnd de la frase', () => {
   spoken[0].onend();
   assert.deepEqual(calls, ['start', 'end']);
 });
+
+test('speak devuelve el utterance para que quien llama lo conserve', () => {
+  const spoken = [];
+  const synth = { cancel() {}, speak(u) { spoken.push(u); } };
+  class U { constructor(text) { this.text = text; } }
+  const utterance = speak(synth, null, 'Salut', 1, { Utterance: U });
+  assert.equal(utterance, spoken[0]);
+});

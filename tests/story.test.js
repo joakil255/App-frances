@@ -53,7 +53,9 @@ test('textFromStory recorta, arma la entrada y pasa validateText', () => {
   assert.equal(input.quiz.lang, 'es');
   assert.deepEqual(input.quiz.questions[0].options, ['Lyon', 'Paris', 'Nice']);
   assert.equal(input.quiz.questions[0].evidence, 'Marie habite à Lyon.');
-  const { ok, errors } = validateText({ ...input, status: 'review', quizResult: null });
+  const { ok, errors } = validateText({
+    ...input, status: 'review', quizResult: null, createdAt: '2026-11-24T10:00:00.000Z', updatedAt: '2026-11-24T10:00:00.000Z',
+  });
   assert.equal(ok, true, JSON.stringify(errors));
 });
 
@@ -83,4 +85,10 @@ test('findEvidenceSentence ignora mayúsculas y apóstrofos tipográficos', () =
   assert.equal(findEvidenceSentence(sentences, 'Le soir'), 3);
   assert.equal(findEvidenceSentence(sentences, 'Elle dort'), -1);
   assert.equal(findEvidenceSentence([], 'Le soir'), -1);
+});
+
+test('findEvidenceSentence pliega ʼ (U+02BC) como el servidor', () => {
+  const sentences = splitSentences('Marie habite à Lyon. Elle aime l\u02BCécole. Le soir, elle lit.');
+  assert.equal(findEvidenceSentence(sentences, "elle aime l'école"), 1);
+  assert.equal(findEvidenceSentence(splitSentences("Elle aime l'école. Bonjour."), 'elle aime l\u02BCécole'), 0);
 });

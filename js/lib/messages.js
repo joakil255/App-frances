@@ -16,6 +16,8 @@ export const MESSAGES = Object.freeze({
     'Se guardó una copia aparte y la lista empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.'),
   corruptStudy: message('Tu progreso guardado estaba dañado.',
     'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.'),
+  corruptTexts: message('Tus historias guardadas estaban dañadas.',
+    'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.'),
   restoreFailed: message('No se pudo restaurar la copia.', ''),
   backupUnverified: message('No se guardó la copia.',
     'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Palabras mientras tanto.'),

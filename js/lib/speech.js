@@ -40,6 +40,7 @@ const NORMAL_STOPS = ['interrupted', 'canceled'];
 
 // Lee el texto; antes corta lo que estuviera sonando.
 // onStart y onEnd avisan cuando empieza y cuando termina esta frase.
+// Devuelve el utterance: quien llama debe conservarlo hasta que termine (Chrome pierde onend si se recoge como basura).
 // onError(código) se llama si el motor de voz del sistema falla (p. ej. «synthesis-failed»).
 export function speak(synth, voice, text, rate, {
   Utterance = globalThis.SpeechSynthesisUtterance, onError = () => {}, onStart = () => {}, onEnd = () => {},
@@ -55,4 +56,5 @@ export function speak(synth, voice, text, rate, {
     if (!NORMAL_STOPS.includes(event.error)) onError(event.error);
   };
   synth.speak(utterance);
+  return utterance;
 }

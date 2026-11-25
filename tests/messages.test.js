@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { MESSAGES, storageMessage, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
 import { StorageError } from '../js/lib/storage.js';
 
-const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'restoreFailed',
+const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'corruptTexts', 'restoreFailed',
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
@@ -43,6 +43,10 @@ test('los textos exactos de almacenamiento y datos dañados nombran Inicio', () 
   assert.deepEqual(MESSAGES.corruptStudy, {
     title: 'Tu progreso guardado estaba dañado.',
     text: 'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
+  });
+  assert.deepEqual(MESSAGES.corruptTexts, {
+    title: 'Tus historias guardadas estaban dañadas.',
+    text: 'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.',
   });
   assert.equal(MESSAGES.restoreFailed.title, 'No se pudo restaurar la copia.');
   assert.deepEqual(MESSAGES.backupUnverified, {

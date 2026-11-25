@@ -372,3 +372,39 @@ test('watchExternalChanges vuelve a leer cuando cambia la clave de textos', asyn
   await listener({ key: null });
   assert.equal(calls, 2);
 });
+
+test('validateText pliega ʼ (U+02BC) igual que el servidor', () => {
+  const t = makeText();
+  t.body = BODY.replace('’', '\u02BC');
+  t.quiz.questions[0].evidence = "chaque matin, elle va à l'école.";
+  assert.equal(validateText(t).ok, true);
+  t.body = BODY;
+  t.quiz.questions[0].evidence = 'chaque matin, elle va à l\u02BCécole.';
+  assert.equal(validateText(t).ok, true);
+});
+
+test('validateText no es más estricto que el servidor con las opciones repetidas', () => {
+  // El servidor compara trim().toLowerCase(): estas opciones le parecen distintas
+  const t = makeText();
+  t.quiz.questions[0].options = ['a  b', 'a b', 'C'];
+  assert.equal(validateText(t).ok, true);
+  t.quiz.questions[0].options = ['\u00e9', 'e\u0301', 'C']; // é compuesta y descompuesta
+  assert.equal(validateText(t).ok, true);
+  t.quiz.questions[0].options = [' Lyon ', 'lyon', 'C']; // el servidor sí las ve iguales
+  assert.equal(validateText(t).ok, false);
+});
+
+for (const [name, over] of Object.entries({
+  'sin createdAt': { createdAt: undefined },
+  'createdAt no es fecha': { createdAt: 'ayer' },
+  'sin updatedAt': { updatedAt: undefined },
+  'updatedAt no es texto': { updatedAt: 5 },
+  'sin nombre de origen': { source: { kind: 'generated', license: 'x' } },
+  'nombre de origen vacío': { source: { kind: 'generated', name: ' ', license: 'x' } },
+})) {
+  test(`validateText rechaza una historia ${name}`, () => {
+    const { ok, errors } = validateText(makeText(over));
+    assert.equal(ok, false);
+    assert.ok(errors.createdAt || errors.updatedAt || errors.source);
+  });
+}

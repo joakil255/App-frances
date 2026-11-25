@@ -12,6 +12,9 @@ export function createSentencePlayer({
   let active = false; // hay una lectura en marcha (hablando o en pausa)
   let paused = false;
   let waitingFrom = null; // frase pendiente: la actual terminó mientras estaba en pausa
+  // Utterance en curso: solo se guarda (nunca se lee) para que Chrome no la recoja y pierda su onend
+  // eslint-disable-next-line no-unused-vars
+  let current = null;
 
   function finish() {
     active = false;
@@ -22,13 +25,14 @@ export function createSentencePlayer({
 
   function speakAt(i, myRun) {
     waitingFrom = null;
-    speak(synth, voice, sentences[i], currentRate, {
+    current = speak(synth, voice, sentences[i], currentRate, {
       Utterance,
       onStart: () => {
         if (myRun === run) onSentence(i);
       },
       onEnd: () => {
         if (myRun !== run) return;
+        current = null;
         if (i + 1 >= sentences.length) finish();
         else if (paused) waitingFrom = i + 1;
         else speakAt(i + 1, myRun);
@@ -73,6 +77,7 @@ export function createSentencePlayer({
       active = false;
       paused = false;
       waitingFrom = null;
+      current = null;
       synth.cancel();
     },
 

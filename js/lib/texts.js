@@ -19,18 +19,20 @@ export const GENERATED_SOURCE = {
   license: 'Historia original generada para uso personal',
 };
 
-// Misma comparación que el servidor: sin mayúsculas y con apóstrofos tipográficos como '
-export const evidenceKey = (value) => normalizeText(value).toLowerCase().replace(/[’‘]/g, "'");
+// Misma comparación que el servidor: sin mayúsculas y con apóstrofos tipográficos (’ ‘ ʼ) como '
+export const evidenceKey = (value) => normalizeText(value).toLowerCase().replace(/[’‘ʼ]/g, "'");
 
 const letters = (value) => [...normalizeText(value)].length;
 const isString = (value) => typeof value === 'string';
+const isIsoDate = (value) => isString(value) && !Number.isNaN(Date.parse(value));
 
 function questionError(q, bodyKey) {
   if (!q || typeof q !== 'object') return 'Pregunta inválida.';
   if (!isString(q.question) || letters(q.question) === 0) return 'Falta el enunciado.';
   if (!Array.isArray(q.options) || q.options.length < 3 || q.options.length > 4) return 'Debe tener 3 o 4 opciones.';
   if (!q.options.every((o) => isString(o) && letters(o) > 0)) return 'Hay opciones vacías.';
-  if (new Set(q.options.map((o) => normalizeText(o).toLowerCase())).size !== q.options.length) return 'Hay opciones repetidas.';
+  // Igual que el servidor (trim y minúsculas): la app nunca es más estricta que él
+  if (new Set(q.options.map((o) => o.trim().toLowerCase())).size !== q.options.length) return 'Hay opciones repetidas.';
   if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= q.options.length) return 'La respuesta no es válida.';
   if (!isString(q.explanation) || letters(q.explanation) === 0) return 'Falta la explicación.';
   if (!isString(q.evidence) || letters(q.evidence) === 0) return 'Falta la frase de evidencia.';
@@ -58,9 +60,12 @@ export function validateText(text) {
   const bodyLength = isString(text.body) ? letters(text.body) : 0;
   if (bodyLength < 1 || bodyLength > BODY_MAX) errors.body = `El texto debe tener de 1 a ${BODY_MAX} letras.`;
   if (!TEXT_STATUSES.includes(text.status)) errors.status = 'Estado no permitido.';
-  if (!text.source || !isString(text.source.license) || letters(text.source.license) === 0) {
-    errors.source = 'Falta la licencia del origen.';
+  if (!text.source || !isString(text.source.license) || letters(text.source.license) === 0
+    || !isString(text.source.name) || letters(text.source.name) === 0) {
+    errors.source = 'Falta el nombre o la licencia del origen.';
   }
+  if (!isIsoDate(text.createdAt)) errors.createdAt = 'La fecha de creación no es válida.';
+  if (!isIsoDate(text.updatedAt)) errors.updatedAt = 'La fecha de cambio no es válida.';
 
   const quiz = text.quiz;
   if (!quiz || typeof quiz !== 'object' || !QUIZ_LANGS.includes(quiz.lang)
