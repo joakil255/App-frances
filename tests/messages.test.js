@@ -1,14 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { MESSAGES, storageMessage, textsLoadNotice, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
+import { MESSAGES, storageMessage, textsLoadNotice, buildLoadNotice, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
 import { StorageError } from '../js/lib/storage.js';
 
 const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'corruptTexts', 'restoreFailed',
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
-  'micFailed', 'lookupLimit'];
+  'micFailed', 'lookupLimit', 'corruptBuild'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -215,6 +215,18 @@ test('textsLoadNotice avisa de datos dañados o de un error de lectura, y calla 
   assert.equal(textsLoadNotice({ corruptBackupKey: 'app-frances-texts-corrupt-x' }), MESSAGES.corruptTexts);
   assert.equal(textsLoadNotice({ error: new StorageError('quota') }), MESSAGES.storageQuota);
   assert.equal(textsLoadNotice({ error: new StorageError('unavailable') }), MESSAGES.storageUnavailable);
+});
+
+test('buildLoadNotice avisa si el progreso de frases estaba dañado o no se pudo leer, y calla si todo salió bien', () => {
+  assert.equal(buildLoadNotice({ corruptBackupKey: null }), null);
+  assert.equal(buildLoadNotice(), null);
+  assert.equal(buildLoadNotice({ corruptBackupKey: 'app-frances-build-corrupt-x' }), MESSAGES.corruptBuild);
+  assert.equal(buildLoadNotice({ error: new StorageError('quota') }), MESSAGES.storageQuota);
+  assert.equal(buildLoadNotice({ error: new StorageError('unavailable') }), MESSAGES.storageUnavailable);
+  assert.deepEqual(MESSAGES.corruptBuild, {
+    title: 'Tu progreso de frases estaba dañado.',
+    text: 'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
+  });
 });
 
 test('sentenceLimit y sentenceOffline tienen su texto exacto y sentence_limit lo usa', () => {

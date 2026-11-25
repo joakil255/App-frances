@@ -18,6 +18,8 @@ export const MESSAGES = Object.freeze({
     'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.'),
   corruptTexts: message('Tus historias guardadas estaban dañadas.',
     'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.'),
+  corruptBuild: message('Tu progreso de frases estaba dañado.',
+    'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.'),
   restoreFailed: message('No se pudo restaurar la copia.', ''),
   backupUnverified: message('No se guardó la copia.',
     'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Palabras mientras tanto.'),
@@ -106,6 +108,12 @@ export function storageMessage(error) {
 export function textsLoadNotice({ error = null, corruptBackupKey = null } = {}) {
   if (error) return storageMessage(error);
   return corruptBackupKey ? MESSAGES.corruptTexts : null;
+}
+
+// Aviso al cargar el progreso de frases: igual que textsLoadNotice
+export function buildLoadNotice({ error = null, corruptBackupKey = null } = {}) {
+  if (error) return storageMessage(error);
+  return corruptBackupKey ? MESSAGES.corruptBuild : null;
 }
 
 // Título y texto en una sola frase (para errores dentro de una ventana)

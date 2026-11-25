@@ -22,7 +22,7 @@ import { initWordCard } from './screens/word-card.js';
 import { initReader } from './screens/reader.js';
 import { initBuild } from './screens/build.js';
 import { loadLessons } from './lib/lessons.js';
-import { textsLoadNotice } from './lib/messages.js';
+import { textsLoadNotice, buildLoadNotice } from './lib/messages.js';
 
 const APP_NAME = 'App de francés';
 let currentId = null;
@@ -208,10 +208,11 @@ textsLoaded.then((loaded) => {
 // Construir frases: las lecciones vienen de data/lessons (guardadas sin conexión).
 // Si el índice no se puede leer, la pantalla lo avisa e Inicio sigue funcionando.
 const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
-Promise.all([lessonsLoaded, buildLoaded]).then(([lessons]) => {
+Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
   loadedLessons = lessons;
   home?.refresh();
   const build = initBuild({
+    loadNotice: buildLoadNotice(loaded),
     buildStore,
     studyStore,
     lessons,

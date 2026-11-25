@@ -54,7 +54,7 @@ function ownExercise(card) {
   };
 }
 
-export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnline, hostname, getCode, now = () => new Date() }) {
+export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnline, hostname, getCode, now = () => new Date(), loadNotice = null }) {
   const heading = $('#screen-build h1');
   const notice = $('#build-notice');
   const indexEl = $('#build-index');
@@ -100,6 +100,7 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
   const today = () => localDate(now());
   const dueQueue = () => buildReviewQueue({ cards: buildStore.getState().cards, lessons: lessons ?? [], algorithm: algorithm(), today: today() });
   let utterance = null; // se guarda hasta que termine (Chrome pierde onend si se recoge)
+  let pendingNotice = loadNotice; // aviso de la carga (datos dañados o sin acceso): se muestra una vez
 
   // --- Avisos ---
   function showNotice({ title, text }) {
@@ -466,7 +467,12 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
       stopVoice();
       clearNotice();
       free.hide();
-      if (lessons === null) showNotice(MESSAGES.storageUnavailable); // no se pudo leer el índice
+      if (pendingNotice) {
+        showNotice(pendingNotice);
+        pendingNotice = null;
+      } else if (lessons === null) {
+        showNotice(MESSAGES.storageUnavailable); // no se pudo leer el índice
+      }
       lesson = null;
       resetPractice();
       if (param === 'repaso') {
