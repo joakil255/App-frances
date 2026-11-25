@@ -78,7 +78,7 @@ test('completeLesson fija completedAt solo si era null', async () => {
 
 test('addOwnCard guarda los datos y vence mañana', async () => {
   const { store } = await makeStore(undefined, () => 'abc');
-  const id = store.addOwnCard({ situation: 'Café', original: 'Je veux café', corrected: 'Je veux du café', errors: [{ original: 'café', corrected: 'du café' }], today: TODAY });
+  const id = store.addOwnCard({ situation: 'Café', original: 'Je veux café', corrected: 'Je veux du café', errors: [{ original: 'café', corrected: 'du café', kind: 'grammar', explanation: 'Falta el artículo.' }], today: TODAY });
   assert.equal(id, 'own:abc');
   const card = store.getState().cards[id];
   assert.equal(card.kind, 'own');
@@ -166,6 +166,12 @@ test('validateBuildDoc rechaza formas incorrectas', () => {
   const own = { id: 'own:1', kind: 'own', original: 'a', corrected: 'b', situation: 's', errors: [], createdAt: 'x', introducedOn: null, lastReviewedAt: null, sm2, leitner };
   assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': own } }), true);
   assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, errors: 'no' } } }), false);
+  // Cada error debe ser un objeto con sus cuatro textos (un null rompería el repaso)
+  const error = { original: 'a', corrected: 'b', kind: 'grammar', explanation: 'Porque sí.' };
+  assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, errors: [error] } } }), true);
+  for (const bad of [null, 'x', [], { ...error, explanation: 5 }, { original: 'a', corrected: 'b', kind: 'grammar' }, { ...error, kind: null }]) {
+    assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, errors: [bad] } } }), false, JSON.stringify(bad));
+  }
   assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, sm2: { ...sm2, ease: 5 } } } }), false);
   assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, leitner: { box: 6, due: null } } } }), false);
   assert.equal(validateBuildDoc({ progress: {}, cards: { 'own:1': { ...own, kind: 'otro' } } }), false);

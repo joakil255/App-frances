@@ -1,5 +1,6 @@
 // Corrección de frases: pedirla al servidor y validar la respuesta. Sin DOM.
 import { chatUrl, postJson } from './chat.js';
+import { isSentenceError } from './build-storage.js';
 
 // Cambia /chat por /sentence en la dirección del servidor
 export function sentenceUrl(hostname) {
@@ -8,7 +9,7 @@ export function sentenceUrl(hostname) {
 
 function isValidSentence(data) {
   return Boolean(data) && typeof data.correct === 'boolean' && typeof data.corrected === 'string'
-    && Array.isArray(data.errors) && typeof data.suggestion === 'string'
+    && Array.isArray(data.errors) && data.errors.every(isSentenceError) && typeof data.suggestion === 'string'
     && typeof data.remainingSentences === 'number';
 }
 

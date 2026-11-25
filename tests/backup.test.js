@@ -505,6 +505,10 @@ test('una v4 con frases inválidas o sin ellas está dañada', async () => {
     'build no es objeto': (d) => { d.build = []; },
     'tarjeta con kind raro': (d) => { d.build.cards['ex:fr-a1-01:e1'].kind = 'x'; },
     'progreso mal formado': (d) => { d.build.progress['fr-a1-01'] = 5; },
+    'frase propia con un error null': (d) => {
+      const { sm2, leitner, createdAt } = d.build.cards['ex:fr-a1-01:e1'];
+      d.build.cards['own:1'] = { id: 'own:1', kind: 'own', situation: 's', original: 'a', corrected: 'b', errors: [null], createdAt, introducedOn: null, lastReviewedAt: null, sm2, leitner };
+    },
   };
   for (const [name, change] of Object.entries(cases)) {
     const data = await v4WithBuild();

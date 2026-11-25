@@ -20,11 +20,15 @@ function validSchedule({ sm2, leitner }) {
   return isObject(leitner) && Number.isInteger(leitner.box) && leitner.box >= 0 && leitner.box <= 5 && isDateOrNull(leitner.due);
 }
 
+// Un error corregido por Claude: un objeto con sus cuatro textos
+export const isSentenceError = (error) => isObject(error)
+  && ['original', 'corrected', 'kind', 'explanation'].every((k) => typeof error[k] === 'string');
+
 function validCard(card, key) {
   if (!isObject(card) || card.id !== key || !validSchedule(card)) return false;
   if (card.kind === 'exercise') return isText(card.lessonId) && isText(card.exerciseId);
   if (card.kind === 'own') {
-    return ['original', 'corrected', 'situation'].every((k) => typeof card[k] === 'string') && Array.isArray(card.errors);
+    return ['original', 'corrected', 'situation'].every((k) => typeof card[k] === 'string') && Array.isArray(card.errors) && card.errors.every(isSentenceError);
   }
   return false;
 }
@@ -123,7 +127,7 @@ export function createBuildStore(backend, { now = () => new Date(), makeId = () 
       return { cardCreated };
     },
 
-    completeLesson(lessonId, today = now().toISOString().slice(0, 10)) {
+    completeLesson(lessonId, today) {
       const next = copy();
       const lesson = next.progress[lessonId] ?? { startedAt: today, completedAt: null, exercises: {} };
       next.progress[lessonId] = lesson;

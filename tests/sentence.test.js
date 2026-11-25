@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { sentenceUrl, sendSentence } from '../js/lib/sentence.js';
 import { PRODUCTION_CHAT_URL } from '../js/lib/chat.js';
 
-const OK = { correct: false, corrected: 'Je mange.', errors: ['verbo'], suggestion: 'Je mange une pomme.', remainingSentences: 7 };
+const ERROR = { original: 'Je mangez', corrected: 'Je mange', kind: 'grammar', explanation: 'Con je, mange.' };
+const OK = { correct: false, corrected: 'Je mange.', errors: [ERROR], suggestion: 'Je mange une pomme.', remainingSentences: 7 };
 const reply = (status, body) => async () => ({ ok: status < 400, status, json: async () => body });
 const send = (fetch, extra = {}) => sendSentence({ url: 'u', code: 'c', body: {}, fetch, isOnline: true, ...extra });
 
@@ -16,7 +17,7 @@ test('sendSentence devuelve el resultado y renombra remainingSentences a remaini
   const out = await send(reply(200, OK));
   assert.deepEqual(out, {
     ok: true,
-    result: { correct: false, corrected: 'Je mange.', errors: ['verbo'], suggestion: 'Je mange une pomme.', remaining: 7 },
+    result: { correct: false, corrected: 'Je mange.', errors: [ERROR], suggestion: 'Je mange une pomme.', remaining: 7 },
   });
 });
 
@@ -35,7 +36,9 @@ test('sendSentence: sentence_limit y JSON roto', async () => {
 
 test('sendSentence: campos que faltan o con otro tipo son bad_output', async () => {
   const bads = [null, {}, { ...OK, correct: 'sí' }, { ...OK, corrected: 1 }, { ...OK, errors: 'x' },
-    { ...OK, suggestion: null }, { ...OK, remainingSentences: '7' }];
+    { ...OK, suggestion: null }, { ...OK, remainingSentences: '7' },
+    { ...OK, errors: [null] }, { ...OK, errors: ['verbo'] }, { ...OK, errors: [{ ...ERROR, explanation: undefined }] },
+    { ...OK, errors: [{ ...ERROR, kind: 1 }] }];
   for (const bad of bads) {
     assert.deepEqual(await send(reply(200, bad)), { ok: false, error: 'bad_output' });
   }
