@@ -247,6 +247,7 @@ Lecciones cortas para armar frases en francés, con ejercicios que la app corrig
   - «Próximamente»: lecciones que todavía no existen. Se ven atenuadas y no se pueden abrir (tampoco escribiendo su dirección: la app vuelve a la ruta).
   - «Tiene partes REVISAR», debajo del estado, avisa que algo de la lección todavía no tiene una fuente segura (dentro de la lección cada parte lleva su etiqueta y su nota).
   - La estación de cada lección acompaña al texto: llena con ✓ (completada), con un punto (en curso), vacía (sin empezar) o punteada (próximamente).
+  - En el teléfono se llega a la ruta con **«Ver todas las lecciones»** (tarjeta de Inicio); dentro de una lección, **«‹ Todas las lecciones»** vuelve a ella.
   - Arriba, **Continuar: Lección N · Título** abre la primera lección pendiente (la misma que «Seguir lección» de Inicio), y en la ruta esa fila va resaltada. Si ya completaste todas, el botón desaparece y se lee «Completaste todas las lecciones disponibles». Al lado está **Repasar (N)**.
 - **Lección:** en este orden, «La idea», «El bloque» (las piezas de la frase), «Cómo pensarlo» (del español al francés), «Ejemplos» (cada uno con **Escuchar**), «Trampa común», «Practicar» y «Fuentes». Lo que está en REVISAR lleva la etiqueta escrita y su nota.
 - **Practicar:** un ejercicio por vez («Ejercicio X/Y»), en el orden de la lección. **Comprobar** dice «Correcto.» o «No es correcta.», explica la regla y muestra «La respuesta es: …»; si fallaste, «Tu respuesta:» marca las palabras que cambian, faltan o sobran. Luego **Siguiente**.

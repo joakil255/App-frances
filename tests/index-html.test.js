@@ -614,7 +614,8 @@ test('la ventana de quitar una frase del repaso pide confirmación', () => {
 });
 
 test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la copia de seguridad', () => {
-  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
+  // La tarjeta termina donde empieza la copia de seguridad (dentro lleva botones y el enlace a la ruta)
+  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<!-- Copia de seguridad/)?.[1];
   assert.ok(card, 'falta la tarjeta .home-build');
   assert.match(card, /<h2 [^>]*>[\s\S]*Construir frases<\/h2>/);
   assert.ok(tagWithId(card, 'home-build-next'), 'falta #home-build-next');
@@ -622,4 +623,24 @@ test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la 
   assert.match(card, /<button type="button" class="button button-primary" id="home-build-continue">Seguir lección<\/button>/);
   assert.match(card, /<button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar \(0\)<\/button>/);
   assert.ok(home.indexOf('home-build') < home.indexOf('Copia de seguridad'), 'la tarjeta va sobre la copia de seguridad');
+});
+
+// En el móvil la barra no tiene Construir: la ruta debe poder abrirse desde la app sin escribir la dirección
+test('la tarjeta de Inicio tiene un enlace visible a la ruta de lecciones', () => {
+  const card = html.match(/<div class="home-build[^"]*">([\s\S]*?)<!-- Copia de seguridad/);
+  assert.ok(card, 'falta la tarjeta Construir frases de Inicio');
+  const link = card[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
+  assert.ok(link, 'la tarjeta no tiene un enlace a #/construir');
+  assert.match(link[1], /Ver todas las lecciones/);
+  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+});
+
+test('cada lección tiene un enlace para volver a la ruta', () => {
+  const lesson = html.match(/<article id="build-lesson"[^>]*>([\s\S]*?)<\/article>/);
+  assert.ok(lesson, 'falta el artículo de la lección');
+  const link = lesson[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
+  assert.ok(link, 'la lección no tiene un enlace a #/construir');
+  assert.match(link[1], /Todas las lecciones/);
+  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
+  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
 });

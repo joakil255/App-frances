@@ -252,6 +252,8 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
 
 ## Índice de lecciones (Etapa 14)
 
+**Cómo se llega a la ruta en el móvil** (arreglo del 25/11/2026: la barra del móvil no tiene Construir): la tarjeta «Construir frases» de Inicio lleva, bajo sus botones, el enlace de texto **«Ver todas las lecciones»**, y cada lección empieza con **«‹ Todas las lecciones»**. Los dos son `.text-link`: texto `--text` en Barlow 600, subrayado de 2 px (no solo color) y 44 px de alto para el dedo; la «‹» va con `aria-hidden`.
+
 La lista de `#/construir` pasa a ser una **ruta**: una línea de metro vertical en turquesa (`--line-build`, `#178A8A`) con una estación por lección, como el texto de Leer. Es el elemento propio de la pantalla; lo demás se queda tranquilo.
 
 ```
