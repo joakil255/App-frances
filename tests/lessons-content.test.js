@@ -23,7 +23,7 @@ test('el índice tiene su formato y solo lista archivos que existen', () => {
   assert.equal(data.format, INDEX_FORMAT);
   assert.equal(data.version, 1);
   assert.equal(data.lang, 'fr');
-  assert.deepEqual(data.lessons, ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07']);
+  assert.deepEqual(data.lessons, ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09']);
   assert.equal(new Set(data.lessons).size, data.lessons.length, 'lecciones repetidas');
   for (const id of data.lessons) assert.ok(existsSync(lessonUrl(id)), `no existe ${id}.json`);
 });

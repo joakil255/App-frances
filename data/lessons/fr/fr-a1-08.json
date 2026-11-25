@@ -1,0 +1,382 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-08",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Aller, faire y el futuro próximo",
+  "areas": ["grammar", "syntax"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49-50",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "62-67 (nivel A1), 91 (nivel B2)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "106-108",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-terminaisons",
+      "title": "Banque de dépannage linguistique: «Terminaison des verbes réguliers et irréguliers au présent de l'indicatif»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24213/la-grammaire/le-verbe/conjugaison/terminaison-des-verbes-reguliers-et-irreguliers-au-present-de-lindicatif"
+    },
+    {
+      "id": "bdl-faire",
+      "title": "Banque de dépannage linguistique: «Conjugaison du verbe faire à l'impératif»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24111/la-grammaire/le-verbe/conjugaison/conjugaison-du-verbe-faire-a-limperatif"
+    },
+    {
+      "id": "bdl-futur-proche",
+      "title": "Banque de dépannage linguistique: «Futur proche : ce qui le distingue du futur simple»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24122/la-grammaire/le-verbe/temps-grammaticaux/futur/le-futur-proche"
+    },
+    {
+      "id": "bdl-present-futur",
+      "title": "Banque de dépannage linguistique: «Présent de l'indicatif : valeurs particulières»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24200/la-grammaire/le-verbe/temps-grammaticaux/present/valeurs-particulieres-du-present-de-lindicatif"
+    },
+    {
+      "id": "bdl-place-negation",
+      "title": "Banque de dépannage linguistique: «Place du verbe avec ne… pas et ne pas»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23909/la-syntaxe/la-negation-et-la-restriction/place-du-verbe-avec-ne-pas-et-ne-pas"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "oqlf-contracte",
+      "title": "Grand dictionnaire terminologique: ficha «déterminant contracté»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "ficha en línea, consultada el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/fiche-gdt/fiche/26506951/determinant-contracte"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Aller (ir) y faire (hacer) son verbos irregulares: no siguen el modelo de parler, así que se aprenden de memoria, en bloque con el sujeto. Aller: je vais, tu vas, il / elle va, nous allons, vous allez, ils / elles vont. Faire: je fais, tu fais, il / elle fait, nous faisons, vous faites, ils / elles font. Ojo con vous faites: no se dice «vous faisez». Con aller dices adónde vas; recuerda la lección 3: à + le = au, y con la y l' no se juntan: je vais au cinéma, à la piscine, à l'école.",
+      "sourceIds": ["bdl-terminaisons", "bdl-faire", "inventaire-d", "inventaire-f", "niveau-a2", "oqlf-contracte"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Faire sirve para hablar de lo que haces: Qu'est-ce que tu fais ? (¿Qué haces?), je fais un gâteau (hago una torta). También sirve para el tiempo (el clima): il fait froid (hace frío), il fait beau (hace buen tiempo). Aquí il no es una persona, pero va igual, como en la lección 1: al contar algo, el sujeto va delante del verbo.",
+      "sourceIds": ["inventaire-f", "niveau-a2"],
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire da il fait + adjetivo en ejemplos A1 (p. 65: Il fait trop froid, je reste à la maison; p. 67: Il fait froid; Il fait beau et il y a du soleil), pero el Niveau A2 (p. 107) escribe la estructura «Il V Adj» (Il fait beau) en negrita, como agregado de A2."
+    },
+    {
+      "id": "i3",
+      "text": "Para contar lo que vas a hacer, el francés usa aller en presente + un segundo verbo en infinitivo (la forma del diccionario: manger, regarder, faire). Se llama futuro próximo: Je vais manger plus tard. Elle va regarder la télé. Es como «voy a comer» en español, con dos diferencias: en francés no va à entre los dos verbos (je vais manger, no «je vais à manger»), y el segundo verbo no se conjuga (je vais manger, no «je vais mange»). Aunque se llama «próximo», sirve también para planes lejanos: Je vais voir mes amis en été. Y, como en español, el presente también puede hablar del futuro si dices cuándo: Nous allons en ville demain (mañana vamos al centro).",
+      "sourceIds": ["bdl-futur-proche", "bdl-present-futur", "inventaire-d", "inventaire-f", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "i4",
+      "text": "Para negar el futuro próximo, ne… pas va alrededor del verbo conjugado, que es aller, y el infinitivo queda después de pas: Je ne vais pas manger. Es como en español, donde el «no» va antes de «voy»: no voy a comer. Recuerda la lección 5: delante de vocal, ne se vuelve n': nous n'allons pas travailler, vous n'allez pas manger. Cuando aller va solo, sin infinitivo, es igual: je ne vais pas au cinéma.",
+      "sourceIds": ["bdl-place-negation", "bdl-futur-proche", "bdl-elision", "inventaire-d", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "pattern": [
+    { "label": "Aller", "options": ["je vais", "tu vas", "il / elle va", "nous allons", "vous allez", "ils / elles vont"] },
+    { "label": "Faire", "options": ["je fais", "tu fais", "il / elle fait", "nous faisons", "vous faites", "ils / elles font"] },
+    { "label": "Futuro próximo", "options": ["je vais manger", "tu vas travailler", "elle va regarder la télé"] },
+    { "label": "Negación", "options": ["je ne vais pas manger", "nous n'allons pas travailler"] },
+    { "label": "Adónde", "options": ["au cinéma", "à la piscine", "à l'école"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Voy a comer",
+      "target": "Je vais manger.",
+      "note": "En español decimos ir + a + infinitivo. En francés no hay à: aller va directo al infinitivo, je vais manger.",
+      "sourceIds": ["bdl-futur-proche", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Mañana no voy a trabajar",
+      "target": "Demain, je ne vais pas travailler.",
+      "note": "Como en español, la negación va con el verbo conjugado: ne… pas alrededor de vais. Travailler queda en infinitivo, después de pas.",
+      "sourceIds": ["bdl-place-negation", "bdl-futur-proche", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Hace frío",
+      "target": "Il fait froid.",
+      "note": "En español «hace frío» no lleva sujeto. En francés sí: il fait froid. Aquí il no es una persona, pero es obligatorio. Y el verbo es faire, como «hacer» en español.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "t4",
+      "source": "¿Qué hacen ustedes el sábado?",
+      "target": "Qu'est-ce que vous faites samedi ?",
+      "note": "Con vous, casi todos los verbos terminan en -ez (vous parlez, vous allez). Faire es una excepción: vous faites. No se dice «vous faisez».",
+      "sourceIds": ["bdl-faire", "bdl-terminaisons"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Je vais manger plus tard.", "translation": "Voy a comer más tarde.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Elle va regarder la télé.", "translation": "Ella va a ver tele.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e3", "text": "Mon voisin va à la piscine le mardi soir.", "translation": "Mi vecino va a la piscina los martes en la noche.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "Nous allons en ville demain.", "translation": "Mañana vamos al centro.", "sourceIds": ["inventaire-f", "bdl-present-futur"], "review": false },
+    { "id": "e5", "text": "Il fait trop froid, je reste à la maison.", "translation": "Hace demasiado frío, me quedo en la casa.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "Ce soir, nous n'allons pas regarder la télé.", "translation": "Esta noche no vamos a ver tele.", "sourceIds": ["bdl-place-negation", "bdl-elision"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Je vais à manger.",
+      "right": "Je vais manger.",
+      "explanation": "En español decimos «voy a comer», con a. En francés, aller va directo al infinitivo, sin à. La à sí va antes de un lugar: je vais à la piscine.",
+      "sourceIds": ["bdl-futur-proche", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Je vais mange une pomme.",
+      "right": "Je vais manger une pomme.",
+      "explanation": "Después de aller, el segundo verbo va en infinitivo, la forma terminada en -er: manger. Solo se conjuga aller (je vais).",
+      "sourceIds": ["bdl-futur-proche", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Qu'est-ce que vous faisez ?",
+      "right": "Qu'est-ce que vous faites ?",
+      "explanation": "Faire es irregular con vous: vous faites. «Faisez» no existe.",
+      "sourceIds": ["bdl-faire", "bdl-terminaisons"],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Nous ne allons pas au cinéma.",
+      "right": "Nous n'allons pas au cinéma.",
+      "explanation": "Allons empieza con vocal, así que ne se vuelve n': nous n'allons pas.",
+      "sourceIds": ["bdl-elision", "bdl-place-negation"],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Voy a comer más tarde».",
+      "tiles": ["manger", "tard", "Je", "plus", "vais"],
+      "answers": ["Je vais manger plus tard.", "Plus tard, je vais manger."],
+      "rule": "Primero el sujeto y aller conjugado (je vais), y después el infinitivo (manger). Plus tard puede ir al final o al principio.",
+      "sourceIds": ["inventaire-f", "bdl-futur-proche"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Mañana no voy a trabajar». Pon ne… pas alrededor del verbo conjugado.",
+      "tiles": ["travailler", "pas", "Demain", "vais", "je", "ne"],
+      "answers": ["Demain, je ne vais pas travailler.", "Je ne vais pas travailler demain."],
+      "mistakes": [
+        { "answer": "Demain, je vais ne pas travailler.", "explanation": "Ne pas delante de un infinitivo también existe en francés, pero este ejercicio pide ne… pas alrededor de vais, el verbo conjugado: je ne vais pas travailler." },
+        { "answer": "Je vais ne pas travailler demain.", "explanation": "Ne pas delante de un infinitivo también existe en francés, pero este ejercicio pide ne… pas alrededor de vais, el verbo conjugado: je ne vais pas travailler." }
+      ],
+      "rule": "Ne… pas rodea al verbo conjugado (vais), y el infinitivo va después de pas: je ne vais pas travailler.",
+      "sourceIds": ["bdl-place-negation", "bdl-futur-proche", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella va al cine los sábados».",
+      "tiles": ["cinéma", "le", "Elle", "samedi", "va", "au"],
+      "answers": ["Elle va au cinéma le samedi.", "Le samedi, elle va au cinéma."],
+      "rule": "À + le se juntan en au: le cinéma → au cinéma. Le samedi significa «los sábados».",
+      "sourceIds": ["inventaire-f", "oqlf-contracte"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con aller: «Ustedes van a la playa».",
+      "before": "Vous ",
+      "after": " à la plage.",
+      "answers": ["allez"],
+      "mistakes": [
+        { "answer": "allons", "explanation": "Allons va con nous. Con vous: allez." },
+        { "answer": "vont", "explanation": "Vont va con ils / elles. Con vous: allez." },
+        { "answer": "vas", "explanation": "Vas va con tu. Con vous: allez." }
+      ],
+      "rule": "Aller con vous: vous allez.",
+      "sourceIds": ["bdl-terminaisons", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con faire: «¿Qué hacen ustedes esta noche?».",
+      "before": "Qu'est-ce que vous ",
+      "after": " ce soir ?",
+      "answers": ["faites"],
+      "mistakes": [
+        { "answer": "faisez", "explanation": "Faire es irregular con vous: vous faites. «Faisez» no existe." },
+        { "answer": "faisons", "explanation": "Faisons va con nous. Con vous: faites." },
+        { "answer": "font", "explanation": "Font va con ils / elles. Con vous: faites." }
+      ],
+      "rule": "Faire con vous: vous faites, terminado en -tes.",
+      "sourceIds": ["bdl-faire", "bdl-terminaisons"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con manger: «Voy a comer una manzana».",
+      "before": "Je vais ",
+      "after": " une pomme.",
+      "answers": ["manger"],
+      "mistakes": [
+        { "answer": "mange", "explanation": "Después de aller, el segundo verbo va en infinitivo: manger. Solo se conjuga aller (je vais)." },
+        { "answer": "à manger", "explanation": "En francés no va à entre aller y el infinitivo: je vais manger." }
+      ],
+      "rule": "Futuro próximo: aller conjugado + infinitivo, sin à: je vais manger.",
+      "sourceIds": ["bdl-futur-proche", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con aller: «Ellos van a jugar tenis».",
+      "before": "Ils ",
+      "after": " jouer au tennis.",
+      "answers": ["vont"],
+      "mistakes": [
+        { "answer": "va", "explanation": "Ils es plural: ils vont. Va es para il / elle." },
+        { "answer": "allent", "explanation": "Aller termina en -er, pero es irregular: ils vont." }
+      ],
+      "rule": "Futuro próximo con ils: ils vont + infinitivo.",
+      "sourceIds": ["bdl-terminaisons", "bdl-futur-proche", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase. Usa el futuro próximo (ir a + infinitivo): «Esta noche voy a ver una película».",
+      "wrong": "Ce soir, je vais à regarder un film.",
+      "answers": [
+        "Ce soir, je vais regarder un film.",
+        "Je vais regarder un film ce soir.",
+        "Moi, je vais regarder un film ce soir.",
+        "Ce soir, moi, je vais regarder un film.",
+        "Ce soir, je vais voir un film.",
+        "Je vais voir un film ce soir."
+      ],
+      "mistakes": [
+        { "answer": "Ce soir, je vais à regarder un film.", "explanation": "Sobra la à: en francés aller va directo al infinitivo. Je vais regarder." },
+        { "answer": "Ce soir, je regarde un film.", "explanation": "Es francés correcto (el presente también puede hablar del futuro), pero aquí se pide el futuro próximo: je vais regarder." },
+        { "answer": "Ce soir, je vais regarde un film.", "explanation": "El segundo verbo va en infinitivo: regarder, no regarde." }
+      ],
+      "rule": "Futuro próximo: aller conjugado + infinitivo, sin à: je vais regarder.",
+      "sourceIds": ["bdl-futur-proche", "bdl-present-futur", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Mañana no vamos a ir a la piscina».",
+      "wrong": "Demain, nous n'allons aller pas à la piscine.",
+      "answers": [
+        "Demain, nous n'allons pas aller à la piscine.",
+        "Nous n'allons pas aller à la piscine demain.",
+        "Nous, nous n'allons pas aller à la piscine demain."
+      ],
+      "mistakes": [
+        { "answer": "Demain, nous n'allons aller pas à la piscine.", "explanation": "Pas va justo después del verbo conjugado (allons), antes del infinitivo: nous n'allons pas aller." },
+        { "answer": "Demain, nous ne allons pas aller à la piscine.", "explanation": "Allons empieza con vocal, así que ne se vuelve n': nous n'allons pas." },
+        { "answer": "Demain, nous n'allons pas à la piscine.", "explanation": "Es francés correcto, pero dice «mañana no vamos a la piscina». Para «no vamos a ir», usa el futuro próximo: nous n'allons pas aller." }
+      ],
+      "rule": "Ne… pas rodea a aller conjugado, y el infinitivo va después de pas: nous n'allons pas aller.",
+      "sourceIds": ["bdl-place-negation", "bdl-futur-proche", "bdl-elision", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Hace frío».",
+      "wrong": "Fait froid.",
+      "answers": ["Il fait froid."],
+      "mistakes": [
+        { "answer": "Fait froid.", "explanation": "Al contar algo, el francés pone el sujeto delante del verbo, también para hablar del tiempo: il fait froid." },
+        { "answer": "Il est froid.", "explanation": "Para hablar del tiempo se usa faire: il fait froid." },
+        { "answer": "Il a froid.", "explanation": "Il a froid es «él tiene frío»: una persona, como en la lección 2. Para el tiempo: il fait froid." }
+      ],
+      "rule": "Para hablar del tiempo: il fait + adjetivo (il fait froid, il fait beau). Aquí il no es una persona, pero es obligatorio.",
+      "sourceIds": ["niveau-a2", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Un amigo te pregunta qué vas a hacer este fin de semana. Cuéntale dos planes y algo que no vas a hacer.",
+      "models": [
+        "Samedi, je vais aller à la piscine. Dimanche, je ne vais pas travailler.",
+        "Ce week-end, je vais faire un gâteau. Je ne vais pas aller au cinéma.",
+        "Samedi, je vais jouer au tennis. Dimanche, je vais regarder un film, mais je ne vais pas étudier."
+      ],
+      "focus": "Aller + infinitivo para los planes, y ne… pas alrededor de aller para lo que no vas a hacer",
+      "sourceIds": ["inventaire-f", "bdl-futur-proche", "bdl-place-negation"],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Estás de viaje en Francia y alguien te pregunta adónde vas hoy. Responde con aller y au, à la o à l'.",
+      "models": [
+        "Je vais au marché.",
+        "Je vais à la plage avec mon frère.",
+        "Nous allons à l'université."
+      ],
+      "focus": "Aller + au / à la / à l' + lugar, como en la lección 3",
+      "sourceIds": ["inventaire-f", "oqlf-contracte"],
+      "review": false
+    }
+  ]
+}
