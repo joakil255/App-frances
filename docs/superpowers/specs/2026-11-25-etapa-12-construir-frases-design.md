@@ -1,6 +1,6 @@
-# Etapa 12 — Construir frases: diseño (borrador)
+# Etapa 12 — Construir frases: diseño (aprobado)
 
-> **Estado:** **borrador, pendiente de aprobación del usuario.** No hay código. Las decisiones de la sección «Decisiones del usuario» las tomó el usuario el 24 y el 25/11/2026. Lo marcado como **decisión del diseño** es una propuesta que el usuario puede corregir.
+> **Estado:** **aprobado por el usuario el 25/11/2026.** No hay código. Las decisiones de la sección «Decisiones del usuario» las tomó el usuario el 24 y el 25/11/2026. Lo marcado como **decisión del diseño** es una propuesta que el usuario puede corregir.
 
 ## Intención
 
