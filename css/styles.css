@@ -120,6 +120,7 @@
 .line-progress { --line: #E0663A; }
 .line-chat { --line: #D9478A; }
 .line-reader { --line: #A0703C; } /* marrón, como el lomo de un libro */
+.line-build { --line: #178A8A; } /* turquesa: la vía sobre la que se arma la frase */
 
 /* --- Base --- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -1057,6 +1058,145 @@ p.word-card-es { color: var(--text-muted); }
 #reader-quiz-verdict:focus,
 .reader-quiz-score:focus { outline: none; }
 
+/* --- Construir frases (DESIGN.md, Etapa 12) --- */
+.build-list {
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--plaque);
+}
+.build-item a,
+.build-item-broken {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 56px;
+  margin: 0;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--divider);
+  color: inherit;
+  text-decoration: none;
+}
+.build-item-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.build-item-broken { flex-direction: column; align-items: flex-start; color: var(--text-muted); font-family: var(--font-sign); }
+.build-number { margin: 0; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+
+.build-lesson { margin-top: var(--space-5); }
+.build-title { margin: var(--space-1) 0 0; font: 600 1.5625rem/1.2 var(--font-text); overflow-wrap: anywhere; }
+.build-title:focus,
+.build-prompt:focus,
+.build-done:focus,
+#build-verdict:focus { outline: none; } /* reciben el foco para que se lean; no son interactivos */
+/* Que la barra de abajo no tape lo que recibe el foco */
+#screen-build [tabindex="-1"],
+#screen-build button,
+#screen-build input { scroll-margin: var(--space-4) 0 calc(var(--nav-height) + var(--space-4)); }
+.build-part { margin-top: var(--space-6); }
+.build-heading { margin: 0 0 var(--space-3); font: 700 1.25rem/1.2 var(--font-sign); }
+.build-part p { overflow-wrap: anywhere; }
+#build-idea p { margin: 0 0 var(--space-3); }
+.build-note { margin: 0 0 var(--space-3); }
+.build-note .tag-review { margin-right: var(--space-1); }
+.build-fr { margin: 0; font-weight: 600; }
+
+/* El bloque: cada grupo con su nombre y sus piezas, como azulejos (sin esquinas redondas, no se tocan) */
+.build-pattern { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.build-block { padding: var(--space-3); background: var(--surface); border: 2px solid var(--divider); border-top: 4px solid var(--line); }
+.build-block-label { margin: 0 0 var(--space-2); color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.build-options { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.build-options li { padding: var(--space-1) var(--space-2); border: 1px solid var(--field-border); font-weight: 600; line-height: 1.3; }
+
+/* Cómo pensarlo, ejemplos y trampas: filas con separador */
+.build-rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--divider); }
+.build-row { padding: var(--space-3) 0; border-bottom: 1px solid var(--divider); }
+.build-row p { margin: 0 0 var(--space-1); }
+.build-row p:last-child { margin-bottom: 0; }
+.build-think-source { color: var(--text-muted); }
+.build-example { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.build-example-text { min-width: 0; }
+.build-example .button { flex: none; }
+.build-translation { font-style: italic; color: var(--text-muted); }
+.build-fix del { color: var(--text-muted); text-decoration-thickness: 1.5px; }
+.build-fix ins { font-weight: 600; text-decoration: none; }
+.build-sources { margin: 0; padding-left: var(--space-5); font-size: var(--size-sm); }
+.build-sources li { margin-bottom: var(--space-2); overflow-wrap: anywhere; }
+.build-sources a { color: var(--secondary-text); }
+
+/* Práctica: tarjeta como la del cuestionario de Leer */
+.build-done { margin: 0 0 var(--space-3); font: 700 1.1rem/1.3 var(--font-sign); }
+.build-card {
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 2px solid var(--plaque);
+  border-left: 8px solid var(--line);
+  border-radius: 10px;
+}
+.build-prompt { margin: 0 0 var(--space-4); font: 600 1.1rem/1.35 var(--font-text); }
+.build-zone { margin: var(--space-3) 0 var(--space-2); color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.build-tiles { display: flex; flex-wrap: wrap; gap: var(--space-2); min-height: 44px; margin: 0; padding: 0; list-style: none; }
+/* «Tu frase» se arma sobre la vía turquesa (el elemento propio de esta pantalla) */
+.build-placed { min-height: 60px; padding-bottom: var(--space-3); border-bottom: 4px solid var(--line); }
+.build-tile {
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface);
+  border: 2px solid var(--secondary-text);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: 600 1.1rem/1.2 var(--font-text);
+  cursor: pointer;
+}
+.build-placed .build-tile { border-bottom-width: 4px; }
+.build-tile:disabled { cursor: default; }
+#build-tiles .build-tile:disabled { color: var(--text-muted); border-color: var(--divider); } /* ya no se pueden usar */
+.build-order .button { margin-top: var(--space-4); }
+
+.build-sentence { margin: 0 0 var(--space-3); font-weight: 600; }
+.build-gap { display: inline-block; min-width: 3em; margin: 0 var(--space-1); border-bottom: 2px solid var(--field-border); text-align: center; }
+.field input#build-answer { font-size: 1.1rem; }
+/* Fila de acentos: botones de 44 px que escriben donde está el cursor */
+.build-accents { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.build-accent {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--surface);
+  border: 2px solid var(--field-border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: 400 1.1rem/1 var(--font-text);
+  cursor: pointer;
+}
+.build-accent:disabled { color: var(--text-muted); border-color: var(--divider); cursor: default; }
+
+.build-button { width: 100%; margin-top: var(--space-4); }
+.build-feedback { padding: var(--space-3) var(--space-4); }
+.build-feedback p { margin: 0 0 var(--space-2); overflow-wrap: anywhere; }
+.build-feedback > p:last-child { margin-bottom: 0; }
+.build-expected { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.build-feedback #build-typed { margin: var(--space-3) 0 0; }
+.build-expected p { margin: 0; }
+/* Diferencia por palabras: recuadro de aviso y negrita (nunca solo color); lo que sobra va tachado */
+.build-diff {
+  padding: 0 2px;
+  background: var(--notice-bg);
+  color: var(--notice-text);
+  border-bottom: 2px solid var(--notice-border);
+  font-weight: 700;
+}
+.build-diff-extra span[lang] { text-decoration: line-through; }
+.build-status:empty { display: none; }
+.build-status {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--notice-bg);
+  color: var(--notice-text);
+  border: 2px solid var(--notice-border);
+  border-radius: var(--radius);
+  font: 700 var(--size-base) var(--font-sign);
+}
+
 /* --- Computador (≥ 900 px): barra a la izquierda --- */
 @media (min-width: 900px) {
   .layout {
@@ -1108,6 +1248,7 @@ p.word-card-es { color: var(--text-muted); }
   .chat-send { flex: none; }
   .reader-quiz-start,
   .reader-quiz-button { width: auto; }
+  .build-button { width: auto; }
   /* En el computador la tarjeta es una ventana centrada, como las demás */
   .word-card {
     width: min(32rem, calc(100vw - 2 * var(--space-4)));

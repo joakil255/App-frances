@@ -415,9 +415,104 @@
         </form>
       </section>
 
-      <!-- Construir frases: la pantalla se arma en las tareas siguientes -->
+      <!-- Construir frases: lecciones y práctica. Todo el contenido se pinta con textContent desde js/screens/build.js -->
       <section id="screen-build" class="screen line-build" hidden>
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Construir frases</h1>
+        <div id="build-notice" class="notice" role="alert" hidden></div>
+
+        <!-- Lista de lecciones (#/construir) -->
+        <ol id="build-list" class="build-list" aria-label="Lecciones"></ol>
+
+        <!-- Lección (#/construir/<id>) -->
+        <article id="build-lesson" class="build-lesson" aria-labelledby="build-title" hidden>
+          <p id="build-number" class="build-number"></p>
+          <h2 id="build-title" class="build-title" tabindex="-1"></h2>
+          <p id="build-meta" class="reader-meta"></p>
+
+          <div class="build-part">
+            <h3 class="build-heading">La idea</h3>
+            <div id="build-idea" lang="es"></div>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">El bloque</h3>
+            <ul id="build-pattern" class="build-pattern"></ul>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">Cómo pensarlo</h3>
+            <ul id="build-think" class="build-rows"></ul>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">Ejemplos</h3>
+            <ul id="build-examples" class="build-rows"></ul>
+          </div>
+          <div class="build-part">
+            <h3 class="build-heading">Trampa común</h3>
+            <ul id="build-pitfalls" class="build-rows"></ul>
+          </div>
+
+          <div class="build-part">
+            <h3 class="build-heading">Practicar</h3>
+            <button type="button" class="button button-primary" id="build-start">Practicar</button>
+            <p id="build-done" class="build-done" tabindex="-1" hidden>Terminaste la práctica de esta lección.</p>
+            <div id="build-exercise" class="build-card" hidden>
+              <p class="reader-quiz-count"><span id="build-count"></span><span class="tag-review" id="build-ex-review" hidden>REVISAR</span></p>
+              <p id="build-ex-review-note" class="hint build-note" hidden></p>
+              <p id="build-prompt" class="build-prompt" tabindex="-1"></p>
+
+              <!-- order: tocar una ficha la mueve; nada se arrastra -->
+              <div id="build-order" class="build-order" hidden>
+                <p id="build-placed-label" class="build-zone">Tu frase</p>
+                <ul id="build-placed" class="build-tiles build-placed" aria-labelledby="build-placed-label" lang="fr"></ul>
+                <p id="build-tiles-label" class="build-zone">Fichas</p>
+                <ul id="build-tiles" class="build-tiles" aria-labelledby="build-tiles-label" lang="fr"></ul>
+                <button type="button" class="button button-secondary" id="build-clear">Borrar todo</button>
+                <p id="build-order-live" class="visually-hidden" aria-live="polite"></p>
+              </div>
+
+              <!-- gap y fix: un campo y la fila de acentos -->
+              <div id="build-write" class="build-write" hidden>
+                <p id="build-sentence" class="build-sentence" lang="fr"></p>
+                <div class="field">
+                  <label for="build-answer">Tu respuesta</label>
+                  <input type="text" id="build-answer" lang="fr" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
+                </div>
+                <div class="build-accents" role="group" aria-label="Letras con acento" lang="fr">
+                <button type="button" class="build-accent" data-letter="à" aria-label="Insertar à">à</button>
+                <button type="button" class="build-accent" data-letter="â" aria-label="Insertar â">â</button>
+                <button type="button" class="build-accent" data-letter="ç" aria-label="Insertar ç">ç</button>
+                <button type="button" class="build-accent" data-letter="é" aria-label="Insertar é">é</button>
+                <button type="button" class="build-accent" data-letter="è" aria-label="Insertar è">è</button>
+                <button type="button" class="build-accent" data-letter="ê" aria-label="Insertar ê">ê</button>
+                <button type="button" class="build-accent" data-letter="ë" aria-label="Insertar ë">ë</button>
+                <button type="button" class="build-accent" data-letter="î" aria-label="Insertar î">î</button>
+                <button type="button" class="build-accent" data-letter="ï" aria-label="Insertar ï">ï</button>
+                <button type="button" class="build-accent" data-letter="ô" aria-label="Insertar ô">ô</button>
+                <button type="button" class="build-accent" data-letter="ù" aria-label="Insertar ù">ù</button>
+                <button type="button" class="build-accent" data-letter="û" aria-label="Insertar û">û</button>
+                <button type="button" class="build-accent" data-letter="œ" aria-label="Insertar œ">œ</button>
+                </div>
+              </div>
+
+              <button type="button" class="button button-primary build-button" id="build-check">Comprobar</button>
+              <div id="build-feedback" class="quiz-feedback build-feedback" hidden>
+                <p id="build-verdict" class="quiz-feedback-title" tabindex="-1"></p>
+                <p id="build-explanation" lang="es"></p>
+                <div class="build-expected">
+                  <p id="build-expected"></p>
+                  <button type="button" class="button button-secondary" id="build-listen">Escuchar</button>
+                </div>
+                <p id="build-typed"></p>
+              </div>
+              <p id="build-status" class="build-status" role="status"></p>
+              <button type="button" class="button button-primary build-button" id="build-next" hidden>Siguiente</button>
+            </div>
+          </div>
+
+          <div class="build-part">
+            <h3 class="build-heading">Fuentes</h3>
+            <ul id="build-sources" class="build-sources"></ul>
+          </div>
+        </article>
       </section>
     </main>
   </div>

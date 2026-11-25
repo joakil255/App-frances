@@ -482,3 +482,67 @@ test('el enlace de Construir frases va en un <li> solo para computador', () => {
   assert.match(nav, /<li class="nav-desktop-only"><a [^>]*href="#\/construir"[^>]*>/);
   assert.equal((nav.match(/<li>/g) ?? []).length, 7);
 });
+
+// --- Pantalla Construir frases (Etapa 12) ---
+const build = html.match(/<section id="screen-build"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+test('Construir es su propia sección con su línea y el título enfocable', () => {
+  assert.match(html, /<section id="screen-build" class="screen line-build" hidden>/);
+  assert.match(build, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Construir frases<\/h1>/);
+});
+
+test('el enlace #/construir de la barra lleva la clase que lo oculta en el móvil', () => {
+  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  assert.match(nav, /<li class="nav-desktop-only"><a class="nav-link line-build" href="#\/construir">/);
+});
+
+test('Construir tiene aviso, zona de estado y la región que anuncia las fichas', () => {
+  assert.match(build, /<div id="build-notice" class="notice" role="alert" hidden><\/div>/);
+  const status = tagWithId(build, 'build-status');
+  assert.ok(status, 'falta #build-status');
+  assert.ok(status.includes('role="status"'), '#build-status sin role="status"');
+  const live = tagWithId(build, 'build-order-live');
+  assert.ok(live, 'falta #build-order-live');
+  assert.ok(live.includes('aria-live="polite"'), '#build-order-live sin aria-live="polite"');
+  assert.ok(tagWithId(build, 'build-list'), 'falta la lista #build-list');
+});
+
+test('la lección tiene su título enfocable y las secciones en orden', () => {
+  assert.match(build, /<h2 id="build-title" [^>]*tabindex="-1"[^>]*><\/h2>/);
+  const titles = [...build.matchAll(/<h3 [^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]);
+  assert.deepEqual(titles, ['La idea', 'El bloque', 'Cómo pensarlo', 'Ejemplos', 'Trampa común', 'Practicar', 'Fuentes']);
+});
+
+test('la práctica tiene sus botones, el contador, el enunciado enfocable y el fin', () => {
+  for (const text of ['Practicar', 'Comprobar', 'Siguiente', 'Borrar todo']) {
+    assert.ok(buttonWithText(build, text), `falta el botón «${text}»`);
+  }
+  assert.ok(tagWithId(build, 'build-count'), 'falta #build-count');
+  assert.match(build, /<p id="build-prompt" [^>]*tabindex="-1"[^>]*><\/p>/);
+  assert.match(build, /<p id="build-verdict" [^>]*tabindex="-1"[^>]*><\/p>/);
+  assert.match(build, /<p id="build-done" [^>]*tabindex="-1"[^>]*>Terminaste la práctica de esta lección\.<\/p>/);
+});
+
+test('el ejercicio order tiene las zonas «Tu frase» y «Fichas» con su nombre', () => {
+  for (const [list, label, text] of [['build-placed', 'build-placed-label', 'Tu frase'], ['build-tiles', 'build-tiles-label', 'Fichas']]) {
+    assert.match(build, new RegExp(`id="${label}"[^>]*>${text}<`));
+    const tag = tagWithId(build, list);
+    assert.ok(tag, `falta #${list}`);
+    assert.ok(tag.includes(`aria-labelledby="${label}"`), `#${list} sin aria-labelledby`);
+  }
+});
+
+test('el campo de gap y fix escribe en francés sin corregir ni completar, con su etiqueta', () => {
+  const input = tagWithId(build, 'build-answer');
+  assert.ok(input, 'falta #build-answer');
+  for (const attr of ['type="text"', 'lang="fr"', 'autocomplete="off"', 'autocorrect="off"', 'autocapitalize="off"', 'spellcheck="false"']) {
+    assert.ok(input.includes(attr), `#build-answer sin ${attr}`);
+  }
+  assert.ok(hasLabelFor('build-answer'), 'falta label de build-answer');
+});
+
+test('la fila de acentos tiene un botón por letra con su nombre «Insertar …»', () => {
+  for (const letter of ['à', 'â', 'ç', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ô', 'ù', 'û', 'œ']) {
+    assert.match(build, new RegExp(`<button type="button" [^>]*data-letter="${letter}" aria-label="Insertar ${letter}"[^>]*>${letter}</button>`));
+  }
+});

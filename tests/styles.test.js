@@ -122,7 +122,7 @@ test('la línea marrón de Leer se ve sobre el fondo y la tarjeta (≥ 3:1) y es
     }
   }
   const others = [...css.matchAll(/\.line-(?!reader)[\w-]+ \{ --line: (#[0-9A-Fa-f]{6}); \}/g)].map((m) => m[1].toUpperCase());
-  assert.equal(others.length, 6);
+  assert.equal(others.length, 7); // las otras siete líneas (Construir es la octava, Etapa 12)
   assert.ok(!others.includes(brown.toUpperCase()), 'Leer repite el color de otra línea');
 });
 
@@ -131,6 +131,21 @@ test('el ▶ blanco de la frase que suena se ve sobre la línea marrón (≥ 3:1
   const color = propertyOf('.reader-sentence[aria-current="true"] .reader-from', 'color');
   const brown = css.match(/\.line-reader \{ --line: (#[0-9A-Fa-f]{6}); \}/)?.[1];
   assert.ok(contrast(color, brown) >= 3, `${color} sobre ${brown}`);
+});
+
+// --- Construir frases (Etapa 12): la línea turquesa dibuja la vía de «Tu frase» y el borde de los bloques ---
+test('la línea turquesa de Construir se ve sobre el fondo y la tarjeta (≥ 3:1) y es distinta de las demás', () => {
+  const teal = css.match(/\.line-build \{ --line: (#[0-9A-Fa-f]{6}); \}/)?.[1];
+  assert.ok(teal, 'falta .line-build');
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    for (const background of ['--surface', '--bg']) {
+      const bg = token(block, background);
+      assert.ok(contrast(teal, bg) >= 3, `${theme}: línea ${teal} sobre ${background} ${bg}`);
+    }
+  }
+  const others = [...css.matchAll(/\.line-(?!build)[\w-]+ \{ --line: (#[0-9A-Fa-f]{6}); \}/g)].map((m) => m[1].toUpperCase());
+  assert.equal(others.length, 7);
+  assert.ok(!others.includes(teal.toUpperCase()), 'Construir repite el color de otra línea');
 });
 
 test('.nav-desktop-only se oculta en móvil y se muestra desde 900 px', () => {

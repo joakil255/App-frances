@@ -234,6 +234,21 @@ Historias cortas en francés escritas por Claude a tu nivel, para leer y escucha
 - **Tus datos:** el nivel, el tema y el idioma de las preguntas se envían a Anthropic. Las historias se guardan en el teléfono y **sí** entran en la copia de seguridad.
 - El gesto «atrás» de Android vuelve de una historia a la biblioteca.
 
+## Construir frases
+
+Lecciones cortas para armar frases en francés, con ejercicios que la app corrige sola (sin conexión y sin Claude). En el computador está en la barra de la izquierda («Construir frases»); en el celular la barra no tiene espacio para un octavo botón, así que se abre desde `#/construir`.
+
+- **Lista:** una fila por lección («Lección 1», «Lección 2»…), con sus áreas (Gramática, Sintaxis, Ortografía) y su estado: «Nueva», «En curso: X/Y» (ejercicios que ya acertaste alguna vez) o «Terminada». «Tiene partes REVISAR» avisa que algo de la lección todavía no tiene una fuente segura.
+- **Lección:** en este orden, «La idea», «El bloque» (las piezas de la frase), «Cómo pensarlo» (del español al francés), «Ejemplos» (cada uno con **Escuchar**), «Trampa común», «Practicar» y «Fuentes». Lo que está en REVISAR lleva la etiqueta escrita y su nota.
+- **Practicar:** un ejercicio por vez («Ejercicio X/Y»), en el orden de la lección. **Comprobar** dice «Correcto.» o «No es correcta.», explica la regla y muestra «La respuesta es: …»; si fallaste, «Tu respuesta:» marca las palabras que cambian, faltan o sobran. Luego **Siguiente**.
+  - **Ordenar:** toca las fichas en el orden correcto; pasan a «Tu frase». Toca una ficha de «Tu frase» para devolverla, o **Borrar todo**. No hay que arrastrar nada: funciona con el teclado (Tab y Enter) y con TalkBack.
+  - **Completar y corregir:** escribe en el campo. Debajo hay una fila con las letras con acento (à â ç é è ê ë î ï ô ù û œ) que escribe la letra donde está el cursor.
+  - Los acentos cuentan según «Exigir acentos» del Quiz.
+  - Un ejercicio que fallas vuelve **una vez** al final de esa práctica. Si lo fallas **dos veces** (seguidas o en días distintos) aparece «Este ejercicio irá a tu repaso.».
+  - La lección queda «Terminada» cuando acertaste cada ejercicio al menos una vez.
+- **Sin conexión:** las lecciones vienen con la app, así que se leen y se practican sin internet.
+- **Tus datos:** el progreso se guarda en el teléfono (clave `app-frances-build`) y entra en la copia de seguridad. Si no hay espacio, la app lo avisa y la práctica sigue sin guardar.
+
 ## Servidor de conversación
 
 La app no guarda ninguna clave. Habla con un servidor pequeño propio (un *Worker* de Cloudflare, carpeta `server/`) que guarda la clave de Anthropic, revisa el código de acceso, cuenta los mensajes del día y llama a Claude.
@@ -439,6 +454,7 @@ js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
 js/screens/home.js      pantalla Inicio (guardar y restaurar la copia de seguridad)
 js/screens/reader.js    pantalla Leer (biblioteca, lector con voz por frases y cuestionario)
+js/screens/build.js     pantalla Construir frases (lista, lección y práctica)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV

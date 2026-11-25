@@ -20,6 +20,8 @@ import { initChatVoice } from './screens/chat-voice.js';
 import { createLookupCache } from './lib/lookup-cache.js';
 import { initWordCard } from './screens/word-card.js';
 import { initReader } from './screens/reader.js';
+import { initBuild } from './screens/build.js';
+import { loadLessons } from './lib/lessons.js';
 import { textsLoadNotice } from './lib/messages.js';
 
 const APP_NAME = 'App de francés';
@@ -29,6 +31,8 @@ let onChatHidden = () => {}; // corta el micrófono al salir de Conversar
 let currentParam = null; // el <id> de «#/leer/<id>»
 let onReaderShown = () => {}; // lo completa initReader
 let onReaderHidden = () => {}; // corta la voz al salir de Leer
+let onBuildShown = () => {}; // lo completa initBuild
+let onBuildHidden = () => {};
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -54,6 +58,8 @@ function showScreen(id, moveFocus) {
   else if (previousId === 'chat') onChatHidden();
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
+  if (id === 'build') onBuildShown(moveFocus);
+  else if (previousId === 'build') onBuildHidden();
 }
 
 function handleRoute(isFirstLoad) {
@@ -69,6 +75,8 @@ function handleRoute(isFirstLoad) {
   if (id !== currentId) showScreen(id, !isFirstLoad);
   // De la biblioteca a una historia (o de una historia a otra) la pantalla sigue siendo Leer
   else if (id === 'reader' && paramChanged) onReaderShown(true);
+  // De la lista a una lección (o de una lección a otra) la pantalla sigue siendo Construir
+  else if (id === 'build' && paramChanged) onBuildShown(true);
 }
 
 window.addEventListener('hashchange', () => handleRoute(false));
@@ -190,6 +198,25 @@ textsLoaded.then((loaded) => {
   textStore.watchExternalChanges(window, () => {
     if (currentId === 'reader') onReaderShown(false);
   });
+});
+
+// Construir frases: las lecciones vienen de data/lessons (guardadas sin conexión).
+// Si el índice no se puede leer, la pantalla lo avisa e Inicio sigue funcionando.
+const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
+Promise.all([lessonsLoaded, buildLoaded]).then(([lessons]) => {
+  const build = initBuild({
+    buildStore,
+    studyStore,
+    lessons,
+    synth,
+    fetch: window.fetch.bind(window),
+    isOnline,
+    hostname: location.hostname,
+    getCode: () => chatStore.loadCode(),
+  });
+  onBuildShown = (moveFocus) => build.onShow(routeParam(location.hash), moveFocus);
+  onBuildHidden = () => build.onHide();
+  if (currentId === 'build') onBuildShown(false);
 });
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
