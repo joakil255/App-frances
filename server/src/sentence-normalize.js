@@ -1,5 +1,4 @@
 import { ProviderError } from './errors.js';
-import { comparable } from './normalize.js';
 import { straighten } from './lookup-validate.js';
 import { HAS_MARKUP } from './story-normalize.js';
 
@@ -11,6 +10,12 @@ const hasKeys = (object, keys) => {
   const found = Object.keys(object);
   return found.length === keys.length && keys.every((key) => found.includes(key));
 };
+// Igual que normalizeAnswer de la app: minúsculas, apóstrofo recto, sin puntuación ni espacios de más
+const PUNCTUATION = /[.,;:!?¿¡«»"“”…()]/g;
+function sameWords(text) {
+  return text.normalize('NFC').toLowerCase().replace(/[’‘ʼ]/g, "'").replace(PUNCTUATION, ' ')
+    .replace(/\s+/g, ' ').replace(/ ?' ?/g, "'").trim();
+}
 // Texto libre válido: hasta 300 letras y sin HTML ni Markdown
 const isCleanText = (value) => isText(value) && [...value].length <= MAX_TEXT && !HAS_MARKUP.test(value);
 
@@ -28,7 +33,8 @@ export function normalizeSentence(raw, sentence) {
     const { original, corrected, kind, explanation } = item;
     if (!isText(original) || !isText(corrected) || !isCleanText(explanation) || !KINDS.includes(kind)) throw bad();
     if (original.trim() === '' || !text.includes(straighten(original))) throw bad();
-    if (comparable(original) !== comparable(corrected)) errors.push({ original, corrected, kind, explanation });
+    // Solo puntuación o mayúsculas no es un error de A1: se descarta
+    if (sameWords(original) !== sameWords(corrected)) errors.push({ original, corrected, kind, explanation });
   }
   if (errors.length === 0) return { correct: true, corrected: sentence, errors, suggestion: raw.suggestion };
   if (raw.corrected.trim() === '') throw bad();

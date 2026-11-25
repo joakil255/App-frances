@@ -168,6 +168,8 @@ Campos de la salida:
 Reglas:
 - Nunca pongas en "errors" algo que solo es «no usaste el patrón» o «no responde a la situación»: eso va en "suggestion".
 - Una frase correcta que no usa el patrón tiene "errors" vacía y una "suggestion".
+- Si falta una palabra, copia en "original" las palabras vecinas tal como las escribió el alumno y pon en "corrected" esas mismas palabras con la que falta (por ejemplo, "original" «mange pain» y "corrected" «mange du pain»). Nunca dejes "original" vacío.
+- No marques como error las mayúsculas ni la puntuación: en este nivel no se califican.
 - Todo es texto plano: sin HTML ni Markdown.`;
 
 export function buildSentencePrompt(level) {

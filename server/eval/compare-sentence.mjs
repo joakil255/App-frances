@@ -55,6 +55,6 @@ for (const [index, item] of cases.entries()) {
 
 const passed = meetsCriterion(scores, rejected);
 console.log(`Rechazadas o con error: ${rejected}.`);
-console.log(`Criterio (6 errores corregidos, 6 correctas sin error inventado, 2 de 3 sugerencias, cero rechazos): ${passed ? 'SE CUMPLE' : 'NO se cumple'}.`);
+console.log(`Criterio (7 errores corregidos, 6 correctas sin error inventado, 2 de 3 sugerencias, cero rechazos): ${passed ? 'SE CUMPLE' : 'NO se cumple'}.`);
 console.log('Revisa a mano las explicaciones y las sugerencias antes de publicar.');
 if (!passed) process.exit(1);

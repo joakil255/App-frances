@@ -68,3 +68,21 @@ test('sin errores desde el principio → correct y corrected = la frase', () => 
   const result = normalizeSentence({ errors: [], corrected: sentence, suggestion: '' }, sentence);
   assert.deepEqual(result, { correct: true, corrected: sentence, errors: [], suggestion: '' });
 });
+
+test('un error que solo cambia puntuación, mayúsculas o espacios se descarta (A1 no los califica)', () => {
+  const frase = 'Bonjour je suis allé au café';
+  const solo = [
+    err({ original: 'Bonjour je', corrected: 'Bonjour, je' }),
+    err({ original: 'café', corrected: 'café !' }),
+    err({ original: 'bonjour', corrected: 'Bonjour' }),
+    err({ original: 'suis allé', corrected: '«suis  allé»' }),
+  ];
+  for (const e of solo) {
+    const result = normalizeSentence(raw({ errors: [e], corrected: 'otra cosa' }), frase);
+    assert.deepEqual(result.errors, [], `${e.original} → ${e.corrected}`);
+    assert.equal(result.correct, true);
+  }
+  // Un acento o una palabra sí cuentan
+  assert.equal(normalizeSentence(raw({ errors: [err({ original: 'cafe', corrected: 'café' })] }), 'Je bois un cafe.').errors.length, 1);
+  assert.equal(normalizeSentence(raw({ errors: [err({ original: 'mange pain', corrected: 'mange du pain' })] }), 'Je mange pain.').errors.length, 1);
+});

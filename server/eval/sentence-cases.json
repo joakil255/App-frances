@@ -54,6 +54,15 @@
     ]
   },
   {
+    "situation": "Le cuentas a un amigo qué comes y qué tomas en el desayuno.",
+    "focus": "Du / de la / de l' para una cantidad de algo que no se cuenta",
+    "sentence": "Je mange pain.",
+    "expect": "error",
+    "accepted": [
+      "Je mange du pain."
+    ]
+  },
+  {
     "situation": "En un café",
     "focus": "la frase básica y la elisión (je + vocal: j'aime)",
     "sentence": "J'aime le café.",

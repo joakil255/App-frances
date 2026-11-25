@@ -9,10 +9,10 @@ const err = { original: 'Je aime', corrected: "J'aime", kind: 'spelling', explan
 const withError = { correct: false, corrected: "J'aime le café.", errors: [err], suggestion: '' };
 const clean = { correct: true, corrected: 'Je mange.', errors: [], suggestion: '' };
 
-test('hay 12 casos: 6 con error, 3 correctas y 3 correctas con sugerencia', () => {
-  assert.equal(cases.length, 12);
+test('hay 13 casos: 7 con error (uno con una palabra que falta), 3 correctas y 3 correctas con sugerencia', () => {
+  assert.equal(cases.length, 13);
   const count = (expect) => cases.filter((item) => item.expect === expect).length;
-  assert.deepEqual([count('error'), count('correct'), count('correct-suggest')], [6, 3, 3]);
+  assert.deepEqual([count('error'), count('correct'), count('correct-suggest')], [7, 3, 3]);
   for (const item of cases) {
     assert.ok(item.situation && item.focus && item.sentence);
     if (item.expect === 'error') assert.ok(item.accepted.length > 0);
@@ -26,6 +26,7 @@ test('hay 12 casos: 6 con error, 3 correctas y 3 correctas con sugerencia', () =
       ['Nous mangez une pomme.', 'Nous mangeons une pomme.'],
       ['Je ne aime pas le thé.', "Je n'aime pas le thé."],
       ['Est-ce que il parle français ?', "Est-ce qu'il parle français ?"],
+      ['Je mange pain.', 'Je mange du pain.'],
     ],
   );
 });
@@ -70,14 +71,16 @@ test('criterio: falla con un rechazo, un error sin corregir o una correcta con e
   assert.equal(meetsCriterion(allGood(), 1), false);
   const a = allGood(); a[0] = { errorFound: true, correctedOk: false };
   assert.equal(meetsCriterion(a, 0), false);
-  const b = allGood(); b[6] = { noInvented: false };
+  const c = allGood(); c[6] = { errorFound: false, correctedOk: false }; // la palabra que falta
+  assert.equal(meetsCriterion(c, 0), false);
+  const b = allGood(); b[7] = { noInvented: false };
   assert.equal(meetsCriterion(b, 0), false);
   assert.equal(meetsCriterion(allGood().slice(1), 0), false);
 });
 
 test('criterio: acepta 2 de 3 sugerencias pero no 1', () => {
-  const a = allGood(); a[11] = { noInvented: true, suggestionOk: false };
+  const a = allGood(); a[12] = { noInvented: true, suggestionOk: false };
   assert.equal(meetsCriterion(a, 0), true);
-  a[10] = { noInvented: true, suggestionOk: false };
+  a[11] = { noInvented: true, suggestionOk: false };
   assert.equal(meetsCriterion(a, 0), false);
 });

@@ -35,3 +35,13 @@ test('las instrucciones de frases llevan el nivel, la regla de suggestion y el e
   assert.deepEqual([...item.required].sort(), ['corrected', 'explanation', 'kind', 'original']);
   assert.deepEqual(item.properties.kind.enum, ['grammar', 'syntax', 'spelling']);
 });
+
+test('las instrucciones de frases dicen qué hacer si falta una palabra y que no se marquen mayúsculas ni puntuación', async () => {
+  const { buildSentencePrompt } = await import('../src/prompt.js');
+  const prompt = buildSentencePrompt('A1.2');
+  assert.match(prompt, /falta una palabra/i);
+  assert.match(prompt, /«mange pain»/);
+  assert.match(prompt, /«mange du pain»/);
+  assert.match(prompt, /nunca dejes "original" vacío/i);
+  assert.match(prompt, /no marques como error las mayúsculas ni la puntuación/i);
+});
