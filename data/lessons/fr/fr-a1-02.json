@@ -29,7 +29,7 @@
       "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
       "publisher": "Didier (extracto publicado por la FIPF)",
       "year": 2008,
-      "pages": "106-108",
+      "pages": "106, 108",
       "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
     },
     {
@@ -260,7 +260,7 @@
       "type": "fix",
       "prompt": "Corrige la frase. Quieres decir «Tengo frío».",
       "wrong": "Je suis froid.",
-      "answers": ["J'ai froid."],
+      "answers": ["J'ai froid.", "Moi, j'ai froid."],
       "mistakes": [
         { "answer": "Je suis froid.", "explanation": "Como en español «tengo frío», la sensación de frío va con avoir: j'ai froid." },
         { "answer": "Je ai froid.", "explanation": "Ai empieza con vocal: je pierde la e y se une con apóstrofo, j'ai." }

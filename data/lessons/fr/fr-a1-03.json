@@ -76,7 +76,7 @@
   "idea": [
     {
       "id": "i1",
-      "text": "En francés casi todo sustantivo lleva una palabra delante, casi siempre un artículo. El artículo muestra si es masculino o femenino, singular o plural. El definido (el, la, los, las) es le, la, les; delante de vocal o de h muda, le y la se vuelven l': l'eau, l'hôtel. El indefinido (un, una, unos, unas) es un, une, des. Ojo: donde el español no pone nada, el francés pone des: «hay niños» se dice il y a des enfants. El género no siempre coincide con el español (le lait, la leche; la mer, el mar), así que aprende cada sustantivo con su artículo.",
+      "text": "En francés casi todo sustantivo lleva una palabra delante, casi siempre un artículo. El artículo muestra si es masculino o femenino, singular o plural. El definido (el, la, los, las) es le, la, les; delante de vocal o de h muda, le y la se vuelven l': l'eau, l'hôtel. El indefinido (un, una, unos, unas) es un, une, des. Ojo: con un plural que se cuenta (niños, amigos), donde el español no pone nada, el francés suele poner des: «hay niños» se dice il y a des enfants. El género no siempre coincide con el español (le lait, la leche; la mer, el mar), así que aprende cada sustantivo con su artículo.",
       "sourceIds": ["inventaire-d", "inventaire-f", "niveau-a2", "bdl-determinants", "bdl-elision"],
       "review": false
     },
@@ -105,7 +105,7 @@
       "id": "t1",
       "source": "Hay niños en el parque.",
       "target": "Il y a des enfants dans le parc.",
-      "note": "Donde el español no pone artículo, el francés pone des.",
+      "note": "Con un plural que se cuenta (niños, amigos), donde el español no pone artículo, el francés suele poner des.",
       "sourceIds": ["inventaire-f", "bdl-determinants"],
       "review": false
     },
@@ -191,7 +191,7 @@
       "prompt": "Ordena las palabras: «Voy al cine con amigos».",
       "tiles": ["amis", "au", "Je", "avec", "cinéma", "vais", "des"],
       "answers": ["Je vais au cinéma avec des amis.", "Avec des amis, je vais au cinéma."],
-      "rule": "À + le = au: au cinéma. Y donde el español no pone artículo, el francés pone des: des amis.",
+      "rule": "À + le = au: au cinéma. Y con un plural que se cuenta, donde el español no pone artículo, el francés suele poner des: des amis.",
       "sourceIds": ["oqlf-contracte", "inventaire-f"],
       "review": false
     },
@@ -268,13 +268,14 @@
     {
       "id": "x7",
       "type": "gap",
-      "prompt": "Completa: «En la mañana tomo café».",
+      "prompt": "Completa: «En la mañana tomo café» (café en general, sin decir cuánto).",
       "before": "Le matin, je bois ",
       "after": " café.",
       "answers": ["du"],
       "mistakes": [
         { "answer": "de le", "explanation": "De + le se juntan: du café." },
-        { "answer": "de", "explanation": "Sin negación, para una cantidad de café se usa du." }
+        { "answer": "de", "explanation": "Sin negación, para una cantidad de café se usa du." },
+        { "answer": "un", "explanation": "Je bois un café también es correcto, pero quiere decir «tomo un café» (una taza). Para café en general, sin decir cuánto, se usa du." }
       ],
       "rule": "Para una cantidad de algo masculino que no se cuenta: du.",
       "sourceIds": ["niveau-a2", "inventaire-f", "bdl-du"],
@@ -286,7 +287,7 @@
       "type": "fix",
       "prompt": "Corrige la frase: «Ella les habla a los niños».",
       "wrong": "Elle parle à les enfants.",
-      "answers": ["Elle parle aux enfants."],
+      "answers": ["Elle parle aux enfants.", "Elle, elle parle aux enfants."],
       "mistakes": [
         { "answer": "Elle parle à les enfants.", "explanation": "À + les se juntan: aux enfants." }
       ],
@@ -299,7 +300,7 @@
       "type": "fix",
       "prompt": "Corrige la frase: «Tengo muchos libros».",
       "wrong": "J'ai beaucoup des livres.",
-      "answers": ["J'ai beaucoup de livres."],
+      "answers": ["J'ai beaucoup de livres.", "Moi, j'ai beaucoup de livres."],
       "mistakes": [
         { "answer": "J'ai beaucoup des livres.", "explanation": "Después de beaucoup va de sin artículo: beaucoup de livres." },
         { "answer": "J'ai beaucoup livres.", "explanation": "Falta de: beaucoup de livres." }
@@ -320,7 +321,8 @@
       ],
       "rule": "Después de ne… pas, un, une, des, du, de la y de l' se vuelven de.",
       "sourceIds": ["bdl-negation"],
-      "review": false
+      "review": true,
+      "reviewNote": "Límite A1-A2: el Inventaire los pone en A1 como expresión de cantidad; el referencial A2, en A2"
     }
   ],
   "situations": [

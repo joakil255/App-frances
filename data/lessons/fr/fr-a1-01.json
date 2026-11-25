@@ -29,7 +29,7 @@
       "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
       "publisher": "Didier (extracto publicado por la FIPF)",
       "year": 2008,
-      "pages": "107, 109-110",
+      "pages": "108-110",
       "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
     },
     {
@@ -209,7 +209,12 @@
       "type": "fix",
       "prompt": "Corrige la frase. Quieres decir «Hablo español y francés».",
       "wrong": "Parle espagnol et français.",
-      "answers": ["Je parle espagnol et français.", "Moi, je parle espagnol et français."],
+      "answers": [
+        "Je parle espagnol et français.",
+        "Moi, je parle espagnol et français.",
+        "Je parle l'espagnol et le français.",
+        "Moi, je parle l'espagnol et le français."
+      ],
       "mistakes": [
         { "answer": "Parle espagnol et français.", "explanation": "Sin sujeto es una orden («¡Habla español y francés!»). Pon je delante: Je parle…" },
         { "answer": "Moi parle espagnol et français.", "explanation": "Moi no reemplaza a je. Pon je delante del verbo: Je parle…" }
@@ -223,7 +228,7 @@
       "type": "fix",
       "prompt": "Corrige la frase: «Me gusta el chocolate».",
       "wrong": "Je aime le chocolat.",
-      "answers": ["J'aime le chocolat."],
+      "answers": ["J'aime le chocolat.", "Moi, j'aime le chocolat."],
       "mistakes": [
         { "answer": "Je aime le chocolat.", "explanation": "Aime empieza con vocal: je pierde la e y se une con apóstrofo, j'aime." },
         { "answer": "J aime le chocolat.", "explanation": "Falta el apóstrofo: j'aime, todo junto." }
@@ -237,7 +242,7 @@
       "type": "fix",
       "prompt": "Corrige la frase: «Yo vivo en Lyon, ¿y tú?».",
       "wrong": "Moi, j'habite à Lyon, et tu ?",
-      "answers": ["Moi, j'habite à Lyon, et toi ?"],
+      "answers": ["Moi, j'habite à Lyon, et toi ?", "J'habite à Lyon, et toi ?"],
       "mistakes": [
         { "answer": "Moi, j'habite à Lyon, et tu ?", "explanation": "Después de et, sin verbo, no va tu sino el tónico: et toi ?" }
       ],
