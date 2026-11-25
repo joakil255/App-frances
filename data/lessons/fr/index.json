@@ -1,6 +1,31 @@
 {
   "format": "app-frances-lecciones",
-  "version": 1,
+  "version": 2,
   "lang": "fr",
-  "lessons": ["fr-a1-01", "fr-a1-02", "fr-a1-03", "fr-a1-04", "fr-a1-05", "fr-a1-06", "fr-a1-07", "fr-a1-08", "fr-a1-09"]
+  "lessons": [
+    {"id": "fr-a1-01", "lang": "fr", "level": "A1", "title": "La frase básica", "status": "available"},
+    {"id": "fr-a1-02", "lang": "fr", "level": "A1", "title": "Être, avoir, c'est, il y a", "status": "available"},
+    {"id": "fr-a1-03", "lang": "fr", "level": "A1", "title": "Los artículos", "status": "available"},
+    {"id": "fr-a1-04", "lang": "fr", "level": "A1", "title": "Verbos en -er en presente", "status": "available"},
+    {"id": "fr-a1-05", "lang": "fr", "level": "A1", "title": "La negación", "status": "available"},
+    {"id": "fr-a1-06", "lang": "fr", "level": "A1", "title": "Preguntas simples", "status": "available"},
+    {"id": "fr-a1-07", "lang": "fr", "level": "A1", "title": "Los adjetivos", "status": "available"},
+    {"id": "fr-a1-08", "lang": "fr", "level": "A1", "title": "Aller, faire y el futuro próximo", "status": "available"},
+    {"id": "fr-a1-09", "lang": "fr", "level": "A1", "title": "Querer, poder y deber", "status": "available"},
+    {"id": "fr-a1-10", "lang": "fr", "level": "A1", "title": "Posesivos y demostrativos", "status": "planned"},
+    {"id": "fr-a1-11", "lang": "fr", "level": "A1", "title": "Verbos pronominales", "status": "planned"},
+    {"id": "fr-a1-12", "lang": "fr", "level": "A1", "title": "El imperativo", "status": "planned"},
+    {"id": "fr-a1-13", "lang": "fr", "level": "A1", "title": "Venir de / il faut + infinitivo", "status": "planned"},
+    {"id": "fr-a1-14", "lang": "fr", "level": "A1", "title": "Preposiciones de lugar y de tiempo", "status": "planned"},
+    {"id": "fr-a1-15", "lang": "fr", "level": "A1", "title": "Conectores: et, ou, mais, parce que, pour", "status": "planned"},
+    {"id": "fr-a2-01", "lang": "fr", "level": "A2", "title": "Passé composé con avoir", "status": "planned"},
+    {"id": "fr-a2-02", "lang": "fr", "level": "A2", "title": "Passé composé con être", "status": "planned"},
+    {"id": "fr-a2-03", "lang": "fr", "level": "A2", "title": "Pronombres de complemento directo (le, la, les)", "status": "planned"},
+    {"id": "fr-a2-04", "lang": "fr", "level": "A2", "title": "Los pronombres y / en", "status": "planned"},
+    {"id": "fr-a2-05", "lang": "fr", "level": "A2", "title": "El imperfecto (iniciación)", "status": "planned"},
+    {"id": "fr-a2-06", "lang": "fr", "level": "A2", "title": "El futuro simple", "status": "planned"},
+    {"id": "fr-a2-07", "lang": "fr", "level": "A2", "title": "Comparativo y superlativo", "status": "planned"},
+    {"id": "fr-a2-08", "lang": "fr", "level": "A2", "title": "Qui, que, où para unir frases", "status": "planned"},
+    {"id": "fr-a2-09", "lang": "fr", "level": "A2", "title": "Ortografía avanzada", "status": "planned"}
+  ]
 }

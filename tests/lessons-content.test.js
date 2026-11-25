@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { INDEX_FORMAT, EXERCISE_TYPES, validateLesson } from '../js/lib/lessons.js';
+import { INDEX_FORMAT, EXERCISE_TYPES, validateLesson, validateLessonIndex } from '../js/lib/lessons.js';
 import { textProblems } from './helpers/content-checks.js';
 
 // --- Lecciones de «Construir frases» (data/lessons/fr) ---
@@ -13,19 +13,34 @@ const ITEM_KEYS = ['idea', 'think', 'examples', 'pitfalls', 'exercises', 'situat
 const readJson = (url) => JSON.parse(readFileSync(url, 'utf8'));
 const index = () => readJson(new URL('index.json', DIR));
 const lessonUrl = (id) => new URL(`${id}.json`, DIR);
-const lessons = () => index().lessons.map((id) => ({ id, lesson: readJson(lessonUrl(id)) }));
+const lessons = () => index().lessons.filter((e) => e.status === 'available').map(({ id }) => ({ id, lesson: readJson(lessonUrl(id)) }));
 
 // Frase completa de un hueco: el autor incluye los espacios en before y after
 const gapSentence = (ex, answer) => ex.before + answer + ex.after;
 
-test('el índice tiene su formato y solo lista archivos que existen', () => {
+const EXPECTED_INDEX = [
+  ['fr-a1-01', 'La frase básica'], ['fr-a1-02', "Être, avoir, c'est, il y a"], ['fr-a1-03', 'Los artículos'],
+  ['fr-a1-04', 'Verbos en -er en presente'], ['fr-a1-05', 'La negación'], ['fr-a1-06', 'Preguntas simples'],
+  ['fr-a1-07', 'Los adjetivos'], ['fr-a1-08', 'Aller, faire y el futuro próximo'], ['fr-a1-09', 'Querer, poder y deber'],
+  ['fr-a1-10', 'Posesivos y demostrativos'], ['fr-a1-11', 'Verbos pronominales'], ['fr-a1-12', 'El imperativo'],
+  ['fr-a1-13', 'Venir de / il faut + infinitivo'], ['fr-a1-14', 'Preposiciones de lugar y de tiempo'],
+  ['fr-a1-15', 'Conectores: et, ou, mais, parce que, pour'], ['fr-a2-01', 'Passé composé con avoir'],
+  ['fr-a2-02', 'Passé composé con être'], ['fr-a2-03', 'Pronombres de complemento directo (le, la, les)'],
+  ['fr-a2-04', 'Los pronombres y / en'], ['fr-a2-05', 'El imperfecto (iniciación)'], ['fr-a2-06', 'El futuro simple'],
+  ['fr-a2-07', 'Comparativo y superlativo'], ['fr-a2-08', 'Qui, que, où para unir frases'], ['fr-a2-09', 'Ortografía avanzada'],
+];
+
+test('el índice v2 es válido, tiene las 24 lecciones en orden y solo las disponibles tienen archivo', () => {
   const data = index();
   assert.equal(data.format, INDEX_FORMAT);
-  assert.equal(data.version, 1);
   assert.equal(data.lang, 'fr');
-  assert.deepEqual(data.lessons, ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09']);
-  assert.equal(new Set(data.lessons).size, data.lessons.length, 'lecciones repetidas');
-  for (const id of data.lessons) assert.ok(existsSync(lessonUrl(id)), `no existe ${id}.json`);
+  assert.deepEqual(validateLessonIndex(data), { ok: true, errors: [] });
+  assert.deepEqual(data.lessons.map((e) => [e.id, e.title]), EXPECTED_INDEX);
+  data.lessons.forEach((e, i) => {
+    assert.equal(e.status, i < 9 ? 'available' : 'planned', e.id);
+    assert.equal(existsSync(lessonUrl(e.id)), i < 9, `archivo de ${e.id}`);
+    if (i < 9) assert.equal(readJson(lessonUrl(e.id)).title, e.title, e.id);
+  });
 });
 
 test('cada lección pasa validateLesson y su id coincide con el nombre del archivo', () => {

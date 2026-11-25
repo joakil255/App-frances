@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  LESSON_FORMAT, INDEX_FORMAT, validateLesson, findExercise, lessonsIndexUrl, loadLessons,
+  LESSON_FORMAT, INDEX_FORMAT, INDEX_VERSION, LESSON_STATUSES, validateLessonIndex, validateLesson, findExercise, lessonsIndexUrl, loadLessons,
 } from '../js/lib/lessons.js';
 
 const review = { sourceIds: ['src1'], review: false };
@@ -112,27 +112,59 @@ function fakeFetch(files) {
   return { fetch, calls };
 }
 
-const indexOf = (ids) => ({ format: INDEX_FORMAT, version: 1, lang: 'fr', lessons: ids });
+const entry = (id, status = 'available', title = 'La frase básica') => ({ id, lang: 'fr', level: 'A1', title, status });
+const indexOf = (entries) => ({ format: INDEX_FORMAT, version: INDEX_VERSION, lang: 'fr', lessons: entries });
+
+test('constantes del índice v2', () => {
+  assert.equal(INDEX_VERSION, 2);
+  assert.deepEqual(LESSON_STATUSES, ['available', 'planned']);
+});
+
+test('validateLessonIndex: acepta uno válido y rechaza los casos malos', () => {
+  const good = indexOf([entry('fr-a1-01'), entry('fr-a1-02', 'planned', 'Otra')]);
+  assert.deepEqual(validateLessonIndex(good), { ok: true, errors: [] });
+  const bad = (change) => validateLessonIndex(change(structuredClone(good)));
+  assert.equal(bad((i) => { i.version = 1; }).ok, false);
+  assert.equal(bad((i) => { i.lessons[1].id = 'fr-a1-01'; }).ok, false);
+  assert.equal(bad((i) => { i.lessons[1].lang = 'en'; }).ok, false);
+  assert.equal(bad((i) => { i.lessons[1].status = 'draft'; }).ok, false);
+  assert.equal(bad((i) => { i.lessons[1].title = '  '; }).ok, false);
+  assert.equal(bad((i) => { i.lessons[1].level = 'B1'; }).ok, false);
+  assert.equal(bad((i) => { i.lessons[1].id = 'FR_1'; }).ok, false);
+  assert.equal(validateLessonIndex(null).ok, false);
+  assert.equal(validateLessonIndex({ ...good, lessons: ['fr-a1-01'] }).ok, false);
+});
 
 test('loadLessons: una válida y otra con 404, en orden del índice', async () => {
   const lesson = makeLesson();
   const { fetch, calls } = fakeFetch({
-    'data/lessons/fr/index.json': indexOf(['fr-a1-99', 'fr-a1-98']),
+    'data/lessons/fr/index.json': indexOf([entry('fr-a1-99'), entry('fr-a1-98')]),
     'data/lessons/fr/fr-a1-99.json': lesson,
   });
   const result = await loadLessons({ fetch, lang: 'fr' });
   assert.deepEqual(result, [
-    { id: 'fr-a1-99', lesson, error: null },
-    { id: 'fr-a1-98', lesson: null, error: 'missing' },
+    { ...entry('fr-a1-99'), lesson, error: null },
+    { ...entry('fr-a1-98'), lesson: null, error: 'missing' },
   ]);
   assert.ok(calls.includes('data/lessons/fr/fr-a1-98.json'));
+});
+
+test('loadLessons: las planned no piden archivo y devuelven sus campos', async () => {
+  const lesson = makeLesson();
+  const { fetch, calls } = fakeFetch({
+    'data/lessons/fr/index.json': indexOf([entry('fr-a1-99'), entry('fr-a1-10', 'planned', 'Futura')]),
+    'data/lessons/fr/fr-a1-99.json': lesson,
+  });
+  const result = await loadLessons({ fetch, lang: 'fr' });
+  assert.deepEqual(result[1], { id: 'fr-a1-10', lang: 'fr', level: 'A1', title: 'Futura', status: 'planned', lesson: null, error: null });
+  assert.ok(!calls.some((url) => url.includes('fr-a1-10')));
 });
 
 test('loadLessons: JSON roto o lección inválida es invalid', async () => {
   const wrong = makeLesson();
   wrong.level = 'B1';
   const { fetch } = fakeFetch({
-    'data/lessons/fr/index.json': indexOf(['fr-a1-99', 'fr-a1-98']),
+    'data/lessons/fr/index.json': indexOf([entry('fr-a1-99'), entry('fr-a1-98')]),
     'data/lessons/fr/fr-a1-99.json': '{ roto',
     'data/lessons/fr/fr-a1-98.json': wrong,
   });
@@ -146,16 +178,38 @@ test('loadLessons: JSON roto o lección inválida es invalid', async () => {
 test('loadLessons: un id distinto al del índice es invalid', async () => {
   const lesson = makeLesson();
   const { fetch } = fakeFetch({
-    'data/lessons/fr/index.json': indexOf(['fr-a1-01']),
+    'data/lessons/fr/index.json': indexOf([entry('fr-a1-01')]),
     'data/lessons/fr/fr-a1-01.json': lesson,
   });
   const result = await loadLessons({ fetch, lang: 'fr' });
   assert.equal(result[0].error, 'invalid');
 });
 
+test('loadLessons: un título distinto entre índice y archivo es invalid', async () => {
+  const { fetch } = fakeFetch({
+    'data/lessons/fr/index.json': indexOf([entry('fr-a1-99', 'available', 'Otro título')]),
+    'data/lessons/fr/fr-a1-99.json': makeLesson(),
+  });
+  const result = await loadLessons({ fetch, lang: 'fr' });
+  assert.equal(result[0].error, 'invalid');
+  assert.equal(result[0].lesson, null);
+});
+
+test('loadLessons: un idioma distinto entre índice y archivo es invalid', async () => {
+  const { fetch } = fakeFetch({
+    'data/lessons/fr/index.json': indexOf([entry('fr-a1-99')]),
+    'data/lessons/fr/fr-a1-99.json': { ...makeLesson(), lang: 'es' },
+  });
+  const result = await loadLessons({ fetch, lang: 'fr' });
+  assert.equal(result[0].error, 'invalid');
+  assert.equal(result[0].lesson, null);
+});
+
 test('loadLessons: lanza si el índice falla', async () => {
   const wrongFormat = fakeFetch({ 'data/lessons/fr/index.json': { ...indexOf([]), format: 'otro' } });
   await assert.rejects(loadLessons({ fetch: wrongFormat.fetch, lang: 'fr' }));
+  const v1 = fakeFetch({ 'data/lessons/fr/index.json': { ...indexOf([]), version: 1, lessons: ['fr-a1-01'] } });
+  await assert.rejects(loadLessons({ fetch: v1.fetch, lang: 'fr' }));
   const missing = fakeFetch({});
   await assert.rejects(loadLessons({ fetch: missing.fetch, lang: 'fr' }));
   const broken = fakeFetch({ 'data/lessons/fr/index.json': '{ roto' });
