@@ -267,3 +267,16 @@ test('isSavedTokenIn: igual que isSavedToken pero con el conjunto de lemmas ya h
   assert.equal(isSavedTokenIn(lemmas, cacheWith({ lemma: 'manger' }), 'fr', 'manges', 's'), true);
   assert.equal(isSavedTokenIn(new Set(['']), { peek: () => ({ lemma: '' }) }, 'fr', "'", 's'), false);
 });
+
+test('wordFromLookup con opciones de lectura: categoría Lectura y por revisar', () => {
+  const entry = wordFromLookup(LOOKED, 'Tu manges.', { category: 'Lectura', needsReview: true });
+  assert.equal(entry.category, 'Lectura');
+  assert.equal(entry.needsReview, true);
+  assert.equal(validateWord(entry).ok, true);
+});
+
+test('wordFromLookup sin opciones sigue en Conversación y sin revisar', () => {
+  const entry = wordFromLookup(LOOKED, 'Tu manges.');
+  assert.equal(entry.category, 'Conversación');
+  assert.equal(entry.needsReview, false);
+});

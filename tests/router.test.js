@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SCREENS, resolveRoute } from '../js/lib/router.js';
+import { SCREENS, resolveRoute, routeParam } from '../js/lib/router.js';
 
-test('SCREENS tiene las seis pantallas en orden', () => {
-  assert.deepEqual(SCREENS.map((s) => s.id), ['home', 'vocabulary', 'study', 'quiz', 'progress', 'chat']);
-  assert.deepEqual(SCREENS.map((s) => s.title), ['Inicio', 'Vocabulario', 'Estudiar', 'Quiz', 'Progreso', 'Conversar']);
+test('SCREENS tiene las siete pantallas en orden', () => {
+  assert.deepEqual(SCREENS.map((s) => s.id), ['home', 'vocabulary', 'study', 'quiz', 'progress', 'chat', 'reader']);
+  assert.deepEqual(SCREENS.map((s) => s.title), ['Inicio', 'Palabras', 'Estudiar', 'Quiz', 'Progreso', 'Conversar', 'Leer']);
 });
 
 test('cada dirección lleva a su pantalla', () => {
@@ -33,4 +33,17 @@ test('dirección desconocida lleva a Inicio', () => {
 
 test('un ancla que no es pantalla devuelve null', () => {
   assert.equal(resolveRoute('#main'), null);
+});
+
+test('#/leer y #/leer/<id> llevan al lector; routeParam da el id sin cambiarlo', () => {
+  assert.equal(resolveRoute('#/leer'), 'reader');
+  assert.equal(resolveRoute('#/leer/AbC-1'), 'reader');
+  assert.equal(routeParam('#/leer/AbC-1'), 'AbC-1');
+  assert.equal(routeParam('#/leer/AbC-1/'), 'AbC-1');
+  assert.equal(routeParam('#/leer'), null);
+  assert.equal(routeParam('#/leer/'), null);
+  assert.equal(routeParam('#/quiz/abc'), null);
+  assert.equal(routeParam('#main'), null);
+  assert.equal(resolveRoute('#/leer/a/b'), 'home');
+  assert.equal(resolveRoute('#/quiz/abc'), 'home');
 });

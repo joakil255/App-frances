@@ -2,7 +2,7 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene cinco pantallas (Inicio, Vocabulario, Estudiar, Quiz y Progreso). Funcionan **Inicio** (tu copia de seguridad), **Vocabulario** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas) y **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas).
+Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene siete pantallas (Inicio, Palabras, Estudiar, Quiz, Progreso, Conversar y Leer). Funcionan **Inicio** (tu copia de seguridad), **Palabras** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas), **Conversar** (chatear en francés con Claude) y **Leer** (historias cortas con cuestionario).
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -75,7 +75,7 @@ Tus palabras, tu progreso (el estado de repaso de cada tarjeta), tu historial de
 - **Restaurar:** en **Inicio**, pulsa **Restaurar copia** y elige el archivo. Una ventana te dice qué tiene la copia y qué tienes ahora. Al pulsar **Restaurar**, **todo** se reemplaza por lo de la copia (no se combina) y la app se recarga. No se puede deshacer: si quieres conservar lo de ahora, guarda antes otra copia.
 - **Si algo falla:** un archivo que no es una copia de la app, dañado o de una versión más nueva **no cambia nada** y la app te dice por qué. Si falta espacio a mitad de la restauración, tus datos quedan como estaban.
 - La copia no incluye los respaldos que la app guarda aparte cuando encuentra datos dañados.
-- **Exportar** e **Importar** de Vocabulario siguen sirviendo para listas de palabras (por ejemplo, en CSV para Excel), pero no guardan tu progreso.
+- **Exportar** e **Importar** de Palabras siguen sirviendo para listas de palabras (por ejemplo, en CSV para Excel), pero no guardan tu progreso.
 
 ## Cómo funciona sin conexión
 
@@ -97,7 +97,7 @@ Cada vez que cambies **cualquier** archivo de la app:
 
 Si no subes `CACHE_VERSION`, los teléfonos que ya tienen la app **no se enteran del cambio**. Las pruebas no pueden detectar este olvido.
 
-## Vocabulario
+## Palabras
 
 La primera vez que abres la app se cargan **60 palabras A1** (saludos, familia, casa, comida, tiempo y verbos). Desde ese momento son tuyas: puedes editarlas o borrarlas. Las que llevan la etiqueta **Revisar** tienen una traducción que puede cambiar según el país; compruébalas y quita la marca al editarlas.
 
@@ -156,7 +156,7 @@ Cada respuesta se guarda con **los dos** algoritmos a la vez: cambiar de uno a o
 
 **Atajos de teclado** (en el computador, durante una sesión): `Espacio` o `Intro` muestran la respuesta, `1` `2` `3` `4` responden Otra vez, Difícil, Bien y Fácil, y `O` lee el francés en voz alta (solo cuando el francés está a la vista). Con ratón, los botones muestran su tecla.
 
-**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. Para no perderlo, usa la [copia de seguridad](#copia-de-seguridad) de Inicio (la exportación de Vocabulario solo guarda las palabras).
+**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. Para no perderlo, usa la [copia de seguridad](#copia-de-seguridad) de Inicio (la exportación de Palabras solo guarda las palabras).
 
 ## Quiz
 
@@ -211,13 +211,28 @@ Toca **Hablar**, di tu frase en francés y toca **Detener** (o calla y se detien
 
 Toca cualquier palabra de una respuesta de Claude y se abre su tarjeta: qué significa **en esa frase**, su forma base («manges» → «manger») con la traducción, el tipo de palabra y, si es un sustantivo, el artículo y el género. **🔊 Escuchar** lee la forma base.
 
-- **Guardar** la añade a tu Vocabulario (categoría «Conversación», con la frase como ejemplo si cabe en 200 letras) y entra al repaso de Estudiar como cualquier palabra nueva.
+- **Guardar** la añade a tus palabras, en la pantalla Palabras (categoría «Conversación», con la frase como ejemplo si cabe en 200 letras) y entra al repaso de Estudiar como cualquier palabra nueva.
 - **Sin duplicados:** si ya tienes la palabra, aunque sea en otra forma («manges» cuando guardaste «manger», o «école» cuando tienes «l'école»), la tarjeta dice «Ya está en tu vocabulario».
 - **Subrayado:** las palabras que ya están en tu vocabulario se ven con una raya rosa debajo en todo el chat.
 - **Límite: 200 consultas al día**, contadas por el servidor aparte de los mensajes. Se reinicia a medianoche, hora de Chile.
 - **Caché:** cada consulta se guarda en el teléfono (hasta 500); la misma palabra en la misma frase no se vuelve a pedir y se puede ver **sin conexión**. Sin conexión y sin caché, la tarjeta lo avisa. La caché no entra en la copia de seguridad.
 - **Tus datos:** la palabra y su frase se envían a Anthropic, igual que tus mensajes.
 - Con «Escuchar primero», las palabras de una respuesta tapada se pueden tocar en cuanto tocas **Mostrar texto**.
+
+## Leer
+
+Historias cortas en francés escritas por Claude a tu nivel, para leer y escuchar frase por frase.
+
+- **Nueva historia:** eliges el nivel (A1.1, A1.2 o A2; por defecto A1.2), un tema si quieres y el idioma de las preguntas (Español o Francés; la app recuerda tu última elección). Mientras Claude escribe, el botón dice «Escribiendo…». Al terminar, la historia se abre sola.
+- **REVISAR:** cada historia nueva llega marcada **REVISAR** («Esta historia aún no está revisada.»), porque el francés lo escribió Claude. Léela y toca **Aprobar** si está bien o **Descartar** para borrarla. Una aprobada se borra con **Borrar historia**; las dos piden confirmación.
+- **Escuchar:** **Escuchar** lee la historia frase por frase y resalta la que suena; el mismo botón dice **Pausa** (termina la frase y se detiene) y **Seguir**. **Más lento** / **Normal** cambia la velocidad desde la frase siguiente. El botón **▶** de cada frase lee desde ahí. La voz se detiene al salir de la pantalla, al ocultar la app, al tocar una palabra y al usar el micrófono de Conversar.
+- **Palabras:** toca cualquier palabra para abrir su tarjeta, como en Conversar. **Guardar** la deja en Palabras con la categoría «Lectura» y la frase de la historia como ejemplo; si la historia todavía está en REVISAR, la palabra queda marcada «Pendiente de revisar». Las consultas cuentan en el límite de 200 al día.
+- **¿Lo entendiste?** Debajo del texto hay 4 preguntas. **Comprobar** dice si acertaste, explica en español y resalta en el texto la frase con la respuesta; luego **Siguiente**. Al final ves «Resultado: X de 4» y la biblioteca muestra «Preguntas: X/4» (repetir lo reemplaza).
+- **Marcar como leída** deja la marca «Leída» en la biblioteca.
+- **Sin conexión:** las historias guardadas se leen y tienen su cuestionario; se escuchan con la voz francesa instalada en el teléfono. Para pedir una nueva necesitas conexión.
+- **Límite: 5 historias al día**, contadas por el servidor aparte de los mensajes y las consultas. Se reinicia a medianoche, hora de Chile.
+- **Tus datos:** el nivel, el tema y el idioma de las preguntas se envían a Anthropic. Las historias se guardan en el teléfono y **sí** entran en la copia de seguridad.
+- El gesto «atrás» de Android vuelve de una historia a la biblioteca.
 
 ## Servidor de conversación
 
@@ -295,12 +310,12 @@ Cambia el sistema (o el navegador) a tema oscuro. La app pasa a fondo azul noche
 
 1. Con la app instalada y abierta al menos una vez, **cierra la app** del todo (desde la vista de apps recientes).
 2. Activa el **modo avión**.
-3. Abre la app desde el icono. Debe abrir normal y navegar entre las cinco pantallas.
+3. Abre la app desde el icono. Debe abrir normal y navegar entre las siete pantallas.
 4. Desactiva el modo avión.
 
 En el computador puedes comprobar lo mismo: en Chrome, `F12` → **Application** → **Service workers** → marca **Offline** y recarga; en Firefox, menú **≡** → **Más herramientas** → **Trabajar sin conexión**.
 
-### 6. Vocabulario en el celular
+### 6. Palabras en el celular
 
 Con la app instalada en el teléfono, marca cada punto:
 
@@ -376,7 +391,7 @@ En el teléfono (app instalada), marca cada punto:
 - [ ] Responde unas tarjetas en Estudiar y un quiz, y abre Progreso: «1 día seguido», «✓ Hoy ya estudiaste», la barra de hoy con el número de respuestas y los dos porcentajes con «de N respuestas».
 - [ ] Al día siguiente, **antes de estudiar**: la racha sigue y dice «Hoy todavía no estudiaste».
 - [ ] **Ver los datos día por día** abre una tabla con los 14 días; los números coinciden con las barras.
-- [ ] **Ver las N palabras dominadas** (cuando tengas alguna) muestra las palabras en el mismo orden que Vocabulario.
+- [ ] **Ver las N palabras dominadas** (cuando tengas alguna) muestra las palabras en el mismo orden que la pantalla Palabras.
 - [ ] Con **TalkBack** activado, al tocar el gráfico se lee «Respuestas por día en los últimos 14 días: estudiaste … de 14 días, … respuestas en total.».
 - [ ] Todo se lee bien en tema claro y oscuro y no hay que desplazarse de lado.
 - [ ] Con **modo avión**, Progreso se abre y muestra lo mismo.
@@ -401,28 +416,29 @@ Si no aparece, cierra y vuelve a abrir la app: GitHub Pages puede tardar hasta 1
 - [ ] Borra los datos del sitio: en Chrome, ⋮ → **Configuración** → **Configuración de sitios** → **Todos los sitios** → `joakil255.github.io` → **Borrar y restablecer** (si usas la app instalada, ciérrala antes). Al volver a abrir la app solo están las 60 palabras iniciales y Progreso está vacío.
 - [ ] **Restaurar copia** → elige el archivo de Descargas. La ventana dice qué tiene la copia y qué tienes ahora. **Cancelar** no cambia nada.
 - [ ] Vuelve a elegirlo y pulsa **Restaurar**: la app se recarga, Inicio dice «Se restauró la copia del …», y las palabras, la racha, los números de Progreso y tus ajustes de Estudiar son los mismos que anotaste.
-- [ ] Elige un archivo que no sea una copia (una foto o la exportación de Vocabulario): aparece un aviso que dice por qué y nada cambia.
+- [ ] Elige un archivo que no sea una copia (una foto o la exportación de Palabras): aparece un aviso que dice por qué y nada cambia.
 
 ### 12. Lector de pantalla (TalkBack)
 
-- [ ] Activa **TalkBack** (Ajustes → Accesibilidad). Recorre Inicio, Vocabulario (abre una ficha), Estudiar (una tarjeta), Quiz y Progreso: cada botón se lee con su nombre, los avisos se anuncian y el gráfico de Progreso se lee con su resumen.
+- [ ] Activa **TalkBack** (Ajustes → Accesibilidad). Recorre Inicio, Palabras (abre una ficha), Estudiar (una tarjeta), Quiz y Progreso: cada botón se lee con su nombre, los avisos se anuncian y el gráfico de Progreso se lee con su resumen.
 
 ## Estructura
 
 ```
-index.html              página única con las cinco pantallas
+index.html              página única con las siete pantallas
 sw.js                   service worker (caché para usar sin conexión)
 manifest.webmanifest    datos de instalación de la PWA
 css/styles.css          estilos (valores de DESIGN.md)
 js/app.js               arranque: navegación y registro del service worker
 js/lib/router.js        qué pantalla corresponde a cada dirección (#/…)
 js/update.js            aviso «Actualizar» para versiones nuevas
-js/screens/vocabulary.js pantalla Vocabulario (lista, ficha, formulario, importar/exportar)
+js/screens/vocabulary.js pantalla Palabras (lista, ficha, formulario, importar/exportar)
 js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
 js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
 js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
 js/screens/home.js      pantalla Inicio (guardar y restaurar la copia de seguridad)
+js/screens/reader.js    pantalla Leer (biblioteca, lector con voz por frases y cuestionario)
 js/lib/words.js         validación, duplicadas, búsqueda y orden de palabras
 js/lib/csv.js           lector y escritor de CSV
 js/lib/transfer.js      importar y exportar en JSON y CSV

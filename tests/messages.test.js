@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { MESSAGES, storageMessage, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
+import { MESSAGES, storageMessage, textsLoadNotice, importFailed, fileTooLarge, FILE_UNREADABLE, chatMessage } from '../js/lib/messages.js';
 import { StorageError } from '../js/lib/storage.js';
 
-const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'restoreFailed',
+const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStudy', 'corruptTexts', 'restoreFailed',
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
@@ -44,10 +44,14 @@ test('los textos exactos de almacenamiento y datos dañados nombran Inicio', () 
     title: 'Tu progreso guardado estaba dañado.',
     text: 'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
   });
+  assert.deepEqual(MESSAGES.corruptTexts, {
+    title: 'Tus historias guardadas estaban dañadas.',
+    text: 'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.',
+  });
   assert.equal(MESSAGES.restoreFailed.title, 'No se pudo restaurar la copia.');
   assert.deepEqual(MESSAGES.backupUnverified, {
     title: 'No se guardó la copia.',
-    text: 'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Vocabulario mientras tanto.',
+    text: 'Tus datos tienen algo que la copia no reconoce y no se podría restaurar. Exporta tus palabras desde Palabras mientras tanto.',
   });
   assert.equal(MESSAGES.noSpeech.title, 'Este navegador no puede leer en voz alta.');
   assert.equal(MESSAGES.noFrenchVoice.title, 'No hay voz francesa en este dispositivo.');
@@ -195,4 +199,20 @@ test('las pantallas no repiten los textos del catálogo', () => {
       assert.ok(!source.includes(MESSAGES[key].title), `${file} repite «${MESSAGES[key].title}»`);
     }
   }
+});
+
+test('storyLimit tiene su texto exacto y story_limit lo usa', () => {
+  assert.deepEqual(MESSAGES.storyLimit, {
+    title: 'Llegaste al límite de historias de hoy.',
+    text: 'Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.',
+  });
+  assert.deepEqual(chatMessage('story_limit'), MESSAGES.storyLimit);
+});
+
+test('textsLoadNotice avisa de datos dañados o de un error de lectura, y calla si todo salió bien', () => {
+  assert.equal(textsLoadNotice({ corruptBackupKey: null }), null);
+  assert.equal(textsLoadNotice(), null);
+  assert.equal(textsLoadNotice({ corruptBackupKey: 'app-frances-texts-corrupt-x' }), MESSAGES.corruptTexts);
+  assert.equal(textsLoadNotice({ error: new StorageError('quota') }), MESSAGES.storageQuota);
+  assert.equal(textsLoadNotice({ error: new StorageError('unavailable') }), MESSAGES.storageUnavailable);
 });

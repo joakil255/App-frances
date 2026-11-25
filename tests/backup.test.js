@@ -1,18 +1,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  BACKUP_FORMAT, BACKUP_VERSION, MAX_BACKUP_BYTES, buildBackup, backupFileName, readBackup, restoreBackup,
+  BACKUP_FORMAT, BACKUP_VERSION, MAX_BACKUP_BYTES, buildBackup, backupFileName, readBackup, restoreBackup, restoreWarning,
 } from '../js/lib/backup.js';
 import { createWordStore, StorageError, STORAGE_KEY } from '../js/lib/storage.js';
 import { createStudyStore, STUDY_KEY } from '../js/lib/study-storage.js';
 import { newCard, review, cardIdOf } from '../js/lib/scheduler.js';
 import { buildQueue } from '../js/lib/queue.js';
 import { lemmaOf } from '../js/lib/words.js';
+import { TEXTS_KEY, GENERATED_SOURCE } from '../js/lib/texts.js';
 
 // localStorage en memoria; failOn hace fallar la próxima escritura de esa clave
 class MemoryStorage {
-  constructor() {
-    this.data = new Map();
+  constructor(initial = {}) {
+    this.data = new Map(Object.entries(initial));
     this.failOn = null;
     this.failAfter = null; // tras fallar failOn, también falla la escritura siguiente
   }
@@ -64,7 +65,7 @@ const backupOf = ({ wordStore, studyStore }) => {
 
 test('constantes de la copia', () => {
   assert.equal(BACKUP_FORMAT, 'app-frances-copia');
-  assert.equal(BACKUP_VERSION, 2);
+  assert.equal(BACKUP_VERSION, 3);
   assert.equal(MAX_BACKUP_BYTES, 10 * 1024 * 1024);
 });
 
@@ -93,7 +94,7 @@ test('el archivo tiene formato, versión, fecha y sangría de 2 espacios', async
   const text = backupOf(await sampleStores());
   const data = JSON.parse(text);
   assert.equal(data.format, 'app-frances-copia');
-  assert.equal(data.version, 2);
+  assert.equal(data.version, 3);
   assert.equal(data.createdAt, AT);
   assert.ok(text.endsWith('\n') && text.includes('\n  "format"'));
   assert.deepEqual(Object.keys(data.study).sort(), ['cards', 'history', 'settings']);
@@ -101,7 +102,7 @@ test('el archivo tiene formato, versión, fecha y sangría de 2 espacios', async
 
 test('summary cuenta palabras, tarjetas y respuestas', async () => {
   const read = readBackup(backupOf(await sampleStores()));
-  assert.deepEqual(read.summary, { words: 4, cards: 3, answers: 4, createdAt: AT });
+  assert.deepEqual(read.summary, { words: 4, cards: 3, answers: 4, createdAt: AT, texts: 0 });
 });
 
 const DAMAGED = 'La copia está incompleta o dañada.';
@@ -115,10 +116,10 @@ test('archivos que no son una copia válida se rechazan con su motivo', async ()
   assert.equal(readBackup(`{"format":"app-frances-copia"${FFFD}}`).fatal, 'El archivo no está en UTF-8.');
   assert.equal(readBackup('esto no es JSON').fatal, 'El archivo no se puede leer.');
   assert.equal(readBackup(JSON.stringify({ format: 'app-frances-vocabulario', version: 1, words: [] })).fatal,
-    'Este archivo es una lista de palabras: impórtalo en Vocabulario con «Importar».');
+    'Este archivo es una lista de palabras: impórtalo en Palabras con «Importar».');
   assert.equal(readBackup(JSON.stringify({ format: 'otra-app' })).fatal, 'Este archivo no es una copia de seguridad de la app.');
   assert.equal(readBackup('null').fatal, 'Este archivo no es una copia de seguridad de la app.');
-  assert.equal((await mutate((d) => { d.version = 3; })).fatal,
+  assert.equal((await mutate((d) => { d.version = 4; })).fatal,
     'La copia es de una versión más nueva de la app. Actualiza la app y vuelve a intentarlo.');
   const bad = readBackup('esto no es JSON');
   assert.equal(bad.backup, null);
@@ -195,7 +196,7 @@ test('una copia vacía (sin palabras ni historial) es válida', () => {
   const text = buildBackup({ words: [], study: { cards: {}, history: [], settings: { algorithm: 'sm2', direction: 'fr-es', newPerDay: 10, requireAccents: false } }, now: NOW });
   const read = readBackup(text);
   assert.equal(read.fatal, null);
-  assert.deepEqual(read.summary, { words: 0, cards: 0, answers: 0, createdAt: AT });
+  assert.deepEqual(read.summary, { words: 0, cards: 0, answers: 0, createdAt: AT, texts: 0 });
 });
 
 test('si falla la escritura del progreso, las palabras vuelven a como estaban', async () => {
@@ -246,9 +247,9 @@ async function v1Backup() {
   return data;
 }
 
-test('buildBackup escribe version 2 y palabras con lang y lemma', async () => {
+test('buildBackup escribe version 3 y palabras con lang y lemma', async () => {
   const data = JSON.parse(backupOf(await sampleStores()));
-  assert.equal(data.version, 2);
+  assert.equal(data.version, 3);
   for (const word of data.words) {
     assert.equal(word.lang, 'fr');
     assert.equal(word.lemma, lemmaOf(word.fr, word.gender));
@@ -298,4 +299,148 @@ test('el lemma guardado en la copia no se cree: se recalcula', async () => {
 
 test('una copia v2 con lang distinto de fr está dañada', async () => {
   assert.equal((await mutate((d) => { d.words[0].lang = 'en'; })).fatal, DAMAGED);
+});
+
+// --- Etapa 11: copia v3 con historias ---
+
+const settings = { algorithm: 'sm2', direction: 'fr-es', newPerDay: 10, requireAccents: false };
+const emptyStudy = { cards: {}, history: [], settings };
+const BODY = "Marie habite à Paris. Elle aime le café. Chaque matin, elle va à l’école. Le soir, elle lit un livre.";
+const makeStory = (over = {}) => ({
+  id: 't1',
+  lang: 'fr',
+  title: 'Marie à Paris',
+  body: BODY,
+  level: 'A1.2',
+  topic: 'la ville',
+  source: { ...GENERATED_SOURCE },
+  quiz: {
+    lang: 'es',
+    questions: [1, 2, 3, 4].map((i) => ({
+      question: `Pregunta ${i} ?`, options: ['A', 'B', 'C'], answer: 1, explanation: 'Porque sí.', evidence: 'Elle aime le café.',
+    })),
+  },
+  status: 'approved',
+  readAt: null,
+  quizResult: { correct: 3, total: 4, at: AT },
+  createdAt: AT,
+  updatedAt: AT,
+  ...over,
+});
+const v3Data = async (texts = [makeStory(), makeStory({ id: 't2', title: "L'été à la mer" })]) => JSON.parse(buildBackup({
+  words: (await sampleStores()).wordStore.getWords(), study: emptyStudy, texts, now: NOW,
+}));
+
+test('buildBackup v3 incluye las historias', async () => {
+  const data = await v3Data();
+  assert.equal(data.version, 3);
+  assert.equal(data.texts.length, 2);
+  assert.equal(data.texts[1].title, "L'été à la mer");
+});
+
+test('readBackup lee v1 y v2 con texts null (no traían historias)', async () => {
+  for (const version of [1, 2]) {
+    const data = await v3Data();
+    data.version = version;
+    delete data.texts;
+    if (version === 1) for (const w of data.words) { delete w.lang; delete w.lemma; }
+    const read = readBackup(JSON.stringify(data));
+    assert.equal(read.fatal, null, `v${version}`);
+    assert.equal(read.backup.texts, null);
+    assert.equal(read.summary.texts, undefined);
+  }
+});
+
+test('readBackup lee v3 con historias y las cuenta', async () => {
+  const read = readBackup(JSON.stringify(await v3Data()));
+  assert.equal(read.fatal, null);
+  assert.equal(read.backup.texts.length, 2);
+  assert.equal(read.summary.texts, 2);
+  assert.equal(readBackup(JSON.stringify(await v3Data([]))).backup.texts.length, 0);
+});
+
+test('v3 con historias inválidas o sin historias está dañada; v4 es más nueva', async () => {
+  const cases = {
+    'sin texts': (d) => { delete d.texts; },
+    'texts no es lista': (d) => { d.texts = {}; },
+    'historia sin evidencia en el texto': (d) => { d.texts[0].quiz.questions[0].evidence = 'no está'; },
+    'historia con nivel raro': (d) => { d.texts[0].level = 'C2'; },
+    'historia sin id': (d) => { delete d.texts[0].id; },
+    'dos historias con el mismo id': (d) => { d.texts[1].id = d.texts[0].id; },
+    'elemento que no es objeto': (d) => { d.texts[0] = 5; },
+  };
+  for (const [name, change] of Object.entries(cases)) {
+    const data = await v3Data();
+    change(data);
+    assert.equal(readBackup(JSON.stringify(data)).fatal, DAMAGED, name);
+  }
+  const data = await v3Data();
+  data.version = 4;
+  assert.match(readBackup(JSON.stringify(data)).fatal, /más nueva/);
+});
+
+test('restaurar una v3 reemplaza palabras, progreso e historias, con ida y vuelta idéntica', async () => {
+  const texts = [makeStory(), makeStory({ id: 't2', title: "L'été à la mer" })];
+  const original = await sampleStores();
+  const { cards, history, settings: s } = original.studyStore.getState();
+  const text = buildBackup({ words: original.wordStore.getWords(), study: { cards, history, settings: s }, texts, now: NOW });
+  const backend = new MemoryStorage({});
+  backend.setItem(TEXTS_KEY, JSON.stringify({ schemaVersion: 1, texts: [makeStory({ id: 'viejo' })] }));
+  restoreBackup(backend, readBackup(text).backup);
+  assert.deepEqual(JSON.parse(backend.getItem(TEXTS_KEY)), { schemaVersion: 1, texts });
+  const again = readBackup(buildBackup({ words: original.wordStore.getWords(), study: { cards, history, settings: s }, texts: JSON.parse(backend.getItem(TEXTS_KEY)).texts, now: NOW }));
+  assert.deepEqual(again.backup.texts, texts);
+});
+
+test('restaurar una copia sin historias no toca las historias guardadas', async () => {
+  const data = await v3Data();
+  data.version = 2;
+  delete data.texts;
+  const backend = new MemoryStorage({});
+  const mine = JSON.stringify({ schemaVersion: 1, texts: [makeStory({ id: 'mia' })] });
+  backend.setItem(TEXTS_KEY, mine);
+  restoreBackup(backend, readBackup(JSON.stringify(data)).backup);
+  assert.equal(backend.getItem(TEXTS_KEY), mine);
+  const empty = new MemoryStorage({});
+  restoreBackup(empty, readBackup(JSON.stringify(data)).backup);
+  assert.equal(empty.getItem(TEXTS_KEY), null);
+});
+
+test('si falla escribir las historias, se deshacen palabras y progreso (con datos previos o sin ellos)', async () => {
+  const { backup } = readBackup(JSON.stringify(await v3Data()));
+  const previous = await sampleStores();
+  const before = { words: previous.backend.getItem(STORAGE_KEY), study: previous.backend.getItem(STUDY_KEY) };
+  previous.backend.setItem(TEXTS_KEY, '{"schemaVersion":1,"texts":[]}');
+  previous.backend.failOn = TEXTS_KEY;
+  assert.throws(() => restoreBackup(previous.backend, backup), StorageError);
+  assert.equal(previous.backend.getItem(STORAGE_KEY), before.words);
+  assert.equal(previous.backend.getItem(STUDY_KEY), before.study);
+  assert.equal(previous.backend.getItem(TEXTS_KEY), '{"schemaVersion":1,"texts":[]}');
+
+  const fresh = new MemoryStorage({});
+  fresh.failOn = TEXTS_KEY;
+  assert.throws(() => restoreBackup(fresh, backup), StorageError);
+  assert.deepEqual([...fresh.data.keys()], []);
+});
+
+test('si falla escribir el progreso en una v3, las historias no se tocan y las palabras se deshacen', async () => {
+  const { backup } = readBackup(JSON.stringify(await v3Data()));
+  const backend = new MemoryStorage({});
+  backend.failOn = STUDY_KEY;
+  assert.throws(() => restoreBackup(backend, backup), StorageError);
+  assert.deepEqual([...backend.data.keys()], []);
+});
+
+test('el texto de la ventana de restaurar dice qué se reemplaza', () => {
+  assert.equal(restoreWarning({ texts: [] }),
+    'Se reemplazarán tus palabras, tu progreso y tus historias. No se puede deshacer. Si quieres conservarlos, guarda antes una copia.');
+  assert.equal(restoreWarning({ texts: null }),
+    'Se reemplazarán tus palabras y tu progreso (esta copia no trae historias: las tuyas se mantienen). No se puede deshacer. Si quieres conservarlos, guarda antes una copia.');
+});
+
+test('una copia grande con historias se arma y se lee bien', async () => {
+  const texts = Array.from({ length: 200 }, (_, i) => makeStory({ id: `t${i}` }));
+  const read = readBackup(buildBackup({ words: [], study: emptyStudy, texts, now: NOW }));
+  assert.equal(read.fatal, null);
+  assert.equal(read.summary.texts, 200);
 });

@@ -26,11 +26,12 @@ Los carteles esmaltados del metro de París: placas azules con borde blanco sobr
 | Pantalla | Token | Color |
 |---|---|---|
 | Inicio | `--line-home` | `#F2C230` amarillo |
-| Vocabulario | `--line-vocabulary` | `#2F7FD0` azul |
+| Palabras | `--line-vocabulary` | `#2F7FD0` azul |
 | Estudiar | `--line-study` | `#9B5BB5` violeta |
 | Quiz | `--line-quiz` | `#2FA36B` verde |
 | Progreso | `--line-progress` | `#E0663A` naranja |
 | Conversar | `--line-chat` | `#D9478A` rosa |
+| Leer | `--line-reader` | `#A0703C` marrón |
 
 Los puntos de línea siempre llevan un anillo blanco y van sobre la barra azul: el amarillo sobre fondo claro solo tiene 1,6:1.
 
@@ -56,7 +57,7 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 
 ## Estructura
 
-- **Móvil (< 900 px):** barra de navegación fija abajo, seis enlaces que se reparten el ancho, cada uno de 48 px de alto como mínimo. «Vocabulario», el nombre más largo, ocupa unos píxeles más (67 px); a 360 px los demás miden 58 × 64 px y ningún nombre se corta.
+- **Móvil (< 900 px):** barra de navegación fija abajo, siete enlaces que se reparten el ancho, cada uno de 48 px de alto como mínimo. La pantalla de palabras se llama «Palabras» (antes «Vocabulario», que no cabía con siete botones). Medido a 360 px con cada enlace activo: el más estrecho mide 49,3 × 64 px, «Conversar» llega a 59,9 px y ningún nombre se corta.
 - **Computador (≥ 900 px):** barra vertical a la izquierda, de 200 px, con «Français» arriba. El contenido se alinea a la izquierda, con un ancho máximo de 65 caracteres.
 - Cada pantalla empieza con su **placa**: el punto de color de su línea y el nombre de la pantalla.
 - **Enlace activo:** texto blanco, negrita y franja del color de la línea (arriba en el móvil, a la izquierda en el computador), más `aria-current="page"`. Nunca se indica solo con color.
@@ -100,13 +101,13 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 
 **Aviso:** caja `--notice-bg` con borde de 2 px `--notice-border` y texto `--notice-text`, título en Barlow 700. Explica qué pasa y qué hacer.
 
-**Mazo A1 (Etapa 6):** botón *secundario* «Añadir 100 palabras A1» al final de la fila de acciones de Vocabulario (después de Exportar). Sin estilos nuevos: la fila ya pasa a la línea siguiente en el móvil. Abre la misma ventana de importar, con el título «Revisión de «100 palabras A1»», y el foco vuelve al botón al cerrarla. Si no se puede cargar el mazo, el aviso de siempre lo dice en una frase.
+**Mazo A1 (Etapa 6):** botón *secundario* «Añadir 100 palabras A1» al final de la fila de acciones de Palabras (después de Exportar). Sin estilos nuevos: la fila ya pasa a la línea siguiente en el móvil. Abre la misma ventana de importar, con el título «Revisión de «100 palabras A1»», y el foco vuelve al botón al cerrarla. Si no se puede cargar el mazo, el aviso de siempre lo dice en una frase.
 
 ## Pantalla Estudiar (Etapa 3)
 
 - **Resumen del día:** dos recuadros (`--surface`, borde 2 px `--divider`, radio 8 px) con el número en Barlow 700 de 30 px color `--plaque` (oscuro: `--plaque-text`) y la etiqueta en Barlow 500 `--text-muted`: «para repasar» y «nuevas». Debajo, dirección y algoritmo en `--text-muted`; **Empezar** (primario) y **Ajustes del estudio** (secundario).
 - **Progreso:** «Tarjeta 3 de 22» en Barlow 500 `--text-muted`, y una barra de 6 px (fondo `--divider`, relleno `--line` de Estudiar). La barra es decoración: el texto da la información.
-- **Tarjeta:** fondo `--surface`, borde 2 px `--plaque`, borde izquierdo de 8 px `--line`, radio 10 px, contenido centrado. Etiqueta del idioma arriba a la izquierda (Barlow 500, `--text-muted`). Palabra del anverso en Source Serif 600 de 1,95 rem; traducción en cursiva de 1,25 rem; separador `--divider`; ejemplo en 0,9 rem con la traducción en cursiva `--text-muted`. Botón de altavoz como en Vocabulario.
+- **Tarjeta:** fondo `--surface`, borde 2 px `--plaque`, borde izquierdo de 8 px `--line`, radio 10 px, contenido centrado. Etiqueta del idioma arriba a la izquierda (Barlow 500, `--text-muted`). Palabra del anverso en Source Serif 600 de 1,95 rem; traducción en cursiva de 1,25 rem; separador `--divider`; ejemplo en 0,9 rem con la traducción en cursiva `--text-muted`. Botón de altavoz como en Palabras.
 - **Respuestas (opción A):** cuatro botones secundarios iguales; **Bien** primario. Nombre en Barlow 700 y, debajo, cuándo vuelve («hoy», «1 día», «8 días») en Barlow 500 de 0,8 rem. Móvil: rejilla 2 × 2, 56 px de alto. Computador (≥ 900 px): una fila de 4. Sin colores con significado: la diferencia la da el texto.
 - **Pistas de teclado:** `<kbd>` con borde 1 px `--field-border` (2 px abajo), radio 4 px, texto `--text-muted` sobre `--surface`. Solo con ratón: `@media (hover: hover) and (pointer: fine)`.
 - **Fin de sesión:** título «Terminaste por hoy» en Barlow 700 de 1,3 rem y un párrafo con las respuestas de la sesión y cuántas tarjetas vencen mañana.
@@ -124,7 +125,7 @@ El fallo usa `--error-text` (7,1–7,4 / 7,6–8,7). El color nunca va solo: sie
 - **Inicio del quiz:** tres botones de modo a lo ancho (`--surface`, borde 2 px `--plaque`, radio 8 px, 64 px de alto como mínimo), con el nombre en Barlow 700 y debajo una línea en Source Serif `--text-muted` que dice qué harás. Desactivado: borde `--divider`, texto `--text-muted` y el motivo debajo del botón, enlazado con `aria-describedby`. Debajo, la casilla «Exigir acentos» (como «Pendiente de revisar») con una frase de ayuda.
 - **Progreso y tarjeta:** iguales que en Estudiar («Pregunta 3 de 10», barra de 6 px, tarjeta con borde izquierdo de 8 px), con el color de línea del Quiz.
 - **Opciones (modo a):** cuatro botones secundarios uno debajo de otro, a lo ancho, 56 px de alto, texto en Source Serif 400 alineado a la izquierda. Tras responder: la correcta con borde `--success-text` y «✓ Correcta»; la elegida mal con borde `--error-text` y «✗ Tu respuesta»; las cuatro quedan desactivadas.
-- **Campo de respuesta (modos b y c):** como los campos de la Etapa 2, de 1,1 rem para que se lea al escribir. Botones **Comprobar** (primario) y **No lo sé** (secundario) en una fila; en el móvil, a lo ancho de la pantalla. **Oír** y **Oír lento** como en la ficha de Vocabulario.
+- **Campo de respuesta (modos b y c):** como los campos de la Etapa 2, de 1,1 rem para que se lea al escribir. Botones **Comprobar** (primario) y **No lo sé** (secundario) en una fila; en el móvil, a lo ancho de la pantalla. **Oír** y **Oír lento** como en la ficha de Palabras.
 - **Respuesta:** caja `--surface` con borde izquierdo de 4 px del color del resultado; título en Barlow 700 de 1,25 rem en `--success-text` o `--error-text` con «✓» o «✗»; «Respuesta correcta», «Escribiste» y el ejemplo en Source Serif, la traducción en cursiva `--text-muted`. **Siguiente** primario, a lo ancho en el móvil.
 - **Resumen:** «Acertaste 7 de 10» en Barlow 700 de 1,3 rem; lista de falladas con separador `--divider`: la pregunta en Source Serif 600, la respuesta correcta debajo y, si la hay, «Escribiste: …» en `--text-muted`. **Otro quiz** primario.
 
@@ -144,7 +145,7 @@ La línea naranja de Progreso (`#E0663A`) se usa en el gráfico como elemento gr
 - **Desplegables** («Ver los datos día por día», «Ver las N palabras dominadas»): `<details>` con el `summary` en Barlow 700 color `--secondary-text`, 44 px de alto y un triángulo ▸/▾ dibujado con CSS.
 - **Acierto:** lista de definiciones; cada fila con el nombre en Barlow 500, el porcentaje en Barlow 700 de 1,6 rem color `--emphasis` y «de N respuestas» en `--text-muted`, con separador `--divider`. Sin datos: «—» y una frase que lo explica.
 - **Tus palabras:** barra de proporción decorativa (`aria-hidden`) de 12 px con tres tramos: nuevas `--divider`, en aprendizaje `--chart-bar`, dominadas naranja. Debajo, los tres números con una muestra de 14 px del mismo color: la información está en el texto.
-- **Lista de dominadas:** francés en Source Serif 600 (`lang="fr"`) y traducción en cursiva `--text-muted`, con separador `--divider`, en el orden de Vocabulario.
+- **Lista de dominadas:** francés en Source Serif 600 (`lang="fr"`) y traducción en cursiva `--text-muted`, con separador `--divider`, en el orden de Palabras.
 
 ## Inicio: copia de seguridad (Etapa 7)
 
@@ -195,10 +196,27 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
 - **Tarjeta** (`<dialog id="word-card">`, modal, con `aria-labelledby` en la palabra):
   - **Móvil (< 900 px):** una **hoja abajo**, a lo ancho, con radio de 12 px solo arriba y hasta el 85 % del alto. Arriba lleva una **franja rosa de 6 px**, como el enlace activo de la barra del móvil.
   - **Computador (≥ 900 px):** una ventana centrada como las demás (32 rem), con la misma franja rosa arriba.
-  - **Contenido:** la palabra tocada como título (Source Serif 600 de 1,95 rem, `lang="fr"`); «En esta frase:» (Barlow 500 `--text-muted`) con la traducción en cursiva; un separador `--divider`; «Forma base:» con la forma base en Source Serif 600 (con artículo si es sustantivo), su traducción en cursiva `--text-muted` y debajo el tipo de palabra y el género («masculino» o «femenino»), como los datos de la ficha de Vocabulario; **🔊 Escuchar** (secundario) lee la forma base con artículo.
+  - **Contenido:** la palabra tocada como título (Source Serif 600 de 1,95 rem, `lang="fr"`); «En esta frase:» (Barlow 500 `--text-muted`) con la traducción en cursiva; un separador `--divider`; «Forma base:» con la forma base en Source Serif 600 (con artículo si es sustantivo), su traducción en cursiva `--text-muted` y debajo el tipo de palabra y el género («masculino» o «femenino»), como los datos de la ficha de Palabras; **🔊 Escuchar** (secundario) lee la forma base con artículo.
   - **Mientras espera:** «Buscando…» en Barlow 500 `--text-muted` (`role="status"`). Los errores van en el aviso de siempre dentro de la tarjeta (`role="alert"`); no se abren otras ventanas.
   - **Botones abajo a la derecha:** **Cerrar** (secundario) y **Guardar** (primario). Si la palabra ya está, el mismo botón dice «Ya está en tu vocabulario»; después de guardar, «Guardada». Los dos desactivados con `aria-disabled` (fondo `--surface`, borde `--divider`, texto `--text-muted`), para que el foco se quede en el botón y se oiga el cambio.
   - Se cierra con **Escape**, con **Cerrar** o tocando fuera; el foco vuelve a la palabra. Al abrirla, el foco va al título para que se lea la palabra.
+
+## Pantalla Leer (Etapa 11)
+
+**Color nuevo:** la línea marrón `#A0703C` (`.line-reader`), como el lomo de un libro y distinta de las otras seis. Además del punto y la franja del enlace activo, dibuja la línea del texto, el recuadro de la frase que suena y el subrayado de las palabras guardadas, así que es un elemento gráfico sobre el fondo y la tarjeta: 4,2–4,3 en claro y 3,6–4,1 en oscuro, por encima del 3:1 exigido. El ▶ blanco sobre la estación llena tiene 4,3. Una prueba de `tests/styles.test.js` lo comprueba. Nunca se usa como color de texto.
+
+**Barra con 7 botones:** «Vocabulario» pasó a llamarse **«Palabras»** para que quepan los siete. Medido a 360 px con cada enlace activo: el más estrecho mide 49,3 px de ancho y ninguna etiqueta se corta.
+
+- **Biblioteca (`#/leer`):** **Nueva historia** (primario) y debajo la lista, de la más nueva a la más vieja, con el borde superior `--plaque` y las filas como las de Palabras: el título en Source Serif 600 (`lang="fr"`) y debajo, en Barlow 500 `--text-muted`, el nivel, la etiqueta **REVISAR**, «Leída» y «Preguntas: X/4». Toda la fila es un enlace a `#/leer/<id>`, con `›` a la derecha. Vacía: «Aquí verás tus lecturas. Pide a Claude una historia a tu nivel.»
+- **Ventana «Nueva historia»:** como las de la Etapa 2; **Nivel** (A1.1 · A1.2 · A2) y **Preguntas en:** (Español · Francés) con el selector de opciones de la Etapa 2, y **Tema (opcional)** (hasta 60 letras). **Cancelar** · **Escribir historia** (primario). Mientras Claude escribe, **Nueva historia** dice «Escribiendo…» desactivado con `aria-disabled` (como «Guardada» en la tarjeta), para que el foco se quede en el botón.
+- **Cabecera del lector:** el título en Source Serif 600 de 26,6 px (`lang="fr"`), el nivel (y «Leída») en Barlow 500 `--text-muted`. Si está en REVISAR, un recuadro `--surface` con borde de 2 px `--review` y radio 8 px: la etiqueta **REVISAR**, «Esta historia aún no está revisada.» y **Aprobar** (primario) · **Descartar** (secundario). Debajo, la fuente y la licencia en texto pequeño `--text-muted`.
+- **Voz:** **Escuchar** (primario; el mismo botón dice **Pausa** y **Seguir**) y **Más lento** / **Normal** (secundario). La fila se queda fija arriba mientras se baja por el texto (fondo `--bg` y una raya de 2 px `--divider` debajo).
+- **Texto (el elemento propio):** el texto es una **línea de metro**. Cada frase empieza con su **estación**: un botón redondo de 44 × 44 px con borde de 2 px marrón y «▶» (`aria-label` «Leer desde esta frase»), y una **línea marrón de 4 px** une las estaciones de arriba abajo. Las palabras son botones como en Conversar (interlineado 1,8, subrayado marrón de 3 px si ya están en tu vocabulario). La puntuación va pegada a su palabra para que nunca quede sola al empezar una línea.
+- **Frase que suena:** recuadro `--surface` con borde de 2 px marrón y radio 8 px, y la estación llena de marrón con el ▶ blanco; además `aria-current="true"`. Forma y color, nunca solo color. Se desplaza para quedar a la vista, con margen para la fila fija de arriba y la barra de abajo.
+- **Abajo:** **Marcar como leída** (secundario; después dice «Leída» desactivado con `aria-disabled`) y, si está aprobada, **Borrar historia** (secundario). Borrar y Descartar abren «¿Borrar esta historia?» / «No se puede deshacer.» con **Cancelar** · **Borrar** (peligro).
+- **Cuestionario:** separado por una raya de 2 px `--divider`; **¿Lo entendiste? Responder 4 preguntas** (secundario, a lo ancho en el móvil, 56 px de alto). La pregunta va en una tarjeta como la de Estudiar (`--surface`, borde 2 px `--plaque`, franja izquierda de 8 px marrón): «1/4» (y **REVISAR** si la historia no está revisada) en Barlow 500 `--text-muted`, la pregunta en Source Serif 600 de 1,1 rem como leyenda de un `fieldset`, y las opciones como **botones de opción reales** dentro de filas de 56 px con borde de 2 px. **Comprobar** (primario); tras responder, la correcta con borde `--success-text` y la elegida mal con borde `--error-text`, y la respuesta como en el Quiz (borde izquierdo de 4 px, título «Correcto.» o «No es correcta. La respuesta es: …» en Barlow 700), la explicación en español y «En el texto: «…»». La frase de la respuesta se resalta en el texto con un **recuadro punteado** de aviso (`--notice-bg`, borde 2 px discontinuo `--notice-border`). **Siguiente** aparece solo después de **Comprobar**. Al final, «Resultado: X de 4» en Barlow 700 de 1,3 rem y **Volver a intentar**.
+- **Foco:** al abrir una historia va al título; al empezar o pasar de pregunta, a la pregunta; al comprobar, al resultado de la respuesta; al terminar, a «Resultado». Al volver a la biblioteca, a la placa. Al cerrar una ventana vuelve al botón que la abrió.
+- **Tarjeta de palabras:** la misma de Conversar (conserva su franja rosa).
 
 ## Icono
 
