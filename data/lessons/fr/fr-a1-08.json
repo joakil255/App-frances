@@ -163,7 +163,7 @@
     { "id": "e3", "text": "Mon voisin va à la piscine le mardi soir.", "translation": "Mi vecino va a la piscina los martes en la noche.", "sourceIds": ["inventaire-f"], "review": false },
     { "id": "e4", "text": "Nous allons en ville demain.", "translation": "Mañana vamos al centro.", "sourceIds": ["inventaire-f", "bdl-present-futur"], "review": false },
     { "id": "e5", "text": "Il fait trop froid, je reste à la maison.", "translation": "Hace demasiado frío, me quedo en la casa.", "sourceIds": ["inventaire-f"], "review": false },
-    { "id": "e6", "text": "Ce soir, nous n'allons pas regarder la télé.", "translation": "Esta noche no vamos a ver tele.", "sourceIds": ["bdl-place-negation", "bdl-elision"], "review": false }
+    { "id": "e6", "text": "Ce soir, nous n'allons pas regarder la télé.", "translation": "Esta noche no vamos a ver tele.", "sourceIds": ["bdl-place-negation", "bdl-futur-proche", "bdl-elision"], "review": false }
   ],
   "pitfalls": [
     {
@@ -178,7 +178,7 @@
       "id": "p2",
       "wrong": "Je vais mange une pomme.",
       "right": "Je vais manger une pomme.",
-      "explanation": "Después de aller, el segundo verbo va en infinitivo, la forma terminada en -er: manger. Solo se conjuga aller (je vais).",
+      "explanation": "Después de aller, el segundo verbo va en infinitivo, la forma del diccionario (aquí, manger). Solo se conjuga aller (je vais).",
       "sourceIds": ["bdl-futur-proche", "niveau-a2"],
       "review": false
     },
@@ -306,12 +306,17 @@
         "Je vais regarder un film ce soir.",
         "Moi, je vais regarder un film ce soir.",
         "Ce soir, moi, je vais regarder un film.",
+        "Moi, ce soir, je vais regarder un film.",
         "Ce soir, je vais voir un film.",
-        "Je vais voir un film ce soir."
+        "Je vais voir un film ce soir.",
+        "Moi, je vais voir un film ce soir.",
+        "Ce soir, moi, je vais voir un film.",
+        "Moi, ce soir, je vais voir un film."
       ],
       "mistakes": [
         { "answer": "Ce soir, je vais à regarder un film.", "explanation": "Sobra la à: en francés aller va directo al infinitivo. Je vais regarder." },
         { "answer": "Ce soir, je regarde un film.", "explanation": "Es francés correcto (el presente también puede hablar del futuro), pero aquí se pide el futuro próximo: je vais regarder." },
+        { "answer": "Je regarde un film ce soir.", "explanation": "Es francés correcto (el presente también puede hablar del futuro), pero aquí se pide el futuro próximo: je vais regarder." },
         { "answer": "Ce soir, je vais regarde un film.", "explanation": "El segundo verbo va en infinitivo: regarder, no regarde." }
       ],
       "rule": "Futuro próximo: aller conjugado + infinitivo, sin à: je vais regarder.",
@@ -321,17 +326,20 @@
     {
       "id": "x9",
       "type": "fix",
-      "prompt": "Corrige la frase: «Mañana no vamos a ir a la piscina».",
+      "prompt": "Corrige la frase. Usa el futuro próximo (ir a + infinitivo): «Mañana no vamos a ir a la piscina».",
       "wrong": "Demain, nous n'allons aller pas à la piscine.",
       "answers": [
         "Demain, nous n'allons pas aller à la piscine.",
         "Nous n'allons pas aller à la piscine demain.",
-        "Nous, nous n'allons pas aller à la piscine demain."
+        "Nous, nous n'allons pas aller à la piscine demain.",
+        "Nous, demain, nous n'allons pas aller à la piscine.",
+        "Demain, nous, nous n'allons pas aller à la piscine."
       ],
       "mistakes": [
         { "answer": "Demain, nous n'allons aller pas à la piscine.", "explanation": "Pas va justo después del verbo conjugado (allons), antes del infinitivo: nous n'allons pas aller." },
         { "answer": "Demain, nous ne allons pas aller à la piscine.", "explanation": "Allons empieza con vocal, así que ne se vuelve n': nous n'allons pas." },
-        { "answer": "Demain, nous n'allons pas à la piscine.", "explanation": "Es francés correcto, pero dice «mañana no vamos a la piscina». Para «no vamos a ir», usa el futuro próximo: nous n'allons pas aller." }
+        { "answer": "Demain, nous n'allons pas à la piscine.", "explanation": "Es francés correcto, pero dice «mañana no vamos a la piscina». Para «no vamos a ir», usa el futuro próximo: nous n'allons pas aller." },
+        { "answer": "Nous n'allons pas à la piscine demain.", "explanation": "Es francés correcto, pero dice «mañana no vamos a la piscina». Para «no vamos a ir», usa el futuro próximo: nous n'allons pas aller." }
       ],
       "rule": "Ne… pas rodea a aller conjugado, y el infinitivo va después de pas: nous n'allons pas aller.",
       "sourceIds": ["bdl-place-negation", "bdl-futur-proche", "bdl-elision", "inventaire-f"],

@@ -276,7 +276,9 @@
         "Tu peux venir demain ?",
         "Est-ce que tu peux venir demain ?",
         "Demain, tu peux venir ?",
-        "Peux-tu venir demain ?"
+        "Peux-tu venir demain ?",
+        "Demain, est-ce que tu peux venir ?",
+        "Demain, peux-tu venir ?"
       ],
       "mistakes": [
         { "answer": "Tu peux viens demain ?", "explanation": "Después de pouvoir, el segundo verbo va en infinitivo: venir. Solo se conjuga pouvoir (tu peux)." },
@@ -295,11 +297,13 @@
       "mistakes": [
         { "answer": "J'ai que faire un dessert.", "explanation": "«Tener que» no se traduce palabra por palabra con avoir y que. Para una obligación, usa devoir + infinitivo: je dois faire." },
         { "answer": "Je dois que faire un dessert.", "explanation": "Devoir va directo al infinitivo, sin que: je dois faire." },
-        { "answer": "Je dois de faire un dessert.", "explanation": "Devoir va directo al infinitivo, sin de: je dois faire." }
+        { "answer": "Je dois de faire un dessert.", "explanation": "Devoir va directo al infinitivo, sin de: je dois faire." },
+        { "answer": "J'ai à faire un dessert.", "explanation": "Esa forma también existe en francés, pero este ejercicio pide devoir: je dois faire un dessert." }
       ],
       "rule": "Para decir «tener que»: devoir conjugado + infinitivo, sin que: je dois faire.",
       "sourceIds": ["bdl-devoir", "inventaire-f"],
-      "review": false
+      "review": true,
+      "reviewNote": "Sin fuente: que J'ai à faire un dessert (avoir à + infinitivo) sea francés correcto, como dice uno de sus errores previstos, no aparece en las fuentes leídas. La regla del ejercicio (devoir + infinitivo para una obligación) sí está en la BDL «Emploi des verbes devoir et se devoir»."
     },
     {
       "id": "x10",
@@ -313,7 +317,9 @@
       ],
       "mistakes": [
         { "answer": "Je voudrait un thé, s'il vous plaît.", "explanation": "Con je, voudrais termina en -s. Voudrait es la forma de il / elle." },
-        { "answer": "Je veux un thé, s'il vous plaît.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." }
+        { "answer": "Je veux un thé, s'il vous plaît.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." },
+        { "answer": "S'il vous plaît, je veux un thé.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." },
+        { "answer": "Moi, je veux un thé, s'il vous plaît.", "explanation": "Je veux también es francés correcto, pero suena más directo. El enunciado pide cortesía: je voudrais." }
       ],
       "rule": "Para pedir con cortesía: je voudrais, con -s al final.",
       "sourceIds": ["bdl-conditionnel-formes", "bdl-conditionnel", "inventaire-f"],
