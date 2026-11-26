@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSystemPrompt, OUTPUT_SCHEMA, LEVELS } from '../src/prompt.js';
+import { buildSystemPrompt, buildStoryPrompt, STORY_SCHEMA, OUTPUT_SCHEMA, LEVELS } from '../src/prompt.js';
 
 test('pone el nivel en las instrucciones', () => {
   const prompt = buildSystemPrompt('A1.1');
@@ -44,4 +44,15 @@ test('las instrucciones de frases dicen qué hacer si falta una palabra y que no
   assert.match(prompt, /«mange du pain»/);
   assert.match(prompt, /nunca dejes "original" vacío/i);
   assert.match(prompt, /no marques como error las mayúsculas ni la puntuación/i);
+});
+
+test('la historia pide frases emparejadas con su traducción al idioma de apoyo', () => {
+  const prompt = buildStoryPrompt('A1.2', 'es', 'es');
+  assert.ok(prompt.includes('"translation"'));
+  assert.ok(prompt.includes('traducción natural y fiel al español'));
+  assert.equal(prompt.includes('{'), false);
+  assert.equal(prompt.includes('"body"'), false);
+  assert.deepEqual(STORY_SCHEMA.properties.sentences.items.required, ['text', 'translation']);
+  assert.equal(STORY_SCHEMA.properties.body, undefined);
+  assert.deepEqual(STORY_SCHEMA.required, ['title', 'sentences', 'questions']);
 });

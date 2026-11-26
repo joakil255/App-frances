@@ -184,3 +184,10 @@ test('el tramo planificado de la ruta es una línea discontinua turquesa', () =>
   assert.ok(rules.length > 0, 'falta la regla .build-route-planned::before');
   assert.ok(rules.some((m) => /border-left-style:\s*dashed/.test(m[2])), 'el tramo planificado no es discontinuo');
 });
+
+test('el botón «Ver traducción» mide 44 px de alto y la traducción usa --text-muted, que pasa AA (Etapa 15)', () => {
+  assert.equal(propertyOf('.reader-translation-toggle', 'min-height'), '44px');
+  const block = css.match(/(?:^|\n|\})\s*\.reader-translation\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.match(block, /color:\s*var\(--text-muted\)/);
+  assert.match(block, /font:[^;]*italic/);
+});

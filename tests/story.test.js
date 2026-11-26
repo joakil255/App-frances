@@ -1,6 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { storyUrl, sendStory, textFromStory, splitSentences, findEvidenceSentence } from '../js/lib/story.js';
+import {
+  storyUrl, sendStory, textFromStory, splitSentences, findEvidenceSentence,
+  translateUrl, readerSentences, translatableSentences, sendTranslation,
+} from '../js/lib/story.js';
 import { PRODUCTION_CHAT_URL } from '../js/lib/chat.js';
 import { validateText, GENERATED_SOURCE } from '../js/lib/texts.js';
 
@@ -12,7 +15,8 @@ const question = (n) => ({
   explanation: ' Elle habite à Lyon. ',
   evidence: ' Marie habite à Lyon. ',
 });
-const STORY = { title: ' Marie ', body: ` ${BODY}\n`, questions: [1, 2, 3, 4].map(question), remainingStories: 4 };
+const PAIRS = splitSentences(BODY).map((text) => ({ text: ` ${text} `, translation: ` Traducción de ${text} ` }));
+const STORY = { title: ' Marie ', body: ` ${BODY}\n`, sentences: PAIRS, questions: [1, 2, 3, 4].map(question), remainingStories: 4 };
 
 test('storyUrl cambia /chat por /story', () => {
   assert.equal(storyUrl('example.com'), PRODUCTION_CHAT_URL.replace(/\/chat$/, '/story'));
@@ -37,13 +41,14 @@ test('sendStory: story_limit, JSON roto, sin conexión y forma incorrecta', asyn
   assert.deepEqual(await send(async () => { throw new TypeError('x'); }), { ok: false, error: 'network' });
   assert.deepEqual(await send(reply(200, STORY), { isOnline: false }), { ok: false, error: 'offline' });
   const badQuestion = { ...STORY, questions: [{ ...question(1), options: 'x' }] };
-  for (const bad of [null, {}, { ...STORY, title: 1 }, { ...STORY, questions: 'x' }, { ...STORY, remainingStories: '1' }, badQuestion]) {
+  for (const bad of [null, {}, { ...STORY, title: 1 }, { ...STORY, questions: 'x' }, { ...STORY, remainingStories: '1' }, badQuestion,
+    { ...STORY, sentences: undefined }, { ...STORY, sentences: [{ text: 'a' }] }, { ...STORY, sentences: [{ text: 1, translation: 'b' }] }]) {
     assert.deepEqual(await send(reply(200, bad)), { ok: false, error: 'bad_output' });
   }
 });
 
 test('textFromStory recorta, arma la entrada y pasa validateText', () => {
-  const input = textFromStory(STORY, { level: 'A1.2', topic: 'La famille', quizLang: 'es' });
+  const input = textFromStory(STORY, { level: 'A1.2', topic: 'La famille', quizLang: 'es', supportLang: 'es' });
   assert.equal(input.title, 'Marie');
   assert.equal(input.body, BODY);
   assert.equal(input.lang, 'fr');
@@ -51,6 +56,9 @@ test('textFromStory recorta, arma la entrada y pasa validateText', () => {
   assert.equal(input.topic, 'La famille');
   assert.deepEqual(input.source, GENERATED_SOURCE);
   assert.equal(input.quiz.lang, 'es');
+  assert.equal(input.translation.lang, 'es');
+  assert.equal(input.translation.status, 'review');
+  assert.deepEqual(input.translation.sentences, PAIRS.map((p) => p.translation.trim()));
   assert.deepEqual(input.quiz.questions[0].options, ['Lyon', 'Paris', 'Nice']);
   assert.equal(input.quiz.questions[0].evidence, 'Marie habite à Lyon.');
   const { ok, errors } = validateText({
@@ -61,7 +69,7 @@ test('textFromStory recorta, arma la entrada y pasa validateText', () => {
 
 test('textFromStory no junta los espacios internos del texto', () => {
   const body = 'Il a  deux chats.\nIls dorment.';
-  const input = textFromStory({ ...STORY, body, questions: [] }, { level: 'A1.1', topic: '', quizLang: 'fr' });
+  const input = textFromStory({ ...STORY, body, questions: [] }, { level: 'A1.1', topic: '', quizLang: 'fr', supportLang: 'es' });
   assert.equal(input.body, body);
 });
 
@@ -91,4 +99,54 @@ test('findEvidenceSentence pliega ʼ (U+02BC) como el servidor', () => {
   const sentences = splitSentences('Marie habite à Lyon. Elle aime l\u02BCécole. Le soir, elle lit.');
   assert.equal(findEvidenceSentence(sentences, "elle aime l'école"), 1);
   assert.equal(findEvidenceSentence(splitSentences("Elle aime l'école. Bonjour."), 'elle aime l\u02BCécole'), 0);
+});
+
+test('textFromStory guarda frases y traducción con los bordes recortados', () => {
+  const input = textFromStory(STORY, { level: 'A1.2', topic: '', quizLang: 'es', supportLang: 'es' });
+  assert.deepEqual(input.sentences, splitSentences(BODY));
+  assert.equal(input.translation.sentences.length, input.sentences.length);
+});
+
+test('translateUrl cambia /chat por /translate', () => {
+  assert.equal(translateUrl('example.com'), PRODUCTION_CHAT_URL.replace(/\/chat$/, '/translate'));
+  assert.equal(translateUrl('127.0.0.1'), 'http://127.0.0.1:8787/translate');
+});
+
+test('readerSentences usa las frases guardadas o parte el texto', () => {
+  assert.deepEqual(readerSentences({ sentences: ['A.', 'B.'], body: 'otro' }), ['A.', 'B.']);
+  assert.deepEqual(readerSentences({ body: BODY }), splitSentences(BODY));
+  assert.deepEqual(readerSentences({ body: 'Bonjour.' }), ['Bonjour.']);
+});
+
+test('translatableSentences parte con el Segmenter real y valida los límites', () => {
+  assert.equal(translatableSentences('Fin. Début.').length, 2);
+  assert.deepEqual(translatableSentences('Fin.Début.'), ['Fin.Début.']); // sin espacio, el Segmenter no parte
+  assert.deepEqual(translatableSentences(BODY), splitSentences(BODY));
+  assert.equal(translatableSentences('a'.repeat(601), undefined), null);
+  assert.equal(translatableSentences('', undefined), null);
+  assert.equal(translatableSentences(Array.from({ length: 61 }, (_, i) => `Phrase ${i}.`).join(' ')), null);
+  assert.equal(translatableSentences(Array.from({ length: 60 }, (_, i) => `Phrase ${i}.`).join(' ')).length, 60);
+  // un Segmenter que pierde texto no cumple sentencesMatchBody
+  const lossy = class { segment() { return [{ segment: 'Hola.' }]; } };
+  assert.equal(translatableSentences('Hola. Adiós.', lossy), null);
+});
+
+test('sendTranslation devuelve las traducciones si el largo coincide', async () => {
+  const body = { sentences: ['A.', 'B.'] };
+  const ok = await sendTranslation({ url: 'u', code: 'c', body, fetch: reply(200, { translations: ['a', 'b'], remainingTranslations: 3 }), isOnline: true });
+  assert.deepEqual(ok, { ok: true, translations: ['a', 'b'], remainingTranslations: 3 });
+  const short = await sendTranslation({ url: 'u', code: 'c', body, fetch: reply(200, { translations: ['a'], remainingTranslations: 3 }), isOnline: true });
+  assert.deepEqual(short, { ok: false, error: 'bad_output' });
+  for (const bad of [null, {}, { translations: ['a', 2], remainingTranslations: 1 }, { translations: ['a', 'b'] }]) {
+    assert.deepEqual(await sendTranslation({ url: 'u', code: 'c', body, fetch: reply(200, bad), isOnline: true }), { ok: false, error: 'bad_output' });
+  }
+  const limit = await sendTranslation({ url: 'u', code: 'c', body, fetch: reply(429, { error: 'translate_limit' }), isOnline: true });
+  assert.deepEqual(limit, { ok: false, error: 'translate_limit' });
+});
+
+test('sendTranslation sin conexión no llama a fetch', async () => {
+  let called = false;
+  const out = await sendTranslation({ url: 'u', code: 'c', body: { sentences: ['A.'] }, fetch: async () => { called = true; }, isOnline: false });
+  assert.deepEqual(out, { ok: false, error: 'offline' });
+  assert.equal(called, false);
 });

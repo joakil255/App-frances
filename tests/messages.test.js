@@ -8,7 +8,8 @@ const KEYS = ['storageQuota', 'storageUnavailable', 'corruptWords', 'corruptStud
   'backupUnverified', 'noSpeech', 'noFrenchVoice', 'voiceFailed', 'chatOffline', 'chatNetwork', 'chatWrongCode',
   'chatDailyLimit', 'chatInvalid', 'chatConfig', 'chatAuth', 'chatRateLimit', 'chatQuota', 'chatUnavailable',
   'chatBadOutput', 'chatRefused', 'micBlocked', 'micNoSpeech', 'micNoDevice', 'micNetwork', 'micLanguage',
-  'micFailed', 'lookupLimit', 'corruptBuild', 'buildMigrationFailed', 'sentenceNoCode', 'lessonsUnavailable'];
+  'micFailed', 'lookupLimit', 'corruptBuild', 'buildMigrationFailed', 'sentenceNoCode', 'lessonsUnavailable',
+  'translateLimit', 'translateNotPossible', 'translateOffline'];
 
 test('cada caso tiene título y texto claros que terminan en punto', () => {
   for (const key of KEYS) {
@@ -16,6 +17,7 @@ test('cada caso tiene título y texto claros que terminan en punto', () => {
     assert.ok(message, `falta ${key}`);
     assert.ok(message.title.length > 0 && message.title.endsWith('.'), `${key}: título`);
     if (key === 'restoreFailed') continue; // su texto es el motivo que da readBackup
+    if (key === 'translateNotPossible') continue; // solo tiene título
     assert.ok(message.text.length > 0 && message.text.endsWith('.'), `${key}: texto`);
   }
 });
@@ -261,4 +263,13 @@ test('sentenceLimit y sentenceOffline tienen su texto exacto y sentence_limit lo
     text: 'Compara tu frase con las respuestas modelo.',
   });
   assert.deepEqual(chatMessage('sentence_limit'), MESSAGES.sentenceLimit);
+});
+
+test('los mensajes de traducción dicen lo acordado', () => {
+  assert.deepEqual(chatMessage('translate_limit'), MESSAGES.translateLimit);
+  assert.equal(MESSAGES.translateLimit.title, 'Llegaste al límite de traducciones de hoy.');
+  assert.equal(MESSAGES.translateLimit.text, 'Puedes leer tus historias; el límite se reinicia a medianoche, hora de Chile.');
+  assert.equal(MESSAGES.translateNotPossible.title, 'Esta historia no se puede traducir frase por frase.');
+  assert.equal(MESSAGES.translateOffline.title, 'Necesitas conexión para generar la traducción.');
+  assert.equal(MESSAGES.translateOffline.text, 'Puedes leer la historia sin ella.');
 });

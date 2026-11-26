@@ -1,6 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createTextStore, validateText, TEXTS_KEY, TEXT_LEVELS, QUIZ_LANGS, GENERATED_SOURCE } from '../js/lib/texts.js';
+import {
+  createTextStore, validateText, TEXTS_KEY, TEXT_LEVELS, QUIZ_LANGS, GENERATED_SOURCE,
+  SUPPORT_LANGS, MAX_SENTENCES, MAX_SENTENCE_LETTERS, sentencesMatchBody, needsReview,
+} from '../js/lib/texts.js';
 import { StorageError } from '../js/lib/storage.js';
 
 // Imita localStorage en memoria; failWith hace que el próximo setItem lance ese error
@@ -408,3 +411,208 @@ for (const [name, over] of Object.entries({
     assert.ok(errors.createdAt || errors.updatedAt || errors.source);
   });
 }
+
+// --- Frases y traducción (Etapa 15) ---
+const FR_SENTENCES = ['Marie habite à Paris.', 'Elle aime le café.', 'Chaque matin, elle va à l’école.', 'Le soir, elle lit un livre.'];
+const ES_SENTENCES = ['María vive en París.', 'Le gusta el café.', 'Cada mañana va a la escuela.', 'Por la noche lee un libro.'];
+const withTranslation = (over = {}) => makeText({
+  sentences: [...FR_SENTENCES],
+  translation: { lang: 'es', status: 'review', sentences: [...ES_SENTENCES] },
+  ...over,
+});
+
+test('las constantes de traducción tienen los valores del diseño', () => {
+  assert.deepEqual(SUPPORT_LANGS, ['es']);
+  assert.equal(MAX_SENTENCES, 60);
+  assert.equal(MAX_SENTENCE_LETTERS, 600);
+});
+
+test('sentencesMatchBody ignora todo espacio y respeta acentos', () => {
+  assert.equal(sentencesMatchBody(['Fin.', 'Début.'], 'Fin.Début.'), true);
+  assert.equal(sentencesMatchBody(['Fin.', 'Début.'], 'Fin.\n\nDébut.  '), true);
+  assert.equal(sentencesMatchBody(['Elle va à l’école.'], 'Elle  va à\nl’école.'), true);
+  assert.equal(sentencesMatchBody(['Ça va.', 'é'], 'Ça va. é'), true);
+  assert.equal(sentencesMatchBody(['Ça va.'], 'Ca va.'), false);
+  assert.equal(sentencesMatchBody(['Fin.'], 'Fin. Début.'), false);
+  // NFC: «é» descompuesta también cuenta igual
+  assert.equal(sentencesMatchBody(['e\u0301cole'], '\u00e9cole'), true);
+});
+
+test('validateText acepta un texto sin frases ni traducción', () => {
+  assert.equal(validateText(makeText()).ok, true);
+});
+
+test('validateText acepta frases y traducción válidas, y frases solas', () => {
+  assert.deepEqual(validateText(withTranslation()), { ok: true, errors: {} });
+  assert.equal(validateText(makeText({ sentences: [...FR_SENTENCES] })).ok, true);
+});
+
+test('validateText rechaza traducción sin frases', () => {
+  const t = withTranslation();
+  delete t.sentences;
+  assert.ok(validateText(t).errors.translation);
+});
+
+test('validateText rechaza traducciones mal formadas', () => {
+  const bad = (translation) => validateText(withTranslation({ translation })).errors.translation;
+  assert.ok(bad({ lang: 'es', status: 'review', sentences: ES_SENTENCES.slice(1) }));
+  assert.ok(bad({ lang: 'es', status: 'review', sentences: ['', ...ES_SENTENCES.slice(1)] }));
+  assert.ok(bad({ lang: 'en', status: 'review', sentences: ES_SENTENCES }));
+  assert.ok(bad({ lang: 'es', status: 'x', sentences: ES_SENTENCES }));
+  assert.ok(bad({ lang: 'es', status: 'review', sentences: ['a'.repeat(601), ...ES_SENTENCES.slice(1)] }));
+  assert.ok(bad(null));
+  assert.equal(bad({ lang: 'es', status: 'review', sentences: ['a'.repeat(600), ...ES_SENTENCES.slice(1)] }), undefined);
+});
+
+test('validateText rechaza frases que no reconstruyen el texto', () => {
+  assert.ok(validateText(makeText({ sentences: FR_SENTENCES.slice(1) })).errors.sentences);
+  assert.ok(validateText(makeText({ sentences: ['', ...FR_SENTENCES] })).errors.sentences);
+  assert.ok(validateText(makeText({ sentences: 'texto' })).errors.sentences);
+  assert.ok(validateText(makeText({ sentences: [] })).errors.sentences);
+});
+
+test('validateText: 60 frases pasan y 61 no', () => {
+  const make = (n) => {
+    const parts = Array.from({ length: n }, (_, i) => `Phrase ${i}.`);
+    return makeText({ body: parts.join(' '), sentences: parts, quiz: makeInput().quiz, source: { ...GENERATED_SOURCE } });
+  };
+  const ok = make(60);
+  ok.quiz.questions.forEach((q) => { q.evidence = 'Phrase 1.'; });
+  assert.equal(validateText(ok).errors.sentences, undefined);
+  const over = make(61);
+  assert.ok(validateText(over).errors.sentences);
+});
+
+test('addText copia frases y traducción recortando bordes', async () => {
+  const store = makeStore();
+  const res = await store.addText(makeInput({
+    sentences: FR_SENTENCES.map((s) => ` ${s} `),
+    translation: { lang: 'es', status: 'review', sentences: ES_SENTENCES.map((s) => `${s}\n`) },
+  }));
+  assert.equal(res.ok, true);
+  assert.deepEqual(res.text.sentences, FR_SENTENCES);
+  assert.deepEqual(res.text.translation, { lang: 'es', status: 'review', sentences: ES_SENTENCES });
+});
+
+test('addText rechaza frases que no cuadran con el texto', async () => {
+  const backend = new MemoryStorage();
+  const res = await makeStore(backend).addText(makeInput({ sentences: ['Otra cosa.'] }));
+  assert.equal(res.ok, false);
+  assert.ok(res.errors.sentences);
+  assert.equal(backend.getItem(TEXTS_KEY), null);
+});
+
+test('approve también aprueba la traducción', async () => {
+  const store = makeStore();
+  const { text } = await store.addText(makeInput({
+    sentences: FR_SENTENCES, translation: { lang: 'es', status: 'review', sentences: ES_SENTENCES },
+  }));
+  const approved = await store.approve(text.id);
+  assert.equal(approved.status, 'approved');
+  assert.equal(approved.translation.status, 'approved');
+  assert.equal(needsReview(approved), false);
+});
+
+test('approve sin traducción no inventa una', async () => {
+  const store = makeStore();
+  const { text } = await store.addText(makeInput());
+  const approved = await store.approve(text.id);
+  assert.equal('translation' in approved, false);
+});
+
+test('needsReview mira el texto y la traducción', () => {
+  assert.equal(needsReview(makeText()), true);
+  assert.equal(needsReview(makeText({ status: 'approved' })), false);
+  assert.equal(needsReview(withTranslation({ status: 'approved' })), true);
+  assert.equal(needsReview(withTranslation({ status: 'approved', translation: { lang: 'es', status: 'approved', sentences: ES_SENTENCES } })), false);
+});
+
+test('addTranslation en historia aprobada deja la traducción en revisión', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  const { text } = await store.addText(makeInput());
+  await store.approve(text.id);
+  const res = await store.addTranslation(text.id, {
+    sentences: FR_SENTENCES, translation: { lang: 'es', status: 'review', sentences: ES_SENTENCES },
+  });
+  assert.equal(res.status, 'approved');
+  assert.equal(res.translation.status, 'review');
+  assert.equal(needsReview(res), true);
+  assert.deepEqual(saved(backend).texts[0].sentences, FR_SENTENCES);
+});
+
+test('addTranslation devuelve null sin guardar si el id no existe o no valida', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  const { text } = await store.addText(makeInput());
+  const before = backend.getItem(TEXTS_KEY);
+  const good = { sentences: FR_SENTENCES, translation: { lang: 'es', status: 'review', sentences: ES_SENTENCES } };
+  assert.equal(await store.addTranslation('nope', good), null);
+  assert.equal(await store.addTranslation(text.id, { ...good, sentences: FR_SENTENCES.slice(1) }), null);
+  assert.equal(await store.addTranslation(text.id, { sentences: FR_SENTENCES, translation: { lang: 'en', status: 'review', sentences: ES_SENTENCES } }), null);
+  assert.equal(backend.getItem(TEXTS_KEY), before);
+  assert.equal('sentences' in store.getText(text.id), false);
+});
+
+test('approveTranslation y discardTranslation cambian y guardan', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  const { text } = await store.addText(makeInput({
+    sentences: FR_SENTENCES, translation: { lang: 'es', status: 'review', sentences: ES_SENTENCES },
+  }));
+  const approved = await store.approveTranslation(text.id);
+  assert.equal(approved.translation.status, 'approved');
+  assert.equal(approved.status, 'review');
+  assert.equal(saved(backend).texts[0].translation.status, 'approved');
+  const discarded = await store.discardTranslation(text.id);
+  assert.equal('sentences' in discarded, false);
+  assert.equal('translation' in discarded, false);
+  assert.equal('translation' in saved(backend).texts[0], false);
+  assert.equal(await store.approveTranslation('nope'), null);
+  assert.equal(await store.discardTranslation('nope'), null);
+});
+
+test('approveTranslation sin traducción devuelve null', async () => {
+  const store = makeStore();
+  const { text } = await store.addText(makeInput());
+  assert.equal(await store.approveTranslation(text.id), null);
+});
+
+test('si el guardado falla, las traducciones no cambian la memoria', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  const { text } = await store.addText(makeInput());
+  const good = { sentences: FR_SENTENCES, translation: { lang: 'es', status: 'review', sentences: ES_SENTENCES } };
+  const before = store.getText(text.id);
+  backend.failWith = new Error('lleno');
+  await assert.rejects(() => store.addTranslation(text.id, good), StorageError);
+  assert.deepEqual(store.getText(text.id), before);
+  await store.addTranslation(text.id, good);
+  const withT = store.getText(text.id);
+  backend.failWith = new Error('lleno');
+  await assert.rejects(() => store.approveTranslation(text.id), StorageError);
+  assert.deepEqual(store.getText(text.id), withT);
+  backend.failWith = new Error('lleno');
+  await assert.rejects(() => store.discardTranslation(text.id), StorageError);
+  assert.deepEqual(store.getText(text.id), withT);
+});
+
+test('addTranslation siempre guarda la traducción en revisión', async () => {
+  const store = makeStore();
+  const { text } = await store.addText(makeInput());
+  const res = await store.addTranslation(text.id, {
+    sentences: FR_SENTENCES, translation: { lang: 'es', status: 'approved', sentences: ES_SENTENCES },
+  });
+  assert.equal(res.translation.status, 'review');
+});
+
+test('addTranslation sin frases o sin traducción devuelve null y no guarda', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  const { text } = await store.addText(makeInput());
+  const before = backend.getItem(TEXTS_KEY);
+  const tr = { lang: 'es', status: 'review', sentences: ES_SENTENCES };
+  assert.equal(await store.addTranslation(text.id, { translation: tr }), null);
+  assert.equal(await store.addTranslation(text.id, { sentences: FR_SENTENCES }), null);
+  assert.equal(backend.getItem(TEXTS_KEY), before);
+});

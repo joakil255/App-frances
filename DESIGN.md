@@ -218,6 +218,13 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
 - **Foco:** al abrir una historia va al título; al empezar o pasar de pregunta, a la pregunta; al comprobar, al resultado de la respuesta; al terminar, a «Resultado». Al volver a la biblioteca, a la placa. Al cerrar una ventana vuelve al botón que la abrió.
 - **Tarjeta de palabras:** la misma de Conversar (conserva su franja rosa).
 
+## Leer: traducción por frase (Etapa 15)
+
+- **Barra de traducción** entre la fila de la voz y el texto: la casilla **«Mostrar traducción siempre»** (como «Escuchar primero», fila de 44 px, se recuerda en el navegador). Si la traducción de una historia ya aprobada está sin revisar, debajo va el recuadro de REVISAR de la cabecera con «La traducción aún no está revisada.», **Aprobar traducción** (primario) y **Descartar traducción** (secundario). Una historia vieja sin traducción muestra en su lugar **Generar traducción** (secundario; mientras espera dice «Traduciendo…» desactivado con `aria-disabled`), o, si no se puede partir en frases válidas, «Esta historia no se puede traducir frase por frase.» en texto pequeño `--text-muted`.
+- **Fila de la frase:** pasa a ser un `<div>`: la estación ▶ a la izquierda y, a la derecha, el francés, el botón **Ver traducción** / **Ocultar traducción** y la traducción. El botón es de texto (Barlow 600 de 13,6 px, `--secondary-text`, subrayado de 2 px; 44 px de alto para el dedo) con `aria-expanded` y `aria-controls`; va aparte de las palabras para no tocar una por error. Con la casilla activada los botones por frase se ocultan.
+- **Traducción:** Source Serif en **cursiva** `--text-muted` (7,4:1 en claro y 9,7:1 en oscuro, medido), con `lang="es"` y sin botones de palabra. Queda dentro de la fila, así que el recuadro de la frase que suena y el de la evidencia la abarcan.
+- **Cuestionario:** al empezar se ocultan todas las traducciones y se desactivan la casilla y los botones por frase (texto `--text-muted`); al terminar, repetir o salir vuelven según el ajuste.
+
 ## Construir frases (Etapa 12)
 
 **Color nuevo:** la línea turquesa `#178A8A` (`.line-build`), distinta de las otras siete (está entre el azul de Palabras y el verde del Quiz, pero más oscura y apagada que los dos). Además del punto y la franja del enlace activo, dibuja la **vía de «Tu frase»**, el borde de arriba de los bloques y la franja izquierda de la tarjeta de práctica, así que es un elemento gráfico sobre el fondo y la tarjeta: 4,0–4,2 en claro y 3,7–4,3 en oscuro, por encima del 3:1 exigido. Una prueba de `tests/styles.test.js` lo comprueba. Nunca se usa como color de texto ni como fondo de texto (el blanco sobre turquesa solo tiene 4,2).

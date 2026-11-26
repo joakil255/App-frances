@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createClaudeAdapter } from '../src/providers/claude.js';
 import { PROVIDERS } from '../src/providers/index.js';
-import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, LOOKUP_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA } from '../src/prompt.js';
+import { buildSystemPrompt, buildLookupPrompt, buildStoryPrompt, buildSentencePrompt, LOOKUP_SCHEMA, STORY_SCHEMA, SENTENCE_SCHEMA, TRANSLATE_SCHEMA, buildTranslatePrompt } from '../src/prompt.js';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -168,11 +168,11 @@ test('el esquema de consulta lista todo en required y permite gender null', () =
   assert.deepEqual([...LOOKUP_SCHEMA.required].sort(), Object.keys(LOOKUP_SCHEMA.properties).sort());
 });
 
-const storyInput = { lang: 'fr', level: 'A1.2', topic: 'le marché', quizLang: 'es' };
-const storyBody = Array.from({ length: 20 }, (_, i) => `Je vois un chat ${i} dans la maison.`).join(' ');
+const storyInput = { lang: 'fr', level: 'A1.2', topic: 'le marché', quizLang: 'es', supportLang: 'es' };
+const storySentences = Array.from({ length: 20 }, (_, i) => ({ text: `Je vois un chat ${i} dans la maison.`, translation: `Veo un gato ${i} en la casa.` }));
 const goodStory = {
   title: 'Mon chat',
-  body: storyBody,
+  sentences: storySentences,
   questions: Array.from({ length: 4 }, () => ({
     question: '¿Qué ve el narrador?',
     options: ['Un gato', 'Un perro', 'Un pájaro'],
@@ -202,7 +202,7 @@ test('story arma la petición con el esquema, el nivel, el idioma de las pregunt
   assert.equal(sent.model, 'claude-haiku-5-5');
   assert.equal(sent.output_config.effort, 'low');
   assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: STORY_SCHEMA });
-  assert.equal(sent.system, buildStoryPrompt('A1.2', 'es'));
+  assert.equal(sent.system, buildStoryPrompt('A1.2', 'es', 'es'));
   assert.ok(sent.system.includes('A1.2'));
   assert.ok(sent.system.includes('escritas en español'));
   assert.equal(sent.system.includes('escritas en francés'), false);
@@ -210,6 +210,12 @@ test('story arma la petición con el esquema, el nivel, el idioma de las pregunt
   assert.equal(sent.messages[0].role, 'user');
   assert.ok(sent.messages[0].content.includes('le marché'));
   assert.equal(sent.system.includes('le marché'), false);
+});
+
+test('story devuelve las frases emparejadas y el body unido', async () => {
+  const result = await adapterWith(async () => json(200, textBody(goodStory))).story(storyInput);
+  assert.deepEqual(result.sentences, storySentences);
+  assert.equal(result.body, storySentences.map((s) => s.text).join(' '));
 });
 
 test('story sin tema pide un tema libre', async () => {
@@ -266,7 +272,7 @@ test('las instrucciones de historia piden un solo tiempo en A2 y preguntas sin m
 
 test('story normaliza una salida válida', async () => {
   const out = await adapterWith(async () => json(200, textBody(goodStory))).story(storyInput);
-  assert.deepEqual(out, goodStory);
+  assert.deepEqual(out, { ...goodStory, body: storySentences.map((pair) => pair.text).join(' ') });
 });
 
 test('story rechaza una salida inválida como bad_output', async () => {
@@ -343,4 +349,23 @@ test('sentence traduce los errores HTTP igual que chat', async () => {
   assert.equal(await sentenceCodeOf(async () => json(401, errBody('authentication_error'))), 'auth');
   assert.equal(await sentenceCodeOf(async () => json(429, errBody('rate_limit_error'))), 'rate_limit');
   assert.equal(await sentenceCodeOf(async () => json(500, errBody('api_error'))), 'unavailable');
+});
+
+test('translate envía las frases numeradas y devuelve el arreglo', async () => {
+  let sent;
+  const fetch = async (url, init) => {
+    sent = JSON.parse(init.body);
+    return json(200, textBody({ translations: ['Léa vive en Lyon.', 'Le gusta el café.'] }));
+  };
+  const result = await adapterWith(fetch).translate({ level: 'A1.2', supportLang: 'es', sentences: ['Léa habite à Lyon.', 'Elle aime le café.'] });
+  assert.deepEqual(result, ['Léa vive en Lyon.', 'Le gusta el café.']);
+  assert.deepEqual(sent.output_config.format, { type: 'json_schema', schema: TRANSLATE_SCHEMA });
+  assert.equal(sent.system, buildTranslatePrompt('A1.2', 'es'));
+  assert.ok(sent.system.includes('español') && sent.system.includes('A1.2'));
+  assert.equal(sent.messages[0].content, '1. Léa habite à Lyon.\n2. Elle aime le café.');
+});
+
+test('translate con largo distinto → bad_output', async () => {
+  const fetch = async () => json(200, textBody({ translations: ['a'] }));
+  await assert.rejects(adapterWith(fetch).translate({ level: 'A1.2', supportLang: 'es', sentences: ['a', 'b'] }), { code: 'bad_output' });
 });

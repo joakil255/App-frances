@@ -10,7 +10,7 @@ import { TEXTS_KEY, validateText } from './texts.js';
 import { BUILD_KEY, validateBuildDoc, migrateBuildDoc } from './build-storage.js';
 
 export const BACKUP_FORMAT = 'app-frances-copia';
-export const BACKUP_VERSION = 5;
+export const BACKUP_VERSION = 6;
 export const MAX_BACKUP_BYTES = 10 * 1024 * 1024;
 const WORDS_FORMAT = 'app-frances-vocabulario';
 const SCHEMA_VERSION = 2; // palabras con lang y lemma
@@ -106,8 +106,8 @@ export function readBackup(text) {
   if (isObject(data) && data.format === WORDS_FORMAT) return failed(BACKUP_ERRORS.wordList);
   if (!isObject(data) || data.format !== BACKUP_FORMAT) return failed(BACKUP_ERRORS.notBackup);
   if (isNumber(data.version) && data.version > BACKUP_VERSION) return failed(BACKUP_ERRORS.newer);
-  // Se leen la versión 1 (sin lang ni lemma), la 2 (sin historias), la 3 (sin frases), la 4 (frases v1) y la 5
-  if (![1, 2, 3, 4, BACKUP_VERSION].includes(data.version) || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
+  // Se leen la versión 1 (sin lang ni lemma), la 2 (sin historias), la 3 (sin frases), la 4 (frases v1), la 5 (sin traducciones) y la 6
+  if (![1, 2, 3, 4, 5, BACKUP_VERSION].includes(data.version) || typeof data.createdAt !== 'string' || Number.isNaN(Date.parse(data.createdAt))
     || !validWords(data.words) || !validStudy(data.study)
     || (data.version >= 3 && !validTexts(data.texts)) || (data.version >= 4 && !validateBuildDoc(data.build))) {
     return failed(BACKUP_ERRORS.damaged);

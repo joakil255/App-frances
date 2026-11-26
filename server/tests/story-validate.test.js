@@ -5,7 +5,14 @@ import { validateStoryInput } from '../src/story-validate.js';
 const input = (overrides = {}) => validateStoryInput({ lang: 'fr', level: 'A1.2', topic: 'la plage', quizLang: 'es', ...overrides });
 
 test('acepta una petición válida', () => {
-  assert.deepEqual(input(), { ok: true, value: { lang: 'fr', level: 'A1.2', topic: 'la plage', quizLang: 'es' } });
+  assert.deepEqual(input(), { ok: true, value: { lang: 'fr', level: 'A1.2', topic: 'la plage', quizLang: 'es', supportLang: 'es' } });
+});
+
+test('supportLang ausente vale es; en y un número se rechazan', () => {
+  assert.equal(input().value.supportLang, 'es');
+  assert.equal(input({ supportLang: 'es' }).value.supportLang, 'es');
+  assert.deepEqual(input({ supportLang: 'en' }), { ok: false });
+  assert.deepEqual(input({ supportLang: 5 }), { ok: false });
 });
 
 test('acepta los tres niveles, ambos idiomas de preguntas y un tema vacío', () => {

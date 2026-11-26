@@ -985,6 +985,21 @@ p.word-card-es { color: var(--text-muted); }
   border-bottom: 2px solid var(--divider);
 }
 
+/* Barra de traducción, arriba del texto */
+.reader-translation-bar { display: grid; justify-items: start; gap: var(--space-2); margin-top: var(--space-3); }
+.reader-translation-bar .reader-show-translation { min-height: 44px; margin: 0; }
+.reader-translation-bar .reader-translation-review { margin-top: 0; justify-self: stretch; }
+.reader-translate-note { margin: 0; }
+.reader-show-translation input:disabled + label { color: var(--text-muted); }
+/* Durante el cuestionario no se puede generar, aprobar ni descartar la traducción */
+.reader-translation-bar .button:disabled,
+#reader-translate[aria-disabled="true"] {
+  background: var(--surface);
+  color: var(--text-muted);
+  border-color: var(--divider);
+  cursor: default;
+}
+
 /* El texto es una línea de metro: cada frase es una estación (el botón ▶) sobre la línea marrón */
 .reader-text { position: relative; margin-top: var(--space-4); }
 .reader-text::before {
@@ -1023,7 +1038,30 @@ p.word-card-es { color: var(--text-muted); }
   cursor: pointer;
 }
 .reader-nowrap { white-space: nowrap; }
-.reader-words { flex: 1; min-width: 0; padding-top: 5px; overflow-wrap: anywhere; } /* primera línea a la altura de la estación */
+.reader-sentence-body { flex: 1; min-width: 0; padding-top: 5px; } /* primera línea a la altura de la estación */
+.reader-words { display: block; overflow-wrap: anywhere; }
+/* Traducción de la frase: botón de texto aparte (no choca con las palabras) y el español en cursiva atenuada */
+.reader-translation-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--secondary-text);
+  font: 600 var(--size-sm) var(--font-sign);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.reader-translation-toggle:disabled { color: var(--text-muted); cursor: default; } /* durante el cuestionario */
+.reader-translation {
+  margin: 0 0 var(--space-1);
+  color: var(--text-muted);
+  font: italic 400 var(--size-base)/1.55 var(--font-text);
+  overflow-wrap: anywhere;
+}
 /* Frase que suena: recuadro con borde marrón y la estación llena (forma y color, nunca solo color) */
 .reader-sentence[aria-current="true"] { background: var(--surface); border-color: var(--line); }
 .reader-sentence[aria-current="true"] .reader-from { background: var(--line); color: #FFFFFF; }
