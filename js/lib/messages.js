@@ -56,6 +56,11 @@ export const MESSAGES = Object.freeze({
     'Puedes seguir conversando; las consultas se reinician a medianoche, hora de Chile.'),
   storyLimit: message('Llegaste al límite de historias de hoy.',
     'Puedes leer las que ya tienes; el límite se reinicia a medianoche, hora de Chile.'),
+  translateLimit: message('Llegaste al límite de traducciones de hoy.',
+    'Puedes leer tus historias; el límite se reinicia a medianoche, hora de Chile.'),
+  translateNotPossible: message('Esta historia no se puede traducir frase por frase.', ''),
+  translateOffline: message('Necesitas conexión para generar la traducción.',
+    'Puedes leer la historia sin ella.'),
   sentenceLimit: message('Llegaste al límite de correcciones de hoy.',
     'El límite se reinicia a medianoche, hora de Chile.'),
   sentenceOffline: message('Necesitas conexión para que Claude revise tu frase.',
@@ -97,6 +102,7 @@ const CHAT_KEYS = Object.freeze({
   lookup_limit: 'lookupLimit',
   story_limit: 'storyLimit',
   sentence_limit: 'sentenceLimit',
+  translate_limit: 'translateLimit',
 });
 
 // Mensaje para un código de error del chat; los códigos desconocidos usan chatUnavailable
