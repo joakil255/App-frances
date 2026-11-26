@@ -157,6 +157,24 @@ Precio de `claude-haiku-5-5` (tabla de la skill claude-api, actualizada el 03/11
 
 Es una estimación hecha a mano. Se mide en la prueba real (abajo) con `usage` de la respuesta.
 
+### Medición real (25/11/2026)
+
+Medido con el campo `usage` de cada respuesta de `claude-haiku-5-5` (esfuerzo `low`). Las historias ya incluyen las traducciones (no se midió una historia sin ellas, así que no hay un «extra» exacto).
+
+| Caso | Entrada | Salida | Costo |
+|---|---|---|---|
+| Historia 1 (A1.1, 18 frases) | 1236 | 1099 | 0,000673 USD |
+| Historia 2 (A1.2, 18 frases) | 1235 | 2383 | 0,001315 USD |
+| Historia 3 (A2, 18 frases) | 1276 | 2848 | 0,001552 USD |
+| **Promedio por historia** | **1249** | **2110** | **0,00118 USD** |
+| Traducción de historia vieja 1 (8 frases) | 480 | 115 | 0,000106 USD |
+| Traducción de historia vieja 2 (8 frases) | 511 | 139 | 0,000121 USD |
+| **Promedio por traducción** | **496** | **127** | **0,00011 USD** |
+
+Total de la prueba: 4738 tokens de entrada y 6584 de salida, **0,003766 USD** (menos de un centavo).
+
+Lo medido frente a lo estimado: traducir una historia vieja costó menos de lo previsto (≈ 0,0001 frente a 0,0003 a 0,0005 USD). El costo total de una historia nueva es de ≈ 0,0012 USD; con 5 historias y 10 traducciones al día durante 30 días serían ≈ 0,18 + 0,03 = 0,21 USD, casi igual que la estimación del peor mes (0,20 USD).
+
 ## Pruebas automáticas (sin red y sin gastar)
 
 **Almacén y validación (`texts.js`)**
