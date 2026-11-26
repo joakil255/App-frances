@@ -11,6 +11,7 @@ export function createUsageMeter(realFetch = fetch) {
   let last = { input: 0, output: 0 };
   async function meteredFetch(...args) {
     const response = await realFetch(...args);
+    last = { input: 0, output: 0 };
     try {
       const { usage } = await response.clone().json();
       last = { input: usage?.input_tokens ?? 0, output: usage?.output_tokens ?? 0 };

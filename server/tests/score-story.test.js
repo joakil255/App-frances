@@ -21,7 +21,7 @@ test('hay 3 casos: A1.1 mon chat (es), A1.2 le marché (es), A2 un voyage (fr)',
   for (const item of cases) assert.equal(item.lang, 'fr');
 });
 
-test('una historia correcta pasa las cuatro comprobaciones', () => {
+test('una historia correcta pasa las cinco comprobaciones', () => {
   assert.deepEqual(scoreStory(good), {
     wordsOk: true, sentencesOk: true, noMarkupOk: true, questionsOk: true, translationsOk: true,
   });

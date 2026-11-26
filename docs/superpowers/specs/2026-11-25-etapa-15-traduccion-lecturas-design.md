@@ -171,6 +171,8 @@ Medido con el campo `usage` de cada respuesta de `claude-haiku-5-5` (esfuerzo `l
 | Traducción de historia vieja 2 (8 frases) | 511 | 139 | 0,000121 USD |
 | **Promedio por traducción** | **496** | **127** | **0,00011 USD** |
 
+En la traducción 2, `Intl.Segmenter` partió mal el diálogo con « » (el » de cierre quedó al inicio de la frase siguiente), así que sus números incluyen esas frases mal partidas. Se dejó así a propósito: el lector usa el mismo `Intl.Segmenter` con las historias viejas.
+
 Total de la prueba: 4738 tokens de entrada y 6584 de salida, **0,003766 USD** (menos de un centavo).
 
 Lo medido frente a lo estimado: traducir una historia vieja costó menos de lo previsto (≈ 0,0001 frente a 0,0003 a 0,0005 USD). El costo total de una historia nueva es de ≈ 0,0012 USD; con 5 historias y 10 traducciones al día durante 30 días serían ≈ 0,18 + 0,03 = 0,21 USD, casi igual que la estimación del peor mes (0,20 USD).
@@ -223,6 +225,7 @@ Lo medido frente a lo estimado: traducir una historia vieja costó menos de lo p
 - **La calidad de las traducciones:** las escribe Claude; por eso quedan REVISAR hasta que el usuario las aprueba.
 - **Que Haiku respete «una frase por elemento»:** el servidor valida la cantidad y el contenido, no que cada elemento sea exactamente una frase (las abreviaturas como «M.» harían fallar una regla estricta). Si junta dos frases en un elemento, la alineación sigue siendo correcta, pero ese renglón es más largo.
 - **Con qué frecuencia Haiku devuelve un número distinto de traducciones** en `/translate`: si pasa, el usuario ve el error de «salida no válida» y puede reintentar. Se mide en la prueba real.
+- **Historias viejas con diálogo « »:** pueden mostrar un » suelto al inicio de una frase, porque se parten con `Intl.Segmenter` en el cliente. Las historias nuevas no se ven afectadas: el servidor devuelve las frases ya separadas.
 - **El precio:** viene de la tabla de la skill (03/11/2026), no de la página de precios del día.
 
 ## Lo que queda para el plan
