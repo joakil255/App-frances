@@ -991,6 +991,8 @@ p.word-card-es { color: var(--text-muted); }
 .reader-translation-bar .reader-translation-review { margin-top: 0; justify-self: stretch; }
 .reader-translate-note { margin: 0; }
 .reader-show-translation input:disabled + label { color: var(--text-muted); }
+/* Durante el cuestionario no se puede generar, aprobar ni descartar la traducción */
+.reader-translation-bar .button:disabled,
 #reader-translate[aria-disabled="true"] {
   background: var(--surface);
   color: var(--text-muted);

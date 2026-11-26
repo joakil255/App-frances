@@ -48,6 +48,8 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
   const translationReview = $('#reader-translation-review');
   const translateButton = $('#reader-translate');
   const translateNote = $('#reader-translate-note');
+  const approveTranslationButton = $('#reader-approve-translation');
+  const discardTranslationButton = $('#reader-discard-translation');
   const markReadButton = $('#reader-mark-read');
   const deleteButton = $('#reader-delete');
   const newDialog = $('#reader-new-dialog');
@@ -257,6 +259,8 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
     const showAll = showAllTranslations && !quizActive;
     showTranslationBox.checked = showAllTranslations;
     showTranslationBox.disabled = quizActive;
+    // Nada de la traducción cambia hasta que termine el cuestionario (redibujar perdería la pregunta)
+    for (const button of [translateButton, approveTranslationButton, discardTranslationButton]) button.disabled = quizActive;
     for (const body of textEl.querySelectorAll('.reader-sentence-body')) {
       const toggle = $('.reader-translation-toggle', body);
       if (!toggle) continue;
@@ -324,14 +328,14 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
     titleEl.focus(); // el botón «Aprobar» desaparece: el foco no se pierde
   });
 
-  $('#reader-approve-translation').addEventListener('click', async () => {
+  approveTranslationButton.addEventListener('click', async () => {
     const updated = await guarded(() => textStore.approveTranslation(text.id));
     if (!updated) return;
     text = updated;
     renderHeader();
     showTranslationBox.focus(); // el recuadro desaparece: el foco va a la casilla
   });
-  $('#reader-discard-translation').addEventListener('click', async () => {
+  discardTranslationButton.addEventListener('click', async () => {
     stopReading();
     const updated = await guarded(() => textStore.discardTranslation(text.id));
     if (!updated) return;
