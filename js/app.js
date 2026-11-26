@@ -20,6 +20,7 @@ import { initChatVoice } from './screens/chat-voice.js';
 import { createLookupCache } from './lib/lookup-cache.js';
 import { initWordCard } from './screens/word-card.js';
 import { initReader } from './screens/reader.js';
+import { createReaderPrefs } from './lib/reader-prefs.js';
 import { initBuild } from './screens/build.js';
 import { loadLessons } from './lib/lessons.js';
 import { textsLoadNotice, buildLoadNotice } from './lib/messages.js';
@@ -188,6 +189,7 @@ textsLoaded.then((loaded) => {
     loadNotice: textsLoadNotice(loaded),
     textStore,
     wordCard,
+    prefs: createReaderPrefs(backend),
     fetch: window.fetch.bind(window),
     isOnline,
     hostname: location.hostname,

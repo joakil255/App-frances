@@ -354,6 +354,22 @@
               <button type="button" class="button button-primary" id="reader-play">Escuchar</button>
               <button type="button" class="button button-secondary" id="reader-rate">Más lento</button>
             </div>
+            <!-- Traducción al español: casilla, REVISAR propio, o generarla para una historia vieja -->
+            <div id="reader-translation-bar" class="reader-translation-bar">
+              <div class="field checkbox-field reader-show-translation" id="reader-show-translation-field" hidden>
+                <input type="checkbox" id="reader-show-translation">
+                <label for="reader-show-translation">Mostrar traducción siempre</label>
+              </div>
+              <div id="reader-translation-review" class="reader-review reader-translation-review" hidden>
+                <p class="reader-review-text"><span class="tag-review">REVISAR</span> <span>La traducción aún no está revisada.</span></p>
+                <div class="reader-actions">
+                  <button type="button" class="button button-primary" id="reader-approve-translation">Aprobar traducción</button>
+                  <button type="button" class="button button-secondary" id="reader-discard-translation">Descartar traducción</button>
+                </div>
+              </div>
+              <button type="button" class="button button-secondary" id="reader-translate" hidden>Generar traducción</button>
+              <p id="reader-translate-note" class="hint reader-translate-note" hidden></p>
+            </div><!-- fin de la barra de traducción -->
             <div id="reader-text" class="reader-text" lang="fr"></div>
           </div>
 

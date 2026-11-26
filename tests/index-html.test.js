@@ -644,3 +644,31 @@ test('cada lección tiene un enlace para volver a la ruta', () => {
   assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
   assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
 });
+
+// --- Traducción en Leer (Etapa 15) ---
+test('el lector tiene la barra de traducción con la casilla «Mostrar traducción siempre» y su etiqueta', () => {
+  const bar = reader.match(/<div id="reader-translation-bar"[^>]*>([\s\S]*?)<!-- fin de la barra de traducción -->/)?.[1];
+  assert.ok(bar, 'falta #reader-translation-bar');
+  assert.match(bar, /<input type="checkbox" id="reader-show-translation">/);
+  assert.match(html, /<label for="reader-show-translation">Mostrar traducción siempre<\/label>/);
+});
+
+test('la barra de traducción tiene REVISAR con «Aprobar traducción» y «Descartar traducción»', () => {
+  const box = reader.match(/<div id="reader-translation-review"[^>]*hidden>([\s\S]*?)<\/div>\s*<\/div>/)?.[1];
+  assert.ok(box, 'falta #reader-translation-review oculto');
+  assert.match(box, /<span [^>]*class="tag-review"[^>]*>REVISAR<\/span>/);
+  assert.match(box, /<button type="button" [^>]*id="reader-approve-translation"[^>]*>Aprobar traducción<\/button>/);
+  assert.match(box, /<button type="button" [^>]*id="reader-discard-translation"[^>]*>Descartar traducción<\/button>/);
+});
+
+test('la barra de traducción tiene «Generar traducción» y la nota de «no se puede traducir», ocultos', () => {
+  assert.match(reader, /<button type="button" [^>]*id="reader-translate"[^>]*hidden>Generar traducción<\/button>/);
+  const note = tagWithId(reader, 'reader-translate-note');
+  assert.ok(note, 'falta #reader-translate-note');
+  assert.ok(note.includes('hidden'), '#reader-translate-note debe empezar oculto');
+});
+
+test('la barra de traducción va antes del texto de la historia', () => {
+  assert.ok(reader.indexOf('id="reader-translation-bar"') < reader.indexOf('id="reader-text"'));
+  assert.ok(reader.indexOf('id="reader-translation-bar"') > 0);
+});

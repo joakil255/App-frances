@@ -1,6 +1,9 @@
 // Pantalla Leer: biblioteca de historias, lector con voz frase por frase y cuestionario.
 // Todo el texto de Claude se pinta con textContent.
-import { storyUrl, sendStory, textFromStory, splitSentences, findEvidenceSentence } from '../lib/story.js';
+import {
+  storyUrl, translateUrl, sendStory, sendTranslation, textFromStory, readerSentences, translatableSentences, findEvidenceSentence,
+} from '../lib/story.js';
+import { needsReview } from '../lib/texts.js';
 import { createSentencePlayer } from '../lib/sentence-player.js';
 import { createReadingQuiz } from '../lib/reading-quiz.js';
 import { tokenize } from '../lib/lookup.js';
@@ -9,7 +12,7 @@ import { StorageError } from '../lib/storage.js';
 import { RATES, loadVoices, pickFrenchVoice } from '../lib/speech.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
-const PREFS_KEY = 'app-frances-reader'; // último idioma de las preguntas
+const SUPPORT_LANG = 'es'; // idioma de las traducciones
 
 function el(tag, { text, className, attrs = {} } = {}, children = []) {
   const node = document.createElement(tag);
@@ -20,25 +23,10 @@ function el(tag, { text, className, attrs = {} } = {}, children = []) {
   return node;
 }
 
-// El navegador puede bloquear localStorage: entonces no se recuerda nada y se usa Español
-function loadQuizLang() {
-  try {
-    const lang = JSON.parse(localStorage.getItem(PREFS_KEY))?.quizLang;
-    return lang === 'fr' ? 'fr' : 'es';
-  } catch {
-    return 'es';
-  }
-}
-function saveQuizLang(quizLang) {
-  try {
-    localStorage.setItem(PREFS_KEY, JSON.stringify({ quizLang }));
-  } catch {
-    // no se recuerda; no es grave
-  }
-}
-
-export function initReader({ textStore, wordCard, fetch, isOnline, hostname, getCode, synth, onBeforeSpeak, loadNotice = null }) {
+// prefs: createReaderPrefs (idioma de las preguntas y «Mostrar traducción siempre»)
+export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostname, getCode, synth, onBeforeSpeak, loadNotice = null }) {
   const url = storyUrl(hostname);
+  const translationUrl = translateUrl(hostname);
   const heading = $('#screen-reader h1');
   const notice = $('#reader-notice');
   const status = $('#reader-status');
@@ -55,6 +43,11 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
   const playButton = $('#reader-play');
   const rateButton = $('#reader-rate');
   const textEl = $('#reader-text');
+  const showTranslationField = $('#reader-show-translation-field');
+  const showTranslationBox = $('#reader-show-translation');
+  const translationReview = $('#reader-translation-review');
+  const translateButton = $('#reader-translate');
+  const translateNote = $('#reader-translate-note');
   const markReadButton = $('#reader-mark-read');
   const deleteButton = $('#reader-delete');
   const newDialog = $('#reader-new-dialog');
@@ -78,12 +71,15 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
 
   let text = null; // la historia abierta
   let sentences = [];
-  let rows = []; // un <p> por frase
+  let rows = []; // un <div> por frase (con su traducción, si la hay)
   let player = null;
   let playerState = 'idle'; // 'idle' | 'playing' | 'paused'
   let rate = RATES.normal;
   let quiz = null;
   let generating = false;
+  let translating = false;
+  let quizActive = false; // durante el cuestionario no se ven las traducciones
+  let showAllTranslations = prefs.load().showTranslation;
   let visible = false; // la pantalla Leer está a la vista
   let playTicket = 0; // cada pedido de lectura lleva un número: uno que llega tarde se ignora
   let deleteReturn = null; // botón que abrió la ventana de borrar
@@ -112,7 +108,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
   // --- Biblioteca ---
   function itemNode(t) {
     const meta = el('span', { className: 'reader-item-meta' }, [el('span', { text: t.level })]);
-    if (t.status === 'review') meta.append(el('span', { className: 'tag-review', text: 'REVISAR' }));
+    if (needsReview(t)) meta.append(el('span', { className: 'tag-review', text: 'REVISAR' }));
     if (t.readAt) meta.append(el('span', { text: 'Leída' }));
     if (t.quizResult) meta.append(el('span', { text: `Preguntas: ${t.quizResult.correct}/${t.quizResult.total}` }));
     const link = el('a', { attrs: { href: `#/leer/${t.id}` } }, [
@@ -214,7 +210,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     stopReading();
     wordCard.open(token, button, { root: textEl, category: 'Lectura', needsReview: text.status === 'review' });
   }
-  function sentenceRow(sentence, index) {
+  function sentenceRow(sentence, index, translated) {
     const from = el('button', { className: 'reader-from', text: '▶', attrs: { type: 'button', 'aria-label': 'Leer desde esta frase' } });
     from.addEventListener('click', () => playFrom(index));
     // Cada palabra va en un grupo sin cortes con la puntuación pegada a ella («famille.»):
@@ -233,8 +229,47 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
       button.addEventListener('click', () => openWord(token, button));
       parts.push(el('span', { className: 'reader-nowrap' }, [button]));
     }
-    return el('p', { className: 'reader-sentence' }, [from, el('span', { className: 'reader-words' }, parts)]);
+    const body = el('div', { className: 'reader-sentence-body' }, [el('span', { className: 'reader-words' }, parts)]);
+    if (translated !== undefined) {
+      // La traducción no lleva botones de palabra: la tarjeta es para el francés
+      const id = `reader-translation-${index}`;
+      const translation = el('p', { className: 'reader-translation', text: translated, attrs: { id, lang: text.translation.lang } });
+      const toggle = el('button', {
+        className: 'reader-translation-toggle',
+        attrs: { type: 'button', 'aria-controls': id },
+      });
+      toggle.addEventListener('click', () => setRevealed(body, toggle.getAttribute('aria-expanded') !== 'true'));
+      body.append(toggle, translation);
+      setRevealed(body, false);
+    }
+    return el('div', { className: 'reader-sentence' }, [from, body]);
   }
+
+  // --- Traducciones ---
+  function setRevealed(body, revealed) {
+    const toggle = $('.reader-translation-toggle', body);
+    toggle.setAttribute('aria-expanded', String(revealed));
+    toggle.textContent = revealed ? 'Ocultar traducción' : 'Ver traducción';
+    $('.reader-translation', body).hidden = !revealed;
+  }
+  // Todas según el ajuste (ocultas durante el cuestionario); se olvida lo revelado una por una
+  function applyTranslationSetting() {
+    const showAll = showAllTranslations && !quizActive;
+    showTranslationBox.checked = showAllTranslations;
+    showTranslationBox.disabled = quizActive;
+    for (const body of textEl.querySelectorAll('.reader-sentence-body')) {
+      const toggle = $('.reader-translation-toggle', body);
+      if (!toggle) continue;
+      setRevealed(body, showAll);
+      toggle.hidden = showAllTranslations;
+      toggle.disabled = quizActive;
+    }
+  }
+  showTranslationBox.addEventListener('change', () => {
+    showAllTranslations = showTranslationBox.checked;
+    prefs.save({ showTranslation: showAllTranslations });
+    applyTranslationSetting();
+  });
 
   // --- Cabecera y botones de la historia ---
   function renderHeader() {
@@ -243,6 +278,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     levelEl.textContent = text.level;
     readMark.hidden = !text.readAt;
     review.hidden = text.status !== 'review';
+    renderTranslationBar();
     quizReview.hidden = text.status !== 'review';
     deleteButton.hidden = text.status === 'review'; // en REVISAR se borra con «Descartar»
     source.textContent = `Fuente: ${text.source.name}. ${text.source.license}.`;
@@ -250,13 +286,27 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     if (text.readAt) markReadButton.setAttribute('aria-disabled', 'true');
     else markReadButton.removeAttribute('aria-disabled');
   }
-  function renderStory() {
-    renderHeader();
-    sentences = splitSentences(text.body);
-    rows = sentences.map(sentenceRow);
+  // Casilla si hay traducción; si no, «Generar traducción» o la nota de que no se puede
+  function renderTranslationBar() {
+    const has = Boolean(text.translation);
+    showTranslationField.hidden = !has;
+    translationReview.hidden = !(has && text.translation.status === 'review' && text.status === 'approved');
+    const possible = !has && translatableSentences(text.body) !== null;
+    translateButton.hidden = !possible;
+    translateNote.hidden = has || possible;
+    translateNote.textContent = MESSAGES.translateNotPossible.title;
+  }
+  function renderText() {
+    sentences = readerSentences(text); // el audio lee solo estas frases en francés
+    rows = sentences.map((sentence, i) => sentenceRow(sentence, i, text.translation?.sentences[i]));
     textEl.replaceChildren(...rows);
     wordCard.refresh(textEl);
-    resetQuiz();
+    applyTranslationSetting();
+  }
+  function renderStory() {
+    renderHeader();
+    renderText();
+    resetQuiz(); // también devuelve las traducciones según el ajuste
   }
 
   markReadButton.addEventListener('click', async () => {
@@ -272,6 +322,70 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     text = updated;
     renderHeader();
     titleEl.focus(); // el botón «Aprobar» desaparece: el foco no se pierde
+  });
+
+  $('#reader-approve-translation').addEventListener('click', async () => {
+    const updated = await guarded(() => textStore.approveTranslation(text.id));
+    if (!updated) return;
+    text = updated;
+    renderHeader();
+    showTranslationBox.focus(); // el recuadro desaparece: el foco va a la casilla
+  });
+  $('#reader-discard-translation').addEventListener('click', async () => {
+    stopReading();
+    const updated = await guarded(() => textStore.discardTranslation(text.id));
+    if (!updated) return;
+    text = updated;
+    renderHeader();
+    renderText();
+    translateButton.focus(); // vuelve «Generar traducción»
+  });
+
+  // --- Generar la traducción de una historia vieja ---
+  function setTranslating(busy) {
+    translating = busy;
+    if (busy) translateButton.setAttribute('aria-disabled', 'true');
+    else translateButton.removeAttribute('aria-disabled');
+    translateButton.textContent = busy ? 'Traduciendo…' : 'Generar traducción';
+    status.textContent = busy ? 'Traduciendo…' : '';
+  }
+  translateButton.addEventListener('click', async () => {
+    if (translating || !text) return;
+    clearNotice();
+    if (!isOnline()) {
+      showNotice(MESSAGES.translateOffline);
+      return;
+    }
+    const list = translatableSentences(text.body);
+    if (!list) return; // el botón no se muestra en ese caso; nunca se gasta una traducción
+    const { id, level } = text;
+    setTranslating(true);
+    let updated = null;
+    try {
+      const code = getCode();
+      const sent = code
+        ? await sendTranslation({ url: translationUrl, code, body: { lang: 'fr', level, supportLang: SUPPORT_LANG, sentences: list }, fetch, isOnline: isOnline() })
+        : { ok: false, error: 'unauthorized' };
+      if (sent.ok) {
+        // guarded devuelve null si no se pudo guardar (ya avisó); addTranslation, si no valida
+        const saved = await guarded(async () => ({
+          text: await textStore.addTranslation(id, { sentences: list, translation: { lang: SUPPORT_LANG, status: 'review', sentences: sent.translations } }),
+        }));
+        if (saved && !saved.text) showNotice(chatMessage('bad_output'));
+        updated = saved?.text ?? null;
+      } else {
+        showNotice(chatMessage(sent.error));
+      }
+    } finally {
+      setTranslating(false);
+    }
+    // Solo se redibuja si sigues en la misma historia
+    if (!updated || !visible || text?.id !== id) return;
+    stopReading();
+    text = updated;
+    renderHeader();
+    renderText();
+    showTranslationBox.focus(); // «Generar traducción» desaparece: el foco va a la casilla
   });
 
   // --- Borrar (Descartar en REVISAR, o Borrar historia) ---
@@ -298,8 +412,14 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
   });
 
   // --- Cuestionario ---
+  // El cuestionario terminó o se dejó: las traducciones vuelven según el ajuste
+  function endQuiz() {
+    quizActive = false;
+    applyTranslationSetting();
+  }
   function resetQuiz() {
     quiz = null;
+    endQuiz();
     quizStart.hidden = false;
     quizCard.hidden = true;
     quizResult.hidden = true;
@@ -326,6 +446,8 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
   }
   function startQuiz() {
     quiz = createReadingQuiz(text.quiz);
+    quizActive = true;
+    applyTranslationSetting(); // se ocultan todas y se desactivan la casilla y los botones
     quizStart.hidden = true;
     quizResult.hidden = true;
     quizCard.hidden = false;
@@ -373,6 +495,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     const { correct, total } = quiz.result();
     quizCard.hidden = true;
     markEvidence(-1);
+    endQuiz();
     score.textContent = `Resultado: ${correct} de ${total}`;
     quizResult.hidden = false;
     score.focus();
@@ -389,7 +512,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
       showNotice(chatMessage('offline'));
       return;
     }
-    const remembered = loadQuizLang();
+    const remembered = prefs.load().quizLang;
     for (const input of quizLangInputs) input.checked = input.value === remembered;
     newDialog.showModal();
   });
@@ -414,7 +537,7 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     const level = data.get('story-level');
     const topic = String(data.get('topic') ?? '').trim();
     const quizLang = data.get('quiz-lang');
-    saveQuizLang(quizLang);
+    prefs.save({ quizLang });
     clearNotice();
     setGenerating(true);
     newDialog.close();
@@ -423,10 +546,10 @@ export function initReader({ textStore, wordCard, fetch, isOnline, hostname, get
     try {
       const code = getCode();
       const sent = code
-        ? await sendStory({ url, code, body: { lang: 'fr', level, topic, quizLang }, fetch, isOnline: isOnline() })
+        ? await sendStory({ url, code, body: { lang: 'fr', level, topic, quizLang, supportLang: SUPPORT_LANG }, fetch, isOnline: isOnline() })
         : { ok: false, error: 'unauthorized' };
       if (sent.ok) {
-        added = await guarded(() => textStore.addText(textFromStory(sent.result, { level, topic, quizLang })));
+        added = await guarded(() => textStore.addText(textFromStory(sent.result, { level, topic, quizLang, supportLang: SUPPORT_LANG })));
         if (added && !added.ok) {
           showNotice(chatMessage('bad_output')); // la historia no pasó la validación: no se guarda
           added = null;
