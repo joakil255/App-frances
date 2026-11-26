@@ -596,3 +596,23 @@ test('si el guardado falla, las traducciones no cambian la memoria', async () =>
   await assert.rejects(() => store.discardTranslation(text.id), StorageError);
   assert.deepEqual(store.getText(text.id), withT);
 });
+
+test('addTranslation siempre guarda la traducción en revisión', async () => {
+  const store = makeStore();
+  const { text } = await store.addText(makeInput());
+  const res = await store.addTranslation(text.id, {
+    sentences: FR_SENTENCES, translation: { lang: 'es', status: 'approved', sentences: ES_SENTENCES },
+  });
+  assert.equal(res.translation.status, 'review');
+});
+
+test('addTranslation sin frases o sin traducción devuelve null y no guarda', async () => {
+  const backend = new MemoryStorage();
+  const store = makeStore(backend);
+  const { text } = await store.addText(makeInput());
+  const before = backend.getItem(TEXTS_KEY);
+  const tr = { lang: 'es', status: 'review', sentences: ES_SENTENCES };
+  assert.equal(await store.addTranslation(text.id, { translation: tr }), null);
+  assert.equal(await store.addTranslation(text.id, { sentences: FR_SENTENCES }), null);
+  assert.equal(backend.getItem(TEXTS_KEY), before);
+});

@@ -59,6 +59,7 @@ const sentenceListOk = (list) => Array.isArray(list) && list.length >= 1 && list
 // Recorta los bordes de cada frase; lo que no sea lista queda igual para que validateText lo rechace
 const trimAll = (list) => (Array.isArray(list) ? list.map((s) => (isString(s) ? s.normalize('NFC').trim() : s)) : list);
 const cleanTranslation = (t) => (t && typeof t === 'object' ? { ...t, sentences: trimAll(t.sentences) } : t);
+const asReview = (t) => (t && typeof t === 'object' ? { ...t, status: 'review' } : t);
 
 function quizResultError(result) {
   if (result === null) return null;
@@ -211,8 +212,8 @@ export function createTextStore(backend, { makeId = () => crypto.randomUUID(), n
     // Devuelve null (sin guardar) si el id no existe o el resultado no valida.
     async addTranslation(id, { sentences, translation }) {
       const existing = store.getText(id);
-      if (!existing) return null;
-      const candidate = { ...existing, sentences: trimAll(sentences), translation: cleanTranslation(translation) };
+      if (!existing || sentences === undefined || translation === undefined) return null;
+      const candidate = { ...existing, sentences: trimAll(sentences), translation: asReview(cleanTranslation(translation)) };
       if (!validateText(candidate).ok) return null;
       return update(id, { sentences: candidate.sentences, translation: candidate.translation });
     },
@@ -223,6 +224,7 @@ export function createTextStore(backend, { makeId = () => crypto.randomUUID(), n
       return update(id, { translation: { ...translation, status: 'approved' } });
     },
 
+    // No usa update porque update solo cambia campos y aquí hay que quitarlos
     async discardTranslation(id) {
       const existing = store.getText(id);
       if (!existing) return null;
