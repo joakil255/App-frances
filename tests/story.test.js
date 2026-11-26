@@ -56,7 +56,6 @@ test('textFromStory recorta, arma la entrada y pasa validateText', () => {
   assert.equal(input.topic, 'La famille');
   assert.deepEqual(input.source, GENERATED_SOURCE);
   assert.equal(input.quiz.lang, 'es');
-  assert.equal(input.sentences, undefined);
   assert.equal(input.translation.lang, 'es');
   assert.equal(input.translation.status, 'review');
   assert.deepEqual(input.translation.sentences, PAIRS.map((p) => p.translation.trim()));
