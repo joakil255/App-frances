@@ -81,6 +81,7 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
   let generating = false;
   let translating = false;
   let quizActive = false; // durante el cuestionario no se ven las traducciones
+  let textOutdated = false; // llegó una traducción durante el cuestionario: se pinta al terminar
   let showAllTranslations = prefs.load().showTranslation;
   let visible = false; // la pantalla Leer está a la vista
   let playTicket = 0; // cada pedido de lectura lleva un número: uno que llega tarde se ignora
@@ -301,6 +302,7 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
     translateNote.textContent = MESSAGES.translateNotPossible.title;
   }
   function renderText() {
+    textOutdated = false;
     sentences = readerSentences(text); // el audio lee solo estas frases en francés
     rows = sentences.map((sentence, i) => sentenceRow(sentence, i, text.translation?.sentences[i]));
     textEl.replaceChildren(...rows);
@@ -342,7 +344,8 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
     text = updated;
     renderHeader();
     renderText();
-    translateButton.focus(); // vuelve «Generar traducción»
+    // Vuelve «Generar traducción»; si la historia no se puede traducir, el foco va al título
+    (translateButton.hidden ? titleEl : translateButton).focus();
   });
 
   // --- Generar la traducción de una historia vieja ---
@@ -385,9 +388,13 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
     }
     // Solo se redibuja si sigues en la misma historia
     if (!updated || !visible || text?.id !== id) return;
-    stopReading();
     text = updated;
     renderHeader();
+    if (quizActive) {
+      textOutdated = true; // redibujar ahora perdería la pregunta y su evidencia
+      return;
+    }
+    stopReading();
     renderText();
     showTranslationBox.focus(); // «Generar traducción» desaparece: el foco va a la casilla
   });
@@ -419,7 +426,12 @@ export function initReader({ textStore, wordCard, prefs, fetch, isOnline, hostna
   // El cuestionario terminó o se dejó: las traducciones vuelven según el ajuste
   function endQuiz() {
     quizActive = false;
-    applyTranslationSetting();
+    if (textOutdated) {
+      stopReading();
+      renderText(); // ya trae las traducciones según el ajuste
+    } else {
+      applyTranslationSetting();
+    }
   }
   function resetQuiz() {
     quiz = null;

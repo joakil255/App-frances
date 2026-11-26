@@ -650,7 +650,7 @@ test('el lector tiene la barra de traducción con la casilla «Mostrar traducci�
   const bar = reader.match(/<div id="reader-translation-bar"[^>]*>([\s\S]*?)<!-- fin de la barra de traducción -->/)?.[1];
   assert.ok(bar, 'falta #reader-translation-bar');
   assert.match(bar, /<input type="checkbox" id="reader-show-translation">/);
-  assert.match(html, /<label for="reader-show-translation">Mostrar traducción siempre<\/label>/);
+  assert.match(bar, /<label for="reader-show-translation">Mostrar traducción siempre<\/label>/);
 });
 
 test('la barra de traducción tiene REVISAR con «Aprobar traducción» y «Descartar traducción»', () => {
