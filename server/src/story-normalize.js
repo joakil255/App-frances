@@ -29,6 +29,7 @@ export function normalizeStory(raw) {
     if (pair === null || typeof pair !== 'object') throw bad();
     const { text, translation } = pair;
     if (!isText(text) || !isText(translation) || HAS_MARKUP.test(text)) throw bad();
+    if ([...text].length > MAX_TRANSLATION) throw bad();
     if ([...translation].length > MAX_TRANSLATION || HAS_MARKUP.test(translation)) throw bad();
     return { text, translation };
   });

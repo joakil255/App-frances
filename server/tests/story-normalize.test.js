@@ -73,13 +73,24 @@ test('text vacío; translation vacía, de 600 o de 601 letras', () => {
   assert.ok(normalizeStory(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'é'.repeat(600) }] })));
 });
 
+test('text de una frase: 601 letras se rechaza, 600 vale', () => {
+  const long = (n) => 'é'.repeat(n);
+  bad(makeStory({ sentences: [...pairs(5), { text: long(601), translation }] }));
+  assert.ok(normalizeStory(makeStory({ sentences: [...pairs(5), { text: long(600), translation }] })));
+});
+
 test('translation con HTML o Markdown se rechaza', () => {
   bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'El <b>gato</b>' }] }));
   bad(makeStory({ sentences: [...pairs(4), { text: sentence, translation: 'El **gato**' }] }));
 });
 
 test('exactamente 80 y 300 palabras son válidas', () => {
-  const make = (n) => withTexts(['Un.', 'Deux.', 'Trois.', `${Array(n - 3).fill('mot').join(' ')}.`]);
+  // Las palabras se reparten en frases de hasta 100 para no pasar el tope de 600 letras
+  const make = (n) => {
+    const chunks = [];
+    for (let left = n - 3; left > 0; left -= 100) chunks.push(`${Array(Math.min(left, 100)).fill('mot').join(' ')}.`);
+    return withTexts(['Un.', 'Deux.', 'Trois.', ...chunks]);
+  };
   assert.ok(normalizeStory(makeStory({ sentences: make(80), questions: evidenceQuestions('Deux') })));
   assert.ok(normalizeStory(makeStory({ sentences: make(300), questions: evidenceQuestions('Deux') })));
   bad(makeStory({ sentences: make(79) }));
@@ -87,7 +98,7 @@ test('exactamente 80 y 300 palabras son válidas', () => {
 });
 
 test('más de 3000 letras', () => {
-  bad(makeStory({ sentences: withTexts(['Un.', 'Deux.', 'Trois.', `Quatre ${'a'.repeat(3000)}.`]) }));
+  bad(makeStory({ sentences: withTexts(['Un.', 'Deux.', 'Trois.', ...Array(6).fill(`Quatre ${'a'.repeat(500)}.`)]) }));
 });
 
 test('rechaza HTML en el texto de una frase', () => {
