@@ -14,12 +14,12 @@ export function scoreSentence(item, output) {
   return { noInvented: noErrors, suggestionOk: output.suggestion.trim() !== '' };
 }
 
-const ERROR_CASES = 10;
+const ERROR_CASES = 15;
 const CORRECT_CASES = 6;
 const SUGGEST_CASES = 3;
 const MIN_SUGGESTIONS = 2;
 
-// Criterio: 10 errores encontrados y corregidos (uno es una palabra que falta), 6 correctas sin error inventado, 2 de 3 sugerencias y cero rechazos
+// Criterio: 15 errores encontrados y corregidos (uno es una palabra que falta), 6 correctas sin error inventado, 2 de 3 sugerencias y cero rechazos
 export function meetsCriterion(scores, rejected) {
   if (rejected !== 0 || scores.length !== ERROR_CASES + CORRECT_CASES) return false;
   const errors = scores.filter((score) => 'errorFound' in score);

@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v26';
+const CACHE_VERSION = 'v27';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -81,6 +81,11 @@ const PRECACHE_URLS = [
   'data/lessons/fr/fr-a1-07.json',
   'data/lessons/fr/fr-a1-08.json',
   'data/lessons/fr/fr-a1-09.json',
+  'data/lessons/fr/fr-a1-10.json',
+  'data/lessons/fr/fr-a2-01.json',
+  'data/lessons/fr/fr-a2-02.json',
+  'data/lessons/fr/fr-a2-03.json',
+  'data/lessons/fr/fr-a2-04.json',
   'fonts/barlow-semi-condensed-500.woff2',
   'fonts/barlow-semi-condensed-700.woff2',
   'fonts/source-serif-4.woff2',

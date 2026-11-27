@@ -1,0 +1,612 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a2-02",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A2",
+  "title": "Passé composé con être",
+  "areas": [
+    "grammar",
+    "spelling"
+  ],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49-50",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-e",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo E: lista de gramática por nivel",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "56-58",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "63-65 (nivel A1), 67-71 (nivel A2)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "bdl-passe-compose",
+      "title": "Banque de dépannage linguistique: «Passé composé : usages et emplois»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24218/la-grammaire/le-verbe/temps-grammaticaux/passe/generalites-sur-le-passe-compose"
+    },
+    {
+      "id": "bdl-auxiliaires",
+      "title": "Banque de dépannage linguistique: «AVOIR et ÊTRE : auxiliaires essentiels à la conjugaison»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24224/la-grammaire/le-verbe/auxiliaires/emploi-des-auxiliaires-avoir-et-etre"
+    },
+    {
+      "id": "bdl-participe-etre",
+      "title": "Banque de dépannage linguistique: «Participe passé employé avec l'auxiliaire ÊTRE : accord»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/21547/la-grammaire/le-verbe/accord-du-participe-passe/avec-lauxiliaire-etre/accord-du-participe-passe-employe-avec-lauxiliaire-etre"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-place-negation",
+      "title": "Banque de dépannage linguistique: «Place du verbe avec ne… pas et ne pas»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23909/la-syntaxe/la-negation-et-la-restriction/place-du-verbe-avec-ne-pas-et-ne-pas"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "El passé composé de algunos verbos (casi todos de movimiento) se forma con être en presente (je suis, tu es, il / elle est, nous sommes, vous êtes, ils / elles sont; lo viste en la lección 2) + el participio. Los verbos de esta lección son nueve: aller (allé), venir (venu), partir (parti), arriver (arrivé), entrer (entré), sortir (sorti), rester (resté), tomber (tombé) y naître (né). Con estos nueve verbos no se usa avoir: elle a allé ✗; elle est allée ✓. Los verbos de la lección 16 (manger, voir, faire…) siguen con avoir.",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "bdl-auxiliaires",
+        "inventaire-d",
+        "inventaire-e"
+      ],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Los participios: aller, arriver, entrer, rester y tomber hacen -é (allé, arrivé, entré, resté, tombé). Venir → venu, partir → parti, sortir → sorti y naître → né se aprenden aparte.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-participe-etre"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F pp. 64, 65, 70 y 71 (allé, arrivé, resté, née en ejemplos) y la BDL «Participe passé employé avec l'auxiliaire ÊTRE : accord» (sortie). Falta: una tabla de participios; venu, parti, entré y tombé no salen en ninguna fuente leída, y no hay una frase literal de la regla -er → -é (naître → né se presenta aparte porque su participio no sale de -er → -é). Los participios se comprobaron con el conocimiento general del francés."
+    },
+    {
+      "id": "i3",
+      "text": "Con être, el participio concuerda con el sujeto, como un adjetivo. Masculino singular: sin cambio (il est allé). Femenino: se añade -e (elle est allée). Plural: se añade -s (ils sont allés: hombres o grupo mixto). Femenino plural: -es (elles sont allées). Con je, tu, nous y vous la forma depende de quién habla o de a quién se habla: un hombre dice je suis allé; una mujer, je suis allée. Con nous: nous sommes allés (todos hombres) o nous sommes allées (todas mujeres).",
+      "sourceIds": [
+        "bdl-participe-etre",
+        "inventaire-d",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "i4",
+      "text": "Para negar, ne y pas rodean al auxiliar être, y el participio va después de pas: je ne suis pas allé, tu n'es pas venu, elle n'est pas venue, nous ne sommes pas partis. Ne se escribe n' delante de una vocal: tu n'es, il n'est, vous n'êtes. Ante consonante queda ne: je ne suis, nous ne sommes, ils ne sont. El participio sigue concordando con el sujeto: elle n'est pas venue.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "bdl-participe-etre",
+        "inventaire-d"
+      ],
+      "review": false
+    }
+  ],
+  "pattern": [
+    {
+      "label": "Être + participio",
+      "options": [
+        "je suis allé",
+        "tu es venu",
+        "il est parti",
+        "elle est arrivée",
+        "nous sommes sortis",
+        "elles sont restées"
+      ]
+    },
+    {
+      "label": "Concordancia con el sujeto",
+      "options": [
+        "il est allé",
+        "elle est allée",
+        "ils sont allés",
+        "elles sont allées"
+      ]
+    },
+    {
+      "label": "Negación",
+      "options": [
+        "elle n'est pas venue",
+        "je ne suis pas allé",
+        "nous ne sommes pas partis"
+      ]
+    },
+    {
+      "label": "Los nueve verbos",
+      "options": [
+        "aller → allé",
+        "venir → venu",
+        "partir → parti",
+        "arriver → arrivé",
+        "entrer → entré",
+        "sortir → sorti",
+        "rester → resté",
+        "tomber → tombé",
+        "naître → né"
+      ]
+    }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Esta mañana ella llegó tarde",
+      "target": "Ce matin, elle est arrivée en retard.",
+      "note": "En español «llegó» es una sola palabra. En francés hacen falta dos piezas: être (elle est) + el participio (arrivé). Como el sujeto es elle (una mujer), el participio lleva -e: arrivée.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Ella no vino a la fiesta",
+      "target": "Elle n'est pas venue à la fête.",
+      "note": "Primero el auxiliar con ne y pas alrededor (n'est pas), y después el participio: venue, con -e porque el sujeto es femenino. Ne se escribe n' delante de est.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Yo (una mujer) nací en 2002",
+      "target": "Je suis née en 2002.",
+      "note": "Naître se forma con être: je suis né. Si quien habla es una mujer, el participio lleva -e: née. Un hombre dice je suis né.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    }
+  ],
+  "examples": [
+    {
+      "id": "e1",
+      "text": "Elle est allée chez ses amies.",
+      "translation": "Fue a casa de sus amigas.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e2",
+      "text": "Elles sont arrivées à 5h.",
+      "translation": "Llegaron a las 5.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e3",
+      "text": "Je suis arrivée en retard ce matin.",
+      "translation": "Llegué tarde esta mañana (lo dice una mujer).",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e4",
+      "text": "Nous sommes allés au Kenya l'an dernier.",
+      "translation": "Fuimos a Kenia el año pasado.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e5",
+      "text": "Il est resté à la maison.",
+      "translation": "Se quedó en casa.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e6",
+      "text": "Je suis née en 2002.",
+      "translation": "Nací en 2002 (lo dice una mujer).",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Hier, elle a allé au cinéma.",
+      "right": "Hier, elle est allée au cinéma.",
+      "explanation": "Aller forma el passé composé con être, no con avoir: elle est allée. El auxiliar a es de avoir (elle a mangé, lección 16). Como el sujeto es elle, el participio lleva -e: allée.",
+      "sourceIds": [
+        "bdl-auxiliaires",
+        "bdl-passe-compose",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Hier, elle est allé au cinéma.",
+      "right": "Hier, elle est allée au cinéma.",
+      "explanation": "Con être, el participio concuerda con el sujeto. Elle es femenino, así que se añade -e: allée. Sin la -e (allé) sería la forma de un hombre: il est allé.",
+      "sourceIds": [
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Elles sont arrivé à 5h.",
+      "right": "Elles sont arrivées à 5h.",
+      "explanation": "Elles es femenino plural, así que el participio lleva -es: arrivées. Con ils (hombres) sería -s: ils sont arrivés.",
+      "sourceIds": [
+        "bdl-participe-etre",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Elle n'est venue pas à la fête.",
+      "right": "Elle n'est pas venue à la fête.",
+      "explanation": "Ne y pas rodean al auxiliar (n'est pas) y el participio va después de pas: elle n'est pas venue.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Esta mañana ella llegó tarde».",
+      "tiles": [
+        "arrivée",
+        "Ce",
+        "matin",
+        "elle",
+        "est",
+        "en",
+        "retard"
+      ],
+      "answers": [
+        "Ce matin, elle est arrivée en retard.",
+        "Elle est arrivée en retard ce matin."
+      ],
+      "rule": "Être (elle est) + participio (arrivée, con -e porque elle es femenino). El momento (ce matin) va al principio o al final.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella no vino a la fiesta».",
+      "tiles": [
+        "venue",
+        "Elle",
+        "pas",
+        "n'est",
+        "à",
+        "la",
+        "fête"
+      ],
+      "answers": [
+        "Elle n'est pas venue à la fête."
+      ],
+      "mistakes": [
+        {
+          "answer": "Elle n'est venue pas à la fête.",
+          "explanation": "Pas va antes del participio: ne y pas rodean al auxiliar (n'est pas) y después viene venue."
+        }
+      ],
+      "rule": "Ne y pas rodean al auxiliar: elle n'est pas, y después el participio venue (con -e).",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Nosotras (todas mujeres) fuimos al cine».",
+      "tiles": [
+        "allées",
+        "Nous",
+        "sommes",
+        "au",
+        "cinéma"
+      ],
+      "answers": [
+        "Nous sommes allées au cinéma."
+      ],
+      "mistakes": [
+        {
+          "answer": "Nous allées sommes au cinéma.",
+          "explanation": "El auxiliar sommes va justo después de nous y el participio allées viene después: nous sommes allées. El participio no va antes del auxiliar."
+        }
+      ],
+      "rule": "Nous sommes + participio. Si nous son todas mujeres, el participio lleva -es: allées.",
+      "sourceIds": [
+        "bdl-participe-etre",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con el auxiliar: «Ayer ellos (hombres) fueron al parque».",
+      "before": "Hier, ils ",
+      "after": " allés au parc.",
+      "answers": [
+        "sont"
+      ],
+      "mistakes": [
+        {
+          "answer": "ont",
+          "explanation": "Ont es el auxiliar de avoir. Aller usa être: ils sont allés."
+        },
+        {
+          "answer": "est",
+          "explanation": "Est es el auxiliar de il o elle. El sujeto aquí es ils: ils sont allés."
+        }
+      ],
+      "rule": "Con ils, el auxiliar de aller es sont (être): ils sont allés.",
+      "sourceIds": [
+        "bdl-auxiliaires",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con el participio de arriver: «Ellas llegaron a las 5».",
+      "before": "Elles sont ",
+      "after": " à 5h.",
+      "answers": [
+        "arrivées"
+      ],
+      "mistakes": [
+        {
+          "answer": "arrivé",
+          "explanation": "Falta la concordancia: elles es femenino plural, así que el participio lleva -es."
+        },
+        {
+          "answer": "arrivés",
+          "explanation": "Arrivés es de un grupo de hombres (ils). Con elles, el participio lleva -es: arrivées."
+        },
+        {
+          "answer": "arrivée",
+          "explanation": "Arrivée es femenino singular. Con elles (plural) se añade -es: arrivées."
+        }
+      ],
+      "rule": "Elles sont + participio con -es: arrivées.",
+      "sourceIds": [
+        "bdl-participe-etre",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con la negación y el auxiliar: «Ella no vino a la fiesta».",
+      "before": "Elle ",
+      "after": " pas venue à la fête.",
+      "answers": [
+        "n'est"
+      ],
+      "mistakes": [
+        {
+          "answer": "ne est",
+          "explanation": "Ne delante de est se escribe n': n'est."
+        },
+        {
+          "answer": "n'a",
+          "explanation": "N'a es de avoir. Venir usa être: elle n'est pas venue."
+        }
+      ],
+      "rule": "Elle n'est pas venue: ne se escribe n' delante de est, y después van pas y el participio.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "bdl-auxiliaires"
+      ],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con el participio de naître (habla una mujer): «Nací en 2002».",
+      "before": "Je suis ",
+      "after": " en 2002.",
+      "answers": [
+        "née"
+      ],
+      "mistakes": [
+        {
+          "answer": "né",
+          "explanation": "Né es la forma de un hombre. Aquí habla una mujer, así que el participio lleva -e: née."
+        },
+        {
+          "answer": "naître",
+          "explanation": "Naître es el infinitivo. Después de je suis va el participio: née."
+        }
+      ],
+      "rule": "Naître se forma con être. Si habla una mujer: je suis née.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ayer ella fue al cine».",
+      "wrong": "Hier, elle a allé au cinéma.",
+      "answers": [
+        "Hier, elle est allée au cinéma.",
+        "Elle est allée au cinéma hier."
+      ],
+      "mistakes": [
+        {
+          "answer": "Hier, elle a allé au cinéma.",
+          "explanation": "Aller usa être, no avoir: elle est allée."
+        },
+        {
+          "answer": "Hier, elle est allé au cinéma.",
+          "explanation": "Con elle, el participio lleva -e: allée."
+        }
+      ],
+      "rule": "Aller + être: elle est allée (el participio concuerda con el sujeto).",
+      "sourceIds": [
+        "bdl-auxiliaires",
+        "bdl-participe-etre",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ellos (hombres) llegaron a las cinco».",
+      "wrong": "Ils sont arrivé à cinq heures.",
+      "answers": [
+        "Ils sont arrivés à cinq heures."
+      ],
+      "mistakes": [
+        {
+          "answer": "Ils sont arrivé à cinq heures.",
+          "explanation": "Ils es plural, así que el participio lleva -s: arrivés."
+        },
+        {
+          "answer": "Ils sont arrivées à cinq heures.",
+          "explanation": "Arrivées es la forma de elles (mujeres). Para ils (hombres) se escribe arrivés."
+        }
+      ],
+      "rule": "Con ils (hombres): ils sont arrivés, con -s.",
+      "sourceIds": [
+        "bdl-participe-etre",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ella no vino».",
+      "wrong": "Elle ne est pas venue.",
+      "answers": [
+        "Elle n'est pas venue."
+      ],
+      "mistakes": [
+        {
+          "answer": "Elle ne est pas venue.",
+          "explanation": "Ne delante de est se escribe n': n'est. Después vienen pas y el participio."
+        },
+        {
+          "answer": "Elle n'est venue pas.",
+          "explanation": "Pas va antes del participio: ne y pas rodean al auxiliar (n'est pas) y después viene venue."
+        },
+        {
+          "answer": "Elle n'est pas venu.",
+          "explanation": "Con elle, el participio lleva -e: venue."
+        }
+      ],
+      "rule": "Elle n'est pas venue: ne y pas rodean al auxiliar, ne delante de est se escribe n', y el participio lleva -e.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "bdl-participe-etre"
+      ],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Un amigo te pregunta qué hiciste ayer. Di adónde fuiste y a qué hora llegaste a casa (usa la forma de hombre o de mujer, según tú).",
+      "models": [
+        "Hier, je suis allé au cinéma. Je suis arrivé à la maison à 5h.",
+        "Hier, je suis allée au cinéma. Je suis arrivée à la maison à 5h.",
+        "Je suis allé au cinéma hier. Je suis arrivé à 5h."
+      ],
+      "focus": "je suis + participio (allé, arrivé) con la forma de tu género",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-participe-etre",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Cuéntale a un amigo que tu hermana no vino a la fiesta y se quedó en casa.",
+      "models": [
+        "Ma sœur n'est pas venue à la fête. Elle est restée à la maison.",
+        "Elle n'est pas venue à la fête. Elle est restée à la maison.",
+        "Ma sœur est restée à la maison. Elle n'est pas venue à la fête."
+      ],
+      "focus": "negación con être (n'est pas venue) y rester (restée) con -e",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-participe-etre",
+        "inventaire-f"
+      ],
+      "review": false
+    }
+  ]
+}

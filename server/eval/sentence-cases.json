@@ -124,5 +124,50 @@
     "accepted": [
       "Tu peux venir demain ?"
     ]
+  },
+  {
+    "situation": "Hablar de tu familia",
+    "focus": "los posesivos (mon, ma, mes; mon delante de vocal: mon amie)",
+    "sentence": "Ma amie arrive.",
+    "expect": "error",
+    "accepted": [
+      "Mon amie arrive."
+    ]
+  },
+  {
+    "situation": "Contar lo que hiciste ayer",
+    "focus": "el passé composé con avoir (j'ai + participio)",
+    "sentence": "Hier, je mangé une pomme.",
+    "expect": "error",
+    "accepted": [
+      "Hier, j'ai mangé une pomme."
+    ]
+  },
+  {
+    "situation": "Contar adónde fue una mujer",
+    "focus": "el passé composé con être (el participio concuerda: allée)",
+    "sentence": "Elle est allé au cinéma.",
+    "expect": "error",
+    "accepted": [
+      "Elle est allée au cinéma."
+    ]
+  },
+  {
+    "situation": "Hablar de lo que ves",
+    "focus": "los pronombres le, la, les (van antes del verbo: je le vois)",
+    "sentence": "Je vois le.",
+    "expect": "error",
+    "accepted": [
+      "Je le vois."
+    ]
+  },
+  {
+    "situation": "Hablar de tus planes",
+    "focus": "los pronombres y y en (van antes del verbo: j'y vais)",
+    "sentence": "Je vais y demain.",
+    "expect": "error",
+    "accepted": [
+      "J'y vais demain."
+    ]
   }
 ]

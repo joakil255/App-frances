@@ -1,0 +1,334 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a1-10",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A1",
+  "title": "Posesivos y demostrativos",
+  "areas": ["grammar", "spelling"],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "51",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-e",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo E: lista de gramática por nivel",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "56",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "65 (nivel A1)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "107-108",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-possessifs",
+      "title": "Banque de dépannage linguistique: «Déterminants possessifs : sens, emplois et formes»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23485/la-grammaire/les-determinants/determinants-possessifs/generalites-sur-les-determinants-possessifs"
+    },
+    {
+      "id": "bdl-mon-ton-son",
+      "title": "Banque de dépannage linguistique: «MON, TON, SON : emploi devant les mots féminins»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24157/la-grammaire/les-determinants/determinants-possessifs/mon-ton-et-son-devant-des-mots-feminins"
+    },
+    {
+      "id": "bdl-demonstratif",
+      "title": "Banque de dépannage linguistique: ficha «déterminant démonstratif» (Grand dictionnaire terminologique)",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "ficha en línea, consultada el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/fiche-gdt/fiche/26559615/determinant-demonstratif"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "El posesivo dice de quién es algo y va antes del sustantivo, como un artículo. Concuerda con lo poseído (la cosa), no con quien la posee. Formas: mon / ma / mes (mi, mis); ton / ta / tes (tu, tus); son / sa / ses (su, de él o de ella); notre / notre / nos (nuestro); votre / votre / vos (de usted, de ustedes); leur / leur / leurs (su, de ellos o de ellas). Se elige por el sustantivo: mon père (masculino), ma mère (femenino), mes parents (plural). En plural no se marca el género: nos parents, nos tantes.",
+      "sourceIds": ["bdl-possessifs", "inventaire-d", "inventaire-e", "niveau-a2"],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "El «su» del español tiene varias formas en francés. Con un solo dueño: son / sa / ses, y la elección depende de la cosa, no del dueño: Marie cherche son chat (chat es masculino, aunque Marie sea mujer); sa voiture puede ser el coche de él o el de ella. Con varios dueños: leur / leurs: Paul et Marie aiment leur chien, leurs parents.",
+      "sourceIds": ["bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "i3",
+      "text": "Delante de un sustantivo femenino que empieza con vocal o con h muda (una h que no se pronuncia), generalmente se usan mon, ton y son, aunque el sustantivo sea femenino: mon amie (mi amiga), ton amie, son amie. Por eso no se dice ma amie. Ojo: la regla dice «generalmente» porque hay palabras raras que no cumplen la regla; no se enseñan en este nivel.",
+      "sourceIds": ["bdl-mon-ton-son", "bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "i4",
+      "text": "Los demostrativos señalan algo y también van antes del sustantivo: ce chien (este o ese perro), cette jupe (esta o esa falda), ces gants (estos o esos guantes). Ce va con un masculino singular, cette con un femenino singular y ces con un plural, masculino o femenino. Cet es la forma de ce delante de un masculino singular que empieza con vocal o h muda: cet enfant (este niño), cet homme (este hombre). Con ce solo, no se distingue «este» de «ese»: ce chien sirve para los dos.",
+      "sourceIds": ["bdl-demonstratif", "inventaire-f", "inventaire-d", "niveau-a2"],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: la ficha BDL «déterminant démonstratif» da las cuatro formas (ce, cette, cet, ces) y el Inventaire F p. 65 trae los ejemplos Ce chien, Cette jupe, Cet enfant est gentil y Ces gants. Falta: ninguna fuente leída enuncia la regla de cet (delante de vocal o h muda; cet homme no está en las fuentes) ni que ce sirva a la vez para «este» y «ese»."
+    }
+  ],
+  "pattern": [
+    { "label": "Mi, tu, su (un dueño)", "options": ["mon manteau", "ma maison", "mes amis", "ton manteau", "ta maison", "tes amis", "son manteau", "sa maison", "ses amis"] },
+    { "label": "Nuestro, de usted(es)", "options": ["notre maison", "nos parents", "votre maison", "vos parents"] },
+    { "label": "Su (varios dueños)", "options": ["leur maison", "leurs parents"] },
+    { "label": "Femenino ante vocal", "options": ["mon amie", "ton amie", "son amie"] },
+    { "label": "Demostrativos", "options": ["ce chien", "cette jupe", "ces gants", "cet enfant"] }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Su coche (el coche de Marie)",
+      "target": "Sa voiture.",
+      "note": "En español «su» no cambia. En francés, elige la forma por la cosa: voiture es femenino, así que sa. Sa voiture puede ser el coche de él o el de ella.",
+      "sourceIds": ["bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "Mi amiga Nadia",
+      "target": "Mon amie Nadia.",
+      "note": "Amie es femenino, pero empieza con vocal: generalmente se usa mon en lugar de ma. Se dice mon amie, no ma amie.",
+      "sourceIds": ["bdl-mon-ton-son"],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Su casa (la casa de Paul y Marie)",
+      "target": "Leur maison.",
+      "note": "Si los dueños son varios, el francés usa leur (singular) o leurs (plural). Se elige por la cosa: leur maison, leurs parents.",
+      "sourceIds": ["bdl-possessifs", "inventaire-f"],
+      "review": false
+    }
+  ],
+  "examples": [
+    { "id": "e1", "text": "Mon manteau est trop petit.", "translation": "Mi abrigo es demasiado pequeño.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e2", "text": "Je te présente mon amie Nadia.", "translation": "Te presento a mi amiga Nadia.", "sourceIds": ["bdl-mon-ton-son"], "review": false },
+    { "id": "e3", "text": "Nos parents sont à la maison.", "translation": "Nuestros padres están en casa.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e4", "text": "J'aime bien leurs chaussures.", "translation": "Me gustan sus zapatos.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e5", "text": "Cette jupe est jolie.", "translation": "Esta falda es bonita.", "sourceIds": ["inventaire-f"], "review": false },
+    { "id": "e6", "text": "Cet enfant est gentil.", "translation": "Este niño es amable.", "sourceIds": ["inventaire-f"], "review": false }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Ma amie est gentille.",
+      "right": "Mon amie est gentille.",
+      "explanation": "Amie es femenino, pero empieza con vocal: generalmente se usa mon, ton, son. Se dice mon amie, no ma amie.",
+      "sourceIds": ["bdl-mon-ton-son", "bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Marie cherche sa chat.",
+      "right": "Marie cherche son chat.",
+      "explanation": "El posesivo concuerda con lo poseído, no con el dueño. Chat es masculino, así que son, aunque Marie sea mujer.",
+      "sourceIds": ["bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Paul et Marie aiment son chien.",
+      "right": "Paul et Marie aiment leur chien.",
+      "explanation": "Si los dueños son varios, «su» es leur (o leurs en plural), no son. Se dice leur chien, leurs chiens.",
+      "sourceIds": ["bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Ce enfant est gentil.",
+      "right": "Cet enfant est gentil.",
+      "explanation": "Delante de un masculino que empieza con vocal o h muda, ce se escribe cet: cet enfant. Se escucha igual que cette, pero cet lleva -t y no -tte.",
+      "sourceIds": ["inventaire-f", "bdl-demonstratif"],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 65 (Cet enfant est gentil, como ejemplo) y la ficha BDL «déterminant démonstratif» (las cuatro formas). Falta: un texto que enuncie la regla de cet delante de vocal o h muda, y la nota sobre la pronunciación."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Mi abrigo es demasiado pequeño».",
+      "tiles": ["petit", "Mon", "est", "manteau", "trop"],
+      "answers": ["Mon manteau est trop petit."],
+      "rule": "El posesivo va antes del sustantivo y concuerda con él: mon manteau (masculino singular).",
+      "sourceIds": ["inventaire-f", "bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Nuestros padres están en la casa».",
+      "tiles": ["maison", "Nos", "parents", "sont", "à", "la"],
+      "answers": ["Nos parents sont à la maison."],
+      "rule": "Parents es plural, así que nos (nuestros). En plural, nos no marca el género.",
+      "sourceIds": ["inventaire-f", "bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Me gusta esta falda».",
+      "tiles": ["bien", "jupe", "J'aime", "cette"],
+      "answers": ["J'aime bien cette jupe."],
+      "rule": "Jupe es femenino singular, así que cette (esta): j'aime bien cette jupe.",
+      "sourceIds": ["inventaire-f", "bdl-demonstratif"],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con el posesivo: «Aquí está mi amiga Nadia».",
+      "before": "Voici ",
+      "after": " amie Nadia.",
+      "answers": ["mon"],
+      "mistakes": [
+        { "answer": "ma", "explanation": "Ma es el femenino normal, pero amie empieza con vocal. Generalmente se usa mon: mon amie." },
+        { "answer": "mes", "explanation": "Mes es plural. Es una sola amiga: mon amie." }
+      ],
+      "rule": "Delante de un femenino que empieza con vocal, generalmente mon, ton, son: mon amie.",
+      "sourceIds": ["bdl-mon-ton-son"],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con el posesivo: «Paul y Marie quieren a su perro (el perro de los dos)».",
+      "before": "Paul et Marie aiment ",
+      "after": " chien.",
+      "answers": ["leur"],
+      "mistakes": [
+        { "answer": "leurs", "explanation": "Leurs va con un sustantivo plural. Chien es singular: leur chien." },
+        { "answer": "son", "explanation": "Son es para un solo dueño. Aquí los dueños son dos: leur chien." }
+      ],
+      "rule": "Varios dueños y una sola cosa: leur + sustantivo singular.",
+      "sourceIds": ["bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con el posesivo: «Nosotros queremos a nuestros padres».",
+      "before": "Nous aimons ",
+      "after": " parents.",
+      "answers": ["nos"],
+      "mistakes": [
+        { "answer": "notre", "explanation": "Notre va con un sustantivo singular. Parents es plural: nos parents." },
+        { "answer": "mes", "explanation": "Mes es «mis». El enunciado dice «nuestros»: los dueños somos nosotros, así que nos." },
+        { "answer": "leurs", "explanation": "Leurs es «de ellos». El enunciado dice «nuestros»: los dueños somos nosotros, así que nos." }
+      ],
+      "rule": "Nuestro con un sustantivo plural: nos parents.",
+      "sourceIds": ["bdl-possessifs", "inventaire-f"],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con el demostrativo: «No me gustan estos guantes».",
+      "before": "Je n'aime pas ",
+      "after": " gants.",
+      "answers": ["ces"],
+      "mistakes": [
+        { "answer": "ce", "explanation": "Ce va con un masculino singular. Gants es plural: ces gants." },
+        { "answer": "cette", "explanation": "Cette va con un femenino singular. Gants es plural: ces gants." },
+        { "answer": "cet", "explanation": "Cet va con un masculino singular que empieza con vocal. Gants es plural: ces gants." }
+      ],
+      "rule": "Con un sustantivo plural, masculino o femenino: ces.",
+      "sourceIds": ["inventaire-f", "bdl-demonstratif"],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Marie busca a su gato».",
+      "wrong": "Marie cherche sa chat.",
+      "answers": ["Marie cherche son chat."],
+      "mistakes": [
+        { "answer": "Marie cherche sa chat.", "explanation": "El posesivo concuerda con lo poseído, no con el dueño. Chat es masculino: son chat, aunque Marie sea mujer." },
+        { "answer": "Marie cherche ses chat.", "explanation": "Ses es plural. Es un solo gato: son chat." }
+      ],
+      "rule": "Son va con un masculino singular, sin importar si el dueño es hombre o mujer.",
+      "sourceIds": ["bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Tu amiga vive en París».",
+      "wrong": "Ta amie habite à Paris.",
+      "answers": ["Ton amie habite à Paris.", "Ton amie habite Paris.", "Ton amie vit à Paris."],
+      "mistakes": [
+        { "answer": "Ta amie habite à Paris.", "explanation": "Amie es femenino, pero empieza con vocal: generalmente se usa ton. Se dice ton amie, no ta amie." },
+        { "answer": "Tes amie habite à Paris.", "explanation": "Tes es plural. Es una sola amiga: ton amie." }
+      ],
+      "rule": "Delante de un femenino que empieza con vocal, generalmente ton: ton amie.",
+      "sourceIds": ["bdl-mon-ton-son", "bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Este niño es amable».",
+      "wrong": "Ce enfant est gentil.",
+      "answers": ["Cet enfant est gentil."],
+      "mistakes": [
+        { "answer": "Ce enfant est gentil.", "explanation": "Delante de un masculino que empieza con vocal o h muda, ce se escribe cet: cet enfant." },
+        { "answer": "Ces enfant est gentil.", "explanation": "Ces es plural. Es un solo niño: cet enfant." }
+      ],
+      "rule": "Ce se escribe cet delante de un masculino singular que empieza con vocal o h muda: cet enfant.",
+      "sourceIds": ["inventaire-f", "bdl-demonstratif"],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 65 (Cet enfant est gentil, como ejemplo) y la ficha BDL «déterminant démonstratif» (las cuatro formas). Falta: un texto que enuncie la regla de cet delante de vocal o h muda."
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Estás en una fiesta. Presenta a una amiga y a tus padres a otra persona.",
+      "models": [
+        "Je te présente mon amie Nadia et mes parents.",
+        "Voici mon amie Nadia. Voilà mes parents.",
+        "Voici mes parents et mon amie Nadia."
+      ],
+      "focus": "mon amie (femenino ante vocal) y mes parents (plural)",
+      "sourceIds": ["bdl-mon-ton-son", "bdl-possessifs"],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Estás en una tienda con una amiga. Dile qué te gusta: una falda y unos guantes.",
+      "models": [
+        "J'aime bien cette jupe et ces gants.",
+        "Cette jupe est jolie. J'aime bien ces gants.",
+        "J'aime bien cette jupe. Ces gants sont jolis aussi."
+      ],
+      "focus": "cette + femenino singular, ces + plural",
+      "sourceIds": ["inventaire-f", "bdl-demonstratif"],
+      "review": false
+    }
+  ]
+}

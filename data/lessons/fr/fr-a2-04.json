@@ -1,0 +1,592 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a2-04",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A2",
+  "title": "Los pronombres y / en",
+  "areas": [
+    "grammar",
+    "syntax"
+  ],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "52",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-e",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo E: lista de gramática por nivel",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "58",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "73 (nivel A2)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "bdl-en",
+      "title": "Banque de dépannage linguistique: «Pronom personnel EN : usages et mode d'emploi»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23513/la-grammaire/les-pronoms/pronoms-personnels/le-pronom-personnel-en"
+    },
+    {
+      "id": "bdl-y",
+      "title": "Banque de dépannage linguistique: «NI et N'Y : distinguer ces homophones»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24451/la-grammaire/les-homophones-grammaticaux/les-homophones-ni-et-ny"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-place-negation",
+      "title": "Banque de dépannage linguistique: «Place du verbe avec ne… pas et ne pas»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23909/la-syntaxe/la-negation-et-la-restriction/place-du-verbe-avec-ne-pas-et-ne-pas"
+    },
+    {
+      "id": "bdl-de-negative",
+      "title": "Banque de dépannage linguistique: «DE : emploi dans une phrase négative»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23514/la-grammaire/les-determinants/determinants-indefinis/de-dans-une-phrase-negative"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Los pronombres «en» e «y» reemplazan algo que ya se dijo, para no repetirlo. En reemplaza un complemento con de, casi siempre una cosa: Vous voulez du sucre ? Oui, j'en prends un. «Du sucre» queda dentro de en; lo que se cuenta o se mide (un, plusieurs) se queda en la frase.",
+      "sourceIds": [
+        "bdl-en",
+        "inventaire-d",
+        "inventaire-e",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Y reemplaza un lugar: el sitio al que vas o donde estás. Vous allez souvent au cinéma ? Oui, j'y vais une fois par semaine. Au cinéma queda dentro de y. En esta lección y se usa solo para lugares.",
+      "sourceIds": [
+        "inventaire-d",
+        "inventaire-e",
+        "inventaire-f",
+        "bdl-y"
+      ],
+      "review": false
+    },
+    {
+      "id": "i3",
+      "text": "Y y en van antes del verbo. Cuando hay un solo verbo, van justo antes de él, igual que le, la y les: j'y vais, j'en prends un. No se ponen después del verbo como el complemento (je vais au cinéma, pero j'y vais; je vais y ✗). El resto de la frase no cambia de sitio: j'y vais une fois par semaine. Con dos verbos (je vais aller…) la posición se deja para más adelante.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-place-negation"
+      ],
+      "review": false
+    },
+    {
+      "id": "i4",
+      "text": "Je + y o en se escribe j'y y j'en, porque y y en empiezan por vocal: j'y vais, j'en prends un.",
+      "sourceIds": [
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "i5",
+      "text": "Para negar, ne y pas rodean al pronombre y al verbo juntos: je n'y vais pas, je n'en veux pas. Delante de y y en, ne se escribe n'. Después de ne… pas, du, de la, des (y un, une) pasan a de si el sustantivo sigue (je ne veux pas de pain); cuando en reemplaza al sustantivo ya no hace falta: je n'en veux pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-y",
+        "bdl-elision",
+        "bdl-de-negative"
+      ],
+      "review": false
+    },
+    {
+      "id": "i6",
+      "text": "Con en, la cantidad se queda en la frase y el sustantivo desaparece: j'en prends un, elle en a plusieurs, j'en ai deux. En español la cantidad sola basta (tengo dos); en francés hace falta en: j'ai deux ✗.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-en"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 73 («j'en prends un») y la BDL «Pronom personnel EN» («Elle en a plusieurs !»). La regla de que la cantidad se queda se apoya en «j'en prends un». Falta: solo la frase j'en ai deux es nuestra; ninguna fuente leída trae en con ese número."
+    },
+    {
+      "id": "i7",
+      "text": "Quedan para más adelante: y y en con verbos como penser à o parler de (nivel B1 en el Inventaire), dos pronombres juntos y el passé composé con y o en.",
+      "sourceIds": [
+        "inventaire-d"
+      ],
+      "review": false
+    }
+  ],
+  "pattern": [
+    {
+      "label": "Y (lugar) + verbo",
+      "options": [
+        "j'y vais",
+        "tu y vas",
+        "nous y allons"
+      ]
+    },
+    {
+      "label": "En + verbo",
+      "options": [
+        "j'en prends un",
+        "elle en a plusieurs",
+        "j'en ai deux"
+      ]
+    },
+    {
+      "label": "Negación",
+      "options": [
+        "je n'y vais pas",
+        "tu n'y vas pas",
+        "je n'en veux pas",
+        "il n'en prend pas"
+      ]
+    }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "¿Vas al cine? Sí, voy",
+      "target": "Oui, j'y vais.",
+      "note": "En español basta con «voy». En francés el lugar ya dicho (au cinéma) pasa a y, y y se escribe antes del verbo: j'y vais. Je + y se escribe j'y.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-elision",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "¿Quiere azúcar? Sí, tomo uno",
+      "target": "Oui, j'en prends un.",
+      "note": "En español «uno» basta. En francés el azúcar pasa a en, antes del verbo, y el un se queda: j'en prends un.",
+      "sourceIds": [
+        "bdl-en",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "No quiero (de eso)",
+      "target": "Je n'en veux pas.",
+      "note": "Ne y pas rodean al pronombre y al verbo. Ne se escribe n' delante de en: je n'en veux pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-en",
+        "bdl-elision"
+      ],
+      "review": false
+    }
+  ],
+  "examples": [
+    {
+      "id": "e1",
+      "text": "Vous voulez du sucre ? Oui, j'en prends un.",
+      "translation": "¿Quiere azúcar? Sí, tomo uno.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e2",
+      "text": "Vous allez souvent au cinéma ? Oui, j'y vais une fois par semaine.",
+      "translation": "¿Va a menudo al cine? Sí, voy una vez por semana.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e3",
+      "text": "Elle en a plusieurs !",
+      "translation": "¡Ella tiene varios!",
+      "sourceIds": [
+        "bdl-en"
+      ],
+      "review": false
+    },
+    {
+      "id": "e4",
+      "text": "Tu vas à la boulangerie ? Non, je n'y vais pas.",
+      "translation": "¿Vas a la panadería? No, no voy.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-place-negation"
+      ],
+      "review": false
+    },
+    {
+      "id": "e5",
+      "text": "Tu veux du pain ? Non, je n'en veux pas.",
+      "translation": "¿Quieres pan? No, no quiero.",
+      "sourceIds": [
+        "bdl-en",
+        "bdl-place-negation"
+      ],
+      "review": false
+    }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Je vais y.",
+      "right": "J'y vais.",
+      "explanation": "Con un solo verbo, y va justo antes de él: aquí antes de vais, j'y vais. «Je vais y» deja y al final como si fuera el lugar; además je + y se escribe j'y.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Oui, je prends un.",
+      "right": "Oui, j'en prends un.",
+      "explanation": "Si el sustantivo (el azúcar) desaparece, en ocupa su lugar y el un se queda: j'en prends un. En español basta con «tomo uno», en francés falta en.",
+      "sourceIds": [
+        "bdl-en",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Je ne vais y pas.",
+      "right": "Je n'y vais pas.",
+      "explanation": "Ne y pas rodean al pronombre y al verbo juntos: n'y vais pas. Y no se queda entre el verbo y pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-y"
+      ],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Je ne veux pas en.",
+      "right": "Je n'en veux pas.",
+      "explanation": "En va antes del verbo, entre ne y el verbo: je n'en veux pas. No se pone después como el complemento.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-en"
+      ],
+      "review": false
+    },
+    {
+      "id": "p5",
+      "wrong": "Je en prends un.",
+      "right": "J'en prends un.",
+      "explanation": "Delante de en (vocal), je se escribe j': j'en prends un.",
+      "sourceIds": [
+        "bdl-elision"
+      ],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Sí, voy (al cine)».",
+      "tiles": [
+        "vais",
+        "Oui,",
+        "j'y"
+      ],
+      "answers": [
+        "Oui, j'y vais."
+      ],
+      "mistakes": [
+        {
+          "answer": "Oui, vais j'y.",
+          "explanation": "El pronombre y va antes del verbo, no después: j'y vais."
+        }
+      ],
+      "rule": "Y reemplaza el lugar y va antes del verbo: j'y vais.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-elision",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «No voy (a la panadería)».",
+      "tiles": [
+        "Je",
+        "vais",
+        "pas",
+        "n'y"
+      ],
+      "answers": [
+        "Je n'y vais pas."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je n'y pas vais.",
+          "explanation": "Ne y pas rodean al pronombre y al verbo: n'y vais pas."
+        },
+        {
+          "answer": "Je vais n'y pas.",
+          "explanation": "El pronombre y el verbo van juntos entre ne y pas: n'y vais pas."
+        }
+      ],
+      "rule": "Ne (n') y pas rodean a y y al verbo: je n'y vais pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-y",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Tomo uno (de azúcar)».",
+      "tiles": [
+        "prends",
+        "un",
+        "J'en"
+      ],
+      "answers": [
+        "J'en prends un."
+      ],
+      "mistakes": [
+        {
+          "answer": "J'en un prends.",
+          "explanation": "El un se queda después del verbo: j'en prends un."
+        },
+        {
+          "answer": "Prends un j'en.",
+          "explanation": "En va antes del verbo: j'en prends un."
+        }
+      ],
+      "rule": "En reemplaza el sustantivo y va antes del verbo; el un se queda: j'en prends un.",
+      "sourceIds": [
+        "bdl-en",
+        "inventaire-f",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con el pronombre: «Sí, voy allí (a París)».",
+      "before": "Oui, ",
+      "after": " vais.",
+      "answers": [
+        "j'y"
+      ],
+      "mistakes": [
+        {
+          "answer": "je",
+          "explanation": "Falta y: el lugar (a París) pasa a y, y je + y se escribe j'y."
+        },
+        {
+          "answer": "j'en",
+          "explanation": "En reemplaza una cosa con de; un lugar se reemplaza con y."
+        }
+      ],
+      "rule": "El lugar se reemplaza con y, antes del verbo: j'y vais.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con el pronombre: «No, no quiero (de pan)».",
+      "before": "Non, je ",
+      "after": " veux pas.",
+      "answers": [
+        "n'en"
+      ],
+      "mistakes": [
+        {
+          "answer": "n'y",
+          "explanation": "Y es para lugares; el pan es una cosa con de, y se reemplaza con en."
+        },
+        {
+          "answer": "ne",
+          "explanation": "Falta en: el pronombre va entre ne y el verbo, y ne se escribe n' delante de en."
+        }
+      ],
+      "rule": "El pan se reemplaza con en; entre ne y el verbo: je n'en veux pas.",
+      "sourceIds": [
+        "bdl-en",
+        "bdl-place-negation",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con el pronombre: «¿Tienes hermanos? Sí, tengo dos».",
+      "before": "Oui, j'",
+      "after": " ai deux.",
+      "answers": [
+        "en"
+      ],
+      "mistakes": [
+        {
+          "answer": "y",
+          "explanation": "Y es para lugares; aquí se cuenta algo (dos hermanos) y se usa en."
+        }
+      ],
+      "rule": "La cantidad se queda y el sustantivo pasa a en: j'en ai deux.",
+      "sourceIds": [
+        "bdl-en"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 73 («j'en prends un») y la BDL «Pronom personnel EN» («Elle en a plusieurs !»). La regla de que la cantidad se queda se apoya en «j'en prends un». Falta: solo la frase j'en ai deux es nuestra; ninguna fuente leída trae en con ese número."
+    },
+    {
+      "id": "x7",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Voy (allí)».",
+      "wrong": "Je vais y.",
+      "answers": [
+        "J'y vais."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je vais y.",
+          "explanation": "Y va antes del verbo: j'y vais."
+        },
+        {
+          "answer": "Je y vais.",
+          "explanation": "Delante de y (vocal), je se escribe j': j'y vais."
+        }
+      ],
+      "rule": "Y va antes del verbo y je + y es j'y: j'y vais.",
+      "sourceIds": [
+        "bdl-y",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase usando en: «¿Quiere azúcar? Sí, tomo uno».",
+      "wrong": "Oui, je prends un.",
+      "answers": [
+        "Oui, j'en prends un."
+      ],
+      "mistakes": [
+        {
+          "answer": "Oui, je prends un.",
+          "explanation": "Falta en: sin el sustantivo, la cantidad necesita en."
+        },
+        {
+          "answer": "Oui, je en prends un.",
+          "explanation": "Delante de en (vocal), je se escribe j': j'en prends un."
+        }
+      ],
+      "rule": "Falta en antes del verbo: j'en prends un.",
+      "sourceIds": [
+        "bdl-en",
+        "inventaire-f",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «No, no quiero (de eso)».",
+      "wrong": "Non, je ne veux pas en.",
+      "answers": [
+        "Non, je n'en veux pas."
+      ],
+      "mistakes": [
+        {
+          "answer": "Non, je ne veux pas en.",
+          "explanation": "En va antes del verbo, entre ne y el verbo: je n'en veux pas."
+        },
+        {
+          "answer": "Non, je ne en veux pas.",
+          "explanation": "Ne se escribe n' delante de en: je n'en veux pas."
+        }
+      ],
+      "rule": "En va entre ne y el verbo, y ne se escribe n': je n'en veux pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-en",
+        "bdl-elision"
+      ],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Una amiga te pregunta: «Tu vas souvent à la piscine ?». Responde que sí, una vez por semana.",
+      "models": [
+        "Oui, j'y vais une fois par semaine.",
+        "Oui, j'y vais souvent.",
+        "Oui, j'y vais une fois par semaine, le samedi."
+      ],
+      "focus": "y antes del verbo, j'y vais",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-y",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Un amigo te pregunta: «Tu veux du café ?». Dile que no quieres.",
+      "models": [
+        "Non, je n'en veux pas.",
+        "Non, merci, je n'en veux pas."
+      ],
+      "focus": "n'en entre ne y el verbo (je n'en veux pas)",
+      "sourceIds": [
+        "bdl-en",
+        "bdl-place-negation",
+        "bdl-elision"
+      ],
+      "review": false
+    }
+  ]
+}

@@ -1,0 +1,600 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a2-03",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A2",
+  "title": "Pronombres de complemento directo (le, la, les)",
+  "areas": [
+    "grammar",
+    "syntax"
+  ],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49 y 52",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-e",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo E: lista de gramática por nivel",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "56-58",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "67 (nivel A2)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "107",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-complement-direct",
+      "title": "Banque de dépannage linguistique: «Le complément direct : mode d'emploi»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24276/la-grammaire/la-grammaire-actuelle/les-fonctions/le-complement-direct"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-place-negation",
+      "title": "Banque de dépannage linguistique: «Place du verbe avec ne… pas et ne pas»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23909/la-syntaxe/la-negation-et-la-restriction/place-du-verbe-avec-ne-pas-et-ne-pas"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "Un complemento directo es lo que recibe la acción del verbo sin preposición en medio: en je vois le film, «le film» es el complemento directo. Para no repetirlo se reemplaza por un pronombre: le (masculino singular), la (femenino singular), l' (delante de una vocal o de una h muda) y les (plural). Je vois le film → je le vois. Je prends la clé → je la prends. Je vois les clés → je les vois. El pronombre toma el género y el número de lo que reemplaza.",
+      "sourceIds": [
+        "bdl-complement-direct",
+        "inventaire-d",
+        "inventaire-e",
+        "niveau-a2"
+      ],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "El pronombre se escribe antes del verbo conjugado, no después como el complemento: je vois le film, pero je le vois (je vois le ✗). Cuando hay un solo verbo, el pronombre va justo antes de él (con aller + infinitivo, mira más abajo). El resto de la frase (lugar, momento) no cambia de sitio: je le vois demain.",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "i3",
+      "text": "Delante de una vocal o de una h muda, le y la se escriben l': je l'écoute, je l'achète, tu l'aimes. L' sirve para el masculino y para el femenino, así que mira lo que reemplaza para saber el género. Les nunca se elide: je les écoute.",
+      "sourceIds": [
+        "bdl-elision",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "i4",
+      "text": "Para negar, ne y pas rodean al pronombre y al verbo juntos: je ne le vois pas, je ne la prends pas, nous ne les achetons pas. El pronombre va entre ne y el verbo; con l' queda ne: je ne l'écoute pas.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    },
+    {
+      "id": "i5",
+      "text": "Con aller + infinitivo (el futur proche de la lección 8), el pronombre va antes del infinitivo, porque es el verbo al que complementa: je vais le voir. No va antes de aller: je le vais voir ✗. Para negar, ne y pas rodean a aller: je ne vais pas le voir.",
+      "sourceIds": [
+        "inventaire-d",
+        "bdl-place-negation"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire D p. 49 (el futur proche es contenido clave A1 y A2) y la BDL «Place du verbe avec ne… pas et ne pas» (con un infinitivo con negación, los pronombres complemento van antes del verbo: «Ne pas lui parler…»). Falta: ninguna fuente leída dice con todas las letras que en aller + infinitivo el pronombre va antes del infinitivo (je vais le voir). El ejemplo y la regla son propios y se comprobaron con el conocimiento general del francés."
+    },
+    {
+      "id": "i6",
+      "text": "Esta lección trata solo de le, la, l' y les. Me, te, nous y vous también pueden ser complemento directo en A2 (me voit, nous aime…), pero se proponen para una lección posterior.",
+      "sourceIds": [
+        "niveau-a2"
+      ],
+      "review": false
+    }
+  ],
+  "pattern": [
+    {
+      "label": "Pronombre + verbo",
+      "options": [
+        "je le vois",
+        "tu la prends",
+        "il les aime",
+        "nous les achetons"
+      ]
+    },
+    {
+      "label": "Con l' (vocal o h muda)",
+      "options": [
+        "je l'écoute",
+        "tu l'achètes",
+        "elle l'aime"
+      ]
+    },
+    {
+      "label": "Negación",
+      "options": [
+        "je ne le vois pas",
+        "tu ne la prends pas",
+        "nous ne les achetons pas",
+        "je ne l'écoute pas"
+      ]
+    },
+    {
+      "label": "Con aller + infinitivo",
+      "options": [
+        "je vais le voir",
+        "tu vas la prendre",
+        "je ne vais pas le voir"
+      ]
+    }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Veo la película → La veo",
+      "target": "Je vois le film. Je le vois.",
+      "note": "En español «la película» pide «la». En francés eliges el pronombre por la palabra francesa: film es masculino, así que el pronombre es le. El pronombre va antes del verbo, como en español (la veo).",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "t2",
+      "source": "No los compramos",
+      "target": "Nous ne les achetons pas.",
+      "note": "Los reemplaza algo plural (les). Ne y pas rodean al pronombre y al verbo: ne les achetons pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "La escucho (la radio)",
+      "target": "Je l'écoute.",
+      "note": "La y écoute: la se escribe l' delante de una vocal. Como l' sirve para el masculino y el femenino, solo la frase anterior te dice qué reemplaza.",
+      "sourceIds": [
+        "bdl-elision",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    }
+  ],
+  "examples": [
+    {
+      "id": "e1",
+      "text": "Je n'aime pas les serpents, je les déteste.",
+      "translation": "No me gustan las serpientes, las detesto.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e2",
+      "text": "Une minute, s'il vous plaît, je l'appelle.",
+      "translation": "Un minuto, por favor, lo (o la) llamo.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e3",
+      "text": "Tu aimes cette chanson ? Oui, je l'aime.",
+      "translation": "¿Te gusta esta canción? Sí, me gusta.",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "e4",
+      "text": "Je ne le vois pas.",
+      "translation": "No lo veo.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    },
+    {
+      "id": "e5",
+      "text": "Nous ne les achetons pas.",
+      "translation": "No los compramos.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    },
+    {
+      "id": "e6",
+      "text": "Je vais le voir demain.",
+      "translation": "Voy a verlo mañana.",
+      "sourceIds": [
+        "inventaire-d",
+        "bdl-place-negation"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire D p. 49 (el futur proche es contenido clave A1 y A2) y la BDL «Place du verbe avec ne… pas et ne pas» (con un infinitivo con negación, los pronombres complemento van antes del verbo: «Ne pas lui parler…»). Falta: ninguna fuente leída dice con todas las letras que en aller + infinitivo el pronombre va antes del infinitivo (je vais le voir). El ejemplo y la regla son propios y se comprobaron con el conocimiento general del francés."
+    }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Je vois le.",
+      "right": "Je le vois.",
+      "explanation": "El pronombre va antes del verbo conjugado, no después: je le vois. En español también va antes (lo veo): no lo dejes al final como si fuera el complemento.",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Je vois le film. Je la vois.",
+      "right": "Je vois le film. Je le vois.",
+      "explanation": "El pronombre toma el género de la palabra francesa: film es masculino, así que le. Aunque en español digas «la película», en francés mira film.",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "p3",
+      "wrong": "Je ne vois le pas.",
+      "right": "Je ne le vois pas.",
+      "explanation": "Ne y pas rodean al pronombre y al verbo juntos: ne le vois pas. El pronombre no se queda detrás del verbo ni de pas.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    },
+    {
+      "id": "p4",
+      "wrong": "Je le aime.",
+      "right": "Je l'aime.",
+      "explanation": "Delante de una vocal (aime) le se escribe l': je l'aime. Lo mismo con la: je l'écoute, no je la écoute.",
+      "sourceIds": [
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "p5",
+      "wrong": "Je le vais voir.",
+      "right": "Je vais le voir.",
+      "explanation": "Con aller + infinitivo, el pronombre va antes del infinitivo (voir), el verbo al que complementa: je vais le voir.",
+      "sourceIds": [
+        "inventaire-d",
+        "bdl-place-negation"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire D p. 49 (el futur proche es contenido clave A1 y A2) y la BDL «Place du verbe avec ne… pas et ne pas» (con un infinitivo con negación, los pronombres complemento van antes del verbo: «Ne pas lui parler…»). Falta: ninguna fuente leída dice con todas las letras que en aller + infinitivo el pronombre va antes del infinitivo (je vais le voir). El ejemplo y la regla son propios y se comprobaron con el conocimiento general del francés."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Lo veo (el film)».",
+      "tiles": [
+        "vois",
+        "Je",
+        "le"
+      ],
+      "answers": [
+        "Je le vois."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je vois le.",
+          "explanation": "El pronombre va antes del verbo conjugado, no después: je le vois."
+        }
+      ],
+      "rule": "El pronombre le va antes del verbo: je le vois.",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «No lo veo (el film)».",
+      "tiles": [
+        "ne",
+        "vois",
+        "Je",
+        "pas",
+        "le"
+      ],
+      "answers": [
+        "Je ne le vois pas."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je ne vois le pas.",
+          "explanation": "El pronombre va entre ne y el verbo: ne le vois pas."
+        },
+        {
+          "answer": "Je ne vois pas le.",
+          "explanation": "El pronombre no va después del verbo: ne le vois pas."
+        }
+      ],
+      "rule": "Ne y pas rodean al pronombre y al verbo: je ne le vois pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ella no la escucha (la radio)».",
+      "tiles": [
+        "Elle",
+        "ne",
+        "l'écoute",
+        "pas"
+      ],
+      "answers": [
+        "Elle ne l'écoute pas."
+      ],
+      "mistakes": [
+        {
+          "answer": "Elle l'écoute ne pas.",
+          "explanation": "Ne y pas rodean al pronombre y al verbo: ne l'écoute pas."
+        }
+      ],
+      "rule": "L' (la delante de una vocal) va entre ne y el verbo: elle ne l'écoute pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Voy a verlo mañana (a Paul)».",
+      "tiles": [
+        "Je",
+        "vais",
+        "le",
+        "voir",
+        "demain"
+      ],
+      "answers": [
+        "Je vais le voir demain.",
+        "Demain, je vais le voir."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je vais voir le demain.",
+        "explanation": "En francés el pronombre va antes del infinitivo (le voir), no pegado después como en español (verlo)."
+      },
+      {
+        "answer": "Je le vais voir demain.",
+          "explanation": "El pronombre va antes del infinitivo (voir), no antes de aller: je vais le voir."
+        }
+      ],
+      "rule": "Con aller + infinitivo, el pronombre va antes del infinitivo: je vais le voir. El momento (demain) va al final o al principio.",
+      "sourceIds": [
+        "inventaire-d",
+        "bdl-place-negation"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire D p. 49 (el futur proche es contenido clave A1 y A2) y la BDL «Place du verbe avec ne… pas et ne pas» (con un infinitivo con negación, los pronombres complemento van antes del verbo: «Ne pas lui parler…»). Falta: ninguna fuente leída dice con todas las letras que en aller + infinitivo el pronombre va antes del infinitivo (je vais le voir). El ejemplo y la regla son propios y se comprobaron con el conocimiento general del francés."
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con el pronombre: «Las llaves (les clés): las veo».",
+      "before": "Je ",
+      "after": " vois.",
+      "answers": [
+        "les"
+      ],
+      "mistakes": [
+        {
+          "answer": "le",
+          "explanation": "Clés es plural: el pronombre es les, no le."
+        },
+        {
+          "answer": "la",
+          "explanation": "Clés es plural: el pronombre es les, no la."
+        }
+      ],
+      "rule": "Les clés es plural, así que el pronombre es les: je les vois.",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con el pronombre: «La escucho (la radio)».",
+      "before": "Je ",
+      "after": "écoute.",
+      "answers": [
+        "l'"
+      ],
+      "mistakes": [
+        {
+          "answer": "la",
+          "explanation": "Delante de una vocal, la se escribe l': je l'écoute."
+        },
+        {
+          "answer": "le",
+          "explanation": "La radio es femenino, y delante de una vocal (écoute) la se escribe l': je l'écoute."
+        }
+      ],
+      "rule": "Delante de una vocal (écoute), la se escribe l': je l'écoute.",
+      "sourceIds": [
+        "bdl-elision",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con el pronombre: «No la veo (la voiture)».",
+      "before": "Je ne ",
+      "after": " vois pas.",
+      "answers": [
+        "la"
+      ],
+      "mistakes": [
+        {
+          "answer": "le",
+          "explanation": "Voiture es femenino: el pronombre es la, no le."
+        },
+        {
+          "answer": "les",
+          "explanation": "Voiture es singular: el pronombre es la, no les."
+        }
+      ],
+      "rule": "Voiture es femenino singular: je ne la vois pas.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Lo compro (le pain)».",
+      "wrong": "Je le achète.",
+      "answers": [
+        "Je l'achète."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je le achète.",
+          "explanation": "Delante de una vocal (achète), le se escribe l': je l'achète."
+        }
+      ],
+      "rule": "Delante de una vocal, le se escribe l': je l'achète.",
+      "sourceIds": [
+        "bdl-elision",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Veo el film. Lo veo».",
+      "wrong": "Je vois le film. Je la vois.",
+      "answers": [
+        "Je vois le film. Je le vois."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je vois le film. Je la vois.",
+          "explanation": "Film es masculino: el pronombre es le, no la."
+        }
+      ],
+      "rule": "Film es masculino: el pronombre es le (je le vois).",
+      "sourceIds": [
+        "bdl-complement-direct"
+      ],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «No lo veo (el film)».",
+      "wrong": "Je le ne vois pas.",
+      "answers": [
+        "Je ne le vois pas."
+      ],
+      "mistakes": [
+        {
+          "answer": "Je le ne vois pas.",
+          "explanation": "Ne va antes del pronombre: ne le vois pas, no le ne vois."
+        },
+        {
+          "answer": "Je ne vois pas le.",
+          "explanation": "El pronombre va entre ne y el verbo: ne le vois pas."
+        }
+      ],
+      "rule": "Ne va antes del pronombre: je ne le vois pas.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Un amigo te pregunta: «Tu aimes cette chanson ?». Responde que sí y que la escuchas todos los días.",
+      "models": [
+        "Oui, je l'aime. Je l'écoute tous les jours.",
+        "Oui, je l'aime beaucoup. Je l'écoute tous les jours.",
+        "Oui, je l'écoute tous les jours."
+      ],
+      "focus": "l' delante de una vocal, antes del verbo (je l'aime, je l'écoute)",
+      "sourceIds": [
+        "bdl-complement-direct",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Una amiga te pregunta: «Tu vois mes clés ?». Dile que no las ves.",
+      "models": [
+        "Non, je ne les vois pas.",
+        "Je ne les vois pas.",
+        "Non, je ne les vois pas ici."
+      ],
+      "focus": "les entre ne y el verbo, con pas después (je ne les vois pas)",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-complement-direct"
+      ],
+      "review": false
+    }
+  ]
+}
