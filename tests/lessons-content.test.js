@@ -33,7 +33,7 @@ const EXPECTED_INDEX = [
 ];
 
 // Lecciones disponibles, en orden (cada lección nueva agrega su id)
-const AVAILABLE_IDS = ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09', 'fr-a1-10', 'fr-a2-01'];
+const AVAILABLE_IDS = ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09', 'fr-a1-10', 'fr-a2-01', 'fr-a2-02'];
 
 test('el índice v2 es válido, tiene las 24 lecciones en orden y solo las disponibles tienen archivo', () => {
   const data = index();
@@ -203,6 +203,12 @@ const FRENCH = {
   situations: (s) => s.models[0],
 };
 
+test('fr-a2-02: x1 acepta la frase sin punto final ni mayúscula inicial', () => {
+  const x1 = readJson(lessonUrl('fr-a2-02')).exercises.find((x) => x.id === 'x1');
+  for (const typed of ['Elle est arrivée en retard ce matin', 'elle est arrivée en retard ce matin.', 'ce matin, elle est arrivée en retard']) {
+    assert.equal(checkExercise(x1, typed, { requireAccents: true }).correct, true, typed);
+  }
+});
 
 test('el documento dice que está pendiente de revisión y nombra las fuentes', () => {
   const doc = readFileSync(DOC, 'utf8');
