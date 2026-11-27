@@ -1,10 +1,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SCREENS, resolveRoute, routeParam } from '../js/lib/router.js';
+import { SCREENS, TABS, resolveRoute, routeParam, tabFor } from '../js/lib/router.js';
 
-test('SCREENS tiene las ocho pantallas en orden', () => {
-  assert.deepEqual(SCREENS.map((s) => s.id), ['home', 'vocabulary', 'study', 'quiz', 'progress', 'chat', 'reader', 'build']);
-  assert.deepEqual(SCREENS.map((s) => s.title), ['Inicio', 'Palabras', 'Estudiar', 'Quiz', 'Progreso', 'Conversar', 'Leer', 'Construir frases']);
+test('SCREENS: primero los tres destinos y después las pantallas de segundo nivel', () => {
+  assert.deepEqual(SCREENS.map((s) => s.id), ['learn', 'practice', 'progress', 'vocabulary', 'study', 'quiz', 'reader', 'chat', 'build']);
+  assert.deepEqual(TABS.map((s) => [s.id, s.path, s.title]), [['learn', 'aprende', 'Aprende'], ['practice', 'practica', 'Practica'], ['progress', 'progreso', 'Progreso']]);
+});
+
+test('cada pantalla de segundo nivel pertenece a su destino', () => {
+  for (const id of ['vocabulary', 'study', 'quiz', 'reader', 'chat']) assert.equal(tabFor(id), 'practice');
+  assert.equal(tabFor('build'), 'learn');
+  for (const id of ['learn', 'practice', 'progress']) assert.equal(tabFor(id), id);
 });
 
 test('cada dirección lleva a su pantalla', () => {
@@ -15,10 +21,9 @@ test('cada dirección lleva a su pantalla', () => {
   assert.equal(resolveRoute('#/conversar'), 'chat');
 });
 
-test('dirección vacía lleva a Inicio', () => {
-  for (const hash of ['', '#', '#/']) {
-    assert.equal(resolveRoute(hash), 'home', `hash "${hash}"`);
-  }
+test('dirección vacía, #/ y #/aprende llevan a Aprende', () => {
+  for (const hash of ['', '#', '#/', '#/aprende', '#/APRENDE/']) assert.equal(resolveRoute(hash), 'learn', hash);
+  assert.equal(resolveRoute('#/practica'), 'practice');
 });
 
 test('ignora mayúsculas y la barra final', () => {
@@ -26,9 +31,10 @@ test('ignora mayúsculas y la barra final', () => {
   assert.equal(resolveRoute('#/progreso/'), 'progress');
 });
 
-test('dirección desconocida lleva a Inicio', () => {
-  assert.equal(resolveRoute('#/nada'), 'home');
-  assert.equal(resolveRoute('#/vocabulario/extra'), 'home');
+test('dirección desconocida lleva a Aprende', () => {
+  assert.equal(resolveRoute('#/nada'), 'learn');
+  assert.equal(resolveRoute('#/vocabulario/extra'), 'learn');
+  assert.equal(resolveRoute('#/leer/a/b'), 'learn');
 });
 
 test('un ancla que no es pantalla devuelve null', () => {
@@ -44,8 +50,8 @@ test('#/leer y #/leer/<id> llevan al lector; routeParam da el id sin cambiarlo',
   assert.equal(routeParam('#/leer/'), null);
   assert.equal(routeParam('#/quiz/abc'), null);
   assert.equal(routeParam('#main'), null);
-  assert.equal(resolveRoute('#/leer/a/b'), 'home');
-  assert.equal(resolveRoute('#/quiz/abc'), 'home');
+  assert.equal(resolveRoute('#/leer/a/b'), 'learn');
+  assert.equal(resolveRoute('#/quiz/abc'), 'learn');
 });
 
 test('#/construir y #/construir/<id> llevan a Construir; routeParam da el id', () => {
@@ -55,6 +61,6 @@ test('#/construir y #/construir/<id> llevan a Construir; routeParam da el id', (
   assert.equal(routeParam('#/construir/fr-a1-01'), 'fr-a1-01');
   assert.equal(routeParam('#/construir/repaso'), 'repaso');
   assert.equal(resolveRoute('#/construir/repaso'), 'build');
-  assert.equal(resolveRoute('#/construir/a/b'), 'home');
+  assert.equal(resolveRoute('#/construir/a/b'), 'learn');
   assert.equal(routeParam('#/leer/x'), 'x');
 });
