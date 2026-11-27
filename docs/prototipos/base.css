@@ -1,0 +1,195 @@
+/* Base común de los dos prototipos del rediseño (no es código de la app).
+   Tokens y letras salen de DESIGN.md («Métro»). */
+
+@font-face { font-family: 'Barlow Semi Condensed'; src: url('../../fonts/barlow-semi-condensed-500.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Barlow Semi Condensed'; src: url('../../fonts/barlow-semi-condensed-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Source Serif 4'; src: url('../../fonts/source-serif-4.woff2') format('woff2'); font-weight: 400 600; font-display: swap; }
+@font-face { font-family: 'Source Serif 4'; src: url('../../fonts/source-serif-4-italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+
+/* --- Tokens: claro --- */
+:root {
+  color-scheme: light;
+  --bg: #FAFBFC;
+  --tile-line: #DDE3E8;
+  --text: #1C2433;
+  --text-muted: #4A5368;
+  --text-planned: #5F6880;
+  --surface: #FFFFFF;
+  --divider: #C7CFDA;
+  --plaque: #233A7A;
+  --plaque-text: #FFFFFF;
+  --plaque-border: #FFFFFF;
+  --plaque-muted: #C9D3EE;
+  --nav-bg: #233A7A;
+  --nav-text: #C9D3EE;
+  --focus: #233A7A;
+  --focus-on-blue: #F2C230;
+  --secondary-text: #233A7A;
+  --emphasis: #233A7A;
+  --chart-bar: #233A7A;
+  --success-text: #1D6B3F;
+  --signal: #F2C230;      /* amarillo de los carteles */
+  --signal-text: #1C2433; /* 9,3:1 sobre --signal */
+
+  --font-sign: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
+  --font-text: 'Source Serif 4', Georgia, serif;
+  --size-sm: 0.8rem;
+  --size-base: 1rem;
+  --size-md: 1.25rem;
+  --size-plaque: 1.5625rem;
+  --size-lg: 1.95rem;
+  --radius: 8px;
+  --nav-height: 64px;
+}
+
+/* --- Tokens: oscuro («andén de noche») --- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #101827; --text: #E8ECF3; --text-muted: #B8C0D2; --text-planned: #8F9BB8;
+    --surface: #1A2438; --divider: #2E3A55; --plaque: #2D4A9A; --plaque-border: #E8ECF3;
+    --nav-bg: #1A2B5C; --focus: #F2C230; --secondary-text: #C9D3EE; --emphasis: #FFFFFF;
+    --chart-bar: #9DB0E3; --success-text: #7FD3A3; --tile-line: transparent;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101827; --text: #E8ECF3; --text-muted: #B8C0D2; --text-planned: #8F9BB8;
+  --surface: #1A2438; --divider: #2E3A55; --plaque: #2D4A9A; --plaque-border: #E8ECF3;
+  --nav-bg: #1A2B5C; --focus: #F2C230; --secondary-text: #C9D3EE; --emphasis: #FFFFFF;
+  --chart-bar: #9DB0E3; --success-text: #7FD3A3; --tile-line: transparent;
+}
+
+/* Colores de línea (decoración: nunca texto) */
+.line-learn { --line: #F2C230; }
+.line-practice { --line: #FFFFFF; }
+.line-progress { --line: #E0663A; }
+.line-vocabulary { --line: #2F7FD0; }
+.line-study { --line: #9B5BB5; }
+.line-quiz { --line: #2FA36B; }
+.line-reader { --line: #A0703C; }
+.line-chat { --line: #D9478A; }
+.line-build { --line: #178A8A; }
+
+/* --- Base --- */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text);
+  background:
+    repeating-linear-gradient(0deg, var(--tile-line) 0 1px, transparent 1px 30px),
+    repeating-linear-gradient(90deg, var(--tile-line) 0 1px, transparent 1px 60px),
+    var(--bg);
+}
+h1, h2, h3 { line-height: 1.2; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+main:focus, [tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+/* --- Barra del prototipo (fuera de la app) --- */
+.proto-bar {
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end;
+  max-width: 420px; margin: 0 auto; padding: 12px 16px;
+  font-family: var(--font-sign); font-size: var(--size-sm);
+  border-bottom: 2px dashed var(--divider);
+}
+.proto-bar p { margin: 0; flex-basis: 100%; font-weight: 700; font-size: var(--size-base); }
+.proto-bar label { display: grid; gap: 2px; color: var(--text-muted); font-weight: 500; }
+.proto-bar select { min-height: 44px; font: inherit; color: var(--text); background: var(--surface); border: 2px solid var(--text-planned); border-radius: var(--radius); padding: 0 8px; }
+
+/* --- Marco del teléfono: en el computador se ve como un móvil de 420 px --- */
+.phone { max-width: 420px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+@media (min-width: 500px) { .phone { border-inline: 2px solid var(--divider); } }
+.phone main { flex: 1; padding: 24px 16px 32px; }
+
+/* --- Placa de título --- */
+.plaque {
+  display: inline-flex; align-items: center; gap: 12px; margin: 0;
+  padding: 8px 16px; font-family: var(--font-sign); font-size: var(--size-plaque); font-weight: 700;
+  color: var(--plaque-text); background: var(--plaque);
+  border: 3px solid var(--plaque-border); border-radius: var(--radius); box-shadow: 0 0 0 2px var(--plaque);
+}
+.plaque:focus-visible { outline-offset: 6px; }
+.line-dot { display: block; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--line); box-shadow: 0 0 0 2px #FFFFFF; }
+/* Correspondencia: en el plano del metro, el círculo blanco con borde oscuro es donde se cruzan las líneas */
+.line-practice .line-dot, .line-dot.interchange { background: #FFFFFF; box-shadow: inset 0 0 0 4px #1C2433, 0 0 0 2px #FFFFFF; }
+
+/* --- Botones y enlaces --- */
+.button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 8px 20px; font-family: var(--font-sign); font-size: 1.05rem; font-weight: 700;
+  text-decoration: none; border-radius: var(--radius); border: 2px solid transparent; cursor: pointer;
+}
+.button-primary { background: var(--plaque); color: #FFFFFF; }
+.button-secondary { background: var(--surface); color: var(--secondary-text); border-color: currentColor; }
+.text-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--text); font-family: var(--font-sign); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.back-link { margin: 0 0 8px; }
+
+.section-title { margin: 40px 0 12px; font-family: var(--font-sign); font-size: var(--size-md); font-weight: 700; }
+.level-title { margin: 24px 0 4px; font-family: var(--font-sign); font-size: var(--size-base); font-weight: 700; color: var(--text-muted); }
+.hint { color: var(--text-muted); font-size: 0.9rem; margin: 8px 0 0; }
+
+/* --- Ruta de lecciones (como el índice de la Etapa 14, más compacta) --- */
+.route { list-style: none; margin: 0; padding: 0; }
+.route li { position: relative; }
+.route-row {
+  display: grid; grid-template-columns: 44px 1fr; gap: 0 8px; align-items: start;
+  min-height: 56px; padding: 10px 12px 10px 0; color: inherit; text-decoration: none;
+  border: 2px solid transparent; border-radius: var(--radius);
+}
+a.route-row[aria-current="step"] { background: var(--surface); border-color: #178A8A; }
+.route-row::before, .route-row::after { content: ''; position: absolute; left: 20px; width: 4px; background: #178A8A; }
+.route-row::before { top: 0; height: 22px; }
+.route-row::after { top: 22px; bottom: 0; }
+.route li:first-child .route-row::before, .route li:last-child .route-row::after { display: none; }
+.route-row.planned::before, .route-row.planned::after { background: none; border-left: 4px dashed #178A8A; width: 0; }
+.station { grid-row: span 2; justify-self: center; margin-top: 2px; position: relative; z-index: 1; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #178A8A; background: var(--bg); display: grid; place-items: center; color: #FFFFFF; font: 700 13px/1 var(--font-sign); }
+.station.done { background: #178A8A; }
+.station.current::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #178A8A; }
+.station.planned { border-style: dotted; }
+.route-name { font-weight: 600; font-size: 1.05rem; }
+.route-name small { font: 500 var(--size-sm) var(--font-sign); color: var(--text-muted); display: block; }
+.route-state { font: 500 var(--size-sm) var(--font-sign); color: var(--text-muted); }
+.route-row.planned .route-name { font-weight: 400; color: var(--text-planned); }
+
+/* --- Barra de navegación: va DESPUÉS de <main> en el HTML; el CSS la deja abajo --- */
+.tabbar { position: sticky; bottom: 0; z-index: 5; font-family: var(--font-sign); padding-bottom: env(safe-area-inset-bottom); }
+.tabbar ul { display: flex; margin: 0; padding: 0; list-style: none; }
+.tabbar li { flex: 1; }
+.tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: var(--nav-height); padding: 8px 4px; text-decoration: none; font-size: 0.95rem; }
+.tab .line-dot { width: 16px; height: 16px; }
+
+/* --- Progreso: gráfico, estados y datos --- */
+.chart { display: flex; align-items: end; gap: 4px; height: 96px; padding: 0 2px; border-bottom: 2px solid var(--divider); }
+.chart span { flex: 1; background: var(--chart-bar); border-radius: 2px 2px 0 0; min-height: 2px; }
+.chart-legend { display: flex; justify-content: space-between; font: 500 var(--size-sm) var(--font-sign); color: var(--text-muted); margin-top: 4px; }
+.states-bar { display: flex; height: 16px; border-radius: 4px; overflow: hidden; border: 2px solid var(--divider); }
+.states-bar span:nth-child(1) { background: var(--divider); }
+.states-bar span:nth-child(2) { background: #2F7FD0; }
+.states-bar span:nth-child(3) { background: var(--plaque); }
+.states { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+.states li { display: flex; gap: 8px; align-items: center; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; flex: none; border: 1px solid var(--text-muted); }
+
+details.fold { margin-top: 40px; border-top: 2px solid var(--divider); border-bottom: 2px solid var(--divider); }
+details.fold > summary {
+  display: flex; align-items: center; gap: 12px; min-height: 56px; cursor: pointer; list-style: none;
+  font: 700 var(--size-md) var(--font-sign);
+}
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::before { content: '+'; display: grid; place-items: center; width: 28px; height: 28px; border: 2px solid currentColor; border-radius: 50%; font-size: 1.1rem; }
+details.fold[open] > summary::before { content: '−'; }
+.fold-body { padding: 0 0 24px; }
+.fold-body h3 { font-family: var(--font-sign); font-size: var(--size-base); margin: 20px 0 4px; }
+.fold-body p { margin: 0 0 8px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+table.days { border-collapse: collapse; font-size: 0.9rem; margin-top: 8px; }
+table.days th, table.days td { text-align: left; padding: 4px 16px 4px 0; border-bottom: 1px solid var(--divider); }
+details.small > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-family: var(--font-sign); font-weight: 700; color: var(--secondary-text); }
