@@ -1,6 +1,6 @@
 // Arranque de la app: navegación entre pantallas sin recargar la página
 // y registro del service worker (funcionamiento sin conexión)
-import { SCREENS, resolveRoute, routeParam } from './lib/router.js';
+import { SCREENS, resolveRoute, routeParam, tabFor } from './lib/router.js';
 import { watchForUpdates, applyUpdate } from './update.js';
 import { createWordStore } from './lib/storage.js';
 import { INITIAL_WORDS } from './data/initial-words.js';
@@ -47,6 +47,7 @@ function showScreen(id, moveFocus) {
   for (const link of document.querySelectorAll('.nav-link')) {
     const linkId = resolveRoute(link.getAttribute('href'));
     if (linkId === id) link.setAttribute('aria-current', 'page');
+    else if (linkId === tabFor(id)) link.setAttribute('aria-current', 'true');
     else link.removeAttribute('aria-current');
   }
 
@@ -61,7 +62,7 @@ function showScreen(id, moveFocus) {
   else if (previousId === 'chat') onChatHidden();
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
-  if (id === 'home') home?.refresh();
+  if (id === 'learn') home?.refresh();
   if (id === 'build') onBuildShown(moveFocus);
   else if (previousId === 'build') onBuildHidden();
 }
@@ -70,7 +71,7 @@ function handleRoute(isFirstLoad) {
   const id = resolveRoute(location.hash);
   if (id === null) {
     // Ancla normal (p. ej. «Saltar al contenido»): no cambia de pantalla
-    if (currentId === null) showScreen('home', false);
+    if (currentId === null) showScreen('learn', false);
     return;
   }
   const param = routeParam(location.hash);
