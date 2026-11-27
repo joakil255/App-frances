@@ -681,3 +681,8 @@ test('la barra de traducción va antes del texto de la historia', () => {
   assert.ok(reader.indexOf('id="reader-translation-bar"') < reader.indexOf('id="reader-text"'));
   assert.ok(reader.indexOf('id="reader-translation-bar"') > 0);
 });
+
+test('la historia abierta tiene como primer elemento el enlace «‹ Leer» a la biblioteca', () => {
+  const story = html.match(/<article id="reader-story"[^>]*>\s*([\s\S]*)/)?.[1] ?? '';
+  assert.ok(story.startsWith('<p class="back-link"><a class="text-link" href="#/leer"><span aria-hidden="true">‹</span> Leer</a></p>'));
+});

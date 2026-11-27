@@ -224,3 +224,8 @@ test('el botón «Ver traducción» mide 44 px de alto y la traducción usa --te
   assert.match(block, /color:\s*var\(--text-muted\)/);
   assert.match(block, /font:[^;]*italic/);
 });
+
+test('el foco de la barra va hacia dentro y el del enlace de salto se ve sobre la placa azul', () => {
+  assert.match(css, /\n\.nav-link:focus-visible\s*\{\s*outline-offset:\s*-3px/);
+  assert.match(css, /\n\.skip-link:focus-visible\s*\{\s*outline-color:\s*var\(--focus-on-blue\)/);
+});

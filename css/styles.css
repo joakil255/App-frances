@@ -170,6 +170,7 @@ main:focus { outline: none; } /* destino del foco al cambiar de pantalla, no es 
   border-radius: var(--radius);
 }
 .skip-link:focus { top: var(--space-2); }
+.skip-link:focus-visible { outline-color: var(--focus-on-blue); }
 
 /* --- Navegación (móvil: barra clara abajo) --- */
 .nav {
@@ -213,6 +214,7 @@ main:focus { outline: none; } /* destino del foco al cambiar de pantalla, no es 
   background: var(--plaque);
   border-radius: 6px;
 }
+.nav-link:focus-visible { outline-offset: -3px; } /* el anillo no se recorta en los bordes de la pantalla */
 .nav-label { padding: 2px 14px; }
 
 .line-dot {
