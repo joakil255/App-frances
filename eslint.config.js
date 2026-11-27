@@ -9,6 +9,11 @@ export default [
     files: ['js/**/*.js'],
     languageOptions: { globals: globals.browser },
   },
+  // Prototipos de diseño en docs/: scripts clásicos del navegador (no son la app)
+  {
+    files: ['docs/**/*.js'],
+    languageOptions: { sourceType: 'script', globals: globals.browser },
+  },
   // Service worker: script clásico (sin import) con sus propias variables globales
   {
     files: ['sw.js'],

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Aprende · prototipo</title>
+  <link rel="stylesheet" href="base.css">
+  <style>
+    /* Dirección A: «Placas esmaltadas». El color fuerte vive en las placas y en la barra azul. */
+
+    /* Repaso de hoy: una placa grande, con su borde esmaltado */
+    .today {
+      margin: 24px 0 0; padding: 16px 20px 20px;
+      color: var(--plaque-text); background: var(--plaque);
+      border: 3px solid var(--plaque-border); border-radius: var(--radius); box-shadow: 0 0 0 2px var(--plaque);
+    }
+    .today h2 { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 var(--size-base) var(--font-sign); color: var(--plaque-muted); }
+    .today h2 .line-dot { width: 14px; height: 14px; }
+    .today-main { margin: 8px 0 16px; font: 700 var(--size-lg)/1.15 var(--font-sign); }
+    .today .button { width: 100%; min-height: 56px; font-size: 1.15rem; background: var(--signal); color: var(--signal-text); }
+    .today :focus-visible { outline-color: #FFFFFF; outline-offset: 3px; }
+    .today-next { margin: 12px 0 0; color: var(--plaque-muted); font-size: 0.95rem; }
+    .today .text-link { color: #FFFFFF; }
+
+    /* Practica: filas como letreros de estación, con la franja de su línea */
+    .group { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .card {
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px;
+      min-height: 72px; padding: 10px 16px; color: var(--text); text-decoration: none;
+      background: var(--surface); border: 2px solid var(--divider); border-left: 8px solid var(--line); border-radius: var(--radius);
+    }
+    .card-name { font: 700 var(--size-md) var(--font-sign); }
+    .card-count { grid-column: 1; color: var(--text-muted); font-size: 0.95rem; }
+    .card-arrow { grid-row: 1 / span 2; grid-column: 2; font: 700 1.6rem var(--font-sign); color: var(--text-muted); }
+
+    /* Progreso */
+    .goal { margin-top: 24px; padding: 16px; background: var(--surface); border: 2px solid var(--plaque); border-left: 8px solid var(--line); border-radius: var(--radius); }
+    .goal h2 { margin: 0; font: 700 var(--size-md) var(--font-sign); }
+    .goal p { margin: 4px 0 0; }
+    .meter { height: 12px; margin: 12px 0 4px; background: var(--divider); border-radius: 6px; overflow: hidden; }
+    .meter span { display: block; height: 100%; background: var(--emphasis); }
+    .figures { margin: 0; display: grid; gap: 8px; }
+    .figures div { display: grid; grid-template-columns: 9.5em 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--divider); }
+    .figures dt { font: 700 var(--size-base) var(--font-sign); }
+    .figures dd { margin: 0; }
+
+    /* Barra de navegación azul, como hoy, con 3 destinos */
+    .tabbar { background: var(--nav-bg); border-top: 2px solid var(--nav-bg); } /* la franja blanca de Practica no toca el fondo */
+    .tab { color: var(--nav-text); font-weight: 500; border-top: 4px solid transparent; }
+    .tab[aria-current="page"] { color: #FFFFFF; font-weight: 700; border-top-color: var(--line); }
+    .tab:focus-visible { outline-color: var(--focus-on-blue); outline-offset: -4px; }
+  </style>
+</head>
+<body>
+  <!-- Controles del prototipo: no forman parte de la app -->
+  <div class="proto-bar">
+    <p>Prototipo A · Placas esmaltadas</p>
+    <label>Situación de ejemplo
+      <select id="situation">
+        <option value="palabras">Hay palabras pendientes</option>
+        <option value="frases">Solo frases pendientes</option>
+        <option value="leccion">Nada pendiente</option>
+        <option value="fin">Todo terminado</option>
+      </select>
+    </label>
+    <label>Tema
+      <select id="theme"><option value="system">Del sistema</option><option value="light">Claro</option><option value="dark">Oscuro</option></select>
+    </label>
+    <p id="demo-status" role="status" style="font-weight:500;font-size:var(--size-sm)"></p>
+  </div>
+
+  <div class="phone">
+    <main id="main" tabindex="-1">
+      <!-- APRENDE -->
+      <section id="aprende" class="screen line-learn" aria-labelledby="aprende-title">
+        <h1 id="aprende-title" class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Aprende</h1>
+
+        <section class="today" aria-labelledby="today-title">
+          <h2 id="today-title"><span class="line-dot" aria-hidden="true"></span>Repaso de hoy</h2>
+          <p class="today-main" data-today-main></p>
+          <a class="button" href="#" data-today-action data-demo="Estudiar o el repaso de frases"></a>
+          <p class="today-next" data-today-next></p>
+          <p data-today-more hidden><a class="text-link" href="#practica">Practicar algo más</a></p>
+        </section>
+
+        <h2 class="section-title">Lecciones</h2>
+        <h3 class="level-title" id="lv-a1">A1</h3>
+        <details class="small" id="done-fold"><summary>Ver las 6 lecciones completadas</summary><ol class="route" id="route-done"></ol></details>
+        <ol class="route" id="route-a1" aria-labelledby="lv-a1"></ol>
+        <h3 class="level-title" id="lv-a2">A2</h3>
+        <ol class="route" id="route-a2" aria-labelledby="lv-a2"></ol>
+      </section>
+
+      <!-- PRACTICA -->
+      <section id="practica" class="screen line-practice" aria-labelledby="practica-title" hidden>
+        <h1 id="practica-title" class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Practica</h1>
+
+        <h2 class="section-title">Vocabulario</h2>
+        <ul class="group">
+          <li class="line-vocabulary"><a class="card" href="#" data-demo="Palabras"><span class="card-name">Palabras</span><span class="card-count">160 palabras</span><span class="card-arrow" aria-hidden="true">›</span></a></li>
+          <li class="line-study"><a class="card" href="#" data-demo="Estudiar"><span class="card-name">Estudiar</span><span class="card-count" data-study-count></span><span class="card-arrow" aria-hidden="true">›</span></a></li>
+          <li class="line-quiz"><a class="card" href="#" data-demo="Quiz"><span class="card-name">Quiz</span><span class="card-count">3 modos: opción múltiple, escribir y dictado</span><span class="card-arrow" aria-hidden="true">›</span></a></li>
+        </ul>
+        <h2 class="section-title">Leer y escuchar</h2>
+        <ul class="group">
+          <li class="line-reader"><a class="card" href="#" data-demo="Leer"><span class="card-name">Leer</span><span class="card-count">3 historias</span><span class="card-arrow" aria-hidden="true">›</span></a></li>
+        </ul>
+        <h2 class="section-title">Hablar</h2>
+        <ul class="group">
+          <li class="line-chat"><a class="card" href="#" data-demo="Conversar"><span class="card-name">Conversar</span><span class="card-count">Necesita conexión a internet</span><span class="card-arrow" aria-hidden="true">›</span></a></li>
+        </ul>
+      </section>
+
+      <!-- PROGRESO -->
+      <section id="progreso" class="screen line-progress" aria-labelledby="progreso-title" hidden>
+        <h1 id="progreso-title" class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Progreso</h1>
+
+        <section class="goal" aria-labelledby="goal-title">
+          <h2 id="goal-title">Objetivo de hoy: dejar el repaso en cero</h2>
+          <p data-goal></p>
+          <div class="meter" aria-hidden="true"><span data-goal-bar></span></div>
+          <p class="hint" data-goal-done></p>
+        </section>
+
+        <h2 class="section-title">Tu constancia</h2>
+        <dl class="figures">
+          <div><dt>Racha</dt><dd>6 días seguidos</dd></div>
+          <div><dt>Acierto en Estudiar</dt><dd>84 % en los últimos 30 días</dd></div>
+          <div><dt>Acierto en el Quiz</dt><dd>76 % en los últimos 30 días</dd></div>
+        </dl>
+
+        <h2 class="section-title">Respuestas de los últimos 14 días</h2>
+        <div class="chart" aria-hidden="true" id="chart"></div>
+        <div class="chart-legend" aria-hidden="true"><span>14/11</span><span>Hoy</span></div>
+        <p class="hint">En total, 248 respuestas. El día con más: 38, ayer.</p>
+        <details class="small"><summary>Ver los datos día por día</summary><table class="days"><thead><tr><th scope="col">Día</th><th scope="col">Respuestas</th></tr></thead><tbody id="days"></tbody></table></details>
+
+        <h2 class="section-title">Tus palabras</h2>
+        <div class="states-bar" aria-hidden="true"><span style="flex:62"></span><span style="flex:71"></span><span style="flex:27"></span></div>
+        <ul class="states">
+          <li><span class="swatch" style="background:var(--divider)" aria-hidden="true"></span>62 nuevas</li>
+          <li><span class="swatch" style="background:#2F7FD0" aria-hidden="true"></span>71 aprendiendo</li>
+          <li><span class="swatch" style="background:var(--plaque)" aria-hidden="true"></span>27 dominadas</li>
+        </ul>
+
+        <details class="fold">
+          <summary>Datos y copia</summary>
+          <div class="fold-body">
+            <h3>Copia de seguridad</h3>
+            <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
+            <div class="actions"><a class="button button-primary" href="#" data-demo="Guardar copia">Guardar copia</a><a class="button button-secondary" href="#" data-demo="Restaurar copia">Restaurar copia</a></div>
+            <h3>Tus palabras en un archivo</h3>
+            <p>Trae palabras desde un archivo JSON o CSV, o llévate las tuyas.</p>
+            <div class="actions"><a class="button button-secondary" href="#" data-demo="Importar palabras">Importar palabras</a><a class="button button-secondary" href="#" data-demo="Exportar palabras">Exportar palabras</a></div>
+            <h3>Ajustes</h3>
+            <div class="actions"><a class="button button-secondary" href="#" data-demo="Ajustes del estudio">Ajustes del estudio</a></div>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <!-- La navegación va después del contenido; el CSS la deja abajo -->
+    <nav class="tabbar" aria-label="Principal">
+      <ul>
+        <li class="line-learn"><a class="tab" href="#aprende"><span class="line-dot" aria-hidden="true"></span>Aprende</a></li>
+        <li class="line-practice"><a class="tab" href="#practica"><span class="line-dot" aria-hidden="true"></span>Practica</a></li>
+        <li class="line-progress"><a class="tab" href="#progreso"><span class="line-dot" aria-hidden="true"></span>Progreso</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <script src="proto.js"></script>
+  <script>
+    // Ruta vertical: las completadas plegadas, después la de ahora y las siguientes
+    function routeItem(l) {
+      const li = document.createElement('li');
+      const openable = l.state !== 'planned';
+      const row = el(openable ? 'a' : 'p', `route-row${l.state === 'planned' ? ' planned' : ''}`);
+      if (openable) { row.href = '#'; row.dataset.demo = `la lección ${l.n}`; }
+      if (l.state === 'current') row.setAttribute('aria-current', 'step');
+      const station = el('span', `station ${l.state}`, l.state === 'done' ? '✓' : '');
+      station.setAttribute('aria-hidden', 'true');
+      const name = el('span', 'route-name');
+      name.append(el('small', '', `Lección ${l.n}`), document.createTextNode(l.title));
+      row.append(station, name, el('span', 'route-state', l.text));
+      li.append(row);
+      return li;
+    }
+    const a1 = LESSONS.filter((l) => l.level === 'A1');
+    document.querySelector('#route-done').append(...a1.filter((l) => l.state === 'done').map(routeItem));
+    document.querySelector('#route-a1').append(...a1.filter((l) => l.state !== 'done').map(routeItem));
+    document.querySelector('#route-a2').append(...LESSONS.filter((l) => l.level === 'A2').map(routeItem));
+
+    // Gráfico de ejemplo
+    const days = [8, 0, 21, 14, 25, 0, 0, 12, 30, 22, 18, 27, 38, 33];
+    const chart = document.querySelector('#chart');
+    const max = Math.max(...days);
+    days.forEach((n, i) => {
+      const bar = document.createElement('span');
+      bar.style.height = `${(n / max) * 100}%`;
+      chart.append(bar);
+      const tr = document.createElement('tr');
+      tr.append(el('td', '', i === 13 ? 'Hoy' : `${14 + i}/11`), el('td', '', String(n)));
+      document.querySelector('#days').append(tr);
+    });
+  </script>
+</body>
+</html>
