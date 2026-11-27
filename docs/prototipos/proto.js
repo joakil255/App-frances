@@ -55,12 +55,13 @@ const LESSON_TITLES = {
     'Los pronombres y / en', 'El imperfecto (iniciación)', 'El futuro simple', 'Comparativo y superlativo',
     'Qui, que, où para unir frases', 'Ortografía avanzada'],
 };
+// La numeración es continua, como en la app: A2 empieza en la lección 16
 const LESSONS = Object.entries(LESSON_TITLES).flatMap(([level, titles]) => titles.map((title, i) => {
-  const n = i + 1;
+  const n = i + 1 + (level === 'A2' ? LESSON_TITLES.A1.length : 0);
   let state = 'todo';
   if (level === 'A1' && n <= 6) state = 'done';
   else if (level === 'A1' && n === 7) state = 'current';
-  else if ((level === 'A1' && n >= 11) || (level === 'A2' && n >= 5)) state = 'planned';
+  else if ((level === 'A1' && n >= 11) || (level === 'A2' && n >= 20)) state = 'planned';
   const text = { done: `Completada · ${n + 17}/11/2026`, current: 'En curso: 4 de 10', todo: 'Sin empezar', planned: 'Próximamente' }[state];
   return { level, n, title, state, text };
 }));
