@@ -274,11 +274,11 @@ test('Vocabulario tiene el botón para añadir el mazo A1 junto a Importar y Exp
   assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
 });
 
-// --- Inicio: copia de seguridad (Etapa 7) ---
-const home = html.match(/<section id="screen-learn"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+// --- Copia de seguridad (Etapa 7): sigue en Aprende hasta la tanda 4 ---
+// sectionOf: Aprende contiene otra <section> (el repaso de hoy)
+const home = sectionOf('learn');
 
-test('Inicio mantiene su frase y tiene la copia de seguridad con avisos', () => {
-  assert.match(home, /<span lang="fr">Bonjour\.<\/span> Aquí verás cada día lo que te toca repasar\./);
+test('Aprende tiene la copia de seguridad con avisos', () => {
   assert.match(home, /<div id="home-notice" class="notice" role="alert" hidden><\/div>/);
   assert.match(home, /<p id="home-status" class="vocab-message" role="status"><\/p>/);
   assert.match(home, /<h2[^>]*>Copia de seguridad<\/h2>/);
@@ -609,26 +609,30 @@ test('la ventana de quitar una frase del repaso pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Quitar<\/button>/);
 });
 
-test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la copia de seguridad', () => {
-  // La tarjeta termina donde empieza la copia de seguridad (dentro lleva botones y el enlace a la ruta)
-  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<!-- Copia de seguridad/)?.[1];
-  assert.ok(card, 'falta la tarjeta .home-build');
-  assert.match(card, /<h2 [^>]*>[\s\S]*Construir frases<\/h2>/);
-  assert.ok(tagWithId(card, 'home-build-next'), 'falta #home-build-next');
-  assert.match(card, /<p id="home-build-due"[^>]*>Repaso: 0 pendientes hoy<\/p>/);
-  assert.match(card, /<button type="button" class="button button-primary" id="home-build-continue">Seguir lección<\/button>/);
-  assert.match(card, /<button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar \(0\)<\/button>/);
-  assert.ok(home.indexOf('home-build') < home.indexOf('Copia de seguridad'), 'la tarjeta va sobre la copia de seguridad');
+// --- Aprende (Etapa 17): repaso de hoy y carrusel de lecciones ---
+test('Aprende tiene el repaso de hoy con la línea del día y su acción', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title">/);
+  assert.match(learn, /<h2 id="today-title"[^>]*>[\s\S]*Repaso de hoy<\/h2>/);
+  assert.match(learn, /<ol class="dayline" aria-label="Orden del día">/);
+  assert.match(learn, /<a class="button button-primary today-action" id="today-action"/);
+  assert.match(learn, /<a class="text-link" href="#\/practica">Practicar algo más<\/a>/);
 });
 
-// En el móvil la barra no tiene Construir: la ruta debe poder abrirse desde la app sin escribir la dirección
-test('la tarjeta de Inicio tiene un enlace visible a la ruta de lecciones', () => {
-  const card = html.match(/<div class="home-build[^"]*">([\s\S]*?)<!-- Copia de seguridad/);
-  assert.ok(card, 'falta la tarjeta Construir frases de Inicio');
-  const link = card[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'la tarjeta no tiene un enlace a #/construir');
-  assert.match(link[1], /Ver todas las lecciones/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+test('las lecciones son un carrusel por nivel, enfocable y con nombre', () => {
+  for (const level of ['a1', 'a2']) {
+    assert.match(html, new RegExp(`<h3 id="learn-level-${level}"[^>]*>${level.toUpperCase()}</h3>`));
+    assert.match(html, new RegExp(`<ol id="learn-route-${level}" class="carousel" tabindex="0" aria-labelledby="learn-level-${level}">`));
+  }
+});
+
+// La tarjeta «Construir frases» de Inicio desaparece: la cubren el repaso de hoy y el carrusel
+test('Aprende ya no tiene la tarjeta «Construir frases» ni la frase de bienvenida; la copia va debajo de las lecciones', () => {
+  const learn = sectionOf('learn');
+  assert.ok(!learn.includes('home-build'), 'sobra la tarjeta .home-build');
+  assert.ok(!learn.includes('Bonjour'), 'sobra la frase «Bonjour…»');
+  assert.ok(learn.indexOf('id="today-title"') < learn.indexOf('id="learn-route-a1"'), 'el repaso va antes de las lecciones');
+  assert.ok(learn.indexOf('id="learn-route-a2"') < learn.indexOf('Copia de seguridad'), 'la copia va debajo de las lecciones');
 });
 
 test('cada lección tiene un enlace para volver a la ruta', () => {

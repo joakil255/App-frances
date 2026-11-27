@@ -210,12 +210,8 @@ test('el texto atenuado de las lecciones planificadas se lee en claro y oscuro (
   assert.match(block, /(?:^|;|\s)color:\s*var\(--text-planned\)/);
 });
 
-test('el tramo planificado de la ruta es una línea discontinua turquesa', () => {
-  // Reglas cuya lista de selectores incluye el tramo que llega a una estación planificada
-  const rules = [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^}]*)\}/g)]
-    .filter((m) => m[1].split(',').map((sel) => sel.trim()).includes('.build-route-planned::before'));
-  assert.ok(rules.length > 0, 'falta la regla .build-route-planned::before');
-  assert.ok(rules.some((m) => /border-left-style:\s*dashed/.test(m[2])), 'el tramo planificado no es discontinuo');
+test('la baldosa de una lección planificada tiene borde discontinuo', () => {
+  assert.equal(propertyOf('.lesson-tile.planned', 'border-style'), 'dashed');
 });
 
 test('el botón «Ver traducción» mide 44 px de alto y la traducción usa --text-muted, que pasa AA (Etapa 15)', () => {

@@ -12,6 +12,7 @@ import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
 import { initHome } from './screens/home.js';
+import { initLearn } from './screens/learn.js';
 import { createChatStore } from './lib/chat.js';
 import { initChat } from './screens/chat.js';
 import { createVoiceStore } from './lib/voice-settings.js';
@@ -34,8 +35,8 @@ let onReaderShown = () => {}; // lo completa initReader
 let onReaderHidden = () => {}; // corta la voz al salir de Leer
 let onBuildShown = () => {}; // lo completa initBuild
 let onBuildHidden = () => {};
-let home = null; // lo completa initHome
-let loadedLessons = null; // las lecciones, cuando lleguen (la tarjeta de Inicio las usa)
+let learn = null; // lo completa initLearn
+let loadedLessons = null; // las lecciones, cuando lleguen (Aprende las usa)
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -62,7 +63,7 @@ function showScreen(id, moveFocus) {
   else if (previousId === 'chat') onChatHidden();
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
-  if (id === 'learn') home?.refresh();
+  if (id === 'learn') learn?.refresh();
   if (id === 'build') onBuildShown(moveFocus);
   else if (previousId === 'build') onBuildHidden();
 }
@@ -120,7 +121,9 @@ initVocabulary({ store: wordStore, synth })
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
-      home = initHome({ wordStore, studyStore, textStore, buildStore, backend, getLessons: () => loadedLessons });
+      initHome({ wordStore, studyStore, textStore, buildStore, backend });
+      learn = initLearn({ wordStore, studyStore, buildStore, getLessons: () => loadedLessons });
+      if (currentId === 'learn') learn.refresh();
     }),
   ]));
 
@@ -175,6 +178,7 @@ onChatShown = () => {
 wordStore.watchExternalChanges(window, () => {
   wordCard.refresh(chatLog);
   wordCard.refresh(readerText);
+  learn?.refresh();
 });
 onChatHidden = () => voice.stop();
 // Si la página queda oculta (otra app, pantalla apagada) el micrófono se corta
@@ -213,7 +217,7 @@ textsLoaded.then((loaded) => {
 const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
 Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
   loadedLessons = lessons;
-  home?.refresh();
+  learn?.refresh();
   const build = initBuild({
     loadNotice: buildLoadNotice(loaded),
     buildStore,
@@ -229,8 +233,9 @@ Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
   onBuildHidden = () => build.onHide();
   if (currentId === 'build') onBuildShown(false);
 });
-// Si otra pestaña cambia el progreso o las tarjetas de frases, la tarjeta de Inicio se actualiza
-buildStore.watchExternalChanges(window, () => home?.refresh());
+// Si otra pestaña cambia el progreso, las frases, el estudio o las palabras, Aprende se actualiza
+buildStore.watchExternalChanges(window, () => learn?.refresh());
+studyStore.watchExternalChanges(window, () => learn?.refresh());
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {
