@@ -59,6 +59,7 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
   const allDone = $('#build-all-done');
   const reviewStart = $('#build-review-start');
   const reviewEl = $('#build-review');
+  const reviewBack = $('.build-back', reviewEl);
   const reviewEmpty = $('#build-review-empty');
   const reviewDone = $('#build-review-done');
   const removeButton = $('#build-remove');
@@ -472,7 +473,7 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
       const exercise = saved.kind === 'own' ? ownExercise(saved) : findExercise(lessons ?? [], saved.lessonId, saved.exerciseId);
       return { exercise, cardId };
     });
-    reviewEl.prepend(card);
+    reviewBack.after(card); // debajo del enlace «Todas las lecciones», como en una lección
     reviewDone.hidden = true;
     reviewEmpty.hidden = queue.length > 0;
     if (queue.length === 0) {
