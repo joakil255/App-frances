@@ -33,7 +33,7 @@ const EXPECTED_INDEX = [
 ];
 
 // Lecciones disponibles, en orden (cada lección nueva agrega su id)
-const AVAILABLE_IDS = ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09', 'fr-a1-10', 'fr-a2-01', 'fr-a2-02'];
+const AVAILABLE_IDS = ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09', 'fr-a1-10', 'fr-a2-01', 'fr-a2-02', 'fr-a2-03'];
 
 test('el índice v2 es válido, tiene las 24 lecciones en orden y solo las disponibles tienen archivo', () => {
   const data = index();

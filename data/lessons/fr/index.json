@@ -20,7 +20,7 @@
     {"id": "fr-a1-15", "lang": "fr", "level": "A1", "title": "Conectores: et, ou, mais, parce que, pour", "status": "planned"},
     {"id": "fr-a2-01", "lang": "fr", "level": "A2", "title": "Passé composé con avoir", "status": "available"},
     {"id": "fr-a2-02", "lang": "fr", "level": "A2", "title": "Passé composé con être", "status": "available"},
-    {"id": "fr-a2-03", "lang": "fr", "level": "A2", "title": "Pronombres de complemento directo (le, la, les)", "status": "planned"},
+    {"id": "fr-a2-03", "lang": "fr", "level": "A2", "title": "Pronombres de complemento directo (le, la, les)", "status": "available"},
     {"id": "fr-a2-04", "lang": "fr", "level": "A2", "title": "Los pronombres y / en", "status": "planned"},
     {"id": "fr-a2-05", "lang": "fr", "level": "A2", "title": "El imperfecto (iniciación)", "status": "planned"},
     {"id": "fr-a2-06", "lang": "fr", "level": "A2", "title": "El futuro simple", "status": "planned"},
