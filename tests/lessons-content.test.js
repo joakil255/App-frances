@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { INDEX_FORMAT, EXERCISE_TYPES, validateLesson, validateLessonIndex } from '../js/lib/lessons.js';
+import { checkExercise } from '../js/lib/sentence-check.js';
+import { normalizeAnswer } from '../js/lib/answer-check.js';
 import { textProblems } from './helpers/content-checks.js';
 
 // --- Lecciones de «Construir frases» (data/lessons/fr) ---
@@ -30,17 +32,22 @@ const EXPECTED_INDEX = [
   ['fr-a2-07', 'Comparativo y superlativo'], ['fr-a2-08', 'Qui, que, où para unir frases'], ['fr-a2-09', 'Ortografía avanzada'],
 ];
 
+// Lecciones disponibles, en orden (cada lección nueva agrega su id)
+const AVAILABLE_IDS = ['fr-a1-01', 'fr-a1-02', 'fr-a1-03', 'fr-a1-04', 'fr-a1-05', 'fr-a1-06', 'fr-a1-07', 'fr-a1-08', 'fr-a1-09', 'fr-a1-10'];
+
 test('el índice v2 es válido, tiene las 24 lecciones en orden y solo las disponibles tienen archivo', () => {
   const data = index();
   assert.equal(data.format, INDEX_FORMAT);
   assert.equal(data.lang, 'fr');
   assert.deepEqual(validateLessonIndex(data), { ok: true, errors: [] });
   assert.deepEqual(data.lessons.map((e) => [e.id, e.title]), EXPECTED_INDEX);
-  data.lessons.forEach((e, i) => {
-    assert.equal(e.status, i < 9 ? 'available' : 'planned', e.id);
-    assert.equal(existsSync(lessonUrl(e.id)), i < 9, `archivo de ${e.id}`);
-    if (i < 9) assert.equal(readJson(lessonUrl(e.id)).title, e.title, e.id);
+  data.lessons.forEach((e) => {
+    const available = AVAILABLE_IDS.includes(e.id);
+    assert.equal(e.status, available ? 'available' : 'planned', e.id);
+    assert.equal(existsSync(lessonUrl(e.id)), available, `archivo de ${e.id}`);
+    if (available) assert.equal(readJson(lessonUrl(e.id)).title, e.title, e.id);
   });
+  assert.deepEqual(data.lessons.filter((e) => e.status === 'available').map((e) => e.id), AVAILABLE_IDS);
 });
 
 test('cada lección pasa validateLesson y su id coincide con el nombre del archivo', () => {
@@ -68,6 +75,34 @@ test('cuentas: 4 a 6 ejemplos, 8 a 10 ejercicios (2 de cada tipo) y 1 o 2 situac
     }
     assert.ok(pitfalls.length >= 1, `${id}: sin trampa`);
     assert.ok(think.length >= 1, `${id}: sin «cómo pensarlo»`);
+  }
+});
+
+test('checkExercise acepta cada respuesta (también con apóstrofo tipográfico) y no acepta los errores previstos', () => {
+  for (const { id, lesson } of lessons()) {
+    for (const ex of lesson.exercises) {
+      for (const answer of ex.answers) {
+        for (const typed of [answer, answer.replaceAll("'", '\u2019')]) {
+          assert.equal(checkExercise(ex, typed, { requireAccents: true }).correct, true, `${id} ${ex.id}: «${typed}»`);
+        }
+      }
+      for (const m of ex.mistakes ?? []) {
+        assert.equal(checkExercise(ex, m.answer, { requireAccents: true }).correct, false, `${id} ${ex.id} error previsto: «${m.answer}»`);
+        assert.ok(!ex.answers.includes(m.answer), `${id} ${ex.id}: el error previsto «${m.answer}» es una respuesta aceptada`);
+      }
+    }
+  }
+});
+
+// Los errores previstos de un ejercicio «order» se pueden armar con sus fichas (las fichas se unen con espacio)
+test('cada error previsto de un ejercicio de ordenar se arma con exactamente las fichas del ejercicio', () => {
+  const words = (text) => normalizeAnswer(text).split(' ').sort().join('|');
+  for (const { id, lesson } of lessons()) {
+    for (const ex of lesson.exercises.filter((e) => e.type === 'order')) {
+      for (const m of ex.mistakes ?? []) {
+        assert.equal(words(m.answer), words(ex.tiles.join(' ')), `${id} ${ex.id}: «${m.answer}» no se arma con las fichas`);
+      }
+    }
   }
 });
 
@@ -167,6 +202,7 @@ const FRENCH = {
   exercises: (x) => x.answers[0],
   situations: (s) => s.models[0],
 };
+
 
 test('el documento dice que está pendiente de revisión y nombra las fuentes', () => {
   const doc = readFileSync(DOC, 'utf8');

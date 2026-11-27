@@ -81,6 +81,7 @@ const PRECACHE_URLS = [
   'data/lessons/fr/fr-a1-07.json',
   'data/lessons/fr/fr-a1-08.json',
   'data/lessons/fr/fr-a1-09.json',
+  'data/lessons/fr/fr-a1-10.json',
   'fonts/barlow-semi-condensed-500.woff2',
   'fonts/barlow-semi-condensed-700.woff2',
   'fonts/source-serif-4.woff2',

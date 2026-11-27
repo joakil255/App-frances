@@ -104,7 +104,7 @@ test('routeRows: exactamente una fila current, la siguiente pendiente; ninguna s
   assert.deepEqual(routeRows([], {}), []);
 });
 
-test('routeRows con el índice real: la numeración sigue en A2 (fr-a2-01 es la 16) y las 15 planificadas no tienen href', async () => {
+test('routeRows con el índice real: la numeración sigue en A2 (fr-a2-01 es la 16) y las planificadas no tienen href', async () => {
   const { readFile } = await import('node:fs/promises');
   const index = JSON.parse(await readFile(new URL('../data/lessons/fr/index.json', import.meta.url), 'utf8'));
   const entries = index.lessons.map((entry) => ({ ...entry, lesson: null, error: null }));
@@ -113,7 +113,7 @@ test('routeRows con el índice real: la numeración sigue en A2 (fr-a2-01 es la 
   const a2 = rows.find((r) => r.id === 'fr-a2-01');
   assert.equal(a2.number, 16);
   assert.equal(a2.level, 'A2');
-  assert.equal(rows.filter((r) => r.kind === 'planned' && r.href === null).length, 15);
+  assert.equal(rows.filter((r) => r.kind === 'planned' && r.href === null).length, index.lessons.filter((e) => e.status === 'planned').length);
 });
 
 test('routeRows: hasReview es true si algún elemento de la lección tiene review: true', () => {
