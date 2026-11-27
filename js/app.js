@@ -1,6 +1,6 @@
 // Arranque de la app: navegación entre pantallas sin recargar la página
 // y registro del service worker (funcionamiento sin conexión)
-import { SCREENS, resolveRoute, routeParam, tabFor } from './lib/router.js';
+import { SCREENS, resolveRoute, routeParam, tabFor, redirectFor } from './lib/router.js';
 import { watchForUpdates, applyUpdate } from './update.js';
 import { createWordStore } from './lib/storage.js';
 import { INITIAL_WORDS } from './data/initial-words.js';
@@ -69,6 +69,12 @@ function showScreen(id, moveFocus) {
 }
 
 function handleRoute(isFirstLoad) {
+  // replace no deja la dirección vieja en el historial: Atrás no vuelve a ella
+  const target = redirectFor(location.hash);
+  if (target) {
+    location.replace(target);
+    return;
+  }
   const id = resolveRoute(location.hash);
   if (id === null) {
     // Ancla normal que no es una pantalla: no cambia de pantalla
@@ -78,10 +84,11 @@ function handleRoute(isFirstLoad) {
   const param = routeParam(location.hash);
   const paramChanged = param !== currentParam;
   currentParam = param;
-  if (id !== currentId) showScreen(id, !isFirstLoad);
+  // Tras una redirección en la primera carga todavía no hay pantalla: el foco tampoco se mueve
+  if (id !== currentId) showScreen(id, !isFirstLoad && currentId !== null);
   // De la biblioteca a una historia (o de una historia a otra) la pantalla sigue siendo Leer
   else if (id === 'reader' && paramChanged) onReaderShown(true);
-  // De la lista a una lección (o de una lección a otra) la pantalla sigue siendo Construir
+  // De una lección a otra (o al repaso) la pantalla sigue siendo Construir
   else if (id === 'build' && paramChanged) onBuildShown(true);
 }
 

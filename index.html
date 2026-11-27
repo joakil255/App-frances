@@ -35,14 +35,14 @@
           <p class="today-more" id="today-more" hidden><a class="text-link" href="#/practica">Practicar algo más</a></p>
         </section>
 
-        <!-- Lecciones: un carrusel por nivel; las planificadas no son enlaces -->
-        <h2 class="learn-title">Lecciones</h2>
-        <h3 id="learn-level-a1" class="learn-level">A1</h3>
-        <ol id="learn-route-a1" class="carousel" tabindex="0" aria-labelledby="learn-level-a1"></ol>
-        <p class="hint learn-hint" id="learn-hint-a1"></p>
-        <h3 id="learn-level-a2" class="learn-level">A2</h3>
-        <ol id="learn-route-a2" class="carousel" tabindex="0" aria-labelledby="learn-level-a2"></ol>
-        <p class="hint learn-hint" id="learn-hint-a2"></p>
+        <!-- Lecciones: un carrusel por nivel; las planificadas no son enlaces. Ocultas hasta que refresh() las rellena -->
+        <h2 class="learn-title" hidden>Lecciones</h2>
+        <h3 id="learn-level-a1" class="learn-level" hidden>A1</h3>
+        <ol id="learn-route-a1" class="carousel" tabindex="0" aria-labelledby="learn-level-a1" hidden></ol>
+        <p class="hint learn-hint" id="learn-hint-a1" hidden></p>
+        <h3 id="learn-level-a2" class="learn-level" hidden>A2</h3>
+        <ol id="learn-route-a2" class="carousel" tabindex="0" aria-labelledby="learn-level-a2" hidden></ol>
+        <p class="hint learn-hint" id="learn-hint-a2" hidden></p>
 
         <!-- Copia de seguridad: todo en un archivo (se rellena con textContent) -->
         <div class="backup">
@@ -470,31 +470,16 @@
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Construir frases</h1>
         <div id="build-notice" class="notice" role="alert" hidden></div>
 
-        <!-- Ruta de lecciones (#/construir): una línea de metro por tramo -->
-        <div id="build-index">
-          <div class="study-actions build-index-actions">
-            <button type="button" class="button button-primary" id="build-continue">Continuar</button>
-            <button type="button" class="button button-secondary" id="build-review-start" aria-disabled="true">Repasar (0)</button>
-          </div>
-          <p id="build-all-done" class="build-all-done" hidden>Completaste todas las lecciones disponibles</p>
-          <div id="build-route">
-            <h2 id="build-level-a1" class="build-level">A1</h2>
-            <ol id="build-route-a1" class="build-route" aria-labelledby="build-level-a1"></ol>
-            <h2 id="build-level-a2" class="build-level">A2</h2>
-            <ol id="build-route-a2" class="build-route" aria-labelledby="build-level-a2"></ol>
-          </div>
-        </div><!-- Fin de la ruta -->
-
         <!-- Repaso (#/construir/repaso): usa la misma tarjeta de ejercicio que Practicar -->
         <div id="build-review" class="build-review" hidden>
-          <p class="build-back"><a class="text-link" href="#/construir"><span aria-hidden="true">‹</span> Todas las lecciones</a></p>
+          <p class="build-back"><a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a></p>
           <p id="build-review-empty" class="build-done" tabindex="-1" hidden>No tienes nada que repasar hoy. Los ejercicios que falles 2 veces aparecerán aquí.</p>
           <p id="build-review-done" class="build-done" tabindex="-1" hidden>Terminaste el repaso.</p>
         </div>
 
         <!-- Lección (#/construir/<id>) -->
         <article id="build-lesson" class="build-lesson" aria-labelledby="build-title" hidden>
-          <p class="build-back"><a class="text-link" href="#/construir"><span aria-hidden="true">‹</span> Todas las lecciones</a></p>
+          <p class="build-back"><a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a></p>
           <p id="build-number" class="build-number"></p>
           <h2 id="build-title" class="build-title" tabindex="-1"></h2>
           <p id="build-meta" class="reader-meta"></p>

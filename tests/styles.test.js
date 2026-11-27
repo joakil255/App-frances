@@ -205,9 +205,7 @@ test('el texto atenuado de las lecciones planificadas se lee en claro y oscuro (
       assert.ok(contrast(planned, bg) < contrast(token(block, '--text-muted'), bg), `${theme}: --text-planned no se ve atenuado`);
     }
   }
-  const block = css.match(/\.build-route-planned\s*\{([^}]*)\}/)?.[1];
-  assert.ok(block, 'falta la regla .build-route-planned');
-  assert.match(block, /(?:^|;|\s)color:\s*var\(--text-planned\)/);
+  assert.equal(propertyOf('.lesson-tile.planned', 'color'), token(lightTokens, '--text-planned'), 'la baldosa planificada usa --text-planned');
 });
 
 test('la baldosa de una lección planificada tiene borde discontinuo', () => {

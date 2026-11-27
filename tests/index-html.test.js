@@ -502,28 +502,19 @@ test('Construir tiene aviso, zona de estado y la región que anuncia las fichas'
   assert.ok(live.includes('aria-live="polite"'), '#build-order-live sin aria-live="polite"');
 });
 
-// --- Índice de lecciones como ruta (Etapa 14) ---
-const buildIndex = build.match(/<div id="build-index"[^>]*>([\s\S]*?)<!-- Fin de la ruta -->/)?.[1] ?? '';
-
-test('la ruta tiene un <h2> y un <ol> por tramo (A1 y A2), unidos con aria-labelledby', () => {
-  assert.ok(tagWithId(buildIndex, 'build-route'), 'falta el contenedor #build-route');
-  for (const level of ['a1', 'a2']) {
-    const re = new RegExp(`<h2 id="build-level-${level}" class="build-level">${level.toUpperCase()}</h2>\\s*<ol id="build-route-${level}" class="build-route" aria-labelledby="build-level-${level}"></ol>`);
-    assert.match(buildIndex, re, `falta el tramo ${level.toUpperCase()}`);
-  }
-  assert.ok(buildIndex.indexOf('build-route-a1') < buildIndex.indexOf('build-route-a2'), 'A1 va antes que A2');
-  assert.ok(!build.includes('id="build-list"'), 'la lista vieja #build-list ya no existe');
+// --- Construir sin lista propia (Etapa 17): la ruta vive en Aprende ---
+test('la lección y el repaso vuelven a Aprende, y Construir ya no tiene lista propia', () => {
+  const build = sectionOf('build');
+  assert.equal([...build.matchAll(/<a class="text-link" href="#\/aprende"><span aria-hidden="true">‹<\/span> Aprende<\/a>/g)].length, 2);
+  assert.ok(!build.includes('href="#/construir"'));
+  assert.ok(!build.includes('id="build-index"'));
 });
 
-test('arriba de la ruta: «Continuar», «Repasar (N)» y el texto sin pendientes', () => {
-  assert.match(buildIndex, /<button type="button" class="button button-primary" id="build-continue">Continuar<\/button>/);
-  assert.match(buildIndex, /<p id="build-all-done" class="build-all-done" hidden>Completaste todas las lecciones disponibles<\/p>/);
-  const route = buildIndex.indexOf('id="build-route"');
-  for (const id of ['build-continue', 'build-review-start', 'build-all-done']) {
-    const at = buildIndex.indexOf(`id="${id}"`);
-    assert.ok(at > -1 && at < route, `#${id} va arriba de la ruta`);
+test('Construir ya no tiene «Continuar», «Repasar (N)», el aviso de fin ni la ruta vieja', () => {
+  for (const id of ['build-continue', 'build-review-start', 'build-all-done', 'build-route', 'build-route-a1', 'build-route-a2', 'build-list']) {
+    assert.ok(!build.includes(`id="${id}"`), `sobra #${id}`);
   }
-  assert.ok(buildIndex.indexOf('id="build-continue"') < buildIndex.indexOf('id="build-review-start"'), '«Continuar» va antes que «Repasar»');
+  assert.ok(!build.includes('Todas las lecciones'), 'sobra «Todas las lecciones»');
 });
 
 test('la lección tiene su título enfocable y las secciones en orden', () => {
@@ -593,8 +584,7 @@ test('la situación tiene su enunciado, Comprobar, el resultado enfocable y los 
   assert.ok(status?.includes('role="status"'), '#build-free-status sin role="status"');
 });
 
-test('el repaso tiene «Repasar», el vacío, el fin y el botón «Quitar del repaso»', () => {
-  assert.match(build, /<button type="button" [^>]*id="build-review-start"[^>]*>Repasar \(0\)<\/button>/);
+test('el repaso tiene el vacío, el fin y el botón «Quitar del repaso»', () => {
   assert.match(build, /<p id="build-review-empty" [^>]*tabindex="-1"[^>]*>No tienes nada que repasar hoy\. Los ejercicios que falles 2 veces aparecerán aquí\.<\/p>/);
   assert.match(build, /<p id="build-review-done" [^>]*tabindex="-1"[^>]*>Terminaste el repaso\.<\/p>/);
   assert.match(build, /<button type="button" [^>]*id="build-remove"[^>]*hidden>Quitar del repaso<\/button>/);
@@ -622,7 +612,18 @@ test('Aprende tiene el repaso de hoy con la línea del día y su acción', () =>
 test('las lecciones son un carrusel por nivel, enfocable y con nombre', () => {
   for (const level of ['a1', 'a2']) {
     assert.match(html, new RegExp(`<h3 id="learn-level-${level}"[^>]*>${level.toUpperCase()}</h3>`));
-    assert.match(html, new RegExp(`<ol id="learn-route-${level}" class="carousel" tabindex="0" aria-labelledby="learn-level-${level}">`));
+    assert.match(html, new RegExp(`<ol id="learn-route-${level}" class="carousel" tabindex="0" aria-labelledby="learn-level-${level}" hidden>`));
+  }
+});
+
+// Antes del primer refresh() no se ven títulos, carruseles vacíos ni un botón sin texto
+test('Aprende llega con las lecciones y la acción ocultas hasta que se rellenan', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<h2 class="learn-title" hidden>Lecciones<\/h2>/);
+  for (const id of ['learn-level-a1', 'learn-route-a1', 'learn-hint-a1', 'learn-level-a2', 'learn-route-a2', 'learn-hint-a2', 'today-action', 'today-more']) {
+    const tag = tagWithId(learn, id);
+    assert.ok(tag, `falta #${id}`);
+    assert.match(tag, /\shidden[\s>]/, `#${id} no llega oculto`);
   }
 });
 
@@ -635,25 +636,21 @@ test('Aprende ya no tiene la tarjeta «Construir frases» ni la frase de bienven
   assert.ok(learn.indexOf('id="learn-route-a2"') < learn.indexOf('Copia de seguridad'), 'la copia va debajo de las lecciones');
 });
 
-test('cada lección tiene un enlace para volver a la ruta', () => {
+test('cada lección tiene un enlace visible para volver a Aprende', () => {
   const lesson = html.match(/<article id="build-lesson"[^>]*>([\s\S]*?)<\/article>/);
   assert.ok(lesson, 'falta el artículo de la lección');
-  const link = lesson[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'la lección no tiene un enlace a #/construir');
-  assert.match(link[1], /Todas las lecciones/);
-  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  const link = lesson[1].match(/<p class="build-back">(<a [^>]*href="#\/aprende"[^>]*>[\s\S]*?<\/a>)<\/p>/);
+  assert.ok(link, 'la lección no tiene «‹ Aprende» en su .build-back');
+  assert.equal(link[1], '<a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a>');
 });
 
 // En el móvil la barra no tiene Construir: desde el repaso también hay que poder volver
-test('el repaso tiene un enlace para volver a la ruta', () => {
+test('el repaso tiene un enlace visible para volver a Aprende', () => {
   const review = html.match(/<div id="build-review"[^>]*>([\s\S]*?)<!-- Lección/);
   assert.ok(review, 'falta el bloque del repaso');
-  const link = review[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'el repaso no tiene un enlace a #/construir');
-  assert.match(link[1], /Todas las lecciones/);
-  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  const link = review[1].match(/<p class="build-back">(<a [^>]*href="#\/aprende"[^>]*>[\s\S]*?<\/a>)<\/p>/);
+  assert.ok(link, 'el repaso no tiene «‹ Aprende» en su .build-back');
+  assert.equal(link[1], '<a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a>');
   // Fuera de los mensajes de vacío y de fin: se ve siempre
   assert.ok(review[1].indexOf(link[0]) < review[1].indexOf('build-review-empty'), 'el enlace va antes de los mensajes');
 });

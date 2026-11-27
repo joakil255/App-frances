@@ -96,10 +96,12 @@ export function initLearn({ wordStore, studyStore, buildStore, getLessons, now =
       const list = $(`#learn-route-${id}`);
       const hint = $(`#learn-hint-${id}`);
       list.replaceChildren(...tiles);
-      // Un nivel sin lecciones no se muestra
-      for (const node of [$(`#learn-level-${id}`), list, hint]) node.hidden = tiles.length === 0;
-      const count = tiles.length === 1 ? `la 1 lección de ${level}` : `las ${tiles.length} lecciones de ${level}`;
-      hint.textContent = touch ? `Desliza para ver ${count}.` : `Usa las flechas o la barra para ver ${count}.`;
+      // Un nivel sin lecciones no se muestra; con una sola no hay nada que deslizar
+      for (const node of [$(`#learn-level-${id}`), list]) node.hidden = tiles.length === 0;
+      hint.hidden = tiles.length < 2;
+      const count = `las ${tiles.length} lecciones de ${level}`;
+      const text = touch ? `Desliza para ver ${count}.` : `Usa las flechas o la barra para ver ${count}.`;
+      hint.textContent = tiles.length < 2 ? '' : text;
       if (tiles.length > 0) scrollToCurrent(list);
     }
     lessonsTitle.hidden = rows.length === 0;
