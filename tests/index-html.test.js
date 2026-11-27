@@ -645,6 +645,19 @@ test('cada lección tiene un enlace para volver a la ruta', () => {
   assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
 });
 
+// En el móvil la barra no tiene Construir: desde el repaso también hay que poder volver
+test('el repaso tiene un enlace para volver a la ruta', () => {
+  const review = html.match(/<div id="build-review"[^>]*>([\s\S]*?)<!-- Lección/);
+  assert.ok(review, 'falta el bloque del repaso');
+  const link = review[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
+  assert.ok(link, 'el repaso no tiene un enlace a #/construir');
+  assert.match(link[1], /Todas las lecciones/);
+  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
+  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  // Fuera de los mensajes de vacío y de fin: se ve siempre
+  assert.ok(review[1].indexOf(link[0]) < review[1].indexOf('build-review-empty'), 'el enlace va antes de los mensajes');
+});
+
 // --- Traducción en Leer (Etapa 15) ---
 test('el lector tiene la barra de traducción con la casilla «Mostrar traducción siempre» y su etiqueta', () => {
   const bar = reader.match(/<div id="reader-translation-bar"[^>]*>([\s\S]*?)<!-- fin de la barra de traducción -->/)?.[1];
