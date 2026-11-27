@@ -655,3 +655,39 @@ test('una v7 da el error de versión más nueva', async () => {
   data.version = 7;
   assert.match(readBackup(JSON.stringify(data)).fatal, /más nueva/);
 });
+
+// --- Etapa 16: progreso de las lecciones nuevas (fr-a2-02) ---
+test('v6 con progreso de fr-a2-02, lastPractice y una tarjeta ex:fr-a2-02:x3 hace ida y vuelta', async () => {
+  const build = sampleBuild();
+  build.progress['fr-a2-02'] = {
+    startedAt: '2026-05-05', completedAt: '2026-05-06',
+    exercises: { x3: { fails: 1, lastCorrectAt: '2026-05-06' } },
+    lastPractice: { firstTry: 5, total: 6, date: '2026-05-06' },
+  };
+  build.cards['ex:fr-a2-02:x3'] = {
+    id: 'ex:fr-a2-02:x3', kind: 'exercise', lessonId: 'fr-a2-02', exerciseId: 'x3', createdAt: AT, introducedOn: '2026-05-06',
+    lastReviewedAt: null, sm2: BUILD_SM2, leitner: { box: 0, due: '2026-05-07' },
+  };
+  const data = await v5WithBuild(build);
+  assert.equal(data.version, 6);
+  const read = readBackup(JSON.stringify(data));
+  assert.equal(read.fatal, null);
+  assert.deepEqual(read.backup.build, build);
+  const backend = new MemoryStorage({});
+  restoreBackup(backend, read.backup);
+  assert.deepEqual(JSON.parse(backend.getItem(BUILD_KEY)), { schemaVersion: 2, ...build });
+  const store = createBuildStore(backend, { now: () => NOW });
+  assert.deepEqual(await store.load(), { corruptBackupKey: null, migrationError: null });
+  assert.deepEqual(store.getState(), build);
+});
+
+test('una v5 con progreso solo de fr-a1-01 se restaura sin cambios', async () => {
+  const data = await v5WithBuild();
+  data.version = 5;
+  const read = readBackup(JSON.stringify(data));
+  assert.equal(read.fatal, null);
+  assert.deepEqual(read.backup.build, sampleBuild());
+  const backend = new MemoryStorage({});
+  restoreBackup(backend, read.backup);
+  assert.deepEqual(JSON.parse(backend.getItem(BUILD_KEY)), { schemaVersion: 2, ...sampleBuild() });
+});

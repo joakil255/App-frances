@@ -140,10 +140,10 @@ test('openableLesson: devuelve la entrada disponible y cargada; null si es plani
   assert.equal(openableLesson([], 'fr-a1-01'), null);
 });
 
-test('openableLesson con el índice real: fr-a1-10 (planificada) no se abre', async () => {
+test('openableLesson con el índice real: fr-a1-11 (planificada) no se abre', async () => {
   const { readFile } = await import('node:fs/promises');
   const index = JSON.parse(await readFile(new URL('../data/lessons/fr/index.json', import.meta.url), 'utf8'));
-  assert.equal(openableLesson(index.lessons.map((entry) => ({ ...entry, lesson: null })), 'fr-a1-10'), null);
+  assert.equal(openableLesson(index.lessons.map((entry) => ({ ...entry, lesson: null })), 'fr-a1-11'), null);
 });
 
 test('continueLabel: «Continuar: Lección N · Título» de la siguiente pendiente, o null', () => {
@@ -153,4 +153,42 @@ test('continueLabel: «Continuar: Lección N · Título» de la siguiente pendie
   map['fr-a1-07'] = { startedAt: 's', exercises: done(2) };
   assert.equal(continueLabel(entries, map), null);
   assert.equal(continueLabel([], {}), null);
+});
+
+// --- Etapa 16: ruta real con las lecciones 1 a 10 y fr-a2-01 a 04 ---
+async function realEntries() {
+  const { readFile } = await import('node:fs/promises');
+  const dir = new URL('../data/lessons/fr/', import.meta.url);
+  const index = JSON.parse(await readFile(new URL('index.json', dir), 'utf8'));
+  return Promise.all(index.lessons.map(async (entry) => {
+    if (entry.status !== 'available') return { ...entry, lesson: null, error: null };
+    const lesson = JSON.parse(await readFile(new URL(`${entry.id}.json`, dir), 'utf8'));
+    return { ...entry, lesson, error: null };
+  }));
+}
+const finished = (entries, ids) => Object.fromEntries(ids.map((id) => {
+  const { lesson } = entries.find((e) => e.id === id);
+  return [id, { startedAt: 's', completedAt: 'c', exercises: Object.fromEntries(lesson.exercises.map((ex) => [ex.id, { lastCorrectAt: 'd' }])) }];
+}));
+const firstTen = Array.from({ length: 10 }, (_, i) => `fr-a1-${String(i + 1).padStart(2, '0')}`);
+
+test('ruta real: con fr-a1-01 a 10 completadas, la siguiente es fr-a2-01 y el botón dice Lección 16', async () => {
+  const entries = await realEntries();
+  const map = finished(entries, firstTen);
+  assert.equal(nextLesson(entries, map).id, 'fr-a2-01');
+  assert.match(continueLabel(entries, map), /^Continuar: Lección 16 · /);
+});
+
+test('ruta real: fr-a1-11 sigue sin abrirse y fr-a1-11 a 15 son planned sin href', async () => {
+  const entries = await realEntries();
+  assert.equal(openableLesson(entries, 'fr-a1-11'), null);
+  const rows = routeRows(entries, {});
+  for (const id of ['fr-a1-11', 'fr-a1-12', 'fr-a1-13', 'fr-a1-14', 'fr-a1-15']) {
+    const row = rows.find((r) => r.id === id);
+    assert.equal(row.kind, 'planned', id);
+    assert.equal(row.href, null, id);
+  }
+  for (const id of [...firstTen, 'fr-a2-01', 'fr-a2-02', 'fr-a2-03', 'fr-a2-04']) {
+    assert.equal(rows.find((r) => r.id === id).href, `#/construir/${id}`, id);
+  }
 });

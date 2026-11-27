@@ -35,7 +35,7 @@ test('todo archivo que la app necesita está en la lista de caché', () => {
   }
 });
 
-test('la caché sube a v26 y guarda los ajustes del lector (Etapa 15)', () => {
-  assert.equal(loadServiceWorker().read('CACHE_VERSION'), 'v26');
+test('la caché sube a v27 (Etapa 16)', () => {
+  assert.equal(loadServiceWorker().read('CACHE_VERSION'), 'v27');
   assert.ok(PRECACHE_URLS.includes('js/lib/reader-prefs.js'));
 });
