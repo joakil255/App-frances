@@ -5,25 +5,37 @@ import { SCREENS } from '../js/lib/router.js';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
-test('tiene enlace para saltar al contenido', () => {
-  assert.match(html, /<a [^>]*href="#main"[^>]*>Saltar al contenido<\/a>/);
+// Todo lo que hay desde <section id="screen-ID"> hasta la siguiente pantalla (o </main>)
+function sectionOf(id) {
+  const start = html.indexOf(`<section id="screen-${id}"`);
+  assert.ok(start >= 0, `falta screen-${id}`);
+  const next = html.indexOf('<section id="screen-', start + 1);
+  return html.slice(start, next === -1 ? html.indexOf('</main>') : next);
+}
+
+test('la navegación va después de <main> y tiene los tres destinos', () => {
+  assert.ok(html.indexOf('<nav aria-label="Principal"') > html.indexOf('</main>'));
+  assert.ok(!html.includes('Saltar al contenido'));
   assert.match(html, /<main [^>]*id="main"/);
-});
-
-test('la navegación principal tiene un enlace por pantalla', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/);
-  assert.ok(nav, 'falta <nav aria-label="Principal">');
-  for (const screen of SCREENS) {
-    const href = `#/${screen.path}`;
-    assert.ok(nav[1].includes(`href="${href}"`), `falta enlace a ${href}`);
-    assert.ok(nav[1].includes(`>${screen.title}<`), `falta texto ${screen.title}`);
-  }
-});
-
-test('la barra dice «Palabras» (antes «Vocabulario») y lleva a #/vocabulario', () => {
   const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /href="#\/vocabulario"><span class="line-dot" aria-hidden="true"><\/span>Palabras<\/a>/);
-  assert.ok(!nav.includes('Vocabulario'));
+  assert.deepEqual([...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]), ['#/aprende', '#/practica', '#/progreso']);
+  for (const t of ['Aprende', 'Practica', 'Progreso']) assert.match(nav, new RegExp(`<span class="nav-label">${t}</span>`));
+});
+
+test('Practica enlaza las cinco pantallas de práctica, agrupadas por habilidad', () => {
+  const practice = sectionOf('practice');
+  assert.deepEqual([...practice.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map((m) => m[1]), ['Vocabulario', 'Leer y escuchar', 'Hablar']);
+  for (const href of ['#/vocabulario', '#/estudiar', '#/quiz', '#/leer', '#/conversar']) assert.ok(practice.includes(`href="${href}"`), href);
+  for (const id of ['practice-words', 'practice-study', 'practice-reader']) assert.match(practice, new RegExp(`id="${id}"`));
+  assert.ok(practice.includes('3 modos: opción múltiple, escribir y dictado'));
+  assert.ok(practice.includes('Necesita conexión a internet'));
+});
+
+test('cada pantalla de práctica tiene un enlace visible para volver a Practica', () => {
+  for (const id of ['vocabulary', 'study', 'quiz', 'chat', 'reader']) {
+    const section = sectionOf(id);
+    assert.match(section, /<p class="back-link"><a class="text-link" href="#\/practica"><span aria-hidden="true">‹<\/span> Practica<\/a><\/p>/, id);
+  }
 });
 
 test('cada pantalla tiene su sección con título enfocable', () => {
@@ -263,7 +275,7 @@ test('Vocabulario tiene el botón para añadir el mazo A1 junto a Importar y Exp
 });
 
 // --- Inicio: copia de seguridad (Etapa 7) ---
-const home = html.match(/<section id="screen-home"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const home = html.match(/<section id="screen-learn"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
 test('Inicio mantiene su frase y tiene la copia de seguridad con avisos', () => {
   assert.match(home, /<span lang="fr">Bonjour\.<\/span> Aquí verás cada día lo que te toca repasar\./);
@@ -409,11 +421,6 @@ test('la tarjeta de palabras tiene los botones Escuchar, Guardar y Cerrar', () =
 const reader = html.match(/<section id="screen-reader"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 const buttonWithText = (source, text) => new RegExp(`<button [^>]*>${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</button>`).test(source);
 
-test('la barra tiene el enlace «Leer» a #/leer con su propia línea', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /<a class="nav-link line-reader" href="#\/leer"><span class="line-dot" aria-hidden="true"><\/span>Leer<\/a>/);
-});
-
 test('Leer es su propia sección con la línea marrón y el título enfocable', () => {
   assert.match(html, /<section id="screen-reader" class="screen line-reader" hidden>/);
   assert.match(reader, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Leer<\/h1>/);
@@ -477,23 +484,12 @@ test('la ventana de borrar una historia pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Borrar<\/button>/);
 });
 
-test('el enlace de Construir frases va en un <li> solo para computador', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /<li class="nav-desktop-only"><a [^>]*href="#\/construir"[^>]*>/);
-  assert.equal((nav.match(/<li>/g) ?? []).length, 7);
-});
-
 // --- Pantalla Construir frases (Etapa 12) ---
 const build = html.match(/<section id="screen-build"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
 test('Construir es su propia sección con su línea y el título enfocable', () => {
   assert.match(html, /<section id="screen-build" class="screen line-build" hidden>/);
   assert.match(build, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Construir frases<\/h1>/);
-});
-
-test('el enlace #/construir de la barra lleva la clase que lo oculta en el móvil', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /<li class="nav-desktop-only"><a class="nav-link line-build" href="#\/construir">/);
 });
 
 test('Construir tiene aviso, zona de estado y la región que anuncia las fichas', () => {
@@ -684,4 +680,9 @@ test('la barra de traducción tiene «Generar traducción» y la nota de «no se
 test('la barra de traducción va antes del texto de la historia', () => {
   assert.ok(reader.indexOf('id="reader-translation-bar"') < reader.indexOf('id="reader-text"'));
   assert.ok(reader.indexOf('id="reader-translation-bar"') > 0);
+});
+
+test('la historia abierta tiene como primer elemento el enlace «‹ Leer» a la biblioteca', () => {
+  const story = html.match(/<article id="reader-story"[^>]*>\s*([\s\S]*)/)?.[1] ?? '';
+  assert.ok(story.startsWith('<p class="back-link"><a class="text-link" href="#/leer"><span aria-hidden="true">‹</span> Leer</a></p>'));
 });

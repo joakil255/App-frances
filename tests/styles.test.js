@@ -148,11 +148,44 @@ test('la línea turquesa de Construir se ve sobre el fondo y la tarjeta (≥ 3:1
   assert.ok(!others.includes(teal.toUpperCase()), 'Construir repite el color de otra línea');
 });
 
-test('.nav-desktop-only se oculta en móvil y se muestra desde 900 px', () => {
-  const at = css.indexOf('@media (min-width: 900px)');
-  assert.ok(at > 0);
-  assert.match(css.slice(0, at), /\.nav-list \.nav-desktop-only\s*\{\s*display:\s*none;/);
-  assert.match(css.slice(at), /\.nav-list \.nav-desktop-only\s*\{\s*display:\s*block;/);
+test('la pestaña activa: texto blanco sobre la placa azul (≥ 4,5:1) en claro y oscuro', () => {
+  const color = propertyOf('.nav-link[aria-current] .nav-label', 'color');
+  for (const [theme, bg] of Object.entries(PLAQUE)) assert.ok(contrast(color, bg) >= 4.5, theme);
+});
+
+test('el texto de las pestañas inactivas se lee sobre la barra clara (≥ 4,5:1)', () => {
+  assert.ok(contrast(propertyOf('.nav-link', 'color'), propertyOf('.nav', 'background')) >= 4.5);
+});
+
+test('la barra mide 64 px de alto en el móvil', () => {
+  assert.match(css, /\n\.nav-link\s*\{[^}]*min-height:\s*var\(--nav-height\)/);
+  assert.match(css, /--nav-height:\s*64px/);
+});
+
+test('ya no quedan estilos de .nav-desktop-only ni de .line-home', () => {
+  assert.doesNotMatch(css, /nav-desktop-only|\.line-home/);
+});
+
+test('«Ir a tu mensaje» se oculta fuera de pantalla y aparece al recibir el foco', () => {
+  assert.match(css, /\n\.skip-link\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-100px/);
+  assert.match(css, /\n\.skip-link:focus\s*\{[^}]*top:\s*var\(--space-2\)/);
+});
+
+test('«‹ Practica» se lee a tamaño normal', () => {
+  assert.match(css, /\n\.back-link \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
+});
+
+test('la baldosa de Practica: rejilla de 2 columnas, banda de 8 px y 112 px de alto mínimo', () => {
+  assert.match(propertyOf('.practice-grid', 'grid-template-columns'), /repeat\(2,\s*1fr\)/);
+  assert.match(css, /\.practice-grid \.wide\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/);
+  assert.equal(propertyOf('.practice-tile', 'min-height'), '112px');
+  assert.match(propertyOf('.practice-tile', 'border-top'), /8px solid var\(--line\)/);
+});
+
+test('desde 900 px la barra va a la izquierda sin reordenar el DOM', () => {
+  const wide = css.slice(css.indexOf('@media (min-width: 900px)'));
+  assert.match(wide, /\.nav\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*1;/);
+  assert.match(wide, /main\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;/);
 });
 
 test('el aviso de Construir vacío no se quita del árbol de accesibilidad (role="status")', () => {
@@ -190,4 +223,9 @@ test('el botón «Ver traducción» mide 44 px de alto y la traducción usa --te
   const block = css.match(/(?:^|\n|\})\s*\.reader-translation\s*\{([^}]*)\}/)?.[1] ?? '';
   assert.match(block, /color:\s*var\(--text-muted\)/);
   assert.match(block, /font:[^;]*italic/);
+});
+
+test('el foco de la barra va hacia dentro y el del enlace de salto se ve sobre la placa azul', () => {
+  assert.match(css, /\n\.nav-link:focus-visible\s*\{\s*outline-offset:\s*-3px/);
+  assert.match(css, /\n\.skip-link:focus-visible\s*\{\s*outline-color:\s*var\(--focus-on-blue\)/);
 });
