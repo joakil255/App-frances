@@ -70,7 +70,7 @@ function showScreen(id, moveFocus) {
 function handleRoute(isFirstLoad) {
   const id = resolveRoute(location.hash);
   if (id === null) {
-    // Ancla normal (p. ej. «Saltar al contenido»): no cambia de pantalla
+    // Ancla normal que no es una pantalla: no cambia de pantalla
     if (currentId === null) showScreen('learn', false);
     return;
   }
