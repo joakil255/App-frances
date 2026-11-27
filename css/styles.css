@@ -156,6 +156,21 @@ body {
 }
 main:focus { outline: none; } /* destino del foco al cambiar de pantalla, no es interactivo */
 
+/* Enlace «Ir a tu mensaje» de Conversar: visible solo al recibir el foco */
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: -100px;
+  z-index: 10;
+  padding: var(--space-3) var(--space-4);
+  background: var(--plaque);
+  color: var(--plaque-text);
+  font-family: var(--font-sign);
+  font-weight: 700;
+  border-radius: var(--radius);
+}
+.skip-link:focus { top: var(--space-2); }
+
 /* --- Navegación (móvil: barra clara abajo) --- */
 .nav {
   position: fixed;
@@ -253,6 +268,7 @@ main {
 }
 
 .back-link { margin: 0 0 var(--space-2); }
+.back-link .text-link { font-size: var(--size-base); } /* la vuelta principal en el móvil: tamaño normal */
 
 /* --- Practica: rejilla de baldosas --- */
 .practice-grid {

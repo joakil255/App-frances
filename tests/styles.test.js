@@ -162,8 +162,17 @@ test('la barra mide 64 px de alto en el móvil', () => {
   assert.match(css, /--nav-height:\s*64px/);
 });
 
-test('ya no quedan estilos del enlace de salto ni de .nav-desktop-only', () => {
-  assert.doesNotMatch(css, /skip-link|nav-desktop-only|\.line-home/);
+test('ya no quedan estilos de .nav-desktop-only ni de .line-home', () => {
+  assert.doesNotMatch(css, /nav-desktop-only|\.line-home/);
+});
+
+test('«Ir a tu mensaje» se oculta fuera de pantalla y aparece al recibir el foco', () => {
+  assert.match(css, /\n\.skip-link\s*\{[^}]*position:\s*absolute;[^}]*top:\s*-100px/);
+  assert.match(css, /\n\.skip-link:focus\s*\{[^}]*top:\s*var\(--space-2\)/);
+});
+
+test('«‹ Practica» se lee a tamaño normal', () => {
+  assert.match(css, /\n\.back-link \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
 });
 
 test('la baldosa de Practica: rejilla de 2 columnas, banda de 8 px y 112 px de alto mínimo', () => {
