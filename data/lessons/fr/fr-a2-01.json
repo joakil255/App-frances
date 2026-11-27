@@ -1,0 +1,582 @@
+{
+  "format": "app-frances-leccion",
+  "version": 1,
+  "id": "fr-a2-01",
+  "lang": "fr",
+  "explainLang": "es",
+  "level": "A2",
+  "title": "Passé composé con avoir",
+  "areas": [
+    "grammar",
+    "syntax",
+    "spelling"
+  ],
+  "sources": [
+    {
+      "id": "inventaire-d",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo D: referencial de contenidos clave (gramática)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "49-50",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-e",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo E: lista de gramática por nivel",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "56-57",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "inventaire-f",
+      "title": "Inventaire linguistique des contenus clés des niveaux du CECRL, anexo F: realizaciones lingüísticas (frases de ejemplo por nivel)",
+      "publisher": "Eaquals y CIEP",
+      "year": 2015,
+      "pages": "63-64 (nivel A1), 67-70 (nivel A2)",
+      "url": "https://www.eaquals.org/wp-content/uploads/Inventaire_ONLINE_full.pdf"
+    },
+    {
+      "id": "niveau-a2",
+      "title": "Niveau A2 pour le français. Un référentiel, capítulo 5: gramática",
+      "publisher": "Didier (extracto publicado por la FIPF)",
+      "year": 2008,
+      "pages": "106",
+      "url": "https://bop.fipf.org/wp-content/uploads/2017/03/refa343342.pdf"
+    },
+    {
+      "id": "bdl-passe-compose",
+      "title": "Banque de dépannage linguistique: «Passé composé : usages et emplois»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24218/la-grammaire/le-verbe/temps-grammaticaux/passe/generalites-sur-le-passe-compose"
+    },
+    {
+      "id": "bdl-auxiliaires",
+      "title": "Banque de dépannage linguistique: «AVOIR et ÊTRE : auxiliaires essentiels à la conjugaison»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/24224/la-grammaire/le-verbe/auxiliaires/emploi-des-auxiliaires-avoir-et-etre"
+    },
+    {
+      "id": "bdl-elision",
+      "title": "Banque de dépannage linguistique: «Cas où l'élision est obligatoire»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 25/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/index.php?id=21737"
+    },
+    {
+      "id": "bdl-place-negation",
+      "title": "Banque de dépannage linguistique: «Place du verbe avec ne… pas et ne pas»",
+      "publisher": "Office québécois de la langue française",
+      "year": null,
+      "pages": "artículo en línea, consultado el 27/11/2026",
+      "url": "https://vitrinelinguistique.oqlf.gouv.qc.ca/23909/la-syntaxe/la-negation-et-la-restriction/place-du-verbe-avec-ne-pas-et-ne-pas"
+    }
+  ],
+  "idea": [
+    {
+      "id": "i1",
+      "text": "El passé composé cuenta algo que ya terminó. Se forma con dos piezas: avoir en presente (j'ai, tu as, il a, nous avons, vous avez, ils ont; lo viste en la lección 2) + el participio del verbo: j'ai mangé, tu as mangé, il a mangé, nous avons mangé, vous avez mangé, ils ont mangé. Cambia el auxiliar según la persona; en esta lección, el participio queda igual con todas las personas. Los casos con un pronombre complemento antes del verbo son de un nivel más alto y no se ven aquí.",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "bdl-auxiliaires",
+        "inventaire-d",
+        "inventaire-e",
+        "niveau-a2"
+      ],
+      "review": false
+    },
+    {
+      "id": "i2",
+      "text": "Se usa para una acción terminada en el pasado, a menudo con un momento: hier (ayer), ce matin (esta mañana), la semaine dernière (la semana pasada). Una frase como J'ai mangé du poisson hier puede traducirse «comí pescado ayer» o «he comido pescado ayer»: en el francés de todos los días es la misma forma para las dos.",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "inventaire-f"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: la BDL «Passé composé : usages et emplois» (un hecho que ocurre completamente en el pasado) y el Inventaire F pp. 63-64 (J'ai mangé du poisson hier; Hier soir, j'ai vu un film). Falta: la comparación con el español. Ninguna fuente leída compara el passé composé con el pretérito ni con el pretérito perfecto español. Tampoco hay una lista de marcadores: hier, ce matin y la semaine dernière aparecen solo dentro de ejemplos (hier, Inventaire F p. 64; la semaine dernière, BDL; ce matin, Inventaire F p. 71, con être)."
+    },
+    {
+      "id": "i3",
+      "text": "Los verbos en -er cambian -er por -é: manger → mangé, aimer → aimé, adorer → adoré. Ojo con la ortografía: el participio (después de avoir) se escribe -é; el infinitivo se escribe -er. Suenan igual, pero no se escriben igual: j'ai mangé (ya pasó) frente a je vais manger (va a pasar).",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F pp. 64 y 68-70 (mangé, aimé, adoré, en ejemplos) y la BDL «Passé composé : usages et emplois». Falta: una frase literal que enuncie «el participio de los verbos en -er termina en -é» y la nota sobre la pronunciación (-é y -er suenan igual)."
+    },
+    {
+      "id": "i4",
+      "text": "Algunos verbos tienen un participio que no sale de -er → -é y hay que aprenderlo aparte. En esta lección: voir → vu (j'ai vu) y faire → fait (j'ai fait). No se dice j'ai voir ni j'ai faire.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 63 (vu: «Hier soir, j'ai vu un film») y p. 68 (fait: «J'ai fait une présentation…»). Falta: una tabla de participios irregulares. Por eso solo se enseñan vu y fait, que salen en ejemplos del Inventaire; pris, bu, lu, eu, été, dit y écrit quedan fuera."
+    },
+    {
+      "id": "i5",
+      "text": "Para negar, ne y pas rodean al auxiliar avoir, y el participio va después de pas: je n'ai pas mangé, tu n'as pas mangé, il n'a pas vu, nous n'avons pas fait. Ne delante de cualquier forma de avoir (todas empiezan con vocal) se escribe n': je n'ai, tu n'as, il n'a, nous n'avons, vous n'avez, ils n'ont.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision",
+        "inventaire-d"
+      ],
+      "review": false
+    }
+  ],
+  "pattern": [
+    {
+      "label": "Avoir + participio",
+      "options": [
+        "j'ai mangé",
+        "tu as mangé",
+        "il a mangé",
+        "nous avons mangé",
+        "vous avez mangé",
+        "ils ont mangé"
+      ]
+    },
+    {
+      "label": "Participios irregulares",
+      "options": [
+        "j'ai vu",
+        "j'ai fait"
+      ]
+    },
+    {
+      "label": "Negación",
+      "options": [
+        "je n'ai pas mangé",
+        "il n'a pas vu",
+        "nous n'avons pas fait"
+      ]
+    },
+    {
+      "label": "Marcadores de tiempo",
+      "options": [
+        "hier",
+        "ce matin",
+        "la semaine dernière"
+      ]
+    }
+  ],
+  "think": [
+    {
+      "id": "t1",
+      "source": "Ayer comí pescado",
+      "target": "Hier, j'ai mangé du poisson.",
+      "note": "En español «comí» es una sola palabra. En francés hacen falta dos piezas: avoir (j'ai) + el participio (mangé). En el francés de todos los días, la misma forma sirve para «comí» y «he comido».",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 64 (J'ai mangé du poisson hier) y la BDL «Passé composé : usages et emplois». Falta: la comparación con el español. Ninguna fuente leída compara el passé composé con el pretérito ni con el pretérito perfecto español."
+    },
+    {
+      "id": "t2",
+      "source": "No vi la película",
+      "target": "Je n'ai pas vu le film.",
+      "note": "Primero el auxiliar con ne y pas alrededor (n'ai pas), y después el participio: vu. Ne se escribe n' delante de ai.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "t3",
+      "source": "Esta mañana hice un pastel",
+      "target": "Ce matin, j'ai fait un gâteau.",
+      "note": "Faire no hace -é: su participio es fait. Se dice j'ai fait, no j'ai faire.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    }
+  ],
+  "examples": [
+    {
+      "id": "e1",
+      "text": "J'ai mangé du poisson hier.",
+      "translation": "Ayer comí pescado.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e2",
+      "text": "Hier soir, j'ai vu un beau film à la télé.",
+      "translation": "Anoche vi una linda película en la tele.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e3",
+      "text": "Elle a aimé le concert.",
+      "translation": "Le gustó el concierto.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e4",
+      "text": "J'ai fait une présentation à l'équipe marketing.",
+      "translation": "Hice una presentación al equipo de marketing.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "e5",
+      "text": "J'ai adoré les repas à l'hôtel.",
+      "translation": "Me encantaron las comidas del hotel.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    }
+  ],
+  "pitfalls": [
+    {
+      "id": "p1",
+      "wrong": "Hier, je mangé du poisson.",
+      "right": "Hier, j'ai mangé du poisson.",
+      "explanation": "Falta el auxiliar. El participio mangé no funciona solo: va después de avoir (j'ai mangé).",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "bdl-auxiliaires"
+      ],
+      "review": false
+    },
+    {
+      "id": "p2",
+      "wrong": "Hier, j'ai manger du poisson.",
+      "right": "Hier, j'ai mangé du poisson.",
+      "explanation": "Después de avoir va el participio, que se escribe -é. La terminación -er es del infinitivo (manger), que va, por ejemplo, después de je vais. Se oyen igual, pero se escriben distinto.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F pp. 64 y 68-70 (participios en -é como ejemplos). Falta: una frase literal de la regla «-é y no -er después de avoir»."
+    },
+    {
+      "id": "p3",
+      "wrong": "Hier, je mange du poisson.",
+      "right": "Hier, j'ai mangé du poisson.",
+      "explanation": "«Comí» también se dice con el passé composé, no solo «he comido». Con hier el hecho ya pasó, así que no sirve el presente (je mange).",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "inventaire-f"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: la BDL «Passé composé : usages et emplois» y el Inventaire F p. 64 (J'ai mangé du poisson hier). Falta: la comparación con el español. Ninguna fuente leída compara el passé composé con el pretérito ni con el pretérito perfecto español."
+    },
+    {
+      "id": "p4",
+      "wrong": "Je n'ai mangé pas le gâteau.",
+      "right": "Je n'ai pas mangé le gâteau.",
+      "explanation": "Ne y pas rodean al auxiliar (n'ai pas) y el participio va después de pas: je n'ai pas mangé.",
+      "sourceIds": [
+        "bdl-place-negation"
+      ],
+      "review": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "x1",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Ayer comí pescado».",
+      "tiles": [
+        "mangé",
+        "Hier",
+        "j'ai",
+        "du",
+        "poisson"
+      ],
+      "answers": [
+        "Hier, j'ai mangé du poisson.",
+        "J'ai mangé du poisson hier."
+      ],
+      "rule": "Avoir (j'ai) + participio (mangé). El momento (hier) va al principio o al final.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    },
+    {
+      "id": "x2",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Nosotros no vimos la película».",
+      "tiles": [
+        "vu",
+        "pas",
+        "Nous",
+        "n'avons",
+        "le",
+        "film"
+      ],
+      "answers": [
+        "Nous n'avons pas vu le film."
+      ],
+      "mistakes": [
+        {
+          "answer": "Nous n'avons vu pas le film.",
+          "explanation": "Pas va antes del participio: ne y pas rodean al auxiliar (n'avons pas) y después viene vu."
+        }
+      ],
+      "rule": "Ne y pas rodean al auxiliar: nous n'avons pas, y después el participio vu.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x3",
+      "type": "order",
+      "prompt": "Ordena las palabras: «Esta mañana ella hizo un pastel».",
+      "tiles": [
+        "fait",
+        "Ce",
+        "matin",
+        "elle",
+        "a",
+        "un",
+        "gâteau"
+      ],
+      "answers": [
+        "Ce matin, elle a fait un gâteau.",
+        "Elle a fait un gâteau ce matin."
+      ],
+      "rule": "Elle a + fait (participio de faire). El momento (ce matin) va al principio o al final.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x4",
+      "type": "gap",
+      "prompt": "Completa con el auxiliar: «Anoche vi una película en la tele».",
+      "before": "Hier soir, j'",
+      "after": " vu un film à la télé.",
+      "answers": [
+        "ai"
+      ],
+      "mistakes": [
+        {
+          "answer": "as",
+          "explanation": "As es el auxiliar de tu (tu as). El sujeto aquí es je: j'ai vu."
+        },
+        {
+          "answer": "a",
+          "explanation": "A es el auxiliar de il o elle. El sujeto aquí es je: j'ai vu."
+        }
+      ],
+      "rule": "Con je, el auxiliar es ai (j'ai) + participio: j'ai vu.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    },
+    {
+      "id": "x5",
+      "type": "gap",
+      "prompt": "Completa con el auxiliar: «Nosotros comimos en el hotel».",
+      "before": "Nous ",
+      "after": " mangé à l'hôtel.",
+      "answers": [
+        "avons"
+      ],
+      "mistakes": [
+        {
+          "answer": "avez",
+          "explanation": "Avez es el auxiliar de vous. El sujeto aquí es nous: nous avons mangé."
+        },
+        {
+          "answer": "ont",
+          "explanation": "Ont es el auxiliar de ils y elles. El sujeto aquí es nous: nous avons mangé."
+        }
+      ],
+      "rule": "Con nous, el auxiliar es avons: nous avons mangé.",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "bdl-auxiliaires"
+      ],
+      "review": false
+    },
+    {
+      "id": "x6",
+      "type": "gap",
+      "prompt": "Completa con el participio de aimer: «A ella le gustó el concierto».",
+      "before": "Elle a ",
+      "after": " le concert.",
+      "answers": [
+        "aimé"
+      ],
+      "mistakes": [
+        {
+          "answer": "aimer",
+          "explanation": "Aimer es el infinitivo. Después de avoir va el participio, que se escribe con -é: elle a aimé."
+        }
+      ],
+      "rule": "Después de avoir va el participio: aimer → aimé.",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    },
+    {
+      "id": "x7",
+      "type": "gap",
+      "prompt": "Completa con el participio de faire: «Hice una presentación».",
+      "before": "J'ai ",
+      "after": " une présentation.",
+      "answers": [
+        "fait"
+      ],
+      "mistakes": [
+        {
+          "answer": "faire",
+          "explanation": "Faire es el infinitivo. Después de j'ai va el participio: fait."
+        },
+        {
+          "answer": "fais",
+          "explanation": "Fais es del presente (je fais, tu fais). Después de j'ai va el participio: fait."
+        }
+      ],
+      "rule": "El participio de faire es fait: j'ai fait.",
+      "sourceIds": [
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x8",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ayer comí pescado».",
+      "wrong": "Hier, je mangé du poisson.",
+      "answers": [
+        "Hier, j'ai mangé du poisson.",
+        "J'ai mangé du poisson hier."
+      ],
+      "mistakes": [
+        {
+          "answer": "Hier, je mangé du poisson.",
+          "explanation": "Falta el auxiliar: el participio mangé va después de avoir (j'ai mangé)."
+        },
+        {
+          "answer": "Hier, j'ai manger du poisson.",
+          "explanation": "Después de avoir va el participio, que se escribe -é: j'ai mangé. La terminación -er es del infinitivo."
+        }
+      ],
+      "rule": "Passé composé = avoir + participio: j'ai mangé.",
+      "sourceIds": [
+        "bdl-passe-compose",
+        "bdl-auxiliaires",
+        "inventaire-f"
+      ],
+      "review": false
+    },
+    {
+      "id": "x9",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Él no comió el pastel».",
+      "wrong": "Il ne a pas mangé le gâteau.",
+      "answers": [
+        "Il n'a pas mangé le gâteau."
+      ],
+      "mistakes": [
+        {
+          "answer": "Il ne a pas mangé le gâteau.",
+          "explanation": "Ne delante de a se escribe n': n'a. Después vienen pas y el participio."
+        },
+        {
+          "answer": "Il n'a mangé pas le gâteau.",
+          "explanation": "Pas va antes del participio: ne y pas rodean al auxiliar (n'a pas) y después viene mangé."
+        }
+      ],
+      "rule": "Il n'a pas + participio: ne y pas rodean al auxiliar, y ne delante de a se escribe n'.",
+      "sourceIds": [
+        "bdl-place-negation",
+        "bdl-elision"
+      ],
+      "review": false
+    },
+    {
+      "id": "x10",
+      "type": "fix",
+      "prompt": "Corrige la frase: «Ella adoró el concierto».",
+      "wrong": "Elle a adorer le concert.",
+      "answers": [
+        "Elle a adoré le concert."
+      ],
+      "mistakes": [
+        {
+          "answer": "Elle a adorer le concert.",
+          "explanation": "Después de avoir va el participio, que se escribe -é: adoré. La terminación -er es del infinitivo (adorer)."
+        },
+        {
+          "answer": "Elle a adorée le concert.",
+          "explanation": "En esta lección el participio con avoir no lleva una -e de más: elle a adoré."
+        }
+      ],
+      "rule": "Participio de los verbos en -er: adorer → adoré (con avoir, -é y no -er).",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": true,
+      "reviewNote": "Fuentes consultadas: Inventaire F p. 68 (J'ai adoré les repas à l'hôtel) y la BDL «Passé composé : usages et emplois». Falta: una frase literal de la regla «-é y no -er después de avoir»."
+    }
+  ],
+  "situations": [
+    {
+      "id": "s1",
+      "situation": "Un amigo te pregunta qué hiciste ayer. Cuéntale qué comiste y qué viste.",
+      "models": [
+        "Hier, j'ai mangé du poisson. Hier soir, j'ai vu un film à la télé.",
+        "J'ai mangé du poisson hier. J'ai vu un film hier soir.",
+        "Hier soir, j'ai vu un film. J'ai mangé du poisson."
+      ],
+      "focus": "j'ai + participio (mangé, vu) con hier",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    },
+    {
+      "id": "s2",
+      "situation": "Un amigo te pregunta qué hiciste la semana pasada. Responde con dos cosas.",
+      "models": [
+        "La semaine dernière, j'ai vu un film et j'ai fait un gâteau.",
+        "J'ai vu un film et j'ai fait un gâteau la semaine dernière.",
+        "La semaine dernière, j'ai fait un gâteau. Et j'ai vu un film."
+      ],
+      "focus": "dos verbos con j'ai (vu, fait) y la semaine dernière",
+      "sourceIds": [
+        "inventaire-f",
+        "bdl-passe-compose"
+      ],
+      "review": false
+    }
+  ]
+}
