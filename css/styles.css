@@ -312,6 +312,7 @@ main {
   border: 2px solid transparent;
   border-radius: var(--radius);
   font: 700 var(--size-base) var(--font-sign);
+  text-decoration: none;
   cursor: pointer;
 }
 .button-primary { background: var(--plaque); color: #FFFFFF; }
@@ -790,7 +791,7 @@ main {
 }
 .today h2 .line-dot { width: 14px; height: 14px; box-shadow: 0 0 0 2px var(--text); } /* la baldosa es clara: anillo oscuro */
 .today-main { margin: 6px 0 var(--space-4); font: 600 1.95rem/1.15 var(--font-text); overflow-wrap: anywhere; }
-.today-action { width: 100%; min-height: 56px; font-size: 1.15rem; text-align: center; text-decoration: none; }
+.today-action { width: 100%; min-height: 56px; font-size: 1.15rem; text-align: center; }
 .today-next { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: 0.95rem; overflow-wrap: anywhere; }
 .today-more { margin: var(--space-1) 0 0; }
 

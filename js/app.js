@@ -144,9 +144,11 @@ initVocabulary({ store: wordStore, synth })
       if (currentId === 'learn') learn.refresh();
     }),
   ]));
-// Al volver a la app pasado el día, Aprende se recalcula (si no cambió el día, no se toca)
+// Al volver a la app pasado el día, Aprende y Practica se recalculan (Aprende solo si cambió el día)
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && currentId === 'learn') learn?.refreshIfNewDay();
+  if (document.visibilityState !== 'visible') return;
+  if (currentId === 'learn') learn?.refreshIfNewDay();
+  if (currentId === 'practice') practice?.refresh(); // las cifras de hoy pueden haber cambiado
 });
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.

@@ -227,3 +227,7 @@ test('el foco de la barra va hacia dentro y el del enlace de salto se ve sobre l
   assert.match(css, /\n\.nav-link:focus-visible\s*\{\s*outline-offset:\s*-3px/);
   assert.match(css, /\n\.skip-link:focus-visible\s*\{\s*outline-color:\s*var\(--focus-on-blue\)/);
 });
+
+test('.button no subraya (también cuando es un enlace)', () => {
+  assert.equal(propertyOf('.button', 'text-decoration'), 'none');
+});

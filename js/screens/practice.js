@@ -26,6 +26,5 @@ export function initPractice({ wordStore, studyStore, textStore, now = () => new
     reader.textContent = counts.reader;
   }
 
-  refresh();
   return { refresh };
 }
