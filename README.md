@@ -5,7 +5,7 @@ Aplicación hecha con IA para aprender francés y programar un poco.
 Es una app web instalable (PWA) para estudiar francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene **tres destinos** en la barra: **Aprende**, **Practica** y **Progreso**.
 
 - **Aprende** (`#/aprende`): «Repaso de hoy» (lo que toca ahora y la línea del día con tres estaciones: palabras, frases y lección) y las lecciones de **Construir frases** en un carrusel por nivel.
-- **Practica** (`#/practica`): baldosas hacia **Palabras** (tu lista, con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Leer** (historias cortas con cuestionario) y **Conversar** (chatear en francés con Claude, necesita conexión).
+- **Practica** (`#/practica`): baldosas hacia **Palabras** (tu lista, con búsqueda y pronunciación; importar y exportar están en Progreso › Datos y copia), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Leer** (historias cortas con cuestionario) y **Conversar** (chatear en francés con Claude, necesita conexión).
 - **Progreso** (`#/progreso`): tu racha, tus respuestas de cada día, tu acierto, las palabras que ya dominas, el objetivo de hoy y, al final, **Datos y copia** (copia de seguridad, importar y exportar palabras y ajustes del estudio).
 
 - **App publicada:** https://joakil255.github.io/App-frances/

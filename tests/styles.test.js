@@ -264,7 +264,8 @@ test('las estaciones y la vía de la línea del día (--emphasis) se ven sobre l
 
 test('el borde turquesa de la lección actual se ve sobre la baldosa y el fondo (≥ 3:1) en claro y oscuro', () => {
   assert.match(css, /a\.lesson-tile\[aria-current="step"\]\s*\{\s*border-color:\s*var\(--line\)/);
-  const teal = css.match(/\.line-build \{ --line: (#[0-9A-Fa-f]{6}); \}/)[1];
+  const teal = propertyOf('.carousel', '--line'); // el color que usa de verdad el carrusel
+  assert.match(teal, /^#[0-9A-Fa-f]{6}$/);
   for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
     for (const background of ['--surface', '--bg']) {
       const bg = token(block, background) ?? token(lightTokens, background);
