@@ -39,6 +39,8 @@ let onBuildHidden = () => {};
 let progress = null; // lo completa initProgress
 let learn = null; // lo completa initLearn
 let practice = null; // lo completa initPractice
+let study = null; // lo completa initStudy
+let redirectedOnLoad = false; // una lección desconocida en la primera carga redirigió: ese cambio no mueve el foco
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -88,7 +90,9 @@ function handleRoute(isFirstLoad) {
   const paramChanged = param !== currentParam;
   currentParam = param;
   // Tras una redirección en la primera carga todavía no hay pantalla: el foco tampoco se mueve
-  if (id !== currentId) showScreen(id, !isFirstLoad && currentId !== null);
+  const moveFocus = !isFirstLoad && currentId !== null && !redirectedOnLoad;
+  redirectedOnLoad = false;
+  if (id !== currentId) showScreen(id, moveFocus);
   // De la biblioteca a una historia (o de una historia a otra) la pantalla sigue siendo Leer
   else if (id === 'reader' && paramChanged) onReaderShown(true);
   // De una lección a otra (o al repaso) la pantalla sigue siendo Construir
@@ -139,6 +143,7 @@ initVocabulary({
   },
 })
   .then(() => initStudy({ wordStore, studyStore, synth }))
+  .then((screen) => { study = screen; })
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
@@ -155,12 +160,13 @@ initVocabulary({
       return initProgress({ wordStore, studyStore, buildStore, getLessons: () => lessons }).then((screen) => { progress = screen; });
     }),
   ]));
-// Al volver a la app pasado el día, Aprende y Practica se recalculan (Aprende solo si cambió el día)
+// Al volver a la app pasado el día, Aprende, Progreso, Practica y el resumen de Estudiar se recalculan (Aprende solo si cambió el día)
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (currentId === 'learn') learn?.refreshIfNewDay();
   if (currentId === 'progress') progress?.refresh(); // el día puede haber cambiado
   if (currentId === 'practice') practice?.refresh(); // las cifras de hoy pueden haber cambiado
+  if (currentId === 'study') study?.refreshSummary(); // solo redibuja el resumen; con una tarjeta en pantalla no toca nada
 });
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
@@ -263,7 +269,12 @@ Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
     hostname: location.hostname,
     getCode: () => chatStore.loadCode(),
   });
-  onBuildShown = (moveFocus) => build.onShow(routeParam(location.hash), moveFocus);
+  onBuildShown = (moveFocus) => {
+    const before = location.hash;
+    build.onShow(routeParam(location.hash), moveFocus);
+    // Sin foco que mover es la primera carga: si Construir redirigió, el cambio siguiente tampoco lo mueve
+    if (!moveFocus && location.hash !== before) redirectedOnLoad = true;
+  };
   onBuildHidden = () => build.onHide();
   if (currentId === 'build') onBuildShown(false);
 });
