@@ -236,3 +236,17 @@ test('el «+» y el «−» del desplegable llevan texto alternativo vacío para
   assert.match(css, /\.fold > summary::after \{[^}]*content: '\+' \/ '';/);
   assert.match(css, /\.fold\[open\] > summary::after \{ content: '−' \/ ''; \}/);
 });
+
+test('«Practicar algo más» de Aprende se lee a 1 rem, como «‹ Practica»', () => {
+  assert.match(css, /\n\.today-more \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
+});
+
+test('el carrusel de lecciones solo sale a los bordes en el móvil; desde 600 px queda dentro de su columna', () => {
+  const block = css.match(/@media \(min-width: 600px\)\s*\{([\s\S]*?)\n\}/)?.[1];
+  assert.ok(block, 'falta el bloque desde 600 px');
+  const rule = block.match(/\.carousel\s*\{([^}]*)\}/)?.[1];
+  assert.ok(rule, 'el bloque no define .carousel');
+  assert.match(rule, /margin:\s*0\s*;/);
+  assert.match(rule, /padding-inline:\s*0\s*;/);
+  assert.match(rule, /scroll-padding:\s*0\s*;/);
+});
