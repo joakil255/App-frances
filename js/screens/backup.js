@@ -1,4 +1,4 @@
-// Aprende (hasta que pase a Progreso): guardar o restaurar la copia de seguridad completa.
+// Progreso › Datos y copia: guardar o restaurar la copia de seguridad completa.
 // Restaurar reemplaza todo tras confirmar; después la app se recarga para leer los datos nuevos.
 import { buildBackup, backupFileName, readBackup, restoreBackup, restoreWarning, MAX_BACKUP_BYTES } from '../lib/backup.js';
 import { MESSAGES, storageMessage, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
@@ -24,9 +24,9 @@ function textEl(tag, text) {
   return node;
 }
 
-export function initHome({ wordStore, studyStore, textStore, buildStore, backend, now = () => new Date() }) {
-  const notice = $('#home-notice');
-  const status = $('#home-status');
+export function initBackup({ wordStore, studyStore, textStore, buildStore, backend, now = () => new Date() }) {
+  const notice = $('#data-notice');
+  const status = $('#data-status');
   const fileInput = $('#backup-file');
   const restoreButton = $('#backup-restore');
   const dialog = $('#restore-confirm');
@@ -127,7 +127,7 @@ export function initHome({ wordStore, studyStore, textStore, buildStore, backend
     } catch {
       // sin sessionStorage solo se pierde el aviso de «restaurada»
     }
-    location.hash = '#/';
+    location.hash = '#/progreso';
     location.reload();
   });
 
@@ -136,6 +136,7 @@ export function initHome({ wordStore, studyStore, textStore, buildStore, backend
     const restored = sessionStorage.getItem(RESTORED_KEY);
     if (restored) {
       sessionStorage.removeItem(RESTORED_KEY);
+      $('#data-fold').open = true;
       status.textContent = `Se restauró la copia del ${dayOf(restored)}.`;
     }
   } catch {

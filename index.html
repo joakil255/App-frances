@@ -19,7 +19,6 @@
     <main id="main" tabindex="-1">
       <section id="screen-learn" class="screen line-learn">
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Aprende</h1>
-        <div id="home-notice" class="notice" role="alert" hidden></div>
 
         <!-- Repaso de hoy: lo que toca ahora y la línea del día (se rellena con textContent; oculto hasta el primer refresh()) -->
         <section class="today tile" aria-labelledby="today-title" hidden>
@@ -46,18 +45,6 @@
         <h3 id="learn-level-a2" class="learn-level" hidden>A2</h3>
         <ol id="learn-route-a2" class="carousel" tabindex="0" aria-labelledby="learn-level-a2" hidden></ol>
         <p class="hint learn-hint" id="learn-hint-a2" hidden></p>
-
-        <!-- Copia de seguridad: todo en un archivo (se rellena con textContent) -->
-        <div class="backup">
-          <h2 class="progress-title backup-title">Copia de seguridad</h2>
-          <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
-          <div class="study-actions">
-            <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
-            <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
-            <input type="file" id="backup-file" accept=".json,application/json" hidden>
-          </div>
-          <p id="home-status" class="vocab-message" role="status"></p>
-        </div>
       </section>
 
       <section id="screen-practice" class="screen line-practice" hidden>
@@ -111,10 +98,7 @@
           </div>
           <div class="vocab-actions">
             <button type="button" class="button button-primary" id="vocab-add">Añadir palabra</button>
-            <button type="button" class="button button-secondary" id="vocab-import">Importar</button>
-            <button type="button" class="button button-secondary" id="vocab-export">Exportar</button>
             <button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1</button>
-            <input type="file" id="vocab-file" accept=".json,.csv" hidden>
           </div>
         </div>
 
@@ -309,7 +293,35 @@
           <div class="trip" aria-hidden="true"><span class="trip-fill" id="goal-fill"></span><span class="trip-start"></span><span class="trip-end"></span></div>
           <div class="trip-labels" aria-hidden="true"><span>Empiezas el día</span><span>Repaso en cero</span></div>
           <p id="goal-answers" class="hint"></p>
-        </section>
+  
+
+        <!-- Datos y copia: copia de seguridad, palabras en un archivo y ajustes (cerrado al entrar) -->
+        <details id="data-fold" class="fold">
+          <summary>Datos y copia</summary>
+          <div class="fold-body">
+            <div id="data-notice" class="notice" role="alert" hidden></div>
+            <h3 class="fold-title">Copia de seguridad</h3>
+            <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
+            <div class="study-actions">
+              <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
+              <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
+              <input type="file" id="backup-file" accept=".json,application/json" hidden>
+            </div>
+            <h3 class="fold-title">Tus palabras en un archivo</h3>
+            <p>Importa palabras desde un archivo JSON o CSV, o exporta las que tienes.</p>
+            <div class="study-actions">
+              <button type="button" class="button button-secondary" id="vocab-import">Importar palabras</button>
+              <button type="button" class="button button-secondary" id="vocab-export">Exportar palabras</button>
+              <input type="file" id="vocab-file" accept=".json,.csv" hidden>
+            </div>
+            <h3 class="fold-title">Ajustes</h3>
+            <div class="study-actions">
+              <button type="button" class="button button-secondary" id="data-settings-open">Ajustes del estudio</button>
+            </div>
+            <p id="data-status" class="vocab-message" role="status"></p>
+          </div>
+        </details>
+      </section>
 
         <!-- Actividad: racha, días y acierto (se rellena con textContent) -->
         <div id="progress-activity" class="progress-activity" hidden>

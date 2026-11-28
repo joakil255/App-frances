@@ -11,7 +11,7 @@ import { createBuildStore } from './lib/build-storage.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
-import { initHome } from './screens/home.js';
+import { initBackup } from './screens/backup.js';
 import { initLearn } from './screens/learn.js';
 import { initPractice } from './screens/practice.js';
 import { createChatStore } from './lib/chat.js';
@@ -129,12 +129,20 @@ const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr'
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
-initVocabulary({ store: wordStore, synth })
+initVocabulary({
+  store: wordStore,
+  synth,
+  // Tras importar palabras, Progreso y Practica se vuelven a dibujar (pueden no existir aún)
+  onWordsChanged: () => {
+    progress?.refresh();
+    practice?.refresh();
+  },
+})
   .then(() => initStudy({ wordStore, studyStore, synth }))
   .then(() => Promise.all([
     initQuiz({ wordStore, studyStore, synth }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
-      initHome({ wordStore, studyStore, textStore, buildStore, backend });
+      initBackup({ wordStore, studyStore, textStore, buildStore, backend });
       practice = initPractice({ wordStore, studyStore, textStore });
       if (currentId === 'practice') practice.refresh();
     }),
