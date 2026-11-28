@@ -94,11 +94,14 @@ export function initLearn({ wordStore, studyStore, buildStore, getLessons, now =
 
   // El aviso de siempre cuando el índice de lecciones no se pudo leer
   function renderNotice(lessons) {
-    notice.hidden = lessons !== null;
     if (lessons !== null) {
+      notice.hidden = true;
       notice.replaceChildren();
       return;
     }
+    // Ya muestra este aviso: no se vuelve a escribir (el lector de pantalla no lo repite en cada visita)
+    if (!notice.hidden) return;
+    notice.hidden = false;
     const { title, text } = MESSAGES.lessonsUnavailable;
     notice.replaceChildren(el('strong', { text: title }), el('span', { text: ` ${text}` }));
   }

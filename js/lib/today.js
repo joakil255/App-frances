@@ -62,7 +62,8 @@ export function dailyGoal({ wordQueue, sentenceQueue, history, sentenceCards, to
   const sentencesLeft = sentenceQueue.length;
 
   const todayEntries = history.filter((h) => h && h.date === today);
-  const wordsDone = new Set(todayEntries.filter((h) => h.kind !== 'quiz' && !wordIdsLeft.has(h.cardId)).map((h) => h.cardId));
+  // Sin cardId no hay palabra que contar como hecha (sí cuenta como respuesta más abajo)
+  const wordsDone = new Set(todayEntries.filter((h) => h.kind !== 'quiz' && h.cardId && !wordIdsLeft.has(h.cardId)).map((h) => h.cardId));
   const sentenceIdsLeft = new Set(sentenceQueue);
   const sentencesDone = Object.entries(sentenceCards)
     .filter(([id, c]) => c && c.lastReviewedAt && dayOf(c.lastReviewedAt) === today && !sentenceIdsLeft.has(id)).length;

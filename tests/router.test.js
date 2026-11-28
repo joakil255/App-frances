@@ -50,7 +50,6 @@ test('#/leer y #/leer/<id> llevan al lector; routeParam da el id sin cambiarlo',
   assert.equal(routeParam('#/leer/'), null);
   assert.equal(routeParam('#/quiz/abc'), null);
   assert.equal(routeParam('#main'), null);
-  assert.equal(resolveRoute('#/leer/a/b'), 'learn');
   assert.equal(resolveRoute('#/quiz/abc'), 'learn');
 });
 

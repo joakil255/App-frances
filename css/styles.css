@@ -39,9 +39,6 @@
   --plaque: #233A7A;
   --plaque-text: #FFFFFF;
   --plaque-border: #FFFFFF;
-  --nav-bg: #233A7A;
-  --nav-text: #C9D3EE;
-  --nav-active: #FFFFFF;
   --focus: #233A7A;
   --focus-on-blue: #F2C230;
 
@@ -95,7 +92,6 @@
     --text: #E8ECF3;
     --plaque: #2D4A9A;
     --plaque-border: #E8ECF3;
-    --nav-bg: #1A2B5C;
     --focus: #F2C230;
 
     --surface: #1A2438;
@@ -315,7 +311,7 @@ main {
   text-decoration: none;
   cursor: pointer;
 }
-.button-primary { background: var(--plaque); color: #FFFFFF; }
+.button-primary { min-height: 48px; background: var(--plaque); color: #FFFFFF; } /* el botón principal es más alto que el secundario */
 .button-secondary { background: var(--surface); color: var(--secondary-text); border-color: currentColor; }
 .button-danger { background: var(--danger); color: #FFFFFF; }
 .button[hidden] { display: none; }
@@ -390,7 +386,7 @@ main {
 
 .checkbox-field { display: flex; align-items: center; gap: var(--space-2); }
 .checkbox-field input { width: 24px; height: 24px; margin: 0; accent-color: var(--plaque); }
-.checkbox-field label { font: 500 var(--size-base) var(--font-sign); }
+.checkbox-field label { display: flex; align-items: center; flex: 1; min-height: 44px; font: 500 var(--size-base) var(--font-sign); } /* toda la fila se toca */
 
 /* --- Avisos --- */
 .notice {
@@ -814,6 +810,7 @@ main {
 .today-action { width: 100%; min-height: 56px; font-size: 1.15rem; text-align: center; }
 .today-next { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: 0.95rem; overflow-wrap: anywhere; }
 .today-more { margin: var(--space-1) 0 0; }
+.today-more .text-link { font-size: var(--size-base); } /* como «‹ Practica» */
 
 /* La línea del día: tres estaciones (decoración); el texto dice el estado */
 .dayline {
@@ -874,6 +871,10 @@ main {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-padding: 0 var(--space-4);
+}
+/* Con la columna ya más angosta que la pantalla, el carrusel no sale de ella */
+@media (min-width: 600px) {
+  .carousel { margin: 0; padding-inline: 0; scroll-padding: 0; }
 }
 .carousel:focus-visible { outline-offset: -3px; } /* el anillo no se recorta en el borde de la pantalla */
 /* Al llegar con Tab, la barra de abajo no tapa el carrusel ni la lección */
@@ -1309,6 +1310,7 @@ p.word-card-es { color: var(--text-muted); }
   align-items: center;
   gap: var(--space-1);
   min-height: 44px;
+  min-width: 44px;
   color: var(--text);
   font: 600 var(--size-sm) var(--font-sign);
   text-decoration: underline;

@@ -4,7 +4,7 @@ Guía visual de la app. Toda pantalla o componente nuevo la sigue. La accesibili
 
 ## Idea
 
-Los carteles esmaltados del metro de París: placas azules con borde blanco sobre azulejo blanco. Cada pantalla es una «línea» con su color, para saber dónde estás de un vistazo. El color fuerte se concentra en la placa del título y en la barra de navegación. El resto es tranquilo: fondo claro, texto oscuro y mucho aire, porque la app se usa para estudiar a diario.
+Los carteles esmaltados del metro de París: placas azules con borde blanco sobre azulejo blanco. Cada pantalla es una «línea» con su color, para saber dónde estás de un vistazo. El color fuerte se concentra en la placa del título y en la pestaña activa de la barra de navegación. El resto es tranquilo: fondo claro, texto oscuro y mucho aire, porque la app se usa para estudiar a diario.
 
 ## Colores
 
@@ -16,16 +16,16 @@ Los carteles esmaltados del metro de París: placas azules con borde blanco sobr
 | `--plaque` | `#233A7A` | `#2D4A9A` | Fondo de la placa de título |
 | `--plaque-text` | `#FFFFFF` | `#FFFFFF` | Texto de la placa |
 | `--plaque-border` | `#FFFFFF` | `#E8ECF3` | Borde esmaltado de la placa |
-| `--nav-bg` | `#233A7A` | `#1A2B5C` | Barra de navegación |
-| `--nav-text` | `#C9D3EE` | `#C9D3EE` | Enlaces inactivos |
-| `--nav-active` | `#FFFFFF` | `#FFFFFF` | Enlace activo |
+| `--emphasis` | `#233A7A` | `#FFFFFF` | Cifras grandes, vía y estaciones de la línea del día y del objetivo |
+| `--signal` | `#F2C230` | `#F2C230` | Estación «ahora» de la línea del día (siempre con anillo `--emphasis`) |
 | `--focus` | `#233A7A` sobre fondo, `#F2C230` sobre azul | `#F2C230` | Anillo de foco |
 
 **Color de línea por pantalla** (solo decoración: puntos y franjas, nunca texto):
 
 | Pantalla | Token | Color |
 |---|---|---|
-| Inicio | `--line-home` | `#F2C230` amarillo |
+| Aprende | `--line-home` | `#F2C230` amarillo (el de la antigua Inicio) |
+| Practica | — | sin color propio: símbolo de correspondencia (ver «Etapa 17») |
 | Palabras | `--line-vocabulary` | `#2F7FD0` azul |
 | Estudiar | `--line-study` | `#9B5BB5` violeta |
 | Quiz | `--line-quiz` | `#2FA36B` verde |
@@ -33,7 +33,7 @@ Los carteles esmaltados del metro de París: placas azules con borde blanco sobr
 | Conversar | `--line-chat` | `#D9478A` rosa |
 | Leer | `--line-reader` | `#A0703C` marrón |
 
-Los puntos de línea siempre llevan un anillo blanco y van sobre la barra azul: el amarillo sobre fondo claro solo tiene 1,6:1.
+Los puntos de línea siempre llevan un anillo (blanco sobre la placa azul; oscuro `--text` sobre la barra y la baldosa, que son claras en el tema claro): el amarillo sobre fondo claro solo tiene 1,6:1. Construir (`--line-build`, turquesa `#178A8A`) está en «Construir frases (Etapa 12)».
 
 **Contraste comprobado** (WCAG AA exige 4,5:1 en texto y 3:1 en elementos gráficos):
 texto/fondo claro 15,0 · texto/fondo oscuro 15,0 · blanco/placa 10,7 (oscuro 8,2) · inactivo/barra 7,2 (oscuro 9,1) · foco amarillo/barra 6,4 (oscuro 8,1) · foco amarillo/fondo oscuro 10,6 · foco azul/fondo claro 10,4 · aviso blanco/#1C2433 15,6 · «ç» del icono 10,4 · línea rosa/fondo 3,9 (oscuro 4,4) · línea rosa/tarjeta 4,0 (oscuro 3,9).
@@ -57,10 +57,11 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 
 ## Estructura
 
-- **Móvil (< 900 px):** barra de navegación fija abajo, siete enlaces que se reparten el ancho, cada uno de 48 px de alto como mínimo. La pantalla de palabras se llama «Palabras» (antes «Vocabulario», que no cabía con siete botones). Medido a 360 px con cada enlace activo: el más estrecho mide 49,3 × 64 px, «Conversar» llega a 59,9 px y ningún nombre se corta.
-- **Computador (≥ 900 px):** barra vertical a la izquierda, de 200 px, con «Français» arriba. El contenido se alinea a la izquierda, con un ancho máximo de 65 caracteres.
+- **Tres destinos:** **Aprende**, **Practica** y **Progreso**. Todo lo demás cuelga de uno de ellos (Palabras, Estudiar, Quiz, Leer y Conversar de Practica; Construir frases de Aprende) y lleva arriba un enlace de vuelta («‹ Practica», «‹ Aprende», «‹ Leer»).
+- **Móvil (< 900 px):** barra de navegación fija abajo, fondo `--surface` con borde superior de 2 px `--divider`, tres enlaces de 64 px de alto que se reparten el ancho. En el HTML la barra va **después** del contenido (el teclado y el lector de pantalla llegan primero al contenido) y por eso ya no hay «Saltar al contenido».
+- **Computador (≥ 900 px):** barra vertical a la izquierda, de 200 px, con «Français» arriba y los tres enlaces en columna. El contenido se alinea a la izquierda, con un ancho máximo de 65 caracteres.
 - Cada pantalla empieza con su **placa**: el punto de color de su línea y el nombre de la pantalla.
-- **Enlace activo:** texto blanco, negrita y franja del color de la línea (arriba en el móvil, a la izquierda en el computador), más `aria-current="page"`. Nunca se indica solo con color.
+- **Enlace activo:** texto en Barlow 700 dentro de una placa azul pequeña (`--plaque`, texto blanco, radio 6 px) más `aria-current`. En una pantalla de segundo nivel, queda marcado su destino padre. Nunca se indica solo con color.
 
 ## Componentes
 
@@ -84,9 +85,9 @@ Texto en minúscula normal (sin mayúsculas sostenidas). No se resalta una sola 
 | `--review` | `#8A3416` | `#F2A07B` | Etiqueta «Revisar» (texto y borde) | 7,9 / 8,5 |
 | `--notice-bg` / `--notice-text` / `--notice-border` | `#FFF4D6` / `#1C2433` / `#8A6600` | `#3A2F10` / `#F5E6B8` / `#E0B23A` | Avisos (falta la voz, archivo no válido) | 14,2 / 10,6 (borde 4,8 / 6,7) |
 
-**Botones** (Barlow 700, 44 px de alto como mínimo, radio 8 px):
+**Botones** (Barlow 700, radio 8 px; 44 px de alto como mínimo, y 48 px el primario; «Repasar» de Aprende y «Mostrar respuesta» de Estudiar, 56 px):
 - *Primario*: fondo `--plaque`, texto blanco. Una acción principal por vista («Añadir palabra», «Guardar», «Importar N nuevas»).
-- *Secundario*: fondo `--surface`, borde de 2 px y texto `--plaque` (oscuro: `--nav-text`).
+- *Secundario*: fondo `--surface`, borde de 2 px y texto `--plaque` (oscuro: `--secondary-text`, `#C9D3EE`).
 - *Peligro*: fondo `--danger`, texto blanco. Solo para confirmar un borrado o un reemplazo.
 
 **Campos:** etiqueta visible encima (Barlow 500, 13,6 px), caja `--surface` con borde de 2 px `--field-border`, 44 px de alto. El error va debajo del campo en `--error-text`, enlazado con `aria-describedby`, y el campo lleva `aria-invalid="true"`. Al fallar el guardado, el foco va al primer campo con error.
@@ -139,20 +140,21 @@ El fallo usa `--error-text` (7,1–7,4 / 7,6–8,7). El color nunca va solo: sie
 
 La línea naranja de Progreso (`#E0663A`) se usa en el gráfico como elemento gráfico (no como texto): 3,3–3,4 en claro y 4,5–5,2 en oscuro, por encima del 3:1 exigido. Una prueba de `tests/styles.test.js` lo comprueba.
 
-- **Racha y hoy:** los dos recuadros del resumen de Estudiar. A la izquierda, el número de días (o «Sin racha») y «días seguidos» (o «Estudia hoy para empezar una nueva.»). A la derecha, «✓ Hoy ya estudiaste» o «Hoy todavía no estudiaste» en Barlow 700 de 1,1 rem, en una fila.
-- **Títulos de sección:** `h2` en Barlow 700 de 1,25 rem, con 32 px de aire encima: «Respuestas de los últimos 14 días», «Acierto en los últimos 30 días», «Tus palabras».
+- **Tu constancia:** dos baldosas en una fila. A la izquierda la racha: el número de días (o «Sin racha») y «días seguidos» (o «Estudia hoy para empezar una nueva.»). A la derecha el acierto de Estudiar en los últimos 30 días: el porcentaje en Source Serif 600 de 1,6 rem color `--emphasis` y debajo su detalle en Barlow 500 `--text-muted` (sin datos: «—» y una frase que lo explica). Debajo de las baldosas, una frase para el Quiz («En el Quiz, …») y otra que recuerda que en Estudiar «Otra vez» cuenta como fallo; después, «✓ Hoy ya estudiaste» o «Hoy todavía no estudiaste» en Barlow 700 de 1,1 rem.
+- **Títulos de sección:** `h2` en Barlow 700 de 1,25 rem, con 32 px de aire encima: «Tu constancia», «Respuestas de los últimos 14 días», «Tus palabras».
 - **Gráfico (el elemento propio de esta pantalla):** las barras se apoyan en una **línea de metro** naranja de 4 unidades con una **estación por día**: llena (naranja con anillo del color de fondo, radio 7) si ese día estudiaste y hueca (fondo con borde naranja, radio 6) si no. Barras `--chart-bar` de 14 unidades de ancho, sin esquinas redondeadas, con el número encima (Barlow 700) y debajo la inicial del día (L M X J V S D) o «hoy» en negrita. SVG con `viewBox`, a lo ancho hasta 400 px. `role="img"` y un `aria-label` con el resumen; el detalle está en la tabla del desplegable.
 - **Desplegables** («Ver los datos día por día», «Ver las N palabras dominadas»): `<details>` con el `summary` en Barlow 700 color `--secondary-text`, 44 px de alto y un triángulo ▸/▾ dibujado con CSS.
-- **Acierto:** lista de definiciones; cada fila con el nombre en Barlow 500, el porcentaje en Barlow 700 de 1,6 rem color `--emphasis` y «de N respuestas» en `--text-muted`, con separador `--divider`. Sin datos: «—» y una frase que lo explica.
 - **Tus palabras:** barra de proporción decorativa (`aria-hidden`) de 12 px con tres tramos: nuevas `--divider`, en aprendizaje `--chart-bar`, dominadas naranja. Debajo, los tres números con una muestra de 14 px del mismo color: la información está en el texto.
 - **Lista de dominadas:** francés en Source Serif 600 (`lang="fr"`) y traducción en cursiva `--text-muted`, con separador `--divider`, en el orden de Palabras.
 
-## Inicio: copia de seguridad (Etapa 7)
+## Datos y copia, en Progreso (Etapas 7 y 17)
 
-- Debajo de la frase de Inicio, un recuadro `--surface` con borde de 2 px `--divider`, **franja izquierda de 8 px del amarillo de Inicio** (decoración: el amarillo nunca va como texto) y radio 8 px. Título `h2` «Copia de seguridad» como los de Progreso, un párrafo que explica qué guarda y para qué sirve, y dos botones: **Guardar copia** (primario) y **Restaurar copia** (secundario). Debajo, el resultado en Barlow 500 (`role="status"`); los errores van en el aviso de siempre (`role="alert"`) arriba del recuadro.
+La copia de seguridad vive al final de Progreso, dentro del desplegable **«Datos y copia»** (`.fold`, cerrado al entrar). Antes (Etapa 7) estaba en Inicio.
+
+- **Desplegable:** `<details>` con borde de 2 px `--divider` y radio 8 px; su `summary` mide 44 px de alto como mínimo y lleva un «+» / «−» decorativo (con texto alternativo vacío, para que no se lea). Dentro, tres títulos `h3`: «Copia de seguridad» (un párrafo que explica qué guarda y para qué sirve, **Guardar copia** primario y **Restaurar copia** secundario), «Tus palabras en un archivo» (**Importar palabras** y **Exportar palabras**, ambos secundarios) y «Ajustes» (**Ajustes del estudio**; el mismo botón sigue también en Estudiar). El resultado va debajo en Barlow 500 (`role="status"`); los errores, en el aviso de siempre (`role="alert"`) dentro del desplegable, antes del título «Copia de seguridad».
+- Tras restaurar una copia, la app vuelve a Progreso con «Datos y copia» abierto y el mensaje visible.
 - **Ventana «¿Restaurar la copia del DD/MM/AAAA?»:** como las de la Etapa 2; dos líneas: qué tiene la copia y qué se reemplaza («no se puede deshacer»). Botones **Cancelar** (secundario) y **Restaurar** (peligro). El foco vuelve a **Restaurar copia** al cerrarla.
 - Mismo verbo de principio a fin: «Guardar copia» → «Se guardó la copia…»; «Restaurar» → «Se restauró la copia…».
-
 ## Pantalla Conversar (Etapa 8)
 
 **Color nuevo:** la línea rosa `#D9478A` (`.line-chat`). Además de los puntos y la franja del enlace activo, aquí dibuja la línea de las correcciones, así que se usa como elemento gráfico sobre el fondo y la tarjeta: 3,9–4,0 en claro y 3,9–4,4 en oscuro, por encima del 3:1 exigido. Una prueba de `tests/styles.test.js` lo comprueba. Nunca se usa como color de texto.
@@ -205,7 +207,7 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
 
 **Color nuevo:** la línea marrón `#A0703C` (`.line-reader`), como el lomo de un libro y distinta de las otras seis. Además del punto y la franja del enlace activo, dibuja la línea del texto, el recuadro de la frase que suena y el subrayado de las palabras guardadas, así que es un elemento gráfico sobre el fondo y la tarjeta: 4,2–4,3 en claro y 3,6–4,1 en oscuro, por encima del 3:1 exigido. El ▶ blanco sobre la estación llena tiene 4,3. Una prueba de `tests/styles.test.js` lo comprueba. Nunca se usa como color de texto.
 
-**Barra con 7 botones:** «Vocabulario» pasó a llamarse **«Palabras»** para que quepan los siete. Medido a 360 px con cada enlace activo: el más estrecho mide 49,3 px de ancho y ninguna etiqueta se corta.
+**Barra:** desde la Etapa 17 la barra tiene tres destinos (ver «Estructura»); Leer cuelga de Practica y su biblioteca lleva «‹ Practica».
 
 - **Biblioteca (`#/leer`):** **Nueva historia** (primario) y debajo la lista, de la más nueva a la más vieja, con el borde superior `--plaque` y las filas como las de Palabras: el título en Source Serif 600 (`lang="fr"`) y debajo, en Barlow 500 `--text-muted`, el nivel, la etiqueta **REVISAR**, «Leída» y «Preguntas: X/4». Toda la fila es un enlace a `#/leer/<id>`, con `›` a la derecha. Vacía: «Aquí verás tus lecturas. Pide a Claude una historia a tu nivel.»
 - **Ventana «Nueva historia»:** como las de la Etapa 2; **Nivel** (A1.1 · A1.2 · A2) y **Preguntas en:** (Español · Francés) con el selector de opciones de la Etapa 2, y **Tema (opcional)** (hasta 60 letras). **Cancelar** · **Escribir historia** (primario). Mientras Claude escribe, **Nueva historia** dice «Escribiendo…» desactivado con `aria-disabled` (como «Guardada» en la tarjeta), para que el foco se quede en el botón.
@@ -229,9 +231,9 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
 
 **Color nuevo:** la línea turquesa `#178A8A` (`.line-build`), distinta de las otras siete (está entre el azul de Palabras y el verde del Quiz, pero más oscura y apagada que los dos). Además del punto y la franja del enlace activo, dibuja la **vía de «Tu frase»**, el borde de arriba de los bloques y la franja izquierda de la tarjeta de práctica, así que es un elemento gráfico sobre el fondo y la tarjeta: 4,0–4,2 en claro y 3,7–4,3 en oscuro, por encima del 3:1 exigido. Una prueba de `tests/styles.test.js` lo comprueba. Nunca se usa como color de texto ni como fondo de texto (el blanco sobre turquesa solo tiene 4,2).
 
-**Barra:** el enlace **«Construir frases»** solo aparece en la barra de la izquierda (≥ 900 px). En el móvil se oculta con `display: none` (`.nav-desktop-only`) y la barra sigue con siete botones: medido a 360 px, el más estrecho mide 49,7 × 64 px, «Conversar» 58,2 px y ningún nombre se corta.
+**Barra:** Construir frases ya no está en la barra: cuelga de **Aprende** (Etapa 17). Se llega desde una lección del carrusel y todas sus pantallas llevan «‹ Aprende». `#/construir` sin id redirige a `#/aprende`.
 
-- **Lista (`#/construir`):** desde la Etapa 14 es la ruta de lecciones; ver «Índice de lecciones (Etapa 14)».
+- **Lista:** la ruta de lecciones ahora es el carrusel de Aprende (ver «Índice de lecciones»).
 - **Lección:** «Lección N», el título (Source Serif 600 de 26,6 px, enfocable) y el nivel y las áreas como en Leer. Las secciones son `h3` en Barlow 700 de 1,25 rem con 32 px de aire encima: «La idea», «El bloque», «Cómo pensarlo», «Ejemplos», «Trampa común», «Practicar» y «Fuentes».
   - **REVISAR:** la etiqueta de Leer seguida de su nota en texto pequeño `--text-muted`, justo debajo del elemento.
   - **El bloque:** cada grupo en un recuadro `--surface` con borde de 2 px `--divider` y **4 px turquesa arriba**; su nombre en Barlow 500 `--text-muted` y las piezas en francés (Source Serif 600) como **azulejos**: borde de 1 px `--field-border` y **sin esquinas redondas**, para que no parezcan botones (no se tocan).
@@ -255,38 +257,41 @@ Sin colores nuevos: todo usa los tokens de arriba y la línea rosa de Conversar.
   - Si hubo errores, «Agregamos esta frase a tu repaso.» en el aviso de repaso (`role="status"`). Los errores de envío (sin código de acceso, límite del día, servidor) van en un aviso `role="alert"` dentro de la tarjeta, junto al botón, y **Comprobar** sigue activo para reintentar. Con un resultado final, Comprobar se oculta y aparece **Siguiente** si quedan situaciones.
 - **Repaso (`#/construir/repaso`):** la misma tarjeta de práctica, que se muda a la vista del repaso, con «Repaso: X/Y». Las frases propias muestran **REVISAR** con «La corrección es de Claude.», «Corrige tu frase» y, debajo de los botones, **Quitar del repaso** (secundario, a todo el ancho en el móvil), que abre la ventana de confirmar de siempre: «¿Quitar esta frase de tu repaso?» / «No se puede deshacer.», **Cancelar** · **Quitar** (rojo). Cancelar devuelve el foco al botón; Quitar pasa a la tarjeta siguiente. Vacío o terminado: «No tienes nada que repasar hoy…» o «Terminaste el repaso.», con el estilo de «Terminaste la práctica…» y el foco.
 - **«Repasar (N)» en la ruta:** botón secundario junto a **Continuar** (Etapa 14; antes era primario). Con N = 0 lleva `aria-disabled="true"`, se ve apagado (fondo `--surface`, texto `--text-muted`, borde `--divider`, como «Escribiendo…» en Leer) y no hace nada.
-- **Tarjeta de Inicio:** como la de la copia de seguridad (fondo `--surface`, borde 2 px `--divider`, radio 8 px), pero con la **franja izquierda turquesa** y, delante del título «Construir frases», el **punto turquesa de la línea**: es una «correspondencia» del metro hacia la línea de Construir, que en el móvil no está en la barra. Va sobre la copia de seguridad. «Próxima lección: …» en Source Serif 600 (o «Terminaste todas las lecciones», y entonces sin **Seguir lección**), «Repaso: N pendientes hoy» (1 pendiente en singular) y los botones **Seguir lección** (primario) y **Repasar (N)** (secundario, apagado con `aria-disabled` si N = 0). Medido a 360 px: los dos botones caben en una fila.
+- **Tarjeta «Construir frases» de Inicio:** desapareció en la Etapa 17; su contenido quedó en «Repaso de hoy» y en el carrusel de Aprende.
 
-## Índice de lecciones (Etapa 14)
+## Índice de lecciones (Etapa 14, en Aprende desde la Etapa 17)
 
-**Cómo se llega a la ruta en el móvil** (arreglo del 25/11/2026: la barra del móvil no tiene Construir): la tarjeta «Construir frases» de Inicio lleva, bajo sus botones, el enlace de texto **«Ver todas las lecciones»**, y cada lección empieza con **«‹ Todas las lecciones»**. Los dos son `.text-link`: texto `--text` en Barlow 600, subrayado de 2 px (no solo color) y 44 px de alto para el dedo; la «‹» va con `aria-hidden`.
+Las lecciones salen en Aprende, bajo «Repaso de hoy», en **un carrusel por nivel** («A1», «A2»). Cada nivel es una lista `<ol class="carousel">` con `tabindex="0"` y `aria-labelledby` hacia su título, así que el teclado puede desplazarla (flechas) y el lector de pantalla la anuncia con su nombre. El desplazamiento es instantáneo. En el móvil el carrusel sale a los bordes de la pantalla; desde 600 px queda dentro de su columna. Un nivel sin lecciones no se muestra. Cada lección empieza con «‹ Aprende».
 
-La lista de `#/construir` pasa a ser una **ruta**: una línea de metro vertical en turquesa (`--line-build`, `#178A8A`) con una estación por lección, como el texto de Leer. Es el elemento propio de la pantalla; lo demás se queda tranquilo.
+- **Baldosa de lección** (`.lesson-tile`, 76 % del ancho en el móvil, 148 px de alto mínimo): estación y «Lección N» en Barlow 500 `--text-muted`, el título en Source Serif 600 de 1,15 rem y abajo el estado en Barlow 500 pequeño. **El estado va siempre en texto** («Sin empezar», «En curso: X de Y», «Completada · F de T a la primera · DD/MM/AAAA», «Completada · DD/MM/AAAA», «Próximamente», «No se pudo cargar»); la estación solo lo acompaña. Si la lección tiene partes dudosas, otra línea: «Tiene partes **REVISAR**».
+- **Estación** (`aria-hidden="true"`, turquesa `--line-build`): completada, llena con «✓» blanco; en curso, con un punto; sin empezar, vacía; planificada, de borde punteado; no se pudo cargar, borde discontinuo `--text-muted`.
+- **Lección actual:** la siguiente pendiente lleva `aria-current="step"` y **borde turquesa** de 2 px (forma y color, nunca solo color). Contraste del borde: 4,2 sobre `--surface` (oscuro 3,7), por encima del 3:1.
+- **Lecciones disponibles:** toda la baldosa es un enlace a `#/construir/<id>`, con el foco de siempre (anillo de 3 px `--focus`). Una lección que no se pudo cargar no es enlace.
+- **Lecciones planificadas:** la baldosa es un `<p>`, no un enlace ni un botón, y **sin** `aria-disabled` (no es un control). Borde discontinuo, texto atenuado con `--text-planned` y el título en Source Serif 400: se sigue leyendo.
+- **Color `--text-planned`:** `#5F6880` en claro y `#8F9BB8` en oscuro (los mismos tonos que `--field-border`). Contraste: 5,4 sobre `--bg` y 5,6 sobre `--surface` en claro; 6,4 sobre `--bg` y 5,6 sobre `--surface` en oscuro. Más tenue que `--text-muted`. Una prueba de `tests/styles.test.js` lo comprueba.
+- **Sin lecciones cargadas:** un aviso (`role="alert"`) dice que no se pudieron cargar; el aviso se escribe solo cuando cambia, para que el lector de pantalla no lo repita al volver a Aprende. El modelo de cada baldosa (número, estado, enlace solo en las que se abren, `current` solo en la siguiente, REVISAR) sale de funciones puras de `js/lib/lesson-route.js` con sus pruebas.
+- **Lector de pantalla:** cada enlace se lee «Lección 8 · Aller, faire y el futuro próximo Sin empezar, enlace» (con «Tiene partes REVISAR» al final si lo lleva), y las planificadas como texto dentro de su elemento de lista.
+- **«Ver todas las lecciones»** y «‹ Todas las lecciones» ya no existen: el carrusel hace ese trabajo.
 
-```
-[Continuar: Lección 7 · Los adjetivos] [Repasar (N)]
-A1
- ✓━  Lección 6 · Preguntas simples
- ┃   Completada · 9 de 9 a la primera · 24/11/2026
- ◉━  Lección 7 · Los adjetivos     (recuadro turquesa: aria-current="step")
- ┃   En curso: 4 de 10
- ○━  Lección 9 · Querer, poder y deber
- ┆   Sin empezar
- ⁘   Lección 10 · Posesivos y demostrativos   (atenuada)
-     Próximamente
-A2 …
-```
+## Etapa 17 · Tres destinos
 
-- **Arriba:** **Continuar: Lección N · Título** (primario) y **Repasar (N)** (secundario, apagado con `aria-disabled` si N = 0), en una fila que se parte en dos en el móvil (medido a 360 px: Continuar 279 × 44 px, Repasar 116 × 44 px). Sin pendientes, Continuar se oculta y aparece «Completaste todas las lecciones disponibles» en Barlow 700 de 1,1 rem.
-- **Tramos:** un `<h2>` («A1», «A2») en Barlow 700 de 1,25 rem, con 32 px de aire encima, y un `<ol>` por tramo con `aria-labelledby` hacia su título. Un tramo sin lecciones no se muestra.
-- **La vía:** cada fila dibuja dos tramos de 4 px (el que llega a su estación y el que sale), así la línea no pasa más allá de la primera ni de la última estación del tramo. El tramo de las planificadas es **discontinuo** (`dashed`), desde la salida de la última lección disponible.
-- **Fila:** columna de 44 px para la estación y el texto al lado, 12 px de relleno, al menos 56 px de alto. «Lección N · » en Barlow 500 `--text-muted`, el título en Source Serif 600 de 1,1 rem, y debajo el estado en Barlow 500 pequeño `--text-muted`. Los textos de estado son los de la Etapa 14 («Sin empezar», «En curso: X de Y», «Completada · F de T a la primera · DD/MM/AAAA», «Completada · DD/MM/AAAA», «Próximamente», «No se pudo cargar»): **el estado va siempre en texto** y la estación solo lo acompaña.
-- **REVISAR:** si la lección tiene algún elemento con `review: true`, la fila suma una línea más bajo el estado: «Tiene partes **REVISAR**», en Barlow 500 pequeño `--text-muted` con la etiqueta de siempre (`.tag-review`, texto y no solo color). Las áreas (Gramática, Sintaxis, Ortografía) solo se ven dentro de la lección.
-- **Estación** (`aria-hidden="true"`, 24 px, borde de 3 px turquesa, sobre la vía): completada, llena de turquesa con «✓» blanco (4,2:1, elemento gráfico); en curso, con un punto turquesa de 10 px; sin empezar, vacía (fondo `--bg`); planificada, con el borde **punteado** (`dotted`); no se pudo cargar, borde discontinuo `--text-muted`.
-- **Lecciones disponibles:** toda la fila es un enlace a `#/construir/<id>`, con el foco de siempre (anillo de 3 px `--focus`) y radio 8 px. La siguiente pendiente lleva `aria-current="step"` y se ve como la frase que suena en Leer: recuadro `--surface` con borde de 2 px turquesa (forma y color, nunca solo color).
-- **Lecciones planificadas:** la fila es un `<p>`, no un enlace ni un botón, y **sin** `aria-disabled` (no es un control). Texto atenuado con el token nuevo `--text-planned` y el título en Source Serif 400: se sigue leyendo. Una lección disponible que no se pudo cargar tampoco es enlace.
-- **Color nuevo `--text-planned`:** `#5F6880` en claro y `#8F9BB8` en oscuro (los mismos tonos que `--field-border`). Contraste: 5,4 sobre `--bg` y 5,6 sobre `--surface` en claro; 6,4 sobre `--bg` y 5,6 sobre `--surface` en oscuro, por encima del 4,5:1. Más tenue que `--text-muted` (7,4–7,7 en claro y 8,5–9,7 en oscuro). Una prueba de `tests/styles.test.js` lo comprueba, y otra que el tramo planificado sea discontinuo. El modelo de cada fila (número, estado, `href` solo en las que se abren, `current` solo en la siguiente, REVISAR) sale de funciones puras de `js/lib/lesson-route.js` (`routeRows`, `openableLesson`, `continueLabel`) con sus pruebas. La línea turquesa sigue en 4,0–4,3 sobre el fondo (≥ 3:1).
-- **Lector de pantalla:** cada enlace se lee «Lección 8 · Aller, faire y el futuro próximo Sin empezar, enlace» (con «Tiene partes REVISAR» al final si la lección lo lleva), y las planificadas como texto dentro de su elemento de lista, nunca como enlace.
+Rediseño «Azulejo y andén»: la app pasa de siete pestañas a tres destinos (Aprende, Practica, Progreso). La barra ya no es azul: es clara, como un andén, y solo la pestaña activa lleva la placa azul. Se conserva lo demás (colores, letras, placa, botones, campos, ventanas).
+
+- **Baldosa (`.tile`):** fondo `--surface`, borde de 2 px `--divider`, canto inferior de 6 px (`border-bottom-width`), radio 12 px. Es la **única excepción al «radio 8 px»**: imita el azulejo biselado del metro. Sin sombras.
+- **Barra (móvil):** fondo `--surface`, borde superior de 2 px `--divider`, tres enlaces de 64 px que se reparten el ancho; texto `--text-muted` Barlow 500; activo: Barlow 700 en una placa azul pequeña (`--plaque`, texto blanco, radio 6 px) y `aria-current`. El punto de línea lleva anillo `--text` porque la barra ya no es azul. En ≥ 900 px es una barra lateral de 200 px con la misma placa.
+- **Correspondencia:** Practica no tiene color propio. Su punto es el símbolo de **correspondencia** del plano del metro (círculo blanco con anillo interior oscuro de 4 px), porque es donde se cruzan las líneas; cada pantalla de Practica conserva su color. Aprende usa el amarillo `#F2C230` y Progreso el naranja `#E0663A`.
+- **Repaso de hoy (Aprende):** baldosa con el título «Repaso de hoy» (Barlow 700 `--text-muted`, con el punto amarillo), la frase principal en Source Serif 600 de 1,95 rem, la **línea del día**, un botón primario a lo ancho de 56 px y «Practicar algo más» (enlace de texto a 1 rem, como «‹ Practica»). La acción del día sigue el orden palabras, frases y lección.
+- **Línea del día:** vía de 4 px `--emphasis` con tres estaciones (Palabras, Frases, Lección) de 26 px y borde de 4 px `--emphasis`; la hecha va llena con ✓ en `--surface`; la de «ahora», en `--signal` con doble anillo; nombre en Barlow 700 y estado en Barlow 500 `--size-sm` `--text-muted`. Es decoración: el texto dice el estado de cada estación.
+- **Carrusel de lecciones:** ver «Índice de lecciones».
+- **Practica:** rejilla de 2 columnas (12 px de separación) en tres grupos (Vocabulario, Leer y escuchar, Hablar). Una baldosa sola en su grupo, o la tercera, ocupa las dos columnas. Cada baldosa lleva arriba una banda de 8 px del color de su línea, mide 112 px como mínimo y muestra su nombre (Barlow 700) y una cifra o frase (`.practice-count`, `--text-muted`, con singular y plural). Vocabulario reúne Palabras, Estudiar y Quiz; Leer y escuchar, Leer; Hablar, Conversar (que avisa «Necesita conexión a internet»).
+- **Estudiar sin palabras:** oculta la línea del modo y los botones, y solo dice que hay que añadir palabras con un botón «Ir a Palabras». Al volver a la app, su resumen se recalcula.
+- **Objetivo de hoy (Progreso):** baldosa con trayecto de 4 px (`--divider` de fondo, `--emphasis` el avance), estación inicial llena y final vacía, y las etiquetas «Empiezas el día» y «Repaso en cero». Al final de Progreso está «Datos y copia».
+- **Palabras vacía:** los botones de la barra de herramientas se ocultan para no repetir los del estado vacío («Añadir 100 palabras A1»).
+- **Movimiento:** ninguno nuevo. El desplazamiento del carrusel es instantáneo; no hay transiciones ni animaciones, así que `prefers-reduced-motion` no tiene nada que quitar.
+- **Medidas táctiles** (comprobadas en el navegador a 360 px, claro y oscuro): todo botón, enlace, selector y campo mide al menos 44 × 44 px (los `.text-link` tienen `min-width` y `min-height` de 44 px; la etiqueta de cada casilla mide 44 px de alto); los botones primarios, 48 px o más; «Repasar» de Aprende y «Mostrar respuesta», 56 px. Los enlaces de la lista de fuentes de una lección van dentro de una frase y miden 40 px de alto. Ninguna pantalla se desborda a lo ancho.
+- **Pistas de teclado (`<kbd>`):** solo con ratón (`hover: hover` y `pointer: fine`); con el dedo no se ven.
+
+**Contraste comprobado** (nuevos pares; el resto ya está en esta guía; cada uno tiene su prueba en `tests/styles.test.js`): `--text-muted` sobre `--surface` 7,7 (oscuro 8,5); blanco sobre la placa activa 10,7 (oscuro 8,2); vía y estaciones `--emphasis` sobre `--surface` 10,7 (oscuro 15,5); `.today-main` (`--text`) sobre `--surface` 15,6 (oscuro 13,1); `.practice-count` (`--text-muted`) sobre `--surface` 7,7 (oscuro 8,5); anillo del punto en la barra clara 13,1; borde turquesa de la lección actual 4,2 (oscuro 3,7, ≥ 3:1); `--text-planned` sobre `--surface` 5,6 (oscuro 5,6). El borde de las baldosas (`--divider`, 1,5:1) es decoración: el texto identifica cada enlace. La estación amarilla (1,7:1 sola) siempre va con anillo azul de 10,7:1.
 
 ## Icono
 

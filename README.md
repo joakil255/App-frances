@@ -2,7 +2,11 @@
 
 Aplicación hecha con IA para aprender francés y programar un poco.
 
-Es una app web instalable (PWA) para estudiar vocabulario francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene ocho pantallas (Inicio, Palabras, Estudiar, Quiz, Progreso, Conversar, Leer y Construir frases). Funcionan **Inicio** (tu copia de seguridad y la tarjeta de Construir frases), **Palabras** (tu lista de palabras con búsqueda, pronunciación e importar/exportar), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Progreso** (tu racha, tus respuestas de cada día, tu acierto y las palabras que ya dominas), **Conversar** (chatear en francés con Claude), **Leer** (historias cortas con cuestionario) y **Construir frases** (lecciones para armar frases, con repaso).
+Es una app web instalable (PWA) para estudiar francés de nivel A1. Funciona en Chrome de Android y en el computador, también sin conexión. Tiene **tres destinos** en la barra: **Aprende**, **Practica** y **Progreso**.
+
+- **Aprende** (`#/aprende`): «Repaso de hoy» (lo que toca ahora y la línea del día con tres estaciones: palabras, frases y lección) y las lecciones de **Construir frases** en un carrusel por nivel.
+- **Practica** (`#/practica`): baldosas hacia **Palabras** (tu lista, con búsqueda y pronunciación; importar y exportar están en Progreso › Datos y copia), **Estudiar** (tarjetas con repetición espaciada), **Quiz** (practicar con la app comprobando tus respuestas), **Leer** (historias cortas con cuestionario) y **Conversar** (chatear en francés con Claude, necesita conexión).
+- **Progreso** (`#/progreso`): tu racha, tus respuestas de cada día, tu acierto, las palabras que ya dominas, el objetivo de hoy y, al final, **Datos y copia** (copia de seguridad, importar y exportar palabras y ajustes del estudio).
 
 - **App publicada:** https://joakil255.github.io/App-frances/
 - **Guía visual:** [`DESIGN.md`](DESIGN.md)
@@ -71,11 +75,11 @@ Abre https://joakil255.github.io/App-frances/ en **Chrome**, espera unos segundo
 
 Tus palabras, tu progreso (el estado de repaso de cada tarjeta), tu historial de respuestas y tus ajustes se guardan **solo en este navegador**. Si borras los datos del navegador o desinstalas la app, se pierden. La copia de seguridad los guarda **todos** en un archivo.
 
-- **Guardar:** en **Inicio**, pulsa **Guardar copia**. Se descarga `copia-frances-AAAA-MM-DD.json`. En Android queda en la carpeta **Descargas** (app *Archivos*). Guárdala también fuera del teléfono (por ejemplo, en tu correo o en Drive): si la borras, no hay copia.
-- **Restaurar:** en **Inicio**, pulsa **Restaurar copia** y elige el archivo. Una ventana te dice qué tiene la copia y qué tienes ahora. Al pulsar **Restaurar**, **todo** se reemplaza por lo de la copia (no se combina) y la app se recarga. No se puede deshacer: si quieres conservar lo de ahora, guarda antes otra copia.
+- **Guardar:** en **Progreso**, abre **Datos y copia** y pulsa **Guardar copia**. Se descarga `copia-frances-AAAA-MM-DD.json`. En Android queda en la carpeta **Descargas** (app *Archivos*). Guárdala también fuera del teléfono (por ejemplo, en tu correo o en Drive): si la borras, no hay copia.
+- **Restaurar:** en **Progreso**, abre **Datos y copia**, pulsa **Restaurar copia** y elige el archivo. Una ventana te dice qué tiene la copia y qué tienes ahora. Al pulsar **Restaurar**, **todo** se reemplaza por lo de la copia (no se combina) y la app se recarga. No se puede deshacer: si quieres conservar lo de ahora, guarda antes otra copia.
 - **Si algo falla:** un archivo que no es una copia de la app, dañado o de una versión más nueva **no cambia nada** y la app te dice por qué. Si falta espacio a mitad de la restauración, tus datos quedan como estaban.
 - La copia no incluye los respaldos que la app guarda aparte cuando encuentra datos dañados.
-- **Exportar** e **Importar** de Palabras siguen sirviendo para listas de palabras (por ejemplo, en CSV para Excel), pero no guardan tu progreso.
+- **Exportar palabras** e **Importar palabras** (también en **Datos y copia**) siguen sirviendo para listas de palabras (por ejemplo, en CSV para Excel), pero no guardan tu progreso.
 
 ## Cómo funciona sin conexión
 
@@ -116,7 +120,7 @@ Al pulsarlo se abre la misma ventana que al importar un archivo («100 palabras 
 
 ### Tus datos y la copia de seguridad
 
-Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras los datos del navegador o desinstalas la app, se pierden. **Guarda de vez en cuando una [copia de seguridad](#copia-de-seguridad) en Inicio**: incluye las palabras, tu progreso y tu historial. *Exportar* solo guarda las palabras.
+Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras los datos del navegador o desinstalas la app, se pierden. **Guarda de vez en cuando una [copia de seguridad](#copia-de-seguridad) en Progreso**: incluye las palabras, tu progreso y tu historial. *Exportar* solo guarda las palabras.
 
 ### Formatos para importar y exportar
 
@@ -131,6 +135,8 @@ Las palabras se guardan **solo en este navegador** (`localStorage`). Si borras l
 Si al hacer doble clic todo aparece en una sola columna: en Excel ve a **Datos → Desde texto/CSV**, elige el archivo, pon **Origen del archivo: 65001 (UTF-8)** y **Delimitador: Coma**, y pulsa **Cargar**. Para volver a importarlo, guárdalo como **CSV UTF-8 (delimitado por comas)**. LibreOffice y Google Sheets lo abren directamente.
 
 ## Estudiar
+
+Se llega desde **Practica**. Si todavía no tienes palabras, la pantalla solo dice que añadas algunas (con el botón **Ir a Palabras**) y no muestra el modo ni **Empezar**. Al volver a la app desde otra aplicación, el resumen del día se recalcula solo.
 
 Cada día la app te prepara una **cola**: primero las tarjetas que ya estudiaste y **te toca repasar**, después **palabras nuevas** hasta tu límite diario y, al final, las que fallaste hoy. Cada palabra tiene dos tarjetas: una de francés a español (reconocer) y otra de español a francés (producir); estudias la dirección que elijas en los ajustes.
 
@@ -156,7 +162,7 @@ Cada respuesta se guarda con **los dos** algoritmos a la vez: cambiar de uno a o
 
 **Atajos de teclado** (en el computador, durante una sesión): `Espacio` o `Intro` muestran la respuesta, `1` `2` `3` `4` responden Otra vez, Difícil, Bien y Fácil, y `O` lee el francés en voz alta (solo cuando el francés está a la vista). Con ratón, los botones muestran su tecla.
 
-**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. Para no perderlo, usa la [copia de seguridad](#copia-de-seguridad) de Inicio (la exportación de Palabras solo guarda las palabras).
+**Tus datos.** El progreso se guarda en este navegador, aparte de las palabras (clave `app-frances-study`), junto con un historial de cada respuesta que usa la pantalla Progreso. Para no perderlo, usa la [copia de seguridad](#copia-de-seguridad) de Progreso (la exportación de Palabras solo guarda las palabras).
 
 ## Quiz
 
@@ -177,7 +183,7 @@ Escribir «oe» en lugar de «œ» cuenta como error de acento. Si no sabes la r
 
 ## Progreso
 
-Progreso responde dos preguntas: **¿estudio todos los días?** y **¿qué palabras ya domino?** No guarda nada nuevo: cada vez que abres la pantalla, lo calcula todo a partir del historial de respuestas de Estudiar y del Quiz y de tus tarjetas.
+Progreso responde tres preguntas: **¿estudio todos los días?**, **¿qué palabras ya domino?** y **¿cuánto me falta hoy?** (el **objetivo de hoy**: dejar el repaso en cero). Al final tiene el desplegable **Datos y copia**, cerrado al entrar. No guarda nada nuevo: cada vez que abres la pantalla, lo calcula todo a partir del historial de respuestas de Estudiar y del Quiz y de tus tarjetas.
 
 **Cómo se cuenta** (las mismas reglas que prueban las pruebas automáticas):
 
@@ -236,19 +242,19 @@ Historias cortas en francés escritas por Claude a tu nivel, para leer y escucha
 
 ## Construir frases
 
-Lecciones cortas para armar frases en francés, con ejercicios que la app corrige sola (sin conexión y sin Claude) y, al final de cada lección, una frase libre que corrige Claude. En el computador está en la barra de la izquierda («Construir frases»); en el celular la barra no tiene espacio para un octavo botón, así que se abre desde la tarjeta **«Construir frases»** de Inicio.
+Lecciones cortas para armar frases en francés, con ejercicios que la app corrige sola (sin conexión y sin Claude) y, al final de cada lección, una frase libre que corrige Claude. Ya no está en la barra: cuelga de **Aprende**. Las lecciones salen en el carrusel de Aprende y cada pantalla de Construir vuelve con **«‹ Aprende»**. Una dirección guardada que abra `#/construir` te lleva a Aprende.
 
-- **En Inicio:** la tarjeta dice la próxima lección («Próxima lección: …», o «Terminaste todas las lecciones») y cuántas frases te toca repasar hoy («Repaso: N pendientes hoy»). **Seguir lección** abre la próxima lección y **Repasar (N)** abre el repaso (no hace nada si N es 0).
+- **En Aprende:** «Repaso de hoy» dice qué toca ahora y su botón lo abre, en este orden: **Repasar palabras** (Estudiar), **Repasar frases** (el repaso de Construir) y, cuando todo está al día, **Continuar: Lección N** (la próxima lección pendiente). La línea del día muestra tres estaciones, «Palabras», «Frases» y «Lección», cada una con su estado escrito. Cuando no queda nada pendiente aparece **Practicar algo más**, que lleva a Practica.
 
-- **La ruta (`#/construir`):** las 24 lecciones en orden, como una línea de metro vertical en dos tramos, **A1** y **A2**. Cada fila dice «Lección N · Título» y su estado en texto:
+- **El carrusel de lecciones (Aprende):** las 24 lecciones en orden, en dos carruseles, **A1** y **A2** (se desplazan con el dedo o, con el teclado, enfocándolos y usando las flechas). Cada baldosa dice «Lección N · Título» y su estado en texto:
   - «Sin empezar»;
   - «En curso: X de Y» (ejercicios que ya acertaste alguna vez);
   - «Completada · F de T a la primera · DD/MM/AAAA»: el resultado de tu última práctica completa (F son los ejercicios que acertaste al primer intento). Si vuelves a practicar una lección completada, al terminar se reemplaza por el nuevo resultado; si sales a medias, no cambia. Las lecciones completadas antes de la Etapa 14 dicen solo «Completada · DD/MM/AAAA»;
-  - «Próximamente»: lecciones que todavía no existen. Se ven atenuadas y no se pueden abrir (tampoco escribiendo su dirección: la app vuelve a la ruta).
+  - «Próximamente»: lecciones que todavía no existen. Se ven atenuadas y no se pueden abrir (tampoco escribiendo su dirección: la app vuelve a Aprende).
   - «Tiene partes REVISAR», debajo del estado, avisa que algo de la lección todavía no tiene una fuente segura (dentro de la lección cada parte lleva su etiqueta y su nota).
-  - La estación de cada lección acompaña al texto: llena con ✓ (completada), con un punto (en curso), vacía (sin empezar) o punteada (próximamente).
-  - En el teléfono se llega a la ruta con **«Ver todas las lecciones»** (tarjeta de Inicio); dentro de una lección, **«‹ Todas las lecciones»** vuelve a ella.
-  - Arriba, **Continuar: Lección N · Título** abre la primera lección pendiente (la misma que «Seguir lección» de Inicio), y en la ruta esa fila va resaltada. Si ya completaste todas, el botón desaparece y se lee «Completaste todas las lecciones disponibles». Al lado está **Repasar (N)**.
+  - La estación de cada baldosa acompaña al texto: llena con ✓ (completada), con un punto (en curso), vacía (sin empezar) o punteada (próximamente).
+  - La lección que sigue lleva un borde turquesa. Dentro de una lección, **«‹ Aprende»** vuelve al carrusel.
+  - Si completaste todas, el carrusel lo dice y «Repaso de hoy» no ofrece lecciones.
 - **Lección:** en este orden, «La idea», «El bloque» (las piezas de la frase), «Cómo pensarlo» (del español al francés), «Ejemplos» (cada uno con **Escuchar**), «Trampa común», «Practicar» y «Fuentes». Lo que está en REVISAR lleva la etiqueta escrita y su nota.
 - **Practicar:** un ejercicio por vez («Ejercicio X/Y»), en el orden de la lección. **Comprobar** dice «Correcto.» o «No es correcta.», explica la regla y muestra «La respuesta es: …»; si fallaste, «Tu respuesta:» marca las palabras que cambian, faltan o sobran. Luego **Siguiente**.
   - **Ordenar:** toca las fichas en el orden correcto; pasan a «Tu frase». Toca una ficha de «Tu frase» para devolverla, o **Borrar todo**. No hay que arrastrar nada: funciona con el teclado (Tab y Enter) y con TalkBack.
@@ -262,7 +268,7 @@ Lecciones cortas para armar frases en francés, con ejercicios que la app corrig
   - Claude responde «Correcta.» o «Corregida: …», con cada error (lo que escribiste → lo correcto, su tipo, Gramática, Sintaxis u Ortografía, y la explicación), una «Sugerencia» aparte si la frase no responde a la situación o no usa el patrón de la lección, y las «Respuestas modelo».
   - Si hubo errores: «Agregamos esta frase a tu repaso.».
   - **Sin conexión** no se envía nada: ves «Necesitas conexión para que Claude revise tu frase.» y las respuestas modelo para comparar. Hay un límite de 50 correcciones al día.
-- **Repaso (`#/construir/repaso`, o «Repasar (N)» arriba de la ruta):** los ejercicios que fallaste dos veces y las frases que corrigió Claude, con la repetición espaciada que elegiste en los ajustes de Estudiar. Cada tarjeta aparece por primera vez **al día siguiente**. Funciona como Practicar, con «Repaso: X/Y».
+- **Repaso (`#/construir/repaso`, el botón **Repasar frases** de «Repaso de hoy»):** los ejercicios que fallaste dos veces y las frases que corrigió Claude, con la repetición espaciada que elegiste en los ajustes de Estudiar. Cada tarjeta aparece por primera vez **al día siguiente**. Funciona como Practicar, con «Repaso: X/Y».
   - Una frase tuya aparece como «Corrige tu frase», con la etiqueta REVISAR (la corrección es de Claude y puede equivocarse). Si crees que está mal, **Quitar del repaso** la borra después de confirmar.
   - Si no hay nada: «No tienes nada que repasar hoy. Los ejercicios que falles 2 veces aparecerán aquí.».
 - **Sin conexión:** las lecciones vienen con la app, así que se leen, se practican y se repasan sin internet. Solo la corrección de la frase libre necesita conexión.
@@ -322,14 +328,15 @@ Estas comprobaciones no se pueden automatizar. Hazlas al cerrar cada etapa que t
 
 1. `npm start` y abre `http://localhost:8000`.
 2. Abre el modo responsive: `Ctrl + Shift + M` en Firefox, o `F12` y luego `Ctrl + Shift + M` en Chrome.
-3. Pon el ancho en **360** px. Debes ver la barra azul **abajo** con cinco enlaces. Pulsa cada uno: cambia la placa del título, el enlace activo se pone en blanco y negrita con una franja de color arriba, y la página **no se recarga**.
-4. Pon el ancho en **1280** px. La barra pasa a la **izquierda** con «Français» arriba. Repite el paso 3; la franja ahora está a la izquierda.
+3. Pon el ancho en **360** px. Debes ver la barra clara **abajo** con tres enlaces: **Aprende**, **Practica** y **Progreso**. Pulsa cada uno: cambia la placa del título, el enlace activo queda en negrita dentro de una placa azul, y la página **no se recarga**. Entra a Palabras desde Practica: «Practica» sigue marcado en la barra y arriba hay un «‹ Practica» para volver.
+4. Pon el ancho en **1280** px. La barra pasa a la **izquierda** con «Français» arriba. Repite el paso 3; la placa azul sigue marcando el destino activo.
 5. Prueba el botón «atrás» del navegador: vuelve a la pantalla anterior.
 
 ### 2. Teclado
 
-1. Recarga la página y pulsa `Tab`: aparece «Saltar al contenido». Pulsa `Intro`.
-2. Sigue con `Tab` por los enlaces: cada uno muestra un recuadro amarillo. Pulsa `Intro` en uno: cambia la pantalla y el foco pasa a su título.
+1. Recarga la página y pulsa `Tab`: el foco recorre primero el contenido de Aprende (el botón de «Repaso de hoy», el carrusel y sus lecciones) y **al final** la barra de navegación.
+2. Con `Tab` llega a los tres enlaces de la barra: cada uno muestra un recuadro de foco. Pulsa `Intro` en uno: cambia la pantalla y el foco pasa a su título.
+3. En Practica, recorre cada baldosa con `Tab` y ábrela con `Intro`; el «‹ Practica» de arriba te devuelve.
 
 ### 3. Tema oscuro
 
@@ -347,7 +354,7 @@ Cambia el sistema (o el navegador) a tema oscuro. La app pasa a fondo azul noche
 
 1. Con la app instalada y abierta al menos una vez, **cierra la app** del todo (desde la vista de apps recientes).
 2. Activa el **modo avión**.
-3. Abre la app desde el icono. Debe abrir normal y navegar entre las siete pantallas.
+3. Abre la app desde el icono. Debe abrir normal y navegar entre los tres destinos (Aprende, Practica y Progreso) y abrir Palabras desde Practica.
 4. Desactiva el modo avión.
 
 En el computador puedes comprobar lo mismo: en Chrome, `F12` → **Application** → **Service workers** → marca **Offline** y recarga; en Firefox, menú **≡** → **Más herramientas** → **Trabajar sin conexión**.
@@ -448,21 +455,28 @@ Si no aparece, cierra y vuelve a abrir la app: GitHub Pages puede tardar hasta 1
 
 ### 11. Copia de seguridad en el celular
 
-- [ ] En **Inicio**, **Guardar copia** descarga `copia-frances-AAAA-MM-DD.json` y dice cuántas palabras y respuestas guardó; el archivo aparece en **Descargas**.
+- [ ] En **Progreso** → **Datos y copia**, **Guardar copia** descarga `copia-frances-AAAA-MM-DD.json` y dice cuántas palabras y respuestas guardó; el archivo aparece en **Descargas**.
 - [ ] Anota la racha y los números de **Progreso** y cuántas palabras tienes.
 - [ ] Borra los datos del sitio: en Chrome, ⋮ → **Configuración** → **Configuración de sitios** → **Todos los sitios** → `joakil255.github.io` → **Borrar y restablecer** (si usas la app instalada, ciérrala antes). Al volver a abrir la app solo están las 60 palabras iniciales y Progreso está vacío.
 - [ ] **Restaurar copia** → elige el archivo de Descargas. La ventana dice qué tiene la copia y qué tienes ahora. **Cancelar** no cambia nada.
-- [ ] Vuelve a elegirlo y pulsa **Restaurar**: la app se recarga, Inicio dice «Se restauró la copia del …», y las palabras, la racha, los números de Progreso y tus ajustes de Estudiar son los mismos que anotaste.
+- [ ] Vuelve a elegirlo y pulsa **Restaurar**: la app se recarga, la app vuelve a Progreso con **Datos y copia** abierto y dice «Se restauró la copia del …», y las palabras, la racha, los números de Progreso y tus ajustes de Estudiar son los mismos que anotaste.
 - [ ] Elige un archivo que no sea una copia (una foto o la exportación de Palabras): aparece un aviso que dice por qué y nada cambia.
 
 ### 12. Lector de pantalla (TalkBack)
 
-- [ ] Activa **TalkBack** (Ajustes → Accesibilidad). Recorre Inicio, Palabras (abre una ficha), Estudiar (una tarjeta), Quiz y Progreso: cada botón se lee con su nombre, los avisos se anuncian y el gráfico de Progreso se lee con su resumen.
+- [ ] Activa **TalkBack** (Ajustes → Accesibilidad). Recorre **Aprende**, **Practica**, **Progreso** y **Datos y copia**, y dentro de Practica Palabras (abre una ficha), Estudiar (una tarjeta) y Quiz: cada botón se lee con su nombre, los avisos se anuncian y el gráfico de Progreso se lee con su resumen.
+
+### 13. Etapa 17: instalar desde v28, actualizar a v33 y acceso guardado
+
+- [ ] **Instalar desde v28:** si tu teléfono todavía tiene la app antigua (v28, con siete pestañas), ábrela con conexión y espera: aparece «Hay una versión nueva de la app.» con **Actualizar**.
+- [ ] **Actualizar a v33:** pulsa **Actualizar**. La app se recarga y abre en **Aprende**; tus palabras, tu racha y tus ajustes siguen igual (míralos en Progreso).
+- [ ] **Acceso guardado:** si tenías guardado un acceso a `#/construir` (por ejemplo en los marcadores o en la pantalla de inicio), ábrelo: te lleva a Aprende, sin pantalla en blanco.
+- [ ] **TalkBack:** recorre **Aprende**, **Practica**, **Progreso** y **Datos y copia**. Cada destino se lee con su nombre y «seleccionado» en el activo; el carrusel de lecciones se anuncia con su nivel («A1», «A2»); las lecciones «Próximamente» se leen como texto; los botones de Datos y copia se leen con su nombre.
 
 ## Estructura
 
 ```
-index.html              página única con las siete pantallas
+index.html              página única con los tres destinos y sus pantallas
 sw.js                   service worker (caché para usar sin conexión)
 manifest.webmanifest    datos de instalación de la PWA
 css/styles.css          estilos (valores de DESIGN.md)
@@ -474,7 +488,9 @@ js/screens/study.js     pantalla Estudiar (resumen, tarjetas, fin y ajustes)
 js/screens/voice.js     oír en francés con los mismos avisos en todas las pantallas
 js/screens/quiz.js      pantalla Quiz (modos, respuesta inmediata y resumen)
 js/screens/progress.js  pantalla Progreso (racha, gráfico SVG, acierto y palabras)
-js/screens/home.js      pantalla Inicio (tarjeta Construir frases y copia de seguridad)
+js/screens/learn.js     pantalla Aprende (repaso de hoy, línea del día y carrusel de lecciones)
+js/screens/practice.js  pantalla Practica (baldosas con sus cifras)
+js/screens/backup.js    Progreso › Datos y copia (guardar y restaurar la copia de seguridad)
 js/screens/reader.js    pantalla Leer (biblioteca, lector con voz por frases y cuestionario)
 js/screens/build.js     pantalla Construir frases (ruta, lección, práctica y repaso)
 js/screens/build-free.js frase libre de Construir (modelos y corrección de Claude)
@@ -490,6 +506,9 @@ js/lib/study-storage.js progreso del estudio, historial (Estudiar y Quiz) y ajus
 js/lib/answer-check.js  comprobar respuestas escritas (mayúsculas, espacios, acentos…)
 js/lib/quiz.js          modos del quiz, elección de palabras y opciones
 js/lib/stats.js         estadísticas de Progreso (racha, días, acierto y estado de las palabras)
+js/lib/today.js        plan del día de Aprende (acción, línea del día) y objetivo de Progreso
+js/lib/practice.js     cifras de las baldosas de Practica
+js/lib/lesson-route.js estado de cada lección y la próxima pendiente
 js/lib/backup.js        copia de seguridad: armar, validar y restaurar (sin dejar datos a medias)
 js/lib/messages.js      catálogo único de mensajes de error
 js/data/initial-words.js lista inicial de 60 palabras

@@ -111,6 +111,14 @@ test('Estudiar tiene el resumen del día con sus botones', () => {
   assert.match(study, /<button type="button"[^>]*id="study-settings-open"[^>]*>Ajustes del estudio<\/button>/);
 });
 
+test('Estudiar: la línea del modo y la fila de botones tienen id para ocultarse sin palabras', () => {
+  assert.match(study, /<p id="study-mode"/);
+  const row = elementById(study, 'div', 'study-actions');
+  assert.ok(row, 'falta la fila #study-actions');
+  assert.match(row, /id="study-start"/);
+  assert.match(row, /id="study-settings-open"/);
+});
+
 test('Estudiar tiene la tarjeta con anverso, reverso y botón de altavoz', () => {
   const card = study.match(/<article [^>]*id="study-card"[^>]*>([\s\S]*?)<\/article>/)?.[1];
   assert.ok(card, 'falta <article id="study-card">');
