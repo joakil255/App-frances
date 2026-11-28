@@ -198,6 +198,10 @@ export async function initProgress({ wordStore, studyStore, buildStore, getLesso
   window.addEventListener('hashchange', () => {
     if (resolveRoute(location.hash) === 'progress') render();
   });
+  // Los ajustes del estudio (palabras nuevas por día, dirección) se abren también desde aquí
+  document.getElementById('study-settings').addEventListener('close', () => {
+    if (resolveRoute(location.hash) === 'progress') render();
+  });
 
   try {
     await studyStore.load();

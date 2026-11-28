@@ -279,8 +279,9 @@ test('«Datos y copia» es un desplegable cerrado al final de Progreso con copia
   }
   assert.match(fold, /<div id="data-notice" class="notice" role="alert" hidden><\/div>/);
   assert.match(fold, /<p id="data-status" class="vocab-message" role="status"><\/p>/);
-  assert.match(fold, /id="backup-file"/);
-  assert.match(fold, /id="vocab-file"/);
+  assert.match(fold, /<button type="button" class="button button-primary" id="backup-save">Guardar copia<\/button>/);
+  assert.match(fold, /<input type="file" id="backup-file" accept="\.json,application\/json" hidden>/);
+  assert.match(fold, /<input type="file" id="vocab-file" accept="\.json,\.csv" hidden>/);
   assert.ok(fold.includes('Guarda en un archivo tus palabras, tu progreso y tu historial. '
     + 'Si se borran los datos del navegador, con ese archivo lo recuperas todo.'));
   assert.ok(sectionOf('progress').includes('id="data-fold"'), 'el desplegable está en Progreso');
@@ -297,7 +298,7 @@ test('«Datos y copia» queda fuera del objetivo y es lo último de Progreso, co
 test('Palabras ya no tiene Importar ni Exportar, y conserva Añadir y el mazo', () => {
   const vocab = sectionOf('vocabulary');
   assert.ok(!vocab.includes('id="vocab-import"') && !vocab.includes('id="vocab-export"'));
-  assert.match(vocab, /id="vocab-add"/);
+  assert.match(vocab, /<button type="button"[^>]*id="vocab-add"[^>]*>Añadir palabra<\/button>/);
   const actions = vocab.match(/<div class="vocab-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
   assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
 });

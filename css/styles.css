@@ -782,7 +782,7 @@ main {
 }
 .fold > summary::-webkit-details-marker { display: none; }
 .fold > summary::after {
-  content: '+';
+  content: '+' / '';
   display: grid;
   place-items: center;
   width: 32px;
@@ -792,7 +792,7 @@ main {
   border-radius: 50%;
   font: 700 1.25rem/1 var(--font-sign);
 }
-.fold[open] > summary::after { content: '−'; }
+.fold[open] > summary::after { content: '−' / ''; }
 .fold-body { padding: 0 var(--space-4) var(--space-4); }
 .fold-title { margin: var(--space-5) 0 var(--space-2); font: 700 1.1rem/1.2 var(--font-sign); }
 .fold-body p { margin: 0 0 var(--space-3); }
