@@ -79,7 +79,7 @@ const TEXT_PAIRS = [
   ['--secondary-text', '--bg'], ['--secondary-text', '--surface'], ['--emphasis', '--bg'], ['--emphasis', '--surface'],
   ['--review', '--bg'], ['--review', '--surface'], ['--error-text', '--bg'], ['--error-text', '--surface'],
   ['--success-text', '--bg'], ['--success-text', '--surface'], ['--notice-text', '--notice-bg'],
-  ['--dialog-title', '--bg'], ['--plaque-text', '--plaque'], ['--nav-text', '--nav-bg'], ['--nav-active', '--nav-bg'],
+  ['--dialog-title', '--bg'], ['--plaque-text', '--plaque'],
 ];
 const GRAPHIC_PAIRS = [['--field-border', '--surface'], ['--field-border', '--bg'], ['--focus', '--bg'], ['--focus', '--surface']];
 
@@ -249,4 +249,57 @@ test('el carrusel de lecciones solo sale a los bordes en el móvil; desde 600 px
   assert.match(rule, /margin:\s*0\s*;/);
   assert.match(rule, /padding-inline:\s*0\s*;/);
   assert.match(rule, /scroll-padding:\s*0\s*;/);
+});
+
+// --- Etapa 17, Tarea 12: pares nuevos de la spec 7 ---
+test('las estaciones y la vía de la línea del día (--emphasis) se ven sobre la baldosa (≥ 3:1)', () => {
+  assert.match(css, /\.dayline::before\s*\{[^}]*background:\s*var\(--emphasis\)/);
+  assert.match(css, /\.dayline \.stop\s*\{[^}]*border:\s*4px solid var\(--emphasis\)/);
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    const emphasis = token(block, '--emphasis') ?? token(lightTokens, '--emphasis');
+    const surface = token(block, '--surface') ?? token(lightTokens, '--surface');
+    assert.ok(contrast(emphasis, surface) >= 3, `${theme}: --emphasis ${emphasis} sobre --surface ${surface}`);
+  }
+});
+
+test('el borde turquesa de la lección actual se ve sobre la baldosa y el fondo (≥ 3:1) en claro y oscuro', () => {
+  assert.match(css, /a\.lesson-tile\[aria-current="step"\]\s*\{\s*border-color:\s*var\(--line\)/);
+  const teal = css.match(/\.line-build \{ --line: (#[0-9A-Fa-f]{6}); \}/)[1];
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    for (const background of ['--surface', '--bg']) {
+      const bg = token(block, background) ?? token(lightTokens, background);
+      assert.ok(contrast(teal, bg) >= 3, `${theme}: borde ${teal} sobre ${background} ${bg}`);
+    }
+  }
+});
+
+test('la frase de «Repaso de hoy» y las cifras de Practica se leen sobre la baldosa (≥ 4,5:1)', () => {
+  assert.equal(propertyOf('.practice-count', 'color'), token(lightTokens, '--text-muted'));
+  assert.match(css, /\.today-main\s*\{[^}]*font:\s*600 1\.95rem/);
+  for (const [theme, block] of Object.entries({ claro: lightTokens, oscuro: darkTokens })) {
+    const surface = token(block, '--surface') ?? token(lightTokens, '--surface');
+    const text = token(block, '--text') ?? token(lightTokens, '--text');
+    const muted = token(block, '--text-muted') ?? token(lightTokens, '--text-muted');
+    assert.ok(contrast(text, surface) >= 4.5, `${theme}: .today-main --text ${text} sobre ${surface}`);
+    assert.ok(contrast(muted, surface) >= 4.5, `${theme}: .practice-count --text-muted ${muted} sobre ${surface}`);
+  }
+});
+
+// --- Etapa 17, Tarea 12: medidas táctiles que fallaron en el navegador ---
+test('los enlaces de texto miden 44 px de ancho y de alto (el «‹ Leer» medía 41 px de ancho)', () => {
+  assert.equal(propertyOf('.text-link', 'min-height'), '44px');
+  assert.equal(propertyOf('.text-link', 'min-width'), '44px');
+});
+
+test('los botones principales miden al menos 48 px de alto (y «Repasar» de Aprende, 56 px)', () => {
+  assert.equal(propertyOf('.button-primary', 'min-height'), '48px');
+  assert.equal(propertyOf('.today-action', 'min-height'), '56px');
+});
+
+test('la etiqueta de cada casilla mide 44 px de alto para poder tocarla', () => {
+  assert.equal(propertyOf('.checkbox-field label', 'min-height'), '44px');
+});
+
+test('ya no quedan los colores --nav-bg, --nav-text ni --nav-active (la barra es clara y usa --surface)', () => {
+  assert.doesNotMatch(css, /--nav-(bg|text|active)/);
 });

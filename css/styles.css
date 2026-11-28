@@ -39,9 +39,6 @@
   --plaque: #233A7A;
   --plaque-text: #FFFFFF;
   --plaque-border: #FFFFFF;
-  --nav-bg: #233A7A;
-  --nav-text: #C9D3EE;
-  --nav-active: #FFFFFF;
   --focus: #233A7A;
   --focus-on-blue: #F2C230;
 
@@ -95,7 +92,6 @@
     --text: #E8ECF3;
     --plaque: #2D4A9A;
     --plaque-border: #E8ECF3;
-    --nav-bg: #1A2B5C;
     --focus: #F2C230;
 
     --surface: #1A2438;
@@ -315,7 +311,7 @@ main {
   text-decoration: none;
   cursor: pointer;
 }
-.button-primary { background: var(--plaque); color: #FFFFFF; }
+.button-primary { min-height: 48px; background: var(--plaque); color: #FFFFFF; } /* el botón principal es más alto que el secundario */
 .button-secondary { background: var(--surface); color: var(--secondary-text); border-color: currentColor; }
 .button-danger { background: var(--danger); color: #FFFFFF; }
 .button[hidden] { display: none; }
@@ -390,7 +386,7 @@ main {
 
 .checkbox-field { display: flex; align-items: center; gap: var(--space-2); }
 .checkbox-field input { width: 24px; height: 24px; margin: 0; accent-color: var(--plaque); }
-.checkbox-field label { font: 500 var(--size-base) var(--font-sign); }
+.checkbox-field label { display: flex; align-items: center; flex: 1; min-height: 44px; font: 500 var(--size-base) var(--font-sign); } /* toda la fila se toca */
 
 /* --- Avisos --- */
 .notice {
@@ -1314,6 +1310,7 @@ p.word-card-es { color: var(--text-muted); }
   align-items: center;
   gap: var(--space-1);
   min-height: 44px;
+  min-width: 44px;
   color: var(--text);
   font: 600 var(--size-sm) var(--font-sign);
   text-decoration: underline;
