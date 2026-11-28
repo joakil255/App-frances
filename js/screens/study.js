@@ -82,7 +82,9 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     $('#study-empty').hidden = hasWords;
     $('#study-empty-actions').hidden = hasWords;
     $('#study-today').hidden = !hasWords;
-    $('#study-start').hidden = !hasWords;
+    // Sin palabras solo queda el texto y «Ir a Palabras» (los ajustes siguen en Progreso)
+    $('#study-mode').hidden = !hasWords;
+    $('#study-actions').hidden = !hasWords;
     $('#study-due').textContent = String(queue.filter((item) => !item.isNew).length);
     $('#study-new').textContent = String(queue.filter((item) => item.isNew).length);
     $('#study-mode').textContent = `${DIRECTION_NAMES[settings.direction]}, con ${ALGORITHM_NAMES[settings.algorithm]}.`;
@@ -306,6 +308,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     renderSummary();
     studyStore.watchExternalChanges(window, refreshSummary);
     wordStore.watchExternalChanges(window, refreshSummary);
+    return { refreshSummary };
   }
 
   return start();
