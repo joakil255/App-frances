@@ -19,7 +19,6 @@
     <main id="main" tabindex="-1">
       <section id="screen-learn" class="screen line-learn">
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Aprende</h1>
-        <div id="home-notice" class="notice" role="alert" hidden></div>
 
         <!-- Repaso de hoy: lo que toca ahora y la línea del día (se rellena con textContent; oculto hasta el primer refresh()) -->
         <section class="today tile" aria-labelledby="today-title" hidden>
@@ -46,18 +45,6 @@
         <h3 id="learn-level-a2" class="learn-level" hidden>A2</h3>
         <ol id="learn-route-a2" class="carousel" tabindex="0" aria-labelledby="learn-level-a2" hidden></ol>
         <p class="hint learn-hint" id="learn-hint-a2" hidden></p>
-
-        <!-- Copia de seguridad: todo en un archivo (se rellena con textContent) -->
-        <div class="backup">
-          <h2 class="progress-title backup-title">Copia de seguridad</h2>
-          <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
-          <div class="study-actions">
-            <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
-            <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
-            <input type="file" id="backup-file" accept=".json,application/json" hidden>
-          </div>
-          <p id="home-status" class="vocab-message" role="status"></p>
-        </div>
       </section>
 
       <section id="screen-practice" class="screen line-practice" hidden>
@@ -111,10 +98,7 @@
           </div>
           <div class="vocab-actions">
             <button type="button" class="button button-primary" id="vocab-add">Añadir palabra</button>
-            <button type="button" class="button button-secondary" id="vocab-import">Importar</button>
-            <button type="button" class="button button-secondary" id="vocab-export">Exportar</button>
             <button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1</button>
-            <input type="file" id="vocab-file" accept=".json,.csv" hidden>
           </div>
         </div>
 
@@ -302,15 +286,31 @@
         <div id="progress-notice" class="notice" role="alert" hidden></div>
         <p id="progress-empty" class="empty" hidden>Aquí verás tu racha y tus respuestas de cada día cuando respondas tu primera tarjeta en Estudiar o en el Quiz.</p>
 
+        <!-- Objetivo de hoy: el texto da la información; el trayecto es solo decoración -->
+        <section class="goal tile" aria-labelledby="goal-title">
+          <h2 id="goal-title" class="goal-title">Objetivo de hoy: dejar el repaso en cero</h2>
+          <p id="goal-text"></p>
+          <div class="trip" aria-hidden="true"><span class="trip-fill" id="goal-fill"></span><span class="trip-start"></span><span class="trip-end"></span></div>
+          <div class="trip-labels" aria-hidden="true"><span>Empiezas el día</span><span>Repaso en cero</span></div>
+          <p id="goal-answers" class="hint"></p>
+        </section>
+
         <!-- Actividad: racha, días y acierto (se rellena con textContent) -->
         <div id="progress-activity" class="progress-activity" hidden>
-          <div class="study-today">
-            <p id="progress-streak" class="study-count">
-              <span id="progress-streak-number" class="study-number"></span>
-              <span id="progress-streak-label" class="study-label"></span>
-            </p>
-            <p id="progress-today" class="study-count progress-today"></p>
+          <h2 class="progress-title">Tu constancia</h2>
+          <div class="progress-pair">
+            <div class="tile" id="progress-streak">
+              <span id="progress-streak-number" class="progress-big"></span>
+              <span id="progress-streak-label" class="progress-what"></span>
+            </div>
+            <div class="tile" id="progress-study">
+              <span id="progress-study-percent" class="progress-big"></span>
+              <span id="progress-study-detail" class="progress-what"></span>
+            </div>
           </div>
+          <p id="progress-quiz" class="hint"><span id="progress-quiz-lead">En el Quiz, </span><span id="progress-quiz-percent"></span> <span id="progress-quiz-detail"></span></p>
+          <p class="hint">En Estudiar, «Otra vez» cuenta como fallo.</p>
+          <p id="progress-today" class="progress-today"></p>
 
           <h2 class="progress-title">Respuestas de los últimos 14 días</h2>
           <div id="progress-chart" class="progress-chart"></div>
@@ -321,23 +321,11 @@
               <tbody id="progress-table-body"></tbody>
             </table>
           </details>
-
-          <h2 class="progress-title">Acierto en los últimos 30 días</h2>
-          <dl id="progress-accuracy" class="progress-accuracy">
-            <div class="progress-rate">
-              <dt>Estudiar</dt>
-              <dd><span id="progress-study-percent" class="progress-percent"></span> <span id="progress-study-detail" class="progress-rate-detail"></span></dd>
-            </div>
-            <div class="progress-rate">
-              <dt>Quiz</dt>
-              <dd><span id="progress-quiz-percent" class="progress-percent"></span> <span id="progress-quiz-detail" class="progress-rate-detail"></span></dd>
-            </div>
-          </dl>
-          <p class="hint">En Estudiar, «Otra vez» cuenta como fallo.</p>
         </div>
 
         <h2 class="progress-title">Tus palabras</h2>
         <p id="progress-words-empty" class="progress-words-empty" hidden>Añade palabras en Palabras para empezar.</p>
+        <p id="progress-words-go-row" class="progress-words-go-row" hidden><a class="button button-secondary" id="progress-words-go" href="#/vocabulario">Ir a Palabras</a></p>
         <div id="progress-words" hidden>
           <div class="progress-states-bar" aria-hidden="true">
             <span class="progress-state-new"></span><span class="progress-state-learning"></span><span class="progress-state-mastered"></span>
@@ -353,6 +341,33 @@
           </details>
           <p id="progress-mastered-none" class="hint" hidden>Cuando repases una palabra y su próximo repaso quede a 14 días o más, aparecerá aquí.</p>
         </div>
+
+        <!-- Datos y copia: copia de seguridad, palabras en un archivo y ajustes (cerrado al entrar) -->
+        <details id="data-fold" class="fold">
+          <summary>Datos y copia</summary>
+          <div class="fold-body">
+            <div id="data-notice" class="notice" role="alert" hidden></div>
+            <h3 class="fold-title">Copia de seguridad</h3>
+            <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
+            <div class="study-actions">
+              <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
+              <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
+              <input type="file" id="backup-file" accept=".json,application/json" hidden>
+            </div>
+            <h3 class="fold-title">Tus palabras en un archivo</h3>
+            <p>Trae palabras desde un archivo JSON o CSV, o llévate las tuyas.</p>
+            <div class="study-actions">
+              <button type="button" class="button button-secondary" id="vocab-import">Importar palabras</button>
+              <button type="button" class="button button-secondary" id="vocab-export">Exportar palabras</button>
+              <input type="file" id="vocab-file" accept=".json,.csv" hidden>
+            </div>
+            <h3 class="fold-title">Ajustes</h3>
+            <div class="study-actions">
+              <button type="button" class="button button-secondary" id="data-settings-open">Ajustes del estudio</button>
+            </div>
+            <p id="data-status" class="vocab-message" role="status"></p>
+          </div>
+        </details>
       </section>
 
       <!-- Leer: biblioteca y lector. Las historias se pintan con textContent desde js/screens/reader.js -->

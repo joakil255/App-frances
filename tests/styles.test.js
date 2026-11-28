@@ -231,3 +231,8 @@ test('el foco de la barra va hacia dentro y el del enlace de salto se ve sobre l
 test('.button no subraya (también cuando es un enlace)', () => {
   assert.equal(propertyOf('.button', 'text-decoration'), 'none');
 });
+
+test('el «+» y el «−» del desplegable llevan texto alternativo vacío para que no se lean', () => {
+  assert.match(css, /\.fold > summary::after \{[^}]*content: '\+' \/ '';/);
+  assert.match(css, /\.fold\[open\] > summary::after \{ content: '−' \/ ''; \}/);
+});

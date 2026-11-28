@@ -1,10 +1,13 @@
 // Pantalla Progreso: racha, respuestas por día, acierto y palabras por estado.
-// Solo lee: todo se calcula con stats.js a partir del historial cada vez que se muestra.
+// Solo lee: todo se calcula con stats.js (y today.js para el objetivo) cada vez que se muestra.
 // Todo texto va con textContent.
 import { resolveRoute } from '../lib/router.js';
 import { StorageError } from '../lib/storage.js';
 import { storageMessage } from '../lib/messages.js';
 import { localDate } from '../lib/dates.js';
+import { buildQueue } from '../lib/queue.js';
+import { buildReviewQueue } from '../lib/build-review.js';
+import { dailyGoal } from '../lib/today.js';
 import { studiedDates, streak, dailyCounts, accuracy, dayLabel, chartSummary, wordStates } from '../lib/stats.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -24,6 +27,10 @@ const HEIGHT = 146;
 const EMPTY_RATE = {
   study: 'Todavía no estudiaste en los últimos 30 días.',
   quiz: 'Todavía no hiciste ningún quiz en los últimos 30 días.',
+};
+const RATE_DETAIL = {
+  study: 'de acierto en Estudiar (30 días)',
+  quiz: 'de acierto en los últimos 30 días.',
 };
 
 function svgEl(tag, attributes, text) {
@@ -79,7 +86,8 @@ function masteredItem(word) {
   return item;
 }
 
-export function initProgress({ wordStore, studyStore, now = () => new Date() }) {
+// getLessons(): las lecciones, o null si no se pudieron cargar (igual que en Aprende)
+export async function initProgress({ wordStore, studyStore, buildStore, getLessons, now = () => new Date() }) {
   const notice = $('#progress-notice');
 
   function showNotice(title, text) {
@@ -122,14 +130,18 @@ export function initProgress({ wordStore, studyStore, now = () => new Date() }) 
   function renderAccuracy(history, today) {
     const rates = accuracy(history, today);
     for (const kind of ['study', 'quiz']) {
-      const { total, percent } = rates[kind];
+      const { percent } = rates[kind];
       $(`#progress-${kind}-percent`).textContent = percent === null ? '—' : `${percent}\u00A0%`;
-      $(`#progress-${kind}-detail`).textContent = percent === null ? EMPTY_RATE[kind] : `de ${plural(total, 'respuesta', 'respuestas')}`;
+      $(`#progress-${kind}-detail`).textContent = percent === null ? EMPTY_RATE[kind] : RATE_DETAIL[kind];
     }
+    // Sin quiz, la frase es solo «Todavía no hiciste…»: sin «En el Quiz, —»
+    $('#progress-quiz-lead').hidden = rates.quiz.percent === null;
+    $('#progress-quiz-percent').hidden = rates.quiz.percent === null;
   }
 
   function renderWords(words, cards, algorithm) {
     $('#progress-words-empty').hidden = words.length > 0;
+    $('#progress-words-go-row').hidden = words.length > 0;
     $('#progress-words').hidden = words.length === 0;
     if (words.length === 0) return;
     const states = wordStates({ words, cards, algorithm });
@@ -149,6 +161,22 @@ export function initProgress({ wordStore, studyStore, now = () => new Date() }) 
     $('#progress-mastered-list').replaceChildren(...states.masteredWords.map(masteredItem));
   }
 
+  // Las mismas colas que Aprende (mismos almacenes y mismo día), para que ambas pantallas coincidan
+  function renderGoal(words, today) {
+    const { history, cards, settings } = studyStore.getState();
+    const build = buildStore.getState();
+    const goal = dailyGoal({
+      wordQueue: buildQueue({ words, cards, settings, today }),
+      sentenceQueue: buildReviewQueue({ cards: build.cards, lessons: getLessons() ?? [], algorithm: settings.algorithm, today }),
+      history,
+      sentenceCards: build.cards,
+      today,
+    });
+    $('#goal-text').textContent = goal.text;
+    $('#goal-answers').textContent = goal.answersText;
+    $('#goal-fill').style.width = `${goal.ratio * 100}%`;
+  }
+
   // «Hoy» se calcula en cada llamada: si pasó la medianoche, entra el nuevo día
   function render() {
     const today = localDate(now());
@@ -161,28 +189,28 @@ export function initProgress({ wordStore, studyStore, now = () => new Date() }) 
       renderDays(history, today);
       renderAccuracy(history, today);
     }
-    renderWords(wordStore.getWords(), cards, settings.algorithm);
+    const words = wordStore.getWords();
+    renderGoal(words, today);
+    renderWords(words, cards, settings.algorithm);
   }
 
   // Al entrar en Progreso se recalcula (puede haber respuestas nuevas o haber cambiado el día)
   window.addEventListener('hashchange', () => {
     if (resolveRoute(location.hash) === 'progress') render();
   });
-  // Al volver a la app (p. ej. al día siguiente, sin cambiar de pantalla) también
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && resolveRoute(location.hash) === 'progress') render();
+  // Los ajustes del estudio (palabras nuevas por día, dirección) se abren también desde aquí
+  document.getElementById('study-settings').addEventListener('close', () => {
+    if (resolveRoute(location.hash) === 'progress') render();
   });
 
-  async function start() {
-    try {
-      await studyStore.load();
-    } catch (error) {
-      storageProblem(error);
-    }
-    render();
-    studyStore.watchExternalChanges(window, render);
-    wordStore.watchExternalChanges(window, render);
+  try {
+    await studyStore.load();
+  } catch (error) {
+    storageProblem(error);
   }
-
-  return start();
+  render();
+  studyStore.watchExternalChanges(window, render);
+  wordStore.watchExternalChanges(window, render);
+  // app.js la llama al volver a la app y cuando cambian las frases
+  return { refresh: render };
 }

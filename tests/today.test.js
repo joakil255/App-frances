@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { todayPlan } from '../js/lib/today.js';
+import { todayPlan, dailyGoal } from '../js/lib/today.js';
 
 const L7 = { id: 'fr-a1-07', number: 7, title: 'Los adjetivos' };
 
@@ -74,4 +74,41 @@ test('sin palabras en la lista, el texto habla solo de las frases', () => {
   // Lo que no depende de las palabras no cambia
   const done = todayPlan({ hasWords: false, wordsDue: 0, sentencesDue: 0, lesson: null, lessonsReady: true });
   assert.equal(done.followUp, 'Completaste todas las lecciones disponibles. Mañana tendrás más repaso.');
+});
+
+const T = '2026-11-27';
+test('cuenta lo que queda y lo hecho hoy', () => {
+  const g = dailyGoal({
+    wordQueue: [{ cardId: 'a' }, { cardId: 'b' }], sentenceQueue: ['s1'],
+    history: [{ date: T, cardId: 'c' }, { date: T, cardId: 'c' }, { date: T, cardId: 'd' }, { date: '2026-11-26', cardId: 'e' }, { kind: 'quiz', date: T }],
+    sentenceCards: { s1: { lastReviewedAt: null }, s2: { lastReviewedAt: '2026-11-27T10:00:00.000Z' } },
+    today: T, dayOf: (iso) => iso.slice(0, 10),
+  });
+  assert.deepEqual([g.wordsLeft, g.sentencesLeft, g.done], [2, 1, 3]);
+  assert.equal(g.ratio, 0.5);
+  assert.equal(g.text, 'Te quedan 2 palabras y 1 frase.');
+  assert.equal(g.answersText, 'Llevas 4 respuestas hoy.');
+});
+test('«Otra vez»: la palabra respondida hoy que sigue en la cola cuenta como pendiente, no como hecha', () => {
+  const g = dailyGoal({ wordQueue: [{ cardId: 'a' }], sentenceQueue: [], history: [{ date: T, cardId: 'a' }], sentenceCards: {}, today: T });
+  assert.deepEqual([g.wordsLeft, g.done], [1, 0]);
+  assert.equal(g.text, 'Te queda 1 palabra.');
+});
+test('textos: solo frases, varias frases, y la frase de completado', () => {
+  const base = { wordQueue: [], history: [], sentenceCards: {}, today: T };
+  assert.equal(dailyGoal({ ...base, sentenceQueue: ['x'] }).text, 'Te queda 1 frase.');
+  assert.equal(dailyGoal({ ...base, sentenceQueue: ['x', 'y'] }).text, 'Te quedan 2 frases.');
+  const done = dailyGoal({ ...base, sentenceQueue: [] });
+  assert.equal(done.text, 'Repaso de hoy completado. No te queda nada pendiente.');
+  assert.equal(done.ratio, 1);
+  assert.equal(done.answersText, 'Hoy todavía no has respondido nada.');
+});
+test('la frase repasada cuenta en el día local, no en UTC', () => {
+  const g = dailyGoal({ wordQueue: [], sentenceQueue: [], history: [{ date: T, cardId: 'z' }], sentenceCards: { s: { lastReviewedAt: '2026-11-28T02:00:00.000Z' } }, today: T, dayOf: () => T });
+  assert.equal(g.done, 2);
+  assert.equal(g.answersText, 'Llevas 1 respuesta hoy.');
+});
+test('ignora entradas del historial sin fecha válida', () => {
+  const g = dailyGoal({ wordQueue: [], sentenceQueue: [], history: [{ cardId: 'q' }, null, { date: 'ayer', cardId: 'r' }], sentenceCards: {}, today: T });
+  assert.equal(g.done, 0);
 });

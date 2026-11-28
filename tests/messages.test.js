@@ -29,10 +29,10 @@ test('los mensajes no se disculpan', () => {
   }
 });
 
-test('los textos exactos de almacenamiento y datos dañados nombran Inicio', () => {
+test('los textos exactos de almacenamiento y datos dañados nombran Progreso › Datos y copia', () => {
   assert.deepEqual(MESSAGES.storageQuota, {
     title: 'No hay espacio para guardar.',
-    text: 'Guarda una copia de seguridad en Inicio y borra palabras que no uses.',
+    text: 'Guarda una copia de seguridad en Progreso › Datos y copia y borra palabras que no uses.',
   });
   assert.deepEqual(MESSAGES.storageUnavailable, {
     title: 'El navegador no deja guardar datos.',
@@ -40,15 +40,15 @@ test('los textos exactos de almacenamiento y datos dañados nombran Inicio', () 
   });
   assert.deepEqual(MESSAGES.corruptWords, {
     title: 'Tus palabras guardadas estaban dañadas.',
-    text: 'Se guardó una copia aparte y la lista empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.',
+    text: 'Se guardó una copia aparte y la lista empezó vacía. Si tienes una copia de seguridad, restáurala en Progreso › Datos y copia.',
   });
   assert.deepEqual(MESSAGES.corruptStudy, {
     title: 'Tu progreso guardado estaba dañado.',
-    text: 'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
+    text: 'Se guardó una copia aparte y el estudio empezó de cero. Si tienes una copia de seguridad, restáurala en Progreso › Datos y copia.',
   });
   assert.deepEqual(MESSAGES.corruptTexts, {
     title: 'Tus historias guardadas estaban dañadas.',
-    text: 'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Inicio.',
+    text: 'Se guardó una copia aparte y la biblioteca empezó vacía. Si tienes una copia de seguridad, restáurala en Progreso › Datos y copia.',
   });
   assert.equal(MESSAGES.restoreFailed.title, 'No se pudo restaurar la copia.');
   assert.deepEqual(MESSAGES.backupUnverified, {
@@ -227,7 +227,7 @@ test('buildLoadNotice avisa si el progreso de frases estaba dañado o no se pudo
   assert.equal(buildLoadNotice({ error: new StorageError('unavailable') }), MESSAGES.storageUnavailable);
   assert.deepEqual(MESSAGES.corruptBuild, {
     title: 'Tu progreso de frases estaba dañado.',
-    text: 'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Inicio.',
+    text: 'Se guardó una copia aparte y Construir frases empezó de cero. Si tienes una copia de seguridad, restáurala en Progreso › Datos y copia.',
   });
 });
 

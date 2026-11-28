@@ -241,7 +241,9 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     else newPerDayInput.removeAttribute('aria-invalid');
   }
 
-  $('#study-settings-open').addEventListener('click', () => {
+  let settingsOpener = $('#study-settings-open'); // el foco vuelve al botón que abrió la ventana
+  function openSettings(opener) {
+    settingsOpener = opener;
     const { settings } = studyStore.getState();
     settingsForm.elements.direction.value = settings.direction;
     settingsForm.elements.algorithm.value = settings.algorithm;
@@ -249,11 +251,14 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     setNewPerDayError('');
     settingsFormError.hidden = true;
     settingsDialog.showModal();
-  });
+  }
+  for (const id of ['#study-settings-open', '#data-settings-open']) {
+    $(id).addEventListener('click', (event) => openSettings(event.currentTarget));
+  }
   settingsDialog.addEventListener('click', (event) => {
     if (event.target.closest('[data-action="close"]')) settingsDialog.close();
   });
-  settingsDialog.addEventListener('close', () => $('#study-settings-open').focus());
+  settingsDialog.addEventListener('close', () => settingsOpener.focus());
 
   settingsForm.addEventListener('submit', async (event) => {
     event.preventDefault();

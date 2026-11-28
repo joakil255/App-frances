@@ -11,7 +11,7 @@ import { createBuildStore } from './lib/build-storage.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
-import { initHome } from './screens/home.js';
+import { initBackup } from './screens/backup.js';
 import { initLearn } from './screens/learn.js';
 import { initPractice } from './screens/practice.js';
 import { createChatStore } from './lib/chat.js';
@@ -36,6 +36,7 @@ let onReaderShown = () => {}; // lo completa initReader
 let onReaderHidden = () => {}; // corta la voz al salir de Leer
 let onBuildShown = () => {}; // lo completa initBuild
 let onBuildHidden = () => {};
+let progress = null; // lo completa initProgress
 let learn = null; // lo completa initLearn
 let practice = null; // lo completa initPractice
 
@@ -128,12 +129,20 @@ const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr'
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
-initVocabulary({ store: wordStore, synth })
+initVocabulary({
+  store: wordStore,
+  synth,
+  // Tras importar palabras, Progreso y Practica se vuelven a dibujar (pueden no existir aún)
+  onWordsChanged: () => {
+    progress?.refresh();
+    practice?.refresh();
+  },
+})
   .then(() => initStudy({ wordStore, studyStore, synth }))
   .then(() => Promise.all([
-    initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
+    initQuiz({ wordStore, studyStore, synth }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
-      initHome({ wordStore, studyStore, textStore, buildStore, backend });
+      initBackup({ wordStore, studyStore, textStore, buildStore, backend });
       practice = initPractice({ wordStore, studyStore, textStore });
       if (currentId === 'practice') practice.refresh();
     }),
@@ -142,12 +151,15 @@ initVocabulary({ store: wordStore, synth })
     Promise.all([buildLoaded, lessonsLoaded]).then(([, lessons]) => {
       learn = initLearn({ wordStore, studyStore, buildStore, getLessons: () => lessons });
       if (currentId === 'learn') learn.refresh();
+      // Progreso también espera a las lecciones: así no pinta un objetivo provisional
+      return initProgress({ wordStore, studyStore, buildStore, getLessons: () => lessons }).then((screen) => { progress = screen; });
     }),
   ]));
 // Al volver a la app pasado el día, Aprende y Practica se recalculan (Aprende solo si cambió el día)
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (currentId === 'learn') learn?.refreshIfNewDay();
+  if (currentId === 'progress') progress?.refresh(); // el día puede haber cambiado
   if (currentId === 'practice') practice?.refresh(); // las cifras de hoy pueden haber cambiado
 });
 
@@ -256,7 +268,10 @@ Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
   if (currentId === 'build') onBuildShown(false);
 });
 // Si otra pestaña cambia el progreso, las frases, el estudio o las palabras, Aprende se actualiza
-buildStore.watchExternalChanges(window, () => learn?.refresh());
+buildStore.watchExternalChanges(window, () => {
+  learn?.refresh();
+  progress?.refresh();
+});
 studyStore.watchExternalChanges(window, () => {
   learn?.refresh();
   practice?.refresh();

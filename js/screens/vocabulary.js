@@ -46,7 +46,7 @@ function speakerIcon() {
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-export function initVocabulary({ store, synth, now = () => new Date() }) {
+export function initVocabulary({ store, synth, now = () => new Date(), onWordsChanged = () => {} }) {
   const search = $('#vocab-search');
   const categorySelect = $('#vocab-category');
   const genderSelect = $('#vocab-gender');
@@ -57,6 +57,8 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   const heading = $('#screen-vocabulary h1');
   const notice = $('#vocab-notice');
   const message = $('#vocab-message');
+  const dataNotice = $('#data-notice');
+  const dataStatus = $('#data-status');
   const fileInput = $('#vocab-file');
 
   const detail = $('#word-detail');
@@ -84,10 +86,24 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   function say(text) {
     message.textContent = text;
   }
-  function storageProblem(error) {
+  // Importar y exportar viven en «Datos y copia» (Progreso): sus avisos van allí
+  function showDataNotice(title, text = '') {
+    dataNotice.replaceChildren(el('strong', { text: title }), ...(text ? [el('span', { text: ` ${text}` })] : []));
+    dataNotice.hidden = false;
+  }
+  function clearDataNotice() {
+    dataNotice.hidden = true;
+    dataNotice.replaceChildren();
+    dataStatus.textContent = '';
+  }
+  function sayData(text) {
+    dataStatus.textContent = text;
+  }
+  const inDataFold = (node) => Boolean(node?.closest('#data-fold'));
+  function storageProblem(error, toData = false) {
     if (!(error instanceof StorageError)) throw error;
     const { title, text } = storageMessage(error);
-    showNotice(title, text);
+    (toData ? showDataNotice : showNotice)(title, text);
   }
 
   // --- Ventanas ---
@@ -293,7 +309,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   });
 
   // --- Exportar ---
-  $('#vocab-export').addEventListener('click', (event) => openDialog(exportDialog, event.currentTarget));
+  $('#vocab-export').addEventListener('click', (event) => {
+    clearDataNotice();
+    openDialog(exportDialog, event.currentTarget);
+  });
   exportDialog.addEventListener('click', (event) => {
     const button = event.target.closest('[data-format]');
     if (!button) return;
@@ -308,7 +327,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     exportDialog.close();
-    say(`Se exportaron ${plural(words.length, 'palabra', 'palabras')} en ${kind.toUpperCase()}.`);
+    sayData(`Se exportaron ${plural(words.length, 'palabra', 'palabras')} en ${kind.toUpperCase()}.`);
   });
 
   // --- Importar ---
@@ -318,10 +337,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     const file = fileInput.files[0];
     fileInput.value = ''; // permite volver a elegir el mismo archivo
     if (!file) return;
-    clearNotice();
+    clearDataNotice();
     if (file.size > MAX_IMPORT_BYTES) {
       const { title, text } = fileTooLarge(2);
-      showNotice(title, text);
+      showDataNotice(title, text);
       return;
     }
     let text;
@@ -329,13 +348,13 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       text = await file.text();
     } catch {
       const { title, text: reason } = importFailed(file.name, FILE_UNREADABLE);
-      showNotice(title, reason);
+      showDataNotice(title, reason);
       return;
     }
     const read = readImport(text, file.name);
     if (read.fatal) {
       const { title, text } = importFailed(file.name, read.fatal);
-      showNotice(title, text);
+      showDataNotice(title, text);
       return;
     }
     pendingPlan = planImport(read.rows, store.getWords());
@@ -389,18 +408,22 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   }
 
   async function runImport(replaceDuplicates, dialog) {
+    // El destino de los mensajes depende de dónde se pulsó: «Datos y copia» o el mazo de Palabras
+    const toData = inDataFold(importSource);
+    const report = toData ? sayData : say;
     try {
       const { added, replaced } = await store.applyImport(pendingPlan, { replaceDuplicates });
-      say(replaced > 0
+      report(replaced > 0
         ? `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')} y se reemplazaron ${replaced}.`
         : `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')}.`);
       returnFocusTo = importSource;
       dialog.close();
       renderCategories();
       render();
+      onWordsChanged();
     } catch (error) {
       dialog.close();
-      storageProblem(error);
+      storageProblem(error, toData);
     } finally {
       pendingPlan = null;
     }
