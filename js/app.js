@@ -36,7 +36,6 @@ let onReaderHidden = () => {}; // corta la voz al salir de Leer
 let onBuildShown = () => {}; // lo completa initBuild
 let onBuildHidden = () => {};
 let learn = null; // lo completa initLearn
-let loadedLessons = null; // las lecciones, cuando lleguen (Aprende las usa)
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -115,11 +114,14 @@ const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
 const studyStore = createStudyStore(backend);
 const textStore = createTextStore(backend);
-// Si falla la lectura, la app sigue (Inicio no depende de las historias) y Leer lo avisa
+// Si falla la lectura, la app sigue (Aprende no depende de las historias) y Leer lo avisa
 const textsLoaded = textStore.load().catch((error) => ({ texts: [], corruptBackupKey: null, error }));
 const buildStore = createBuildStore(backend);
-// Igual que las historias: si falla la lectura, Inicio sigue funcionando
+// Igual que las historias: si falla la lectura, Aprende sigue funcionando
 const buildLoaded = buildStore.load().catch((error) => ({ corruptBackupKey: null, error }));
+// Construir frases y Aprende: las lecciones vienen de data/lessons (guardadas sin conexión).
+// Si el índice no se puede leer queda null: las pantallas lo avisan y Aprende sigue funcionando.
+const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
@@ -129,10 +131,18 @@ initVocabulary({ store: wordStore, synth })
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
       initHome({ wordStore, studyStore, textStore, buildStore, backend });
-      learn = initLearn({ wordStore, studyStore, buildStore, getLessons: () => loadedLessons });
+    }),
+    // Aprende se dibuja por primera vez cuando ya se sabe si hay lecciones: así no muestra un plan
+    // provisional que cambia un momento después. Desde aquí, null significa «no se pudieron cargar».
+    Promise.all([buildLoaded, lessonsLoaded]).then(([, lessons]) => {
+      learn = initLearn({ wordStore, studyStore, buildStore, getLessons: () => lessons });
       if (currentId === 'learn') learn.refresh();
     }),
   ]));
+// Al volver a la app pasado el día, Aprende se recalcula (si no cambió el día, no se toca)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && currentId === 'learn') learn?.refreshIfNewDay();
+});
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
 const isOnline = () => navigator.onLine;
@@ -219,12 +229,8 @@ textsLoaded.then((loaded) => {
   });
 });
 
-// Construir frases: las lecciones vienen de data/lessons (guardadas sin conexión).
-// Si el índice no se puede leer, la pantalla lo avisa e Inicio sigue funcionando.
-const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
+// Construir frases: la lección y el repaso (las lecciones se piden arriba, con los almacenes)
 Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
-  loadedLessons = lessons;
-  learn?.refresh();
   const build = initBuild({
     loadNotice: buildLoadNotice(loaded),
     buildStore,

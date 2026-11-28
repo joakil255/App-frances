@@ -23,13 +23,15 @@ export function todayPlan({ hasWords, wordsDue, sentencesDue, lesson, lessonsRea
     followUp = !onWords && hasWords ? `Tus palabras ya están al día. ${after}` : after;
   } else {
     title = 'Tu repaso de hoy está completo';
+    // Sin palabras en la lista no se dice que estén al día
+    const upToDate = hasWords ? 'Tus palabras y tus frases están al día.' : 'Tus frases están al día.';
     if (lesson) {
       action = { text: `Continuar: Lección ${lesson.number} · ${lesson.title}`, href: `#/construir/${lesson.id}` };
-      followUp = 'Tus palabras y tus frases están al día.';
+      followUp = upToDate;
     } else if (lessonsReady) {
       followUp = 'Completaste todas las lecciones disponibles. Mañana tendrás más repaso.';
     } else {
-      followUp = 'Tus palabras y tus frases están al día. Las lecciones todavía no están disponibles.';
+      followUp = `${upToDate} Las lecciones todavía no están disponibles.`;
     }
   }
 

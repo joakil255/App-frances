@@ -175,6 +175,10 @@ test('«‹ Practica» se lee a tamaño normal', () => {
   assert.match(css, /\n\.back-link \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
 });
 
+test('«‹ Aprende» de la lección y del repaso se lee a tamaño normal, como «‹ Practica»', () => {
+  assert.match(css, /\n\.build-back \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
+});
+
 test('la baldosa de Practica: rejilla de 2 columnas, banda de 8 px y 112 px de alto mínimo', () => {
   assert.match(propertyOf('.practice-grid', 'grid-template-columns'), /repeat\(2,\s*1fr\)/);
   assert.match(css, /\.practice-grid \.wide\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/);

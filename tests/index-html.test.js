@@ -602,11 +602,19 @@ test('la ventana de quitar una frase del repaso pide confirmación', () => {
 // --- Aprende (Etapa 17): repaso de hoy y carrusel de lecciones ---
 test('Aprende tiene el repaso de hoy con la línea del día y su acción', () => {
   const learn = sectionOf('learn');
-  assert.match(learn, /<section class="today tile" aria-labelledby="today-title">/);
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title"[^>]*>/);
   assert.match(learn, /<h2 id="today-title"[^>]*>[\s\S]*Repaso de hoy<\/h2>/);
   assert.match(learn, /<ol class="dayline" aria-label="Orden del día">/);
   assert.match(learn, /<a class="button button-primary today-action" id="today-action"/);
   assert.match(learn, /<a class="text-link" href="#\/practica">Practicar algo más<\/a>/);
+});
+
+// El aviso de lecciones que no cargaron, encima del bloque «Lecciones» (Construir ya no tiene lista)
+test('Aprende tiene su aviso de lecciones, anunciable y oculto, antes de «Lecciones»', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<div id="learn-notice" class="notice" role="alert" hidden><\/div>/);
+  const at = learn.indexOf('id="learn-notice"');
+  assert.ok(at > learn.indexOf('id="today-title"') && at < learn.indexOf('class="learn-title"'), 'el aviso va entre el repaso de hoy y «Lecciones»');
 });
 
 test('las lecciones son un carrusel por nivel, enfocable y con nombre', () => {
@@ -619,6 +627,7 @@ test('las lecciones son un carrusel por nivel, enfocable y con nombre', () => {
 // Antes del primer refresh() no se ven títulos, carruseles vacíos ni un botón sin texto
 test('Aprende llega con las lecciones y la acción ocultas hasta que se rellenan', () => {
   const learn = sectionOf('learn');
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title" hidden>/, 'el repaso de hoy llega oculto');
   assert.match(learn, /<h2 class="learn-title" hidden>Lecciones<\/h2>/);
   for (const id of ['learn-level-a1', 'learn-route-a1', 'learn-hint-a1', 'learn-level-a2', 'learn-route-a2', 'learn-hint-a2', 'today-action', 'today-more']) {
     const tag = tagWithId(learn, id);

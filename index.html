@@ -21,8 +21,8 @@
         <h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"></span>Aprende</h1>
         <div id="home-notice" class="notice" role="alert" hidden></div>
 
-        <!-- Repaso de hoy: lo que toca ahora y la línea del día (se rellena con textContent) -->
-        <section class="today tile" aria-labelledby="today-title">
+        <!-- Repaso de hoy: lo que toca ahora y la línea del día (se rellena con textContent; oculto hasta el primer refresh()) -->
+        <section class="today tile" aria-labelledby="today-title" hidden>
           <h2 id="today-title"><span class="line-dot" aria-hidden="true"></span>Repaso de hoy</h2>
           <p class="today-main" id="today-main"></p>
           <ol class="dayline" aria-label="Orden del día">
@@ -34,6 +34,9 @@
           <p class="today-next" id="today-next"></p>
           <p class="today-more" id="today-more" hidden><a class="text-link" href="#/practica">Practicar algo más</a></p>
         </section>
+
+        <!-- Aviso si las lecciones no se pudieron cargar (se rellena con textContent) -->
+        <div id="learn-notice" class="notice" role="alert" hidden></div>
 
         <!-- Lecciones: un carrusel por nivel; las planificadas no son enlaces. Ocultas hasta que refresh() las rellena -->
         <h2 class="learn-title" hidden>Lecciones</h2>

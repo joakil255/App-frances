@@ -1,10 +1,12 @@
 // Aprende: el repaso de hoy (acción principal y línea del día) y las lecciones en carrusel.
-// Todo se pinta con textContent; refresh() recalcula desde now() (sirve también pasada la medianoche).
+// Todo se pinta con textContent. refresh() recalcula desde now(); refreshIfNewDay() solo si
+// cambió el día desde el último dibujo (al volver a la app pasada la medianoche).
 import { todayPlan } from '../lib/today.js';
 import { buildQueue } from '../lib/queue.js';
 import { countDueToday } from '../lib/build-review.js';
 import { nextLesson, lessonNumber, routeRows } from '../lib/lesson-route.js';
 import { localDate } from '../lib/dates.js';
+import { MESSAGES } from '../lib/messages.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const LEVELS = ['A1', 'A2'];
@@ -46,16 +48,19 @@ function scrollToCurrent(list) {
   list.scrollLeft = current ? current.parentElement.offsetLeft - parseFloat(getComputedStyle(list).paddingLeft) : 0;
 }
 
+// getLessons(): las lecciones, o null si no se pudieron cargar (Aprende se crea cuando ya se sabe)
 export function initLearn({ wordStore, studyStore, buildStore, getLessons, now = () => new Date() }) {
+  const tile = $('#screen-learn .today');
+  const notice = $('#learn-notice');
   const main = $('#today-main');
   const action = $('#today-action');
   const followUp = $('#today-next');
   const more = $('#today-more');
   const stations = [...document.querySelectorAll('#screen-learn [data-station]')];
   const lessonsTitle = $('#screen-learn .learn-title');
+  let renderedDay = null; // día del último dibujo
 
-  function renderToday(lessons) {
-    const today = localDate(now());
+  function renderToday(lessons, today) {
     const words = wordStore.getWords();
     const { cards, settings } = studyStore.getState();
     const build = buildStore.getState();
@@ -84,6 +89,18 @@ export function initLearn({ wordStore, studyStore, buildStore, getLessons, now =
     }
     followUp.textContent = plan.followUp;
     more.hidden = !plan.showMore;
+    tile.hidden = false; // llega oculto hasta el primer dibujo
+  }
+
+  // El aviso de siempre cuando el índice de lecciones no se pudo leer
+  function renderNotice(lessons) {
+    notice.hidden = lessons !== null;
+    if (lessons !== null) {
+      notice.replaceChildren();
+      return;
+    }
+    const { title, text } = MESSAGES.lessonsUnavailable;
+    notice.replaceChildren(el('strong', { text: title }), el('span', { text: ` ${text}` }));
   }
 
   function renderLessons(lessons) {
@@ -109,9 +126,16 @@ export function initLearn({ wordStore, studyStore, buildStore, getLessons, now =
 
   function refresh() {
     const lessons = getLessons();
-    renderToday(lessons);
+    renderedDay = localDate(now());
+    renderToday(lessons, renderedDay);
+    renderNotice(lessons);
     renderLessons(lessons);
   }
 
-  return { refresh };
+  // Un cambio rápido de app no redibuja (el carrusel conserva el foco y su posición)
+  function refreshIfNewDay() {
+    if (localDate(now()) !== renderedDay) refresh();
+  }
+
+  return { refresh, refreshIfNewDay };
 }

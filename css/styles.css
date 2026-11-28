@@ -1291,6 +1291,7 @@ p.word-card-es { color: var(--text-muted); }
   text-underline-offset: 3px;
 }
 .build-back { margin: 0 0 var(--space-2); }
+.build-back .text-link { font-size: var(--size-base); } /* «‹ Aprende»: tamaño normal, como «‹ Practica» */
 
 .build-lesson { margin-top: var(--space-5); }
 .build-title { margin: var(--space-1) 0 0; font: 600 1.5625rem/1.2 var(--font-text); overflow-wrap: anywhere; }

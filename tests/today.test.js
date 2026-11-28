@@ -66,3 +66,12 @@ test('cifras grandes y títulos con acentos y comillas', () => {
   assert.equal(p.title, '15.000 palabras te esperan');
   assert.equal(p.followUp, "Después: la lección 2, «Être, avoir, c'est, il y a».");
 });
+test('sin palabras en la lista, el texto habla solo de las frases', () => {
+  const lesson = todayPlan({ hasWords: false, wordsDue: 0, sentencesDue: 0, lesson: L7, lessonsReady: true });
+  assert.equal(lesson.followUp, 'Tus frases están al día.');
+  const notReady = todayPlan({ hasWords: false, wordsDue: 0, sentencesDue: 0, lesson: null, lessonsReady: false });
+  assert.equal(notReady.followUp, 'Tus frases están al día. Las lecciones todavía no están disponibles.');
+  // Lo que no depende de las palabras no cambia
+  const done = todayPlan({ hasWords: false, wordsDue: 0, sentencesDue: 0, lesson: null, lessonsReady: true });
+  assert.equal(done.followUp, 'Completaste todas las lecciones disponibles. Mañana tendrás más repaso.');
+});
