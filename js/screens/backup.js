@@ -1,10 +1,7 @@
-// Inicio: la tarjeta de «Construir frases» y guardar o restaurar la copia de seguridad completa.
+// Progreso › Datos y copia: guardar o restaurar la copia de seguridad completa.
 // Restaurar reemplaza todo tras confirmar; después la app se recarga para leer los datos nuevos.
 import { buildBackup, backupFileName, readBackup, restoreBackup, restoreWarning, MAX_BACKUP_BYTES } from '../lib/backup.js';
 import { MESSAGES, storageMessage, fileTooLarge, FILE_UNREADABLE } from '../lib/messages.js';
-import { countDueToday } from '../lib/build-review.js';
-import { nextLesson } from '../lib/lesson-route.js';
-import { localDate } from '../lib/dates.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const RESTORED_KEY = 'app-frances-restored';
@@ -27,10 +24,9 @@ function textEl(tag, text) {
   return node;
 }
 
-// getLessons: las lecciones cargadas ([{ id, lang, level, title, status, lesson, error }]) o null si aún no llegan o no se pudieron leer
-export function initHome({ wordStore, studyStore, textStore, buildStore, backend, getLessons = () => null, now = () => new Date() }) {
-  const notice = $('#home-notice');
-  const status = $('#home-status');
+export function initBackup({ wordStore, studyStore, textStore, buildStore, backend, now = () => new Date() }) {
+  const notice = $('#data-notice');
+  const status = $('#data-status');
   const fileInput = $('#backup-file');
   const restoreButton = $('#backup-restore');
   const dialog = $('#restore-confirm');
@@ -50,39 +46,6 @@ export function initHome({ wordStore, studyStore, textStore, buildStore, backend
     const { cards, history, settings } = studyStore.getState();
     return { words: wordStore.getWords(), texts: textStore.getTexts(), build: buildStore.getState(), study: { cards, history, settings } };
   };
-
-  // --- Construir frases: próxima lección y repaso de hoy ---
-  const buildNext = $('#home-build-next');
-  const buildDue = $('#home-build-due');
-  const continueButton = $('#home-build-continue');
-  const reviewButton = $('#home-build-review');
-  let nextHref = '#/construir';
-
-  function renderBuildCard() {
-    const lessons = getLessons();
-    const { progress, cards } = buildStore.getState();
-    // Sin lecciones todavía solo se cuentan las frases propias (las de ejercicio necesitan su lección)
-    const due = countDueToday({ cards, lessons: lessons ?? [], algorithm: studyStore.getState().settings.algorithm, today: localDate(now()) });
-    buildDue.textContent = `Repaso: ${due} ${due === 1 ? 'pendiente' : 'pendientes'} hoy`;
-    reviewButton.textContent = `Repasar (${due})`;
-    if (due === 0) reviewButton.setAttribute('aria-disabled', 'true');
-    else reviewButton.removeAttribute('aria-disabled');
-
-    const valid = (lessons ?? []).filter((entry) => entry.status === 'available' && entry.lesson);
-    const next = nextLesson(lessons ?? [], progress);
-    buildNext.hidden = valid.length === 0;
-    buildNext.textContent = next ? `Próxima lección: ${next.lesson.title}` : 'Terminaste todas las lecciones';
-    // Sin lecciones cargadas, «Seguir lección» lleva a la lista; con todas terminadas, no se muestra
-    continueButton.hidden = valid.length > 0 && !next;
-    nextHref = next ? `#/construir/${next.id}` : '#/construir';
-  }
-  continueButton.addEventListener('click', () => {
-    location.hash = nextHref;
-  });
-  reviewButton.addEventListener('click', () => {
-    if (reviewButton.getAttribute('aria-disabled') !== 'true') location.hash = '#/construir/repaso';
-  });
-  renderBuildCard();
 
   // --- Guardar copia ---
   $('#backup-save').addEventListener('click', () => {
@@ -164,7 +127,7 @@ export function initHome({ wordStore, studyStore, textStore, buildStore, backend
     } catch {
       // sin sessionStorage solo se pierde el aviso de «restaurada»
     }
-    location.hash = '#/';
+    location.hash = '#/progreso';
     location.reload();
   });
 
@@ -173,14 +136,12 @@ export function initHome({ wordStore, studyStore, textStore, buildStore, backend
     const restored = sessionStorage.getItem(RESTORED_KEY);
     if (restored) {
       sessionStorage.removeItem(RESTORED_KEY);
+      $('#data-fold').open = true;
       status.textContent = `Se restauró la copia del ${dayOf(restored)}.`;
     }
   } catch {
     // sin sessionStorage no hay aviso
   }
 
-  return {
-    // Al mostrar Inicio, al llegar las lecciones y si otra pestaña cambia el progreso
-    refresh: renderBuildCard,
-  };
+  return {};
 }

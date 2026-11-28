@@ -35,7 +35,12 @@ test('todo archivo que la app necesita está en la lista de caché', () => {
   }
 });
 
-test('la caché sube a v28 (arreglo del repaso)', () => {
-  assert.equal(loadServiceWorker().read('CACHE_VERSION'), 'v28');
+test('la caché sube a v33 (Etapa 17, pulido y accesibilidad)', () => {
+  assert.equal(loadServiceWorker().read('CACHE_VERSION'), 'v33');
+  assert.ok(PRECACHE_URLS.includes('js/screens/backup.js'));
+  assert.ok(!PRECACHE_URLS.includes('js/screens/home.js'));
+  assert.ok(PRECACHE_URLS.includes('js/lib/practice.js'));
+  assert.ok(PRECACHE_URLS.includes('js/screens/practice.js'));
+  assert.ok(PRECACHE_URLS.includes('js/screens/learn.js'));
   assert.ok(PRECACHE_URLS.includes('js/lib/reader-prefs.js'));
 });

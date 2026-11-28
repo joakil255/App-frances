@@ -80,8 +80,11 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     const queue = currentQueue();
     const { settings } = studyStore.getState();
     $('#study-empty').hidden = hasWords;
+    $('#study-empty-actions').hidden = hasWords;
     $('#study-today').hidden = !hasWords;
-    $('#study-start').hidden = !hasWords;
+    // Sin palabras solo queda el texto y «Ir a Palabras» (los ajustes siguen en Progreso)
+    $('#study-mode').hidden = !hasWords;
+    $('#study-actions').hidden = !hasWords;
     $('#study-due').textContent = String(queue.filter((item) => !item.isNew).length);
     $('#study-new').textContent = String(queue.filter((item) => item.isNew).length);
     $('#study-mode').textContent = `${DIRECTION_NAMES[settings.direction]}, con ${ALGORITHM_NAMES[settings.algorithm]}.`;
@@ -240,7 +243,9 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     else newPerDayInput.removeAttribute('aria-invalid');
   }
 
-  $('#study-settings-open').addEventListener('click', () => {
+  let settingsOpener = $('#study-settings-open'); // el foco vuelve al botón que abrió la ventana
+  function openSettings(opener) {
+    settingsOpener = opener;
     const { settings } = studyStore.getState();
     settingsForm.elements.direction.value = settings.direction;
     settingsForm.elements.algorithm.value = settings.algorithm;
@@ -248,11 +253,14 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     setNewPerDayError('');
     settingsFormError.hidden = true;
     settingsDialog.showModal();
-  });
+  }
+  for (const id of ['#study-settings-open', '#data-settings-open']) {
+    $(id).addEventListener('click', (event) => openSettings(event.currentTarget));
+  }
   settingsDialog.addEventListener('click', (event) => {
     if (event.target.closest('[data-action="close"]')) settingsDialog.close();
   });
-  settingsDialog.addEventListener('close', () => $('#study-settings-open').focus());
+  settingsDialog.addEventListener('close', () => settingsOpener.focus());
 
   settingsForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -300,6 +308,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     renderSummary();
     studyStore.watchExternalChanges(window, refreshSummary);
     wordStore.watchExternalChanges(window, refreshSummary);
+    return { refreshSummary };
   }
 
   return start();

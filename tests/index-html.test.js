@@ -5,25 +5,37 @@ import { SCREENS } from '../js/lib/router.js';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
-test('tiene enlace para saltar al contenido', () => {
-  assert.match(html, /<a [^>]*href="#main"[^>]*>Saltar al contenido<\/a>/);
+// Todo lo que hay desde <section id="screen-ID"> hasta la siguiente pantalla (o </main>)
+function sectionOf(id) {
+  const start = html.indexOf(`<section id="screen-${id}"`);
+  assert.ok(start >= 0, `falta screen-${id}`);
+  const next = html.indexOf('<section id="screen-', start + 1);
+  return html.slice(start, next === -1 ? html.indexOf('</main>') : next);
+}
+
+test('la navegación va después de <main> y tiene los tres destinos', () => {
+  assert.ok(html.indexOf('<nav aria-label="Principal"') > html.indexOf('</main>'));
+  assert.ok(!html.includes('Saltar al contenido'));
   assert.match(html, /<main [^>]*id="main"/);
-});
-
-test('la navegación principal tiene un enlace por pantalla', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/);
-  assert.ok(nav, 'falta <nav aria-label="Principal">');
-  for (const screen of SCREENS) {
-    const href = `#/${screen.path}`;
-    assert.ok(nav[1].includes(`href="${href}"`), `falta enlace a ${href}`);
-    assert.ok(nav[1].includes(`>${screen.title}<`), `falta texto ${screen.title}`);
-  }
-});
-
-test('la barra dice «Palabras» (antes «Vocabulario») y lleva a #/vocabulario', () => {
   const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /href="#\/vocabulario"><span class="line-dot" aria-hidden="true"><\/span>Palabras<\/a>/);
-  assert.ok(!nav.includes('Vocabulario'));
+  assert.deepEqual([...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]), ['#/aprende', '#/practica', '#/progreso']);
+  for (const t of ['Aprende', 'Practica', 'Progreso']) assert.match(nav, new RegExp(`<span class="nav-label">${t}</span>`));
+});
+
+test('Practica enlaza las cinco pantallas de práctica, agrupadas por habilidad', () => {
+  const practice = sectionOf('practice');
+  assert.deepEqual([...practice.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map((m) => m[1]), ['Vocabulario', 'Leer y escuchar', 'Hablar']);
+  for (const href of ['#/vocabulario', '#/estudiar', '#/quiz', '#/leer', '#/conversar']) assert.ok(practice.includes(`href="${href}"`), href);
+  for (const id of ['practice-words', 'practice-study', 'practice-reader']) assert.match(practice, new RegExp(`id="${id}"`));
+  assert.ok(practice.includes('3 modos: opción múltiple, escribir y dictado'));
+  assert.ok(practice.includes('Necesita conexión a internet'));
+});
+
+test('cada pantalla de práctica tiene un enlace visible para volver a Practica', () => {
+  for (const id of ['vocabulary', 'study', 'quiz', 'chat', 'reader']) {
+    const section = sectionOf(id);
+    assert.match(section, /<p class="back-link"><a class="text-link" href="#\/practica"><span aria-hidden="true">‹<\/span> Practica<\/a><\/p>/, id);
+  }
 });
 
 test('cada pantalla tiene su sección con título enfocable', () => {
@@ -64,13 +76,6 @@ test('Vocabulario tiene buscador y filtros con etiqueta', () => {
   assert.match(vocab, /<select id="vocab-gender"[\s\S]*value="m"[\s\S]*value="f"[\s\S]*value="none"/);
 });
 
-test('Vocabulario tiene los botones de añadir, importar y exportar', () => {
-  assert.match(vocab, /<button type="button"[^>]*id="vocab-add"[^>]*>Añadir palabra<\/button>/);
-  assert.match(vocab, /<button type="button"[^>]*id="vocab-import"[^>]*>Importar<\/button>/);
-  assert.match(vocab, /<button type="button"[^>]*id="vocab-export"[^>]*>Exportar<\/button>/);
-  assert.match(vocab, /<input type="file" id="vocab-file" accept="\.json,\.csv"/);
-});
-
 test('Vocabulario anuncia el contador y tiene la lista', () => {
   assert.match(vocab, /<p id="vocab-count"[^>]*role="status"/);
   assert.match(vocab, /<ul id="vocab-list"/);
@@ -104,6 +109,14 @@ test('Estudiar tiene el resumen del día con sus botones', () => {
   assert.match(study, /id="study-new"/);
   assert.match(study, /<button type="button"[^>]*id="study-start"[^>]*>Empezar<\/button>/);
   assert.match(study, /<button type="button"[^>]*id="study-settings-open"[^>]*>Ajustes del estudio<\/button>/);
+});
+
+test('Estudiar: la línea del modo y la fila de botones tienen id para ocultarse sin palabras', () => {
+  assert.match(study, /<p id="study-mode"/);
+  const row = elementById(study, 'div', 'study-actions');
+  assert.ok(row, 'falta la fila #study-actions');
+  assert.match(row, /id="study-start"/);
+  assert.match(row, /id="study-settings-open"/);
 });
 
 test('Estudiar tiene la tarjeta con anverso, reverso y botón de altavoz', () => {
@@ -215,7 +228,7 @@ test('Quiz tiene la respuesta inmediata y el resumen', () => {
 });
 
 // --- Pantalla Progreso (Etapa 5) ---
-const progress = html.match(/<section id="screen-progress"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const progress = sectionOf('progress');
 
 test('Progreso tiene aviso, estado vacío y ya no el texto de relleno', () => {
   assert.match(progress, /<div id="progress-notice" class="notice" role="alert" hidden><\/div>/);
@@ -226,7 +239,7 @@ test('Progreso tiene aviso, estado vacío y ya no el texto de relleno', () => {
 
 test('Progreso tiene la racha y el gráfico con su tabla de datos', () => {
   for (const id of ['progress-activity', 'progress-streak', 'progress-streak-number', 'progress-streak-label',
-    'progress-today', 'progress-chart', 'progress-table-body', 'progress-accuracy']) {
+    'progress-today', 'progress-chart', 'progress-table-body']) {
     assert.ok(tagWithId(progress, id), `falta #${id}`);
   }
   assert.match(progress, /<h2[^>]*>Respuestas de los últimos 14 días<\/h2>/);
@@ -237,13 +250,12 @@ test('Progreso tiene la racha y el gráfico con su tabla de datos', () => {
 });
 
 test('Progreso tiene el acierto de Estudiar y Quiz', () => {
-  assert.match(progress, /<h2[^>]*>Acierto en los últimos 30 días<\/h2>/);
+  assert.match(progress, /<h2[^>]*>Tu constancia<\/h2>/);
+  assert.match(progress, /<div class="tile" id="progress-study">/);
   for (const kind of ['study', 'quiz']) {
     assert.ok(tagWithId(progress, `progress-${kind}-percent`), `falta #progress-${kind}-percent`);
     assert.ok(tagWithId(progress, `progress-${kind}-detail`), `falta #progress-${kind}-detail`);
   }
-  assert.match(progress, /<dt[^>]*>Estudiar<\/dt>/);
-  assert.match(progress, /<dt[^>]*>Quiz<\/dt>/);
 });
 
 test('Progreso tiene «Tus palabras» con los tres estados y la lista de dominadas', () => {
@@ -256,25 +268,51 @@ test('Progreso tiene «Tus palabras» con los tres estados y la lista de dominad
   assert.match(progress, /<div class="progress-states-bar" aria-hidden="true">/);
 });
 
-// --- Mazo A1 (Etapa 6) ---
-test('Vocabulario tiene el botón para añadir el mazo A1 junto a Importar y Exportar', () => {
-  const actions = html.match(/<div class="vocab-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
-  assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
+test('Progreso empieza con el objetivo de hoy, con su texto y el trayecto decorativo', () => {
+  const progress = sectionOf('progress');
+  assert.match(progress, /<section class="goal tile" aria-labelledby="goal-title">\s*<h2 id="goal-title"[^>]*>Objetivo de hoy: dejar el repaso en cero<\/h2>/);
+  assert.match(progress, /<p id="goal-text"><\/p>/);
+  assert.match(progress, /<div class="trip" aria-hidden="true">/);
+  assert.match(progress, /<p id="goal-answers" class="hint"><\/p>/);
+  assert.match(progress, /<a class="button button-secondary" id="progress-words-go" href="#\/vocabulario">Ir a Palabras<\/a>/);
 });
 
-// --- Inicio: copia de seguridad (Etapa 7) ---
-const home = html.match(/<section id="screen-home"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
-
-test('Inicio mantiene su frase y tiene la copia de seguridad con avisos', () => {
-  assert.match(home, /<span lang="fr">Bonjour\.<\/span> Aquí verás cada día lo que te toca repasar\./);
-  assert.match(home, /<div id="home-notice" class="notice" role="alert" hidden><\/div>/);
-  assert.match(home, /<p id="home-status" class="vocab-message" role="status"><\/p>/);
-  assert.match(home, /<h2[^>]*>Copia de seguridad<\/h2>/);
-  assert.ok(home.includes('Guarda en un archivo tus palabras, tu progreso y tu historial. '
+// --- Datos y copia (Etapa 17, Tanda 4): desplegable al final de Progreso ---
+test('«Datos y copia» es un desplegable cerrado al final de Progreso con copia, archivo y ajustes', () => {
+  const fold = html.match(/<details id="data-fold" class="fold">([\s\S]*?)<\/details>/)[1];
+  assert.match(fold, /<summary>Datos y copia<\/summary>/);
+  assert.deepEqual([...fold.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]), ['Copia de seguridad', 'Tus palabras en un archivo', 'Ajustes']);
+  for (const [id, text] of [['backup-save', 'Guardar copia'], ['backup-restore', 'Restaurar copia'], ['vocab-import', 'Importar palabras'], ['vocab-export', 'Exportar palabras'], ['data-settings-open', 'Ajustes del estudio']]) {
+    assert.match(fold, new RegExp(`id="${id}"[^>]*>${text}</button>`), id);
+  }
+  assert.match(fold, /<div id="data-notice" class="notice" role="alert" hidden><\/div>/);
+  assert.match(fold, /<p id="data-status" class="vocab-message" role="status"><\/p>/);
+  assert.match(fold, /<button type="button" class="button button-primary" id="backup-save">Guardar copia<\/button>/);
+  assert.match(fold, /<input type="file" id="backup-file" accept="\.json,application\/json" hidden>/);
+  assert.match(fold, /<input type="file" id="vocab-file" accept="\.json,\.csv" hidden>/);
+  assert.ok(fold.includes('Guarda en un archivo tus palabras, tu progreso y tu historial. '
     + 'Si se borran los datos del navegador, con ese archivo lo recuperas todo.'));
-  assert.match(home, /<button type="button" class="button button-primary" id="backup-save">Guardar copia<\/button>/);
-  assert.match(home, /<button type="button" class="button button-secondary" id="backup-restore">Restaurar copia<\/button>/);
-  assert.match(home, /<input type="file" id="backup-file" accept="\.json,application\/json" hidden>/);
+  assert.ok(sectionOf('progress').includes('id="data-fold"'), 'el desplegable está en Progreso');
+});
+test('«Datos y copia» queda fuera del objetivo y es lo último de Progreso, con las secciones bien cerradas', () => {
+  const progress = sectionOf('progress');
+  const goal = progress.match(/<section class="goal tile"[^>]*>([\s\S]*?)<\/section>/)[1];
+  assert.ok(!goal.includes('data-fold'), 'el desplegable no puede estar dentro de .goal');
+  assert.ok(goal.includes('id="goal-answers"'));
+  assert.equal(progress.match(/<section\b/g).length, progress.match(/<\/section>/g).length, '<section> sin cerrar');
+  assert.match(progress, /<\/details>\s*<\/section>\s*(<!--[\s\S]*?-->\s*)?$/, 'el desplegable es lo último de #screen-progress');
+  assert.ok(progress.indexOf('id="progress-words"') < progress.indexOf('id="data-fold"'));
+});
+test('Palabras ya no tiene Importar ni Exportar, y conserva Añadir y el mazo', () => {
+  const vocab = sectionOf('vocabulary');
+  assert.ok(!vocab.includes('id="vocab-import"') && !vocab.includes('id="vocab-export"'));
+  assert.match(vocab, /<button type="button"[^>]*id="vocab-add"[^>]*>Añadir palabra<\/button>/);
+  const actions = vocab.match(/<div class="vocab-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
+  assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
+});
+test('Aprende ya no tiene la copia de seguridad', () => {
+  const learn = sectionOf('learn');
+  assert.ok(!learn.includes('backup-save') && !learn.includes('home-notice') && !learn.includes('home-status'));
 });
 
 test('la ventana de confirmar la restauración tiene título, texto y los dos botones', () => {
@@ -409,11 +447,6 @@ test('la tarjeta de palabras tiene los botones Escuchar, Guardar y Cerrar', () =
 const reader = html.match(/<section id="screen-reader"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 const buttonWithText = (source, text) => new RegExp(`<button [^>]*>${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</button>`).test(source);
 
-test('la barra tiene el enlace «Leer» a #/leer con su propia línea', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /<a class="nav-link line-reader" href="#\/leer"><span class="line-dot" aria-hidden="true"><\/span>Leer<\/a>/);
-});
-
 test('Leer es su propia sección con la línea marrón y el título enfocable', () => {
   assert.match(html, /<section id="screen-reader" class="screen line-reader" hidden>/);
   assert.match(reader, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Leer<\/h1>/);
@@ -477,23 +510,12 @@ test('la ventana de borrar una historia pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Borrar<\/button>/);
 });
 
-test('el enlace de Construir frases va en un <li> solo para computador', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /<li class="nav-desktop-only"><a [^>]*href="#\/construir"[^>]*>/);
-  assert.equal((nav.match(/<li>/g) ?? []).length, 7);
-});
-
 // --- Pantalla Construir frases (Etapa 12) ---
 const build = html.match(/<section id="screen-build"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
 test('Construir es su propia sección con su línea y el título enfocable', () => {
   assert.match(html, /<section id="screen-build" class="screen line-build" hidden>/);
   assert.match(build, /<h1 class="plaque" tabindex="-1"><span class="line-dot" aria-hidden="true"><\/span>Construir frases<\/h1>/);
-});
-
-test('el enlace #/construir de la barra lleva la clase que lo oculta en el móvil', () => {
-  const nav = html.match(/<nav aria-label="Principal"[^>]*>([\s\S]*?)<\/nav>/)[1];
-  assert.match(nav, /<li class="nav-desktop-only"><a class="nav-link line-build" href="#\/construir">/);
 });
 
 test('Construir tiene aviso, zona de estado y la región que anuncia las fichas', () => {
@@ -506,28 +528,19 @@ test('Construir tiene aviso, zona de estado y la región que anuncia las fichas'
   assert.ok(live.includes('aria-live="polite"'), '#build-order-live sin aria-live="polite"');
 });
 
-// --- Índice de lecciones como ruta (Etapa 14) ---
-const buildIndex = build.match(/<div id="build-index"[^>]*>([\s\S]*?)<!-- Fin de la ruta -->/)?.[1] ?? '';
-
-test('la ruta tiene un <h2> y un <ol> por tramo (A1 y A2), unidos con aria-labelledby', () => {
-  assert.ok(tagWithId(buildIndex, 'build-route'), 'falta el contenedor #build-route');
-  for (const level of ['a1', 'a2']) {
-    const re = new RegExp(`<h2 id="build-level-${level}" class="build-level">${level.toUpperCase()}</h2>\\s*<ol id="build-route-${level}" class="build-route" aria-labelledby="build-level-${level}"></ol>`);
-    assert.match(buildIndex, re, `falta el tramo ${level.toUpperCase()}`);
-  }
-  assert.ok(buildIndex.indexOf('build-route-a1') < buildIndex.indexOf('build-route-a2'), 'A1 va antes que A2');
-  assert.ok(!build.includes('id="build-list"'), 'la lista vieja #build-list ya no existe');
+// --- Construir sin lista propia (Etapa 17): la ruta vive en Aprende ---
+test('la lección y el repaso vuelven a Aprende, y Construir ya no tiene lista propia', () => {
+  const build = sectionOf('build');
+  assert.equal([...build.matchAll(/<a class="text-link" href="#\/aprende"><span aria-hidden="true">‹<\/span> Aprende<\/a>/g)].length, 2);
+  assert.ok(!build.includes('href="#/construir"'));
+  assert.ok(!build.includes('id="build-index"'));
 });
 
-test('arriba de la ruta: «Continuar», «Repasar (N)» y el texto sin pendientes', () => {
-  assert.match(buildIndex, /<button type="button" class="button button-primary" id="build-continue">Continuar<\/button>/);
-  assert.match(buildIndex, /<p id="build-all-done" class="build-all-done" hidden>Completaste todas las lecciones disponibles<\/p>/);
-  const route = buildIndex.indexOf('id="build-route"');
-  for (const id of ['build-continue', 'build-review-start', 'build-all-done']) {
-    const at = buildIndex.indexOf(`id="${id}"`);
-    assert.ok(at > -1 && at < route, `#${id} va arriba de la ruta`);
+test('Construir ya no tiene «Continuar», «Repasar (N)», el aviso de fin ni la ruta vieja', () => {
+  for (const id of ['build-continue', 'build-review-start', 'build-all-done', 'build-route', 'build-route-a1', 'build-route-a2', 'build-list']) {
+    assert.ok(!build.includes(`id="${id}"`), `sobra #${id}`);
   }
-  assert.ok(buildIndex.indexOf('id="build-continue"') < buildIndex.indexOf('id="build-review-start"'), '«Continuar» va antes que «Repasar»');
+  assert.ok(!build.includes('Todas las lecciones'), 'sobra «Todas las lecciones»');
 });
 
 test('la lección tiene su título enfocable y las secciones en orden', () => {
@@ -597,8 +610,7 @@ test('la situación tiene su enunciado, Comprobar, el resultado enfocable y los 
   assert.ok(status?.includes('role="status"'), '#build-free-status sin role="status"');
 });
 
-test('el repaso tiene «Repasar», el vacío, el fin y el botón «Quitar del repaso»', () => {
-  assert.match(build, /<button type="button" [^>]*id="build-review-start"[^>]*>Repasar \(0\)<\/button>/);
+test('el repaso tiene el vacío, el fin y el botón «Quitar del repaso»', () => {
   assert.match(build, /<p id="build-review-empty" [^>]*tabindex="-1"[^>]*>No tienes nada que repasar hoy\. Los ejercicios que falles 2 veces aparecerán aquí\.<\/p>/);
   assert.match(build, /<p id="build-review-done" [^>]*tabindex="-1"[^>]*>Terminaste el repaso\.<\/p>/);
   assert.match(build, /<button type="button" [^>]*id="build-remove"[^>]*hidden>Quitar del repaso<\/button>/);
@@ -613,47 +625,67 @@ test('la ventana de quitar una frase del repaso pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Quitar<\/button>/);
 });
 
-test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la copia de seguridad', () => {
-  // La tarjeta termina donde empieza la copia de seguridad (dentro lleva botones y el enlace a la ruta)
-  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<!-- Copia de seguridad/)?.[1];
-  assert.ok(card, 'falta la tarjeta .home-build');
-  assert.match(card, /<h2 [^>]*>[\s\S]*Construir frases<\/h2>/);
-  assert.ok(tagWithId(card, 'home-build-next'), 'falta #home-build-next');
-  assert.match(card, /<p id="home-build-due"[^>]*>Repaso: 0 pendientes hoy<\/p>/);
-  assert.match(card, /<button type="button" class="button button-primary" id="home-build-continue">Seguir lección<\/button>/);
-  assert.match(card, /<button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar \(0\)<\/button>/);
-  assert.ok(home.indexOf('home-build') < home.indexOf('Copia de seguridad'), 'la tarjeta va sobre la copia de seguridad');
+// --- Aprende (Etapa 17): repaso de hoy y carrusel de lecciones ---
+test('Aprende tiene el repaso de hoy con la línea del día y su acción', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title"[^>]*>/);
+  assert.match(learn, /<h2 id="today-title"[^>]*>[\s\S]*Repaso de hoy<\/h2>/);
+  assert.match(learn, /<ol class="dayline" aria-label="Orden del día">/);
+  assert.match(learn, /<a class="button button-primary today-action" id="today-action"/);
+  assert.match(learn, /<a class="text-link" href="#\/practica">Practicar algo más<\/a>/);
 });
 
-// En el móvil la barra no tiene Construir: la ruta debe poder abrirse desde la app sin escribir la dirección
-test('la tarjeta de Inicio tiene un enlace visible a la ruta de lecciones', () => {
-  const card = html.match(/<div class="home-build[^"]*">([\s\S]*?)<!-- Copia de seguridad/);
-  assert.ok(card, 'falta la tarjeta Construir frases de Inicio');
-  const link = card[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'la tarjeta no tiene un enlace a #/construir');
-  assert.match(link[1], /Ver todas las lecciones/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+// El aviso de lecciones que no cargaron, encima del bloque «Lecciones» (Construir ya no tiene lista)
+test('Aprende tiene su aviso de lecciones, anunciable y oculto, antes de «Lecciones»', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<div id="learn-notice" class="notice" role="alert" hidden><\/div>/);
+  const at = learn.indexOf('id="learn-notice"');
+  assert.ok(at > learn.indexOf('id="today-title"') && at < learn.indexOf('class="learn-title"'), 'el aviso va entre el repaso de hoy y «Lecciones»');
 });
 
-test('cada lección tiene un enlace para volver a la ruta', () => {
+test('las lecciones son un carrusel por nivel, enfocable y con nombre', () => {
+  for (const level of ['a1', 'a2']) {
+    assert.match(html, new RegExp(`<h3 id="learn-level-${level}"[^>]*>${level.toUpperCase()}</h3>`));
+    assert.match(html, new RegExp(`<ol id="learn-route-${level}" class="carousel" tabindex="0" aria-labelledby="learn-level-${level}" hidden>`));
+  }
+});
+
+// Antes del primer refresh() no se ven títulos, carruseles vacíos ni un botón sin texto
+test('Aprende llega con las lecciones y la acción ocultas hasta que se rellenan', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title" hidden>/, 'el repaso de hoy llega oculto');
+  assert.match(learn, /<h2 class="learn-title" hidden>Lecciones<\/h2>/);
+  for (const id of ['learn-level-a1', 'learn-route-a1', 'learn-hint-a1', 'learn-level-a2', 'learn-route-a2', 'learn-hint-a2', 'today-action', 'today-more']) {
+    const tag = tagWithId(learn, id);
+    assert.ok(tag, `falta #${id}`);
+    assert.match(tag, /\shidden[\s>]/, `#${id} no llega oculto`);
+  }
+});
+
+// La tarjeta «Construir frases» de Inicio desaparece: la cubren el repaso de hoy y el carrusel
+test('Aprende ya no tiene la tarjeta «Construir frases» ni la frase de bienvenida; el repaso va antes de las lecciones', () => {
+  const learn = sectionOf('learn');
+  assert.ok(!learn.includes('home-build'), 'sobra la tarjeta .home-build');
+  assert.ok(!learn.includes('Bonjour'), 'sobra la frase «Bonjour…»');
+  assert.ok(learn.indexOf('id="today-title"') < learn.indexOf('id="learn-route-a1"'), 'el repaso va antes de las lecciones');
+  assert.ok(!learn.includes('Copia de seguridad'), 'la copia ya no está en Aprende');
+});
+
+test('cada lección tiene un enlace visible para volver a Aprende', () => {
   const lesson = html.match(/<article id="build-lesson"[^>]*>([\s\S]*?)<\/article>/);
   assert.ok(lesson, 'falta el artículo de la lección');
-  const link = lesson[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'la lección no tiene un enlace a #/construir');
-  assert.match(link[1], /Todas las lecciones/);
-  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  const link = lesson[1].match(/<p class="build-back">(<a [^>]*href="#\/aprende"[^>]*>[\s\S]*?<\/a>)<\/p>/);
+  assert.ok(link, 'la lección no tiene «‹ Aprende» en su .build-back');
+  assert.equal(link[1], '<a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a>');
 });
 
 // En el móvil la barra no tiene Construir: desde el repaso también hay que poder volver
-test('el repaso tiene un enlace para volver a la ruta', () => {
+test('el repaso tiene un enlace visible para volver a Aprende', () => {
   const review = html.match(/<div id="build-review"[^>]*>([\s\S]*?)<!-- Lección/);
   assert.ok(review, 'falta el bloque del repaso');
-  const link = review[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'el repaso no tiene un enlace a #/construir');
-  assert.match(link[1], /Todas las lecciones/);
-  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  const link = review[1].match(/<p class="build-back">(<a [^>]*href="#\/aprende"[^>]*>[\s\S]*?<\/a>)<\/p>/);
+  assert.ok(link, 'el repaso no tiene «‹ Aprende» en su .build-back');
+  assert.equal(link[1], '<a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a>');
   // Fuera de los mensajes de vacío y de fin: se ve siempre
   assert.ok(review[1].indexOf(link[0]) < review[1].indexOf('build-review-empty'), 'el enlace va antes de los mensajes');
 });
@@ -684,4 +716,28 @@ test('la barra de traducción tiene «Generar traducción» y la nota de «no se
 test('la barra de traducción va antes del texto de la historia', () => {
   assert.ok(reader.indexOf('id="reader-translation-bar"') < reader.indexOf('id="reader-text"'));
   assert.ok(reader.indexOf('id="reader-translation-bar"') > 0);
+});
+
+test('la historia abierta tiene como primer elemento el enlace «‹ Leer» a la biblioteca', () => {
+  const story = html.match(/<article id="reader-story"[^>]*>\s*([\s\S]*)/)?.[1] ?? '';
+  assert.ok(story.startsWith('<p class="back-link"><a class="text-link" href="#/leer"><span aria-hidden="true">‹</span> Leer</a></p>'));
+});
+
+test('Palabras vacía ofrece el mazo A1 como acción principal y añadir una palabra', () => {
+  const block = html.match(/<div id="vocab-start"[^>]*hidden[^>]*>([\s\S]*?)<\/div>/)[1];
+  assert.match(block, /Todavía no tienes palabras\./);
+  assert.match(block, /Empieza con 100 palabras frecuentes de nivel A1 o añade las tuyas\./);
+  assert.match(block, /<button type="button" class="button button-primary" id="vocab-start-deck">Añadir 100 palabras A1<\/button>/);
+  assert.match(block, /<button type="button" class="button button-secondary" id="vocab-start-add">Añadir palabra<\/button>/);
+});
+
+test('Estudiar y Quiz sin palabras llevan a Palabras', () => {
+  for (const id of ['study-empty-go', 'quiz-empty-go']) assert.match(html, new RegExp(`<a class="button button-secondary" id="${id}" href="#/vocabulario">Ir a Palabras</a>`));
+  assert.match(html, /<p id="quiz-empty"[^>]*hidden[^>]*>Añade palabras en Palabras para empezar\.<\/p>/);
+});
+
+test('todos los id de index.html son únicos', () => {
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+  const repeated = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+  assert.deepEqual(repeated, []);
 });

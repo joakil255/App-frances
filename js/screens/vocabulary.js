@@ -46,15 +46,19 @@ function speakerIcon() {
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-export function initVocabulary({ store, synth, now = () => new Date() }) {
+export function initVocabulary({ store, synth, now = () => new Date(), onWordsChanged = () => {} }) {
   const search = $('#vocab-search');
   const categorySelect = $('#vocab-category');
   const genderSelect = $('#vocab-gender');
   const list = $('#vocab-list');
   const count = $('#vocab-count');
   const emptyText = $('#vocab-empty');
+  const startBlock = $('#vocab-start');
+  const heading = $('#screen-vocabulary h1');
   const notice = $('#vocab-notice');
   const message = $('#vocab-message');
+  const dataNotice = $('#data-notice');
+  const dataStatus = $('#data-status');
   const fileInput = $('#vocab-file');
 
   const detail = $('#word-detail');
@@ -82,10 +86,24 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   function say(text) {
     message.textContent = text;
   }
-  function storageProblem(error) {
+  // Importar y exportar viven en «Datos y copia» (Progreso): sus avisos van allí
+  function showDataNotice(title, text = '') {
+    dataNotice.replaceChildren(el('strong', { text: title }), ...(text ? [el('span', { text: ` ${text}` })] : []));
+    dataNotice.hidden = false;
+  }
+  function clearDataNotice() {
+    dataNotice.hidden = true;
+    dataNotice.replaceChildren();
+    dataStatus.textContent = '';
+  }
+  function sayData(text) {
+    dataStatus.textContent = text;
+  }
+  const inDataFold = (node) => Boolean(node?.closest('#data-fold'));
+  function storageProblem(error, toData = false) {
     if (!(error instanceof StorageError)) throw error;
     const { title, text } = storageMessage(error);
-    showNotice(title, text);
+    (toData ? showDataNotice : showNotice)(title, text);
   }
 
   // --- Ventanas ---
@@ -98,7 +116,9 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       if (event.target.closest('[data-action="close"]')) dialog.close();
     });
     dialog.addEventListener('close', () => {
-      const target = returnFocusTo && returnFocusTo.isConnected ? returnFocusTo : search;
+      // Si el botón que abrió la ventana ya no se ve (el bloque vacío desapareció), el foco va al título
+      let target = search;
+      if (returnFocusTo && returnFocusTo.isConnected) target = returnFocusTo.offsetParent === null ? heading : returnFocusTo;
       if (!document.querySelector('dialog[open]')) target.focus();
     });
   }
@@ -143,10 +163,13 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     const shown = filterWords(all, { query: search.value, category: categorySelect.value, gender: genderSelect.value });
     list.replaceChildren(...shown.map(wordRow));
     count.textContent = `${shown.length} de ${plural(all.length, 'palabra', 'palabras')}`;
-    emptyText.hidden = shown.length > 0;
-    emptyText.textContent = all.length === 0
-      ? 'Todavía no hay palabras. Añade una o importa un archivo.'
-      : 'Ninguna palabra coincide con la búsqueda.';
+    const noWords = all.length === 0;
+    // Sin palabras: bloque de inicio con acción; con palabras: el aviso de búsqueda sin resultados
+    startBlock.hidden = !noWords;
+    emptyText.hidden = noWords || shown.length > 0;
+    emptyText.textContent = 'Ninguna palabra coincide con la búsqueda.';
+    $('#vocab-add').hidden = noWords;
+    $('#vocab-deck').hidden = noWords;
   }
 
   // Botón de la fila de una palabra (tras volver a dibujar la lista), o null si no se ve
@@ -245,7 +268,9 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     form.elements.fr.focus();
   }
 
-  $('#vocab-add').addEventListener('click', (event) => openForm(null, event.currentTarget));
+  for (const id of ['#vocab-add', '#vocab-start-add']) {
+    $(id).addEventListener('click', (event) => openForm(null, event.currentTarget));
+  }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -284,7 +309,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   });
 
   // --- Exportar ---
-  $('#vocab-export').addEventListener('click', (event) => openDialog(exportDialog, event.currentTarget));
+  $('#vocab-export').addEventListener('click', (event) => {
+    clearDataNotice();
+    openDialog(exportDialog, event.currentTarget);
+  });
   exportDialog.addEventListener('click', (event) => {
     const button = event.target.closest('[data-format]');
     if (!button) return;
@@ -299,7 +327,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     exportDialog.close();
-    say(`Se exportaron ${plural(words.length, 'palabra', 'palabras')} en ${kind.toUpperCase()}.`);
+    sayData(`Se exportaron ${plural(words.length, 'palabra', 'palabras')} en ${kind.toUpperCase()}.`);
   });
 
   // --- Importar ---
@@ -309,10 +337,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     const file = fileInput.files[0];
     fileInput.value = ''; // permite volver a elegir el mismo archivo
     if (!file) return;
-    clearNotice();
+    clearDataNotice();
     if (file.size > MAX_IMPORT_BYTES) {
       const { title, text } = fileTooLarge(2);
-      showNotice(title, text);
+      showDataNotice(title, text);
       return;
     }
     let text;
@@ -320,13 +348,13 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       text = await file.text();
     } catch {
       const { title, text: reason } = importFailed(file.name, FILE_UNREADABLE);
-      showNotice(title, reason);
+      showDataNotice(title, reason);
       return;
     }
     const read = readImport(text, file.name);
     if (read.fatal) {
       const { title, text } = importFailed(file.name, read.fatal);
-      showNotice(title, text);
+      showDataNotice(title, text);
       return;
     }
     pendingPlan = planImport(read.rows, store.getWords());
@@ -334,8 +362,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   });
 
   // Mazo A1: el mismo resumen que al importar un archivo (no cambia nada hasta confirmar)
-  const deckButton = $('#vocab-deck');
-  deckButton.addEventListener('click', async () => {
+  async function openDeck(deckButton) {
     if (deckButton.disabled) return;
     deckButton.disabled = true; // evita abrir dos veces la ventana con un doble toque
     clearNotice();
@@ -350,7 +377,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     } finally {
       deckButton.disabled = false;
     }
-  });
+  }
+  for (const id of ['#vocab-deck', '#vocab-start-deck']) {
+    $(id).addEventListener('click', (event) => openDeck(event.currentTarget));
+  }
 
   // «source» es el botón que abrió la ventana: el foco vuelve a él al cerrarla
   let importSource = null;
@@ -378,18 +408,22 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   }
 
   async function runImport(replaceDuplicates, dialog) {
+    // El destino de los mensajes depende de dónde se pulsó: «Datos y copia» o el mazo de Palabras
+    const toData = inDataFold(importSource);
+    const report = toData ? sayData : say;
     try {
       const { added, replaced } = await store.applyImport(pendingPlan, { replaceDuplicates });
-      say(replaced > 0
+      report(replaced > 0
         ? `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')} y se reemplazaron ${replaced}.`
         : `Se importaron ${plural(added, 'palabra nueva', 'palabras nuevas')}.`);
       returnFocusTo = importSource;
       dialog.close();
       renderCategories();
       render();
+      onWordsChanged();
     } catch (error) {
       dialog.close();
-      storageProblem(error);
+      storageProblem(error, toData);
     } finally {
       pendingPlan = null;
     }

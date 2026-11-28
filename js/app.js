@@ -1,6 +1,6 @@
 // Arranque de la app: navegación entre pantallas sin recargar la página
 // y registro del service worker (funcionamiento sin conexión)
-import { SCREENS, resolveRoute, routeParam } from './lib/router.js';
+import { SCREENS, resolveRoute, routeParam, tabFor, redirectFor } from './lib/router.js';
 import { watchForUpdates, applyUpdate } from './update.js';
 import { createWordStore } from './lib/storage.js';
 import { INITIAL_WORDS } from './data/initial-words.js';
@@ -11,7 +11,9 @@ import { createBuildStore } from './lib/build-storage.js';
 import { initStudy } from './screens/study.js';
 import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
-import { initHome } from './screens/home.js';
+import { initBackup } from './screens/backup.js';
+import { initLearn } from './screens/learn.js';
+import { initPractice } from './screens/practice.js';
 import { createChatStore } from './lib/chat.js';
 import { initChat } from './screens/chat.js';
 import { createVoiceStore } from './lib/voice-settings.js';
@@ -34,8 +36,11 @@ let onReaderShown = () => {}; // lo completa initReader
 let onReaderHidden = () => {}; // corta la voz al salir de Leer
 let onBuildShown = () => {}; // lo completa initBuild
 let onBuildHidden = () => {};
-let home = null; // lo completa initHome
-let loadedLessons = null; // las lecciones, cuando lleguen (la tarjeta de Inicio las usa)
+let progress = null; // lo completa initProgress
+let learn = null; // lo completa initLearn
+let practice = null; // lo completa initPractice
+let study = null; // lo completa initStudy
+let redirectedOnLoad = false; // una lección desconocida en la primera carga redirigió: ese cambio no mueve el foco
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -47,6 +52,7 @@ function showScreen(id, moveFocus) {
   for (const link of document.querySelectorAll('.nav-link')) {
     const linkId = resolveRoute(link.getAttribute('href'));
     if (linkId === id) link.setAttribute('aria-current', 'page');
+    else if (linkId === tabFor(id)) link.setAttribute('aria-current', 'true');
     else link.removeAttribute('aria-current');
   }
 
@@ -61,25 +67,35 @@ function showScreen(id, moveFocus) {
   else if (previousId === 'chat') onChatHidden();
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
-  if (id === 'home') home?.refresh();
+  if (id === 'learn') learn?.refresh();
+  if (id === 'practice') practice?.refresh();
   if (id === 'build') onBuildShown(moveFocus);
   else if (previousId === 'build') onBuildHidden();
 }
 
 function handleRoute(isFirstLoad) {
+  // replace no deja la dirección vieja en el historial: Atrás no vuelve a ella
+  const target = redirectFor(location.hash);
+  if (target) {
+    location.replace(target);
+    return;
+  }
   const id = resolveRoute(location.hash);
   if (id === null) {
-    // Ancla normal (p. ej. «Saltar al contenido»): no cambia de pantalla
-    if (currentId === null) showScreen('home', false);
+    // Ancla normal que no es una pantalla: no cambia de pantalla
+    if (currentId === null) showScreen('learn', false);
     return;
   }
   const param = routeParam(location.hash);
   const paramChanged = param !== currentParam;
   currentParam = param;
-  if (id !== currentId) showScreen(id, !isFirstLoad);
+  // Tras una redirección en la primera carga todavía no hay pantalla: el foco tampoco se mueve
+  const moveFocus = !isFirstLoad && currentId !== null && !redirectedOnLoad;
+  redirectedOnLoad = false;
+  if (id !== currentId) showScreen(id, moveFocus);
   // De la biblioteca a una historia (o de una historia a otra) la pantalla sigue siendo Leer
   else if (id === 'reader' && paramChanged) onReaderShown(true);
-  // De la lista a una lección (o de una lección a otra) la pantalla sigue siendo Construir
+  // De una lección a otra (o al repaso) la pantalla sigue siendo Construir
   else if (id === 'build' && paramChanged) onBuildShown(true);
 }
 
@@ -106,22 +122,52 @@ const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
 const studyStore = createStudyStore(backend);
 const textStore = createTextStore(backend);
-// Si falla la lectura, la app sigue (Inicio no depende de las historias) y Leer lo avisa
+// Si falla la lectura, la app sigue (Aprende no depende de las historias) y Leer lo avisa
 const textsLoaded = textStore.load().catch((error) => ({ texts: [], corruptBackupKey: null, error }));
 const buildStore = createBuildStore(backend);
-// Igual que las historias: si falla la lectura, Inicio sigue funcionando
+// Igual que las historias: si falla la lectura, Aprende sigue funcionando
 const buildLoaded = buildStore.load().catch((error) => ({ corruptBackupKey: null, error }));
+// Construir frases y Aprende: las lecciones vienen de data/lessons (guardadas sin conexión).
+// Si el índice no se puede leer queda null: las pantallas lo avisan y Aprende sigue funcionando.
+const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
 
 // Estudiar necesita las palabras ya cargadas; Quiz y Progreso, además, el estudio cargado
 // (comparten el mismo almacén e historial). Progreso no espera a que Quiz compruebe la voz.
-initVocabulary({ store: wordStore, synth })
+initVocabulary({
+  store: wordStore,
+  synth,
+  // Tras importar palabras, Progreso y Practica se vuelven a dibujar (pueden no existir aún)
+  onWordsChanged: () => {
+    progress?.refresh();
+    practice?.refresh();
+  },
+})
   .then(() => initStudy({ wordStore, studyStore, synth }))
+  .then((screen) => { study = screen; })
   .then(() => Promise.all([
-    initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
+    initQuiz({ wordStore, studyStore, synth }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
-      home = initHome({ wordStore, studyStore, textStore, buildStore, backend, getLessons: () => loadedLessons });
+      initBackup({ wordStore, studyStore, textStore, buildStore, backend });
+      practice = initPractice({ wordStore, studyStore, textStore });
+      if (currentId === 'practice') practice.refresh();
+    }),
+    // Aprende se dibuja por primera vez cuando ya se sabe si hay lecciones: así no muestra un plan
+    // provisional que cambia un momento después. Desde aquí, null significa «no se pudieron cargar».
+    Promise.all([buildLoaded, lessonsLoaded]).then(([, lessons]) => {
+      learn = initLearn({ wordStore, studyStore, buildStore, getLessons: () => lessons });
+      if (currentId === 'learn') learn.refresh();
+      // Progreso también espera a las lecciones: así no pinta un objetivo provisional
+      return initProgress({ wordStore, studyStore, buildStore, getLessons: () => lessons }).then((screen) => { progress = screen; });
     }),
   ]));
+// Al volver a la app pasado el día, Aprende, Progreso, Practica y el resumen de Estudiar se recalculan (Aprende solo si cambió el día)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (currentId === 'learn') learn?.refreshIfNewDay();
+  if (currentId === 'progress') progress?.refresh(); // el día puede haber cambiado
+  if (currentId === 'practice') practice?.refresh(); // las cifras de hoy pueden haber cambiado
+  if (currentId === 'study') study?.refreshSummary(); // solo redibuja el resumen; con una tarjeta en pantalla no toca nada
+});
 
 // Conversar no depende del estudio. Las palabras ya están en memoria: store.load() de Vocabulario no espera nada.
 const isOnline = () => navigator.onLine;
@@ -174,6 +220,8 @@ onChatShown = () => {
 wordStore.watchExternalChanges(window, () => {
   wordCard.refresh(chatLog);
   wordCard.refresh(readerText);
+  learn?.refresh();
+  practice?.refresh();
 });
 onChatHidden = () => voice.stop();
 // Si la página queda oculta (otra app, pantalla apagada) el micrófono se corta
@@ -203,16 +251,13 @@ textsLoaded.then((loaded) => {
   // Si otra pestaña cambia las historias, se vuelven a leer y Leer se redibuja
   // (una historia borrada allá te devuelve a la biblioteca)
   textStore.watchExternalChanges(window, () => {
+    practice?.refresh();
     if (currentId === 'reader') onReaderShown(false);
   });
 });
 
-// Construir frases: las lecciones vienen de data/lessons (guardadas sin conexión).
-// Si el índice no se puede leer, la pantalla lo avisa e Inicio sigue funcionando.
-const lessonsLoaded = loadLessons({ fetch: window.fetch.bind(window), lang: 'fr' }).catch(() => null);
+// Construir frases: la lección y el repaso (las lecciones se piden arriba, con los almacenes)
 Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
-  loadedLessons = lessons;
-  home?.refresh();
   const build = initBuild({
     loadNotice: buildLoadNotice(loaded),
     buildStore,
@@ -224,12 +269,24 @@ Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
     hostname: location.hostname,
     getCode: () => chatStore.loadCode(),
   });
-  onBuildShown = (moveFocus) => build.onShow(routeParam(location.hash), moveFocus);
+  onBuildShown = (moveFocus) => {
+    const before = location.hash;
+    build.onShow(routeParam(location.hash), moveFocus);
+    // Sin foco que mover es la primera carga: si Construir redirigió, el cambio siguiente tampoco lo mueve
+    if (!moveFocus && location.hash !== before) redirectedOnLoad = true;
+  };
   onBuildHidden = () => build.onHide();
   if (currentId === 'build') onBuildShown(false);
 });
-// Si otra pestaña cambia el progreso o las tarjetas de frases, la tarjeta de Inicio se actualiza
-buildStore.watchExternalChanges(window, () => home?.refresh());
+// Si otra pestaña cambia el progreso, las frases, el estudio o las palabras, Aprende se actualiza
+buildStore.watchExternalChanges(window, () => {
+  learn?.refresh();
+  progress?.refresh();
+});
+studyStore.watchExternalChanges(window, () => {
+  learn?.refresh();
+  practice?.refresh();
+});
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {
