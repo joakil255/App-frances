@@ -717,3 +717,9 @@ test('Estudiar y Quiz sin palabras llevan a Palabras', () => {
   for (const id of ['study-empty-go', 'quiz-empty-go']) assert.match(html, new RegExp(`<a class="button button-secondary" id="${id}" href="#/vocabulario">Ir a Palabras</a>`));
   assert.match(html, /<p id="quiz-empty"[^>]*hidden[^>]*>Añade palabras en Palabras para empezar\.<\/p>/);
 });
+
+test('todos los id de index.html son únicos', () => {
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+  const repeated = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+  assert.deepEqual(repeated, []);
+});
