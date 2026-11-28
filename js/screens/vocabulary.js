@@ -53,6 +53,8 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   const list = $('#vocab-list');
   const count = $('#vocab-count');
   const emptyText = $('#vocab-empty');
+  const startBlock = $('#vocab-start');
+  const heading = $('#screen-vocabulary h1');
   const notice = $('#vocab-notice');
   const message = $('#vocab-message');
   const fileInput = $('#vocab-file');
@@ -98,7 +100,9 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
       if (event.target.closest('[data-action="close"]')) dialog.close();
     });
     dialog.addEventListener('close', () => {
-      const target = returnFocusTo && returnFocusTo.isConnected ? returnFocusTo : search;
+      // Si el botón que abrió la ventana ya no se ve (el bloque vacío desapareció), el foco va al título
+      let target = search;
+      if (returnFocusTo && returnFocusTo.isConnected) target = returnFocusTo.offsetParent === null ? heading : returnFocusTo;
       if (!document.querySelector('dialog[open]')) target.focus();
     });
   }
@@ -143,10 +147,13 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     const shown = filterWords(all, { query: search.value, category: categorySelect.value, gender: genderSelect.value });
     list.replaceChildren(...shown.map(wordRow));
     count.textContent = `${shown.length} de ${plural(all.length, 'palabra', 'palabras')}`;
-    emptyText.hidden = shown.length > 0;
-    emptyText.textContent = all.length === 0
-      ? 'Todavía no hay palabras. Añade una o importa un archivo.'
-      : 'Ninguna palabra coincide con la búsqueda.';
+    const noWords = all.length === 0;
+    // Sin palabras: bloque de inicio con acción; con palabras: el aviso de búsqueda sin resultados
+    startBlock.hidden = !noWords;
+    emptyText.hidden = noWords || shown.length > 0;
+    emptyText.textContent = 'Ninguna palabra coincide con la búsqueda.';
+    $('#vocab-add').hidden = noWords;
+    $('#vocab-deck').hidden = noWords;
   }
 
   // Botón de la fila de una palabra (tras volver a dibujar la lista), o null si no se ve
@@ -245,7 +252,9 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     form.elements.fr.focus();
   }
 
-  $('#vocab-add').addEventListener('click', (event) => openForm(null, event.currentTarget));
+  for (const id of ['#vocab-add', '#vocab-start-add']) {
+    $(id).addEventListener('click', (event) => openForm(null, event.currentTarget));
+  }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -334,8 +343,7 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
   });
 
   // Mazo A1: el mismo resumen que al importar un archivo (no cambia nada hasta confirmar)
-  const deckButton = $('#vocab-deck');
-  deckButton.addEventListener('click', async () => {
+  async function openDeck(deckButton) {
     if (deckButton.disabled) return;
     deckButton.disabled = true; // evita abrir dos veces la ventana con un doble toque
     clearNotice();
@@ -350,7 +358,10 @@ export function initVocabulary({ store, synth, now = () => new Date() }) {
     } finally {
       deckButton.disabled = false;
     }
-  });
+  }
+  for (const id of ['#vocab-deck', '#vocab-start-deck']) {
+    $(id).addEventListener('click', (event) => openDeck(event.currentTarget));
+  }
 
   // «source» es el botón que abrió la ventana: el foco vuelve a él al cerrarla
   let importSource = null;

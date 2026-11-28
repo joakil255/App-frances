@@ -13,6 +13,7 @@ import { initQuiz } from './screens/quiz.js';
 import { initProgress } from './screens/progress.js';
 import { initHome } from './screens/home.js';
 import { initLearn } from './screens/learn.js';
+import { initPractice } from './screens/practice.js';
 import { createChatStore } from './lib/chat.js';
 import { initChat } from './screens/chat.js';
 import { createVoiceStore } from './lib/voice-settings.js';
@@ -36,6 +37,7 @@ let onReaderHidden = () => {}; // corta la voz al salir de Leer
 let onBuildShown = () => {}; // lo completa initBuild
 let onBuildHidden = () => {};
 let learn = null; // lo completa initLearn
+let practice = null; // lo completa initPractice
 
 // Muestra una pantalla, oculta las demás y marca su enlace como activo
 function showScreen(id, moveFocus) {
@@ -63,6 +65,7 @@ function showScreen(id, moveFocus) {
   if (id === 'reader') onReaderShown(moveFocus);
   else if (previousId === 'reader') onReaderHidden();
   if (id === 'learn') learn?.refresh();
+  if (id === 'practice') practice?.refresh();
   if (id === 'build') onBuildShown(moveFocus);
   else if (previousId === 'build') onBuildHidden();
 }
@@ -131,6 +134,8 @@ initVocabulary({ store: wordStore, synth })
     initQuiz({ wordStore, studyStore, synth }), initProgress({ wordStore, studyStore }),
     Promise.all([textsLoaded, buildLoaded]).then(() => {
       initHome({ wordStore, studyStore, textStore, buildStore, backend });
+      practice = initPractice({ wordStore, studyStore, textStore });
+      if (currentId === 'practice') practice.refresh();
     }),
     // Aprende se dibuja por primera vez cuando ya se sabe si hay lecciones: así no muestra un plan
     // provisional que cambia un momento después. Desde aquí, null significa «no se pudieron cargar».
@@ -196,6 +201,7 @@ wordStore.watchExternalChanges(window, () => {
   wordCard.refresh(chatLog);
   wordCard.refresh(readerText);
   learn?.refresh();
+  practice?.refresh();
 });
 onChatHidden = () => voice.stop();
 // Si la página queda oculta (otra app, pantalla apagada) el micrófono se corta
@@ -225,6 +231,7 @@ textsLoaded.then((loaded) => {
   // Si otra pestaña cambia las historias, se vuelven a leer y Leer se redibuja
   // (una historia borrada allá te devuelve a la biblioteca)
   textStore.watchExternalChanges(window, () => {
+    practice?.refresh();
     if (currentId === 'reader') onReaderShown(false);
   });
 });
@@ -248,7 +255,10 @@ Promise.all([lessonsLoaded, buildLoaded]).then(([lessons, loaded]) => {
 });
 // Si otra pestaña cambia el progreso, las frases, el estudio o las palabras, Aprende se actualiza
 buildStore.watchExternalChanges(window, () => learn?.refresh());
-studyStore.watchExternalChanges(window, () => learn?.refresh());
+studyStore.watchExternalChanges(window, () => {
+  learn?.refresh();
+  practice?.refresh();
+});
 
 // Muestra el aviso «Actualizar» cuando hay una versión nueva esperando
 function showUpdateBanner(worker) {

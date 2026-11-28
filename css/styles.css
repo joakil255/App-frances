@@ -296,6 +296,8 @@ main {
   text-decoration: none;
   overflow-wrap: anywhere;
 }
+#screen-practice h2 { margin: 0 0 var(--space-2); font: 700 1.25rem/1.2 var(--font-sign); } /* títulos de grupo en la letra de los carteles */
+#screen-practice .plaque + h2 { margin-top: var(--space-5); }
 .practice-name { display: block; font: 700 1.25rem/1.2 var(--font-sign); }
 .practice-count { display: block; color: var(--text-muted); font-family: var(--font-text); }
 
@@ -418,6 +420,8 @@ main {
 .vocab-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .vocab-message:empty { display: none; }
 .vocab-message { margin: var(--space-3) 0 0; font-family: var(--font-sign); font-weight: 500; }
+.vocab-start { margin-top: var(--space-5); }
+.vocab-start-title { font: 700 1.25rem/1.2 var(--font-sign); margin: 0 0 var(--space-2); }
 .vocab-count {
   margin: var(--space-4) 0 var(--space-1);
   color: var(--text-muted);
