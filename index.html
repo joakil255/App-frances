@@ -122,6 +122,14 @@
         <p id="vocab-count" class="vocab-count" role="status"></p>
         <ul id="vocab-list" class="vocab-list"></ul>
         <p id="vocab-empty" class="empty" hidden></p>
+        <div id="vocab-start" class="vocab-start" hidden>
+          <p class="vocab-start-title">Todavía no tienes palabras.</p>
+          <p>Empieza con 100 palabras frecuentes de nivel A1 o añade las tuyas.</p>
+          <div class="study-actions">
+            <button type="button" class="button button-primary" id="vocab-start-deck">Añadir 100 palabras A1</button>
+            <button type="button" class="button button-secondary" id="vocab-start-add">Añadir palabra</button>
+          </div>
+        </div>
       </section>
 
       <section id="screen-study" class="screen line-study" hidden>
@@ -133,6 +141,7 @@
         <!-- Resumen del día -->
         <div id="study-summary" class="study-summary">
           <p id="study-empty" class="empty" hidden>Añade palabras en Palabras para empezar.</p>
+          <div class="study-actions" id="study-empty-actions" hidden><a class="button button-secondary" id="study-empty-go" href="#/vocabulario">Ir a Palabras</a></div>
           <div id="study-today" class="study-today">
             <p class="study-count"><span id="study-due" class="study-number">0</span> <span class="study-label">para repasar</span></p>
             <p class="study-count"><span id="study-new" class="study-number">0</span> <span class="study-label">nuevas</span></p>
@@ -202,6 +211,8 @@
 
         <!-- Inicio: elegir el modo -->
         <div id="quiz-start" class="quiz-start">
+          <p id="quiz-empty" class="empty" hidden>Añade palabras en Palabras para empezar.</p>
+          <div class="study-actions" id="quiz-empty-actions" hidden><a class="button button-secondary" id="quiz-empty-go" href="#/vocabulario">Ir a Palabras</a></div>
           <p class="quiz-intro">Elige cómo quieres practicar. Cada quiz tiene hasta 10 preguntas.</p>
           <ul class="quiz-modes">
             <li>

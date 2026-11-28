@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v30';
+const CACHE_VERSION = 'v31';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -57,6 +57,8 @@ const PRECACHE_URLS = [
   'js/lib/voice-settings.js',
   'js/lib/sentence-check.js',
   'js/lib/exercise-ui.js',
+  'js/lib/practice.js',
+  'js/screens/practice.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',

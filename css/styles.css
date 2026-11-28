@@ -296,6 +296,8 @@ main {
   text-decoration: none;
   overflow-wrap: anywhere;
 }
+#screen-practice h2 { margin: 0 0 var(--space-2); font: 700 1.25rem/1.2 var(--font-sign); } /* títulos de grupo en la letra de los carteles */
+#screen-practice .plaque + h2 { margin-top: var(--space-5); }
 .practice-name { display: block; font: 700 1.25rem/1.2 var(--font-sign); }
 .practice-count { display: block; color: var(--text-muted); font-family: var(--font-text); }
 
@@ -310,6 +312,7 @@ main {
   border: 2px solid transparent;
   border-radius: var(--radius);
   font: 700 var(--size-base) var(--font-sign);
+  text-decoration: none;
   cursor: pointer;
 }
 .button-primary { background: var(--plaque); color: #FFFFFF; }
@@ -418,6 +421,8 @@ main {
 .vocab-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .vocab-message:empty { display: none; }
 .vocab-message { margin: var(--space-3) 0 0; font-family: var(--font-sign); font-weight: 500; }
+.vocab-start { margin-top: var(--space-5); }
+.vocab-start-title { font: 700 1.25rem/1.2 var(--font-sign); margin: 0 0 var(--space-2); }
 .vocab-count {
   margin: var(--space-4) 0 var(--space-1);
   color: var(--text-muted);
@@ -786,7 +791,7 @@ main {
 }
 .today h2 .line-dot { width: 14px; height: 14px; box-shadow: 0 0 0 2px var(--text); } /* la baldosa es clara: anillo oscuro */
 .today-main { margin: 6px 0 var(--space-4); font: 600 1.95rem/1.15 var(--font-text); overflow-wrap: anywhere; }
-.today-action { width: 100%; min-height: 56px; font-size: 1.15rem; text-align: center; text-decoration: none; }
+.today-action { width: 100%; min-height: 56px; font-size: 1.15rem; text-align: center; }
 .today-next { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: 0.95rem; overflow-wrap: anywhere; }
 .today-more { margin: var(--space-1) 0 0; }
 

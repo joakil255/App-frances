@@ -696,3 +696,16 @@ test('la historia abierta tiene como primer elemento el enlace «‹ Leer» a la
   const story = html.match(/<article id="reader-story"[^>]*>\s*([\s\S]*)/)?.[1] ?? '';
   assert.ok(story.startsWith('<p class="back-link"><a class="text-link" href="#/leer"><span aria-hidden="true">‹</span> Leer</a></p>'));
 });
+
+test('Palabras vacía ofrece el mazo A1 como acción principal y añadir una palabra', () => {
+  const block = html.match(/<div id="vocab-start"[^>]*hidden[^>]*>([\s\S]*?)<\/div>/)[1];
+  assert.match(block, /Todavía no tienes palabras\./);
+  assert.match(block, /Empieza con 100 palabras frecuentes de nivel A1 o añade las tuyas\./);
+  assert.match(block, /<button type="button" class="button button-primary" id="vocab-start-deck">Añadir 100 palabras A1<\/button>/);
+  assert.match(block, /<button type="button" class="button button-secondary" id="vocab-start-add">Añadir palabra<\/button>/);
+});
+
+test('Estudiar y Quiz sin palabras llevan a Palabras', () => {
+  for (const id of ['study-empty-go', 'quiz-empty-go']) assert.match(html, new RegExp(`<a class="button button-secondary" id="${id}" href="#/vocabulario">Ir a Palabras</a>`));
+  assert.match(html, /<p id="quiz-empty"[^>]*hidden[^>]*>Añade palabras en Palabras para empezar\.<\/p>/);
+});

@@ -80,6 +80,7 @@ export function initStudy({ wordStore, studyStore, synth, now = () => new Date()
     const queue = currentQueue();
     const { settings } = studyStore.getState();
     $('#study-empty').hidden = hasWords;
+    $('#study-empty-actions').hidden = hasWords;
     $('#study-today').hidden = !hasWords;
     $('#study-start').hidden = !hasWords;
     $('#study-due').textContent = String(queue.filter((item) => !item.isNew).length);

@@ -74,6 +74,13 @@ export function initQuiz({ wordStore, studyStore, synth, now = () => new Date(),
   // --- Inicio ---
   function renderStart() {
     session = null;
+    const noWords = wordStore.getWords().length === 0;
+    $('#quiz-empty').hidden = !noWords;
+    $('#quiz-empty-actions').hidden = !noWords;
+    // Sin palabras no hay modos que elegir
+    for (const child of start.children) {
+      if (child.id !== 'quiz-empty' && child.id !== 'quiz-empty-actions') child.hidden = noWords;
+    }
     const status = modeStatus({ words: wordStore.getWords(), hasVoice });
     for (const mode of MODES) {
       const button = $(`[data-mode="${mode}"]`, start);
