@@ -89,6 +89,14 @@ test('cuenta lo que queda y lo hecho hoy', () => {
   assert.equal(g.text, 'Te quedan 2 palabras y 1 frase.');
   assert.equal(g.answersText, 'Llevas 4 respuestas hoy.');
 });
+test('una entrada de hoy sin cardId no cuenta como palabra hecha, pero sí como respuesta', () => {
+  const g = dailyGoal({
+    wordQueue: [], sentenceQueue: [], sentenceCards: {}, today: T,
+    history: [{ date: T }, { date: T, cardId: undefined }, { date: T, cardId: 'a' }, { kind: 'quiz', date: T }],
+  });
+  assert.equal(g.done, 1);
+  assert.equal(g.answersText, 'Llevas 4 respuestas hoy.');
+});
 test('«Otra vez»: la palabra respondida hoy que sigue en la cola cuenta como pendiente, no como hecha', () => {
   const g = dailyGoal({ wordQueue: [{ cardId: 'a' }], sentenceQueue: [], history: [{ date: T, cardId: 'a' }], sentenceCards: {}, today: T });
   assert.deepEqual([g.wordsLeft, g.done], [1, 0]);
