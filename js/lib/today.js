@@ -1,4 +1,5 @@
 // Plan del día en Aprende: la acción principal, la línea «Después» y las tres estaciones.
+import { localDate } from './dates.js';
 const fmt = (n) => n.toLocaleString('es');
 const words = (n) => `${fmt(n)} ${n === 1 ? 'palabra' : 'palabras'}`;
 const sentences = (n) => `${fmt(n)} ${n === 1 ? 'frase' : 'frases'}`;
@@ -52,4 +53,36 @@ export function todayPlan({ hasWords, wordsDue, sentencesDue, lesson, lessonsRea
   else stations.push({ name: 'Lección', state: 'todo', text: 'Sin cargar' });
 
   return { title, action, followUp, showMore: action === null, stations };
+}
+
+// Objetivo de hoy en Progreso: dejar el repaso en cero
+export function dailyGoal({ wordQueue, sentenceQueue, history, sentenceCards, today, dayOf = (iso) => localDate(new Date(iso)) }) {
+  const wordIdsLeft = new Set(wordQueue.map((q) => q.cardId));
+  const wordsLeft = wordIdsLeft.size;
+  const sentencesLeft = sentenceQueue.length;
+
+  const todayEntries = history.filter((h) => h && h.date === today);
+  const wordsDone = new Set(todayEntries.filter((h) => h.kind !== 'quiz' && !wordIdsLeft.has(h.cardId)).map((h) => h.cardId));
+  const sentenceIdsLeft = new Set(sentenceQueue);
+  const sentencesDone = Object.entries(sentenceCards)
+    .filter(([id, c]) => c && c.lastReviewedAt && dayOf(c.lastReviewedAt) === today && !sentenceIdsLeft.has(id)).length;
+
+  const left = wordsLeft + sentencesLeft;
+  const done = wordsDone.size + sentencesDone;
+  const total = left + done;
+  const ratio = total === 0 ? 1 : done / total;
+
+  let text;
+  if (left === 0) text = 'Repaso de hoy completado. No te queda nada pendiente.';
+  else {
+    const parts = [];
+    if (wordsLeft > 0) parts.push(words(wordsLeft));
+    if (sentencesLeft > 0) parts.push(sentences(sentencesLeft));
+    text = `${left === 1 ? 'Te queda' : 'Te quedan'} ${parts.join(' y ')}.`;
+  }
+
+  const answers = todayEntries.length;
+  const answersText = answers === 0 ? 'Hoy todavía no has respondido nada.' : `Llevas ${fmt(answers)} ${answers === 1 ? 'respuesta' : 'respuestas'} hoy.`;
+
+  return { wordsLeft, sentencesLeft, done, ratio, text, answersText };
 }
