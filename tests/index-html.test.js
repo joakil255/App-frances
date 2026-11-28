@@ -227,7 +227,7 @@ test('Quiz tiene la respuesta inmediata y el resumen', () => {
 });
 
 // --- Pantalla Progreso (Etapa 5) ---
-const progress = html.match(/<section id="screen-progress"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const progress = sectionOf('progress');
 
 test('Progreso tiene aviso, estado vacío y ya no el texto de relleno', () => {
   assert.match(progress, /<div id="progress-notice" class="notice" role="alert" hidden><\/div>/);
@@ -238,7 +238,7 @@ test('Progreso tiene aviso, estado vacío y ya no el texto de relleno', () => {
 
 test('Progreso tiene la racha y el gráfico con su tabla de datos', () => {
   for (const id of ['progress-activity', 'progress-streak', 'progress-streak-number', 'progress-streak-label',
-    'progress-today', 'progress-chart', 'progress-table-body', 'progress-accuracy']) {
+    'progress-today', 'progress-chart', 'progress-table-body']) {
     assert.ok(tagWithId(progress, id), `falta #${id}`);
   }
   assert.match(progress, /<h2[^>]*>Respuestas de los últimos 14 días<\/h2>/);
@@ -249,13 +249,12 @@ test('Progreso tiene la racha y el gráfico con su tabla de datos', () => {
 });
 
 test('Progreso tiene el acierto de Estudiar y Quiz', () => {
-  assert.match(progress, /<h2[^>]*>Acierto en los últimos 30 días<\/h2>/);
+  assert.match(progress, /<h2[^>]*>Tu constancia<\/h2>/);
+  assert.match(progress, /<div class="tile" id="progress-study">/);
   for (const kind of ['study', 'quiz']) {
     assert.ok(tagWithId(progress, `progress-${kind}-percent`), `falta #progress-${kind}-percent`);
     assert.ok(tagWithId(progress, `progress-${kind}-detail`), `falta #progress-${kind}-detail`);
   }
-  assert.match(progress, /<dt[^>]*>Estudiar<\/dt>/);
-  assert.match(progress, /<dt[^>]*>Quiz<\/dt>/);
 });
 
 test('Progreso tiene «Tus palabras» con los tres estados y la lista de dominadas', () => {
@@ -266,6 +265,15 @@ test('Progreso tiene «Tus palabras» con los tres estados y la lista de dominad
   }
   assert.match(progress, /<details id="progress-mastered" class="progress-details"/);
   assert.match(progress, /<div class="progress-states-bar" aria-hidden="true">/);
+});
+
+test('Progreso empieza con el objetivo de hoy, con su texto y el trayecto decorativo', () => {
+  const progress = sectionOf('progress');
+  assert.match(progress, /<section class="goal tile" aria-labelledby="goal-title">\s*<h2 id="goal-title"[^>]*>Objetivo de hoy: dejar el repaso en cero<\/h2>/);
+  assert.match(progress, /<p id="goal-text"><\/p>/);
+  assert.match(progress, /<div class="trip" aria-hidden="true">/);
+  assert.match(progress, /<p id="goal-answers" class="hint"><\/p>/);
+  assert.match(progress, /<a class="button button-secondary" id="progress-words-go" href="#\/vocabulario">Ir a Palabras<\/a>/);
 });
 
 // --- Mazo A1 (Etapa 6) ---
