@@ -293,35 +293,7 @@
           <div class="trip" aria-hidden="true"><span class="trip-fill" id="goal-fill"></span><span class="trip-start"></span><span class="trip-end"></span></div>
           <div class="trip-labels" aria-hidden="true"><span>Empiezas el día</span><span>Repaso en cero</span></div>
           <p id="goal-answers" class="hint"></p>
-  
-
-        <!-- Datos y copia: copia de seguridad, palabras en un archivo y ajustes (cerrado al entrar) -->
-        <details id="data-fold" class="fold">
-          <summary>Datos y copia</summary>
-          <div class="fold-body">
-            <div id="data-notice" class="notice" role="alert" hidden></div>
-            <h3 class="fold-title">Copia de seguridad</h3>
-            <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
-            <div class="study-actions">
-              <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
-              <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
-              <input type="file" id="backup-file" accept=".json,application/json" hidden>
-            </div>
-            <h3 class="fold-title">Tus palabras en un archivo</h3>
-            <p>Trae palabras desde un archivo JSON o CSV, o llévate las tuyas.</p>
-            <div class="study-actions">
-              <button type="button" class="button button-secondary" id="vocab-import">Importar palabras</button>
-              <button type="button" class="button button-secondary" id="vocab-export">Exportar palabras</button>
-              <input type="file" id="vocab-file" accept=".json,.csv" hidden>
-            </div>
-            <h3 class="fold-title">Ajustes</h3>
-            <div class="study-actions">
-              <button type="button" class="button button-secondary" id="data-settings-open">Ajustes del estudio</button>
-            </div>
-            <p id="data-status" class="vocab-message" role="status"></p>
-          </div>
-        </details>
-      </section>
+        </section>
 
         <!-- Actividad: racha, días y acierto (se rellena con textContent) -->
         <div id="progress-activity" class="progress-activity" hidden>
@@ -369,6 +341,33 @@
           </details>
           <p id="progress-mastered-none" class="hint" hidden>Cuando repases una palabra y su próximo repaso quede a 14 días o más, aparecerá aquí.</p>
         </div>
+
+        <!-- Datos y copia: copia de seguridad, palabras en un archivo y ajustes (cerrado al entrar) -->
+        <details id="data-fold" class="fold">
+          <summary>Datos y copia</summary>
+          <div class="fold-body">
+            <div id="data-notice" class="notice" role="alert" hidden></div>
+            <h3 class="fold-title">Copia de seguridad</h3>
+            <p>Guarda en un archivo tus palabras, tu progreso y tu historial. Si se borran los datos del navegador, con ese archivo lo recuperas todo.</p>
+            <div class="study-actions">
+              <button type="button" class="button button-primary" id="backup-save">Guardar copia</button>
+              <button type="button" class="button button-secondary" id="backup-restore">Restaurar copia</button>
+              <input type="file" id="backup-file" accept=".json,application/json" hidden>
+            </div>
+            <h3 class="fold-title">Tus palabras en un archivo</h3>
+            <p>Trae palabras desde un archivo JSON o CSV, o llévate las tuyas.</p>
+            <div class="study-actions">
+              <button type="button" class="button button-secondary" id="vocab-import">Importar palabras</button>
+              <button type="button" class="button button-secondary" id="vocab-export">Exportar palabras</button>
+              <input type="file" id="vocab-file" accept=".json,.csv" hidden>
+            </div>
+            <h3 class="fold-title">Ajustes</h3>
+            <div class="study-actions">
+              <button type="button" class="button button-secondary" id="data-settings-open">Ajustes del estudio</button>
+            </div>
+            <p id="data-status" class="vocab-message" role="status"></p>
+          </div>
+        </details>
       </section>
 
       <!-- Leer: biblioteca y lector. Las historias se pintan con textContent desde js/screens/reader.js -->

@@ -285,11 +285,21 @@ test('«Datos y copia» es un desplegable cerrado al final de Progreso con copia
     + 'Si se borran los datos del navegador, con ese archivo lo recuperas todo.'));
   assert.ok(sectionOf('progress').includes('id="data-fold"'), 'el desplegable está en Progreso');
 });
+test('«Datos y copia» queda fuera del objetivo y es lo último de Progreso, con las secciones bien cerradas', () => {
+  const progress = sectionOf('progress');
+  const goal = progress.match(/<section class="goal tile"[^>]*>([\s\S]*?)<\/section>/)[1];
+  assert.ok(!goal.includes('data-fold'), 'el desplegable no puede estar dentro de .goal');
+  assert.ok(goal.includes('id="goal-answers"'));
+  assert.equal(progress.match(/<section\b/g).length, progress.match(/<\/section>/g).length, '<section> sin cerrar');
+  assert.match(progress, /<\/details>\s*<\/section>\s*(<!--[\s\S]*?-->\s*)?$/, 'el desplegable es lo último de #screen-progress');
+  assert.ok(progress.indexOf('id="progress-words"') < progress.indexOf('id="data-fold"'));
+});
 test('Palabras ya no tiene Importar ni Exportar, y conserva Añadir y el mazo', () => {
   const vocab = sectionOf('vocabulary');
   assert.ok(!vocab.includes('id="vocab-import"') && !vocab.includes('id="vocab-export"'));
   assert.match(vocab, /id="vocab-add"/);
-  assert.match(vocab, /id="vocab-deck"/);
+  const actions = vocab.match(/<div class="vocab-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
+  assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
 });
 test('Aprende ya no tiene la copia de seguridad', () => {
   const learn = sectionOf('learn');
