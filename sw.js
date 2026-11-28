@@ -57,6 +57,7 @@ const PRECACHE_URLS = [
   'js/lib/voice-settings.js',
   'js/lib/sentence-check.js',
   'js/lib/exercise-ui.js',
+  'js/lib/practice.js',
   'js/screens/vocabulary.js',
   'js/screens/voice.js',
   'js/screens/study.js',
