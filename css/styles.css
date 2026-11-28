@@ -84,6 +84,8 @@
   --chart-bar: #233A7A;
   /* Índice de lecciones (DESIGN.md, Etapa 14): lecciones planificadas */
   --text-planned: #5F6880;
+  /* Aprende (Etapa 17): la estación de ahora, amarilla como los carteles */
+  --signal: #F2C230;
 }
 
 /* --- Tokens: tema oscuro («andén de noche») --- */
@@ -772,19 +774,113 @@ main {
 .backup .study-actions { margin-top: 0; }
 .restore-text { white-space: pre-line; }
 
-/* --- Inicio: tarjeta «Construir frases» (DESIGN.md, Etapa 12): una correspondencia a la línea turquesa --- */
-.home-build {
-  margin-top: var(--space-6);
-  padding: var(--space-2) var(--space-4) var(--space-4);
-  background: var(--surface);
-  border: 2px solid var(--divider);
-  border-left: 8px solid var(--line);
-  border-radius: var(--radius);
+/* --- Aprende (Etapa 17): repaso de hoy y lecciones en carrusel --- */
+.today { margin-top: var(--space-5); padding: 18px 18px 20px; }
+.today h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font: 700 var(--size-base) var(--font-sign);
+  color: var(--text-muted);
 }
-.home-build-title { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); }
-.home-build p { margin: 0 0 var(--space-3); overflow-wrap: anywhere; }
-#home-build-next { font-weight: 600; }
-.home-build .study-actions { margin-top: 0; }
+.today h2 .line-dot { width: 14px; height: 14px; box-shadow: 0 0 0 2px var(--text); } /* la baldosa es clara: anillo oscuro */
+.today-main { margin: 6px 0 var(--space-4); font: 600 1.95rem/1.15 var(--font-text); overflow-wrap: anywhere; }
+.today-action { width: 100%; min-height: 56px; font-size: 1.15rem; text-align: center; text-decoration: none; }
+.today-next { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: 0.95rem; overflow-wrap: anywhere; }
+.today-more { margin: var(--space-1) 0 0; }
+
+/* La línea del día: tres estaciones (decoración); el texto dice el estado */
+.dayline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+.dayline::before {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 16.6%;
+  right: 16.6%;
+  height: 4px;
+  background: var(--emphasis);
+}
+.dayline li {
+  position: relative; /* sobre la vía */
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-1);
+  text-align: center;
+  font-family: var(--font-sign);
+}
+.dayline .stop {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 4px solid var(--emphasis);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--surface);
+  font: 700 13px/1 var(--font-sign);
+}
+.dayline [data-state="done"] .stop { background: var(--emphasis); }
+.dayline [data-state="done"] .stop::after { content: '✓'; }
+.dayline [data-state="current"] .stop { background: var(--signal); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--emphasis); }
+.dayline .stop-name { font-weight: 700; }
+.dayline [data-state="current"] .stop-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.dayline .stop-text { color: var(--text-muted); font-size: var(--size-sm); font-weight: 500; line-height: 1.2; }
+
+/* Lecciones: un carrusel por nivel que llega al borde de la pantalla */
+.learn-title { margin: var(--space-6) 0 var(--space-2); font: 700 1.25rem/1.2 var(--font-sign); }
+.learn-level { margin: var(--space-4) 0 var(--space-1); font: 700 var(--size-base) var(--font-sign); color: var(--text-muted); }
+.carousel {
+  --line: #178A8A; /* las estaciones turquesa de Construir */
+  position: relative; /* las lecciones miden su posición desde aquí */
+  display: flex;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--space-4));
+  padding: var(--space-1) var(--space-4) var(--space-3);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--space-4);
+}
+.carousel:focus-visible { outline-offset: -3px; } /* el anillo no se recorta en el borde de la pantalla */
+/* Al llegar con Tab, la barra de abajo no tapa el carrusel ni la lección */
+.carousel,
+.lesson-tile { scroll-margin-bottom: calc(var(--nav-height) + var(--space-4)); }
+.carousel > li { display: flex; flex: 0 0 76%; scroll-snap-align: start; }
+.lesson-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-height: 148px;
+  margin: 0;
+  padding: 14px var(--space-4);
+  color: var(--text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.lesson-top { display: flex; align-items: center; gap: var(--space-2); color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.lesson-tile .build-station { flex: none; }
+.lesson-title { font: 600 1.15rem/1.25 var(--font-text); }
+.lesson-state,
+.lesson-review { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
+.lesson-state { margin-top: auto; }
+/* La siguiente pendiente: borde turquesa */
+a.lesson-tile[aria-current="step"] { border-color: var(--line); }
+/* Planificadas: borde discontinuo y texto atenuado que se sigue leyendo (≥ 4,5:1) */
+.lesson-tile.planned { border-style: dashed; border-bottom-width: 2px; color: var(--text-planned); }
+.lesson-tile.planned .lesson-title { font-weight: 400; }
+.lesson-tile.planned .lesson-top,
+.lesson-tile.planned .lesson-state { color: inherit; }
+.learn-hint { margin: 0; }
 
 /* --- Conversar (DESIGN.md, Etapa 8) --- */
 /* Texto solo para lectores de pantalla */
@@ -1154,56 +1250,6 @@ p.word-card-es { color: var(--text-muted); }
 .reader-quiz-score:focus { outline: none; }
 
 /* --- Construir frases (DESIGN.md, Etapa 12) --- */
-/* Ruta de lecciones (Etapa 14): una línea de metro vertical por tramo, con una estación por lección */
-.build-index-actions { margin-top: var(--space-5); }
-.build-all-done { margin: var(--space-5) 0 0; font: 700 1.1rem/1.3 var(--font-sign); }
-.build-level { margin: var(--space-6) 0 var(--space-2); font: 700 1.25rem/1.2 var(--font-sign); }
-.build-route {
-  --station-y: 26px; /* centro de la estación desde arriba de la fila */
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.build-route > li { position: relative; }
-/* La vía: tramo que llega a la estación (::before) y tramo que sale (::after) */
-.build-route > li::before,
-.build-route > li::after {
-  content: '';
-  position: absolute;
-  left: 22px; /* centro de la columna de 44 px más el borde de 2 px de la fila */
-  border-left: 4px solid var(--line);
-}
-.build-route > li::before { top: 0; height: var(--station-y); }
-.build-route > li::after { top: var(--station-y); bottom: 0; }
-.build-route > li:first-child::before,
-.build-route > li:last-child::after { display: none; }
-/* El tramo planificado es discontinuo desde la última estación disponible */
-.build-route-planned::before,
-.build-route-planned::after,
-.build-route > li:has(+ .build-route-planned)::after { border-left-style: dashed; }
-
-.build-route-row {
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  column-gap: var(--space-2);
-  align-items: start;
-  min-height: 56px;
-  margin: 0;
-  padding: var(--space-3) var(--space-3) var(--space-3) 0;
-  border: 2px solid transparent;
-  border-radius: var(--radius);
-  color: inherit;
-  text-decoration: none;
-}
-/* La siguiente lección pendiente: recuadro con borde turquesa, como la frase que suena en Leer */
-a.build-route-row[aria-current="step"] { background: var(--surface); border-color: var(--line); }
-.build-route-text { min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
-.build-route-name { font-weight: 600; font-size: 1.1rem; line-height: 1.25; overflow-wrap: anywhere; }
-.build-route-number { color: var(--text-muted); font: 500 var(--size-base) var(--font-sign); }
-.build-route-state { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
-/* «Tiene partes REVISAR»: la etiqueta de siempre (texto, no solo color) */
-.build-route-review { color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
-
 /* Estación: vacía (sin empezar), con punto (en curso), llena con ✓ (completada), punteada (planificada) */
 .build-station {
   position: relative;
@@ -1230,12 +1276,6 @@ a.build-route-row[aria-current="step"] { background: var(--surface); border-colo
 .build-station-planned { border-style: dotted; }
 .build-station-error { border-color: var(--text-muted); border-style: dashed; }
 
-/* Planificadas: texto atenuado que se sigue leyendo (≥ 4,5:1) */
-.build-route-planned { color: var(--text-planned); }
-.build-route-planned .build-route-name { font-weight: 400; }
-.build-route-planned .build-route-number,
-.build-route-planned .build-route-state { color: inherit; }
-
 .build-number { margin: 0; color: var(--text-muted); font: 500 var(--size-sm) var(--font-sign); }
 
 /* Enlace de texto para volver o ver la ruta: subrayado (no solo color) y 44 px de alto para el dedo */
@@ -1250,8 +1290,8 @@ a.build-route-row[aria-current="step"] { background: var(--surface); border-colo
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
-.home-build .home-build-all { margin: var(--space-2) 0 0; }
 .build-back { margin: 0 0 var(--space-2); }
+.build-back .text-link { font-size: var(--size-base); } /* «‹ Aprende»: tamaño normal, como «‹ Practica» */
 
 .build-lesson { margin-top: var(--space-5); }
 .build-title { margin: var(--space-1) 0 0; font: 600 1.5625rem/1.2 var(--font-text); overflow-wrap: anywhere; }
@@ -1383,10 +1423,8 @@ a.build-route-row[aria-current="step"] { background: var(--surface); border-colo
 
 /* Repaso: el vacío y el fin como el fin de la práctica */
 .build-review { margin-top: var(--space-5); }
-/* «Revisando…» y «Repasar (0)»: desactivados con aria-disabled, como «Escribiendo…» en Leer */
-#build-free-check[aria-disabled="true"],
-#build-review-start[aria-disabled="true"],
-#home-build-review[aria-disabled="true"] {
+/* «Revisando…»: desactivado con aria-disabled, como «Escribiendo…» en Leer */
+#build-free-check[aria-disabled="true"] {
   background: var(--surface);
   color: var(--text-muted);
   border-color: var(--divider);

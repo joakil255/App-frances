@@ -35,7 +35,8 @@ test('todo archivo que la app necesita está en la lista de caché', () => {
   }
 });
 
-test('la caché sube a v29 (Etapa 17, navegación)', () => {
-  assert.equal(loadServiceWorker().read('CACHE_VERSION'), 'v29');
+test('la caché sube a v30 (Etapa 17, Aprende)', () => {
+  assert.equal(loadServiceWorker().read('CACHE_VERSION'), 'v30');
+  assert.ok(PRECACHE_URLS.includes('js/screens/learn.js'));
   assert.ok(PRECACHE_URLS.includes('js/lib/reader-prefs.js'));
 });

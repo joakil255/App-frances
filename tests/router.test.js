@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SCREENS, TABS, resolveRoute, routeParam, tabFor } from '../js/lib/router.js';
+import { SCREENS, TABS, resolveRoute, routeParam, tabFor, redirectFor } from '../js/lib/router.js';
 
 test('SCREENS: primero los tres destinos y después las pantallas de segundo nivel', () => {
   assert.deepEqual(SCREENS.map((s) => s.id), ['learn', 'practice', 'progress', 'vocabulary', 'study', 'quiz', 'reader', 'chat', 'build']);
@@ -63,4 +63,9 @@ test('#/construir y #/construir/<id> llevan a Construir; routeParam da el id', (
   assert.equal(resolveRoute('#/construir/repaso'), 'build');
   assert.equal(resolveRoute('#/construir/a/b'), 'learn');
   assert.equal(routeParam('#/leer/x'), 'x');
+});
+
+test('#/construir redirige a Aprende; lo demás no se redirige', () => {
+  for (const hash of ['#/construir', '#/CONSTRUIR/', '#/construir/']) assert.equal(redirectFor(hash), '#/aprende', hash);
+  for (const hash of ['#/construir/fr-a1-01', '#/construir/repaso', '#/', '', '#/leer', '#main']) assert.equal(redirectFor(hash), null, hash);
 });

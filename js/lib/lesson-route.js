@@ -37,7 +37,7 @@ const REVIEW_PARTS = ['idea', 'think', 'examples', 'pitfalls', 'exercises', 'sit
 const hasReview = (lesson) => REVIEW_PARTS.some((part) => (lesson[part] ?? []).some((item) => item.review));
 const isOpenable = (entry) => entry.status === 'available' && Boolean(entry.lesson);
 
-// Filas de la ruta, en orden: lo que pinta #/construir. href solo en las que se pueden abrir;
+// Filas de la ruta, en orden: lo que pinta el carrusel de Aprende. href solo en las que se pueden abrir;
 // current solo en la siguiente pendiente
 export function routeRows(entries, progressMap) {
   const next = nextLesson(entries, progressMap);

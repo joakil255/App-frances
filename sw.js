@@ -13,7 +13,7 @@
 // IMPORTANTE: cada vez que cambie cualquier archivo de la app, sube
 // CACHE_VERSION (v1 → v2 → …). Si no, los teléfonos no se enteran del cambio.
 
-const CACHE_VERSION = 'v29';
+const CACHE_VERSION = 'v30';
 const CACHE_PREFIX = 'app-frances-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -37,6 +37,7 @@ const PRECACHE_URLS = [
   'js/lib/answer-check.js',
   'js/lib/lessons.js',
   'js/lib/lesson-route.js',
+  'js/lib/today.js',
   'js/lib/build-storage.js',
   'js/lib/build-review.js',
   'js/lib/quiz.js',
@@ -62,6 +63,7 @@ const PRECACHE_URLS = [
   'js/screens/quiz.js',
   'js/screens/progress.js',
   'js/screens/home.js',
+  'js/screens/learn.js',
   'js/screens/chat.js',
   'js/screens/chat-voice.js',
   'js/screens/word-card.js',

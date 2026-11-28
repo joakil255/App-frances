@@ -175,6 +175,10 @@ test('«‹ Practica» se lee a tamaño normal', () => {
   assert.match(css, /\n\.back-link \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
 });
 
+test('«‹ Aprende» de la lección y del repaso se lee a tamaño normal, como «‹ Practica»', () => {
+  assert.match(css, /\n\.build-back \.text-link\s*\{[^}]*font-size:\s*var\(--size-base\)/);
+});
+
 test('la baldosa de Practica: rejilla de 2 columnas, banda de 8 px y 112 px de alto mínimo', () => {
   assert.match(propertyOf('.practice-grid', 'grid-template-columns'), /repeat\(2,\s*1fr\)/);
   assert.match(css, /\.practice-grid \.wide\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/);
@@ -205,17 +209,11 @@ test('el texto atenuado de las lecciones planificadas se lee en claro y oscuro (
       assert.ok(contrast(planned, bg) < contrast(token(block, '--text-muted'), bg), `${theme}: --text-planned no se ve atenuado`);
     }
   }
-  const block = css.match(/\.build-route-planned\s*\{([^}]*)\}/)?.[1];
-  assert.ok(block, 'falta la regla .build-route-planned');
-  assert.match(block, /(?:^|;|\s)color:\s*var\(--text-planned\)/);
+  assert.equal(propertyOf('.lesson-tile.planned', 'color'), token(lightTokens, '--text-planned'), 'la baldosa planificada usa --text-planned');
 });
 
-test('el tramo planificado de la ruta es una línea discontinua turquesa', () => {
-  // Reglas cuya lista de selectores incluye el tramo que llega a una estación planificada
-  const rules = [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^}]*)\}/g)]
-    .filter((m) => m[1].split(',').map((sel) => sel.trim()).includes('.build-route-planned::before'));
-  assert.ok(rules.length > 0, 'falta la regla .build-route-planned::before');
-  assert.ok(rules.some((m) => /border-left-style:\s*dashed/.test(m[2])), 'el tramo planificado no es discontinuo');
+test('la baldosa de una lección planificada tiene borde discontinuo', () => {
+  assert.equal(propertyOf('.lesson-tile.planned', 'border-style'), 'dashed');
 });
 
 test('el botón «Ver traducción» mide 44 px de alto y la traducción usa --text-muted, que pasa AA (Etapa 15)', () => {

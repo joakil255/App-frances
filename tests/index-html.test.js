@@ -274,11 +274,11 @@ test('Vocabulario tiene el botón para añadir el mazo A1 junto a Importar y Exp
   assert.match(actions, /<button type="button" class="button button-secondary" id="vocab-deck">Añadir 100 palabras A1<\/button>/);
 });
 
-// --- Inicio: copia de seguridad (Etapa 7) ---
-const home = html.match(/<section id="screen-learn"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+// --- Copia de seguridad (Etapa 7): sigue en Aprende hasta la tanda 4 ---
+// sectionOf: Aprende contiene otra <section> (el repaso de hoy)
+const home = sectionOf('learn');
 
-test('Inicio mantiene su frase y tiene la copia de seguridad con avisos', () => {
-  assert.match(home, /<span lang="fr">Bonjour\.<\/span> Aquí verás cada día lo que te toca repasar\./);
+test('Aprende tiene la copia de seguridad con avisos', () => {
   assert.match(home, /<div id="home-notice" class="notice" role="alert" hidden><\/div>/);
   assert.match(home, /<p id="home-status" class="vocab-message" role="status"><\/p>/);
   assert.match(home, /<h2[^>]*>Copia de seguridad<\/h2>/);
@@ -502,28 +502,19 @@ test('Construir tiene aviso, zona de estado y la región que anuncia las fichas'
   assert.ok(live.includes('aria-live="polite"'), '#build-order-live sin aria-live="polite"');
 });
 
-// --- Índice de lecciones como ruta (Etapa 14) ---
-const buildIndex = build.match(/<div id="build-index"[^>]*>([\s\S]*?)<!-- Fin de la ruta -->/)?.[1] ?? '';
-
-test('la ruta tiene un <h2> y un <ol> por tramo (A1 y A2), unidos con aria-labelledby', () => {
-  assert.ok(tagWithId(buildIndex, 'build-route'), 'falta el contenedor #build-route');
-  for (const level of ['a1', 'a2']) {
-    const re = new RegExp(`<h2 id="build-level-${level}" class="build-level">${level.toUpperCase()}</h2>\\s*<ol id="build-route-${level}" class="build-route" aria-labelledby="build-level-${level}"></ol>`);
-    assert.match(buildIndex, re, `falta el tramo ${level.toUpperCase()}`);
-  }
-  assert.ok(buildIndex.indexOf('build-route-a1') < buildIndex.indexOf('build-route-a2'), 'A1 va antes que A2');
-  assert.ok(!build.includes('id="build-list"'), 'la lista vieja #build-list ya no existe');
+// --- Construir sin lista propia (Etapa 17): la ruta vive en Aprende ---
+test('la lección y el repaso vuelven a Aprende, y Construir ya no tiene lista propia', () => {
+  const build = sectionOf('build');
+  assert.equal([...build.matchAll(/<a class="text-link" href="#\/aprende"><span aria-hidden="true">‹<\/span> Aprende<\/a>/g)].length, 2);
+  assert.ok(!build.includes('href="#/construir"'));
+  assert.ok(!build.includes('id="build-index"'));
 });
 
-test('arriba de la ruta: «Continuar», «Repasar (N)» y el texto sin pendientes', () => {
-  assert.match(buildIndex, /<button type="button" class="button button-primary" id="build-continue">Continuar<\/button>/);
-  assert.match(buildIndex, /<p id="build-all-done" class="build-all-done" hidden>Completaste todas las lecciones disponibles<\/p>/);
-  const route = buildIndex.indexOf('id="build-route"');
-  for (const id of ['build-continue', 'build-review-start', 'build-all-done']) {
-    const at = buildIndex.indexOf(`id="${id}"`);
-    assert.ok(at > -1 && at < route, `#${id} va arriba de la ruta`);
+test('Construir ya no tiene «Continuar», «Repasar (N)», el aviso de fin ni la ruta vieja', () => {
+  for (const id of ['build-continue', 'build-review-start', 'build-all-done', 'build-route', 'build-route-a1', 'build-route-a2', 'build-list']) {
+    assert.ok(!build.includes(`id="${id}"`), `sobra #${id}`);
   }
-  assert.ok(buildIndex.indexOf('id="build-continue"') < buildIndex.indexOf('id="build-review-start"'), '«Continuar» va antes que «Repasar»');
+  assert.ok(!build.includes('Todas las lecciones'), 'sobra «Todas las lecciones»');
 });
 
 test('la lección tiene su título enfocable y las secciones en orden', () => {
@@ -593,8 +584,7 @@ test('la situación tiene su enunciado, Comprobar, el resultado enfocable y los 
   assert.ok(status?.includes('role="status"'), '#build-free-status sin role="status"');
 });
 
-test('el repaso tiene «Repasar», el vacío, el fin y el botón «Quitar del repaso»', () => {
-  assert.match(build, /<button type="button" [^>]*id="build-review-start"[^>]*>Repasar \(0\)<\/button>/);
+test('el repaso tiene el vacío, el fin y el botón «Quitar del repaso»', () => {
   assert.match(build, /<p id="build-review-empty" [^>]*tabindex="-1"[^>]*>No tienes nada que repasar hoy\. Los ejercicios que falles 2 veces aparecerán aquí\.<\/p>/);
   assert.match(build, /<p id="build-review-done" [^>]*tabindex="-1"[^>]*>Terminaste el repaso\.<\/p>/);
   assert.match(build, /<button type="button" [^>]*id="build-remove"[^>]*hidden>Quitar del repaso<\/button>/);
@@ -609,47 +599,67 @@ test('la ventana de quitar una frase del repaso pide confirmación', () => {
   assert.match(dialog, /<button type="button" class="button button-danger" data-action="confirm">Quitar<\/button>/);
 });
 
-test('Inicio tiene la tarjeta «Construir frases» con sus botones, antes de la copia de seguridad', () => {
-  // La tarjeta termina donde empieza la copia de seguridad (dentro lleva botones y el enlace a la ruta)
-  const card = home.match(/<div class="home-build line-build">([\s\S]*?)<!-- Copia de seguridad/)?.[1];
-  assert.ok(card, 'falta la tarjeta .home-build');
-  assert.match(card, /<h2 [^>]*>[\s\S]*Construir frases<\/h2>/);
-  assert.ok(tagWithId(card, 'home-build-next'), 'falta #home-build-next');
-  assert.match(card, /<p id="home-build-due"[^>]*>Repaso: 0 pendientes hoy<\/p>/);
-  assert.match(card, /<button type="button" class="button button-primary" id="home-build-continue">Seguir lección<\/button>/);
-  assert.match(card, /<button type="button" class="button button-secondary" id="home-build-review" aria-disabled="true">Repasar \(0\)<\/button>/);
-  assert.ok(home.indexOf('home-build') < home.indexOf('Copia de seguridad'), 'la tarjeta va sobre la copia de seguridad');
+// --- Aprende (Etapa 17): repaso de hoy y carrusel de lecciones ---
+test('Aprende tiene el repaso de hoy con la línea del día y su acción', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title"[^>]*>/);
+  assert.match(learn, /<h2 id="today-title"[^>]*>[\s\S]*Repaso de hoy<\/h2>/);
+  assert.match(learn, /<ol class="dayline" aria-label="Orden del día">/);
+  assert.match(learn, /<a class="button button-primary today-action" id="today-action"/);
+  assert.match(learn, /<a class="text-link" href="#\/practica">Practicar algo más<\/a>/);
 });
 
-// En el móvil la barra no tiene Construir: la ruta debe poder abrirse desde la app sin escribir la dirección
-test('la tarjeta de Inicio tiene un enlace visible a la ruta de lecciones', () => {
-  const card = html.match(/<div class="home-build[^"]*">([\s\S]*?)<!-- Copia de seguridad/);
-  assert.ok(card, 'falta la tarjeta Construir frases de Inicio');
-  const link = card[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'la tarjeta no tiene un enlace a #/construir');
-  assert.match(link[1], /Ver todas las lecciones/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+// El aviso de lecciones que no cargaron, encima del bloque «Lecciones» (Construir ya no tiene lista)
+test('Aprende tiene su aviso de lecciones, anunciable y oculto, antes de «Lecciones»', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<div id="learn-notice" class="notice" role="alert" hidden><\/div>/);
+  const at = learn.indexOf('id="learn-notice"');
+  assert.ok(at > learn.indexOf('id="today-title"') && at < learn.indexOf('class="learn-title"'), 'el aviso va entre el repaso de hoy y «Lecciones»');
 });
 
-test('cada lección tiene un enlace para volver a la ruta', () => {
+test('las lecciones son un carrusel por nivel, enfocable y con nombre', () => {
+  for (const level of ['a1', 'a2']) {
+    assert.match(html, new RegExp(`<h3 id="learn-level-${level}"[^>]*>${level.toUpperCase()}</h3>`));
+    assert.match(html, new RegExp(`<ol id="learn-route-${level}" class="carousel" tabindex="0" aria-labelledby="learn-level-${level}" hidden>`));
+  }
+});
+
+// Antes del primer refresh() no se ven títulos, carruseles vacíos ni un botón sin texto
+test('Aprende llega con las lecciones y la acción ocultas hasta que se rellenan', () => {
+  const learn = sectionOf('learn');
+  assert.match(learn, /<section class="today tile" aria-labelledby="today-title" hidden>/, 'el repaso de hoy llega oculto');
+  assert.match(learn, /<h2 class="learn-title" hidden>Lecciones<\/h2>/);
+  for (const id of ['learn-level-a1', 'learn-route-a1', 'learn-hint-a1', 'learn-level-a2', 'learn-route-a2', 'learn-hint-a2', 'today-action', 'today-more']) {
+    const tag = tagWithId(learn, id);
+    assert.ok(tag, `falta #${id}`);
+    assert.match(tag, /\shidden[\s>]/, `#${id} no llega oculto`);
+  }
+});
+
+// La tarjeta «Construir frases» de Inicio desaparece: la cubren el repaso de hoy y el carrusel
+test('Aprende ya no tiene la tarjeta «Construir frases» ni la frase de bienvenida; la copia va debajo de las lecciones', () => {
+  const learn = sectionOf('learn');
+  assert.ok(!learn.includes('home-build'), 'sobra la tarjeta .home-build');
+  assert.ok(!learn.includes('Bonjour'), 'sobra la frase «Bonjour…»');
+  assert.ok(learn.indexOf('id="today-title"') < learn.indexOf('id="learn-route-a1"'), 'el repaso va antes de las lecciones');
+  assert.ok(learn.indexOf('id="learn-route-a2"') < learn.indexOf('Copia de seguridad'), 'la copia va debajo de las lecciones');
+});
+
+test('cada lección tiene un enlace visible para volver a Aprende', () => {
   const lesson = html.match(/<article id="build-lesson"[^>]*>([\s\S]*?)<\/article>/);
   assert.ok(lesson, 'falta el artículo de la lección');
-  const link = lesson[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'la lección no tiene un enlace a #/construir');
-  assert.match(link[1], /Todas las lecciones/);
-  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  const link = lesson[1].match(/<p class="build-back">(<a [^>]*href="#\/aprende"[^>]*>[\s\S]*?<\/a>)<\/p>/);
+  assert.ok(link, 'la lección no tiene «‹ Aprende» en su .build-back');
+  assert.equal(link[1], '<a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a>');
 });
 
 // En el móvil la barra no tiene Construir: desde el repaso también hay que poder volver
-test('el repaso tiene un enlace para volver a la ruta', () => {
+test('el repaso tiene un enlace visible para volver a Aprende', () => {
   const review = html.match(/<div id="build-review"[^>]*>([\s\S]*?)<!-- Lección/);
   assert.ok(review, 'falta el bloque del repaso');
-  const link = review[1].match(/<a [^>]*href="#\/construir"[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, 'el repaso no tiene un enlace a #/construir');
-  assert.match(link[1], /Todas las lecciones/);
-  assert.match(link[1], /<span aria-hidden="true">‹<\/span>/);
-  assert.doesNotMatch(link[0].match(/<a [^>]*>/)[0], /\bhidden\b|nav-desktop-only/);
+  const link = review[1].match(/<p class="build-back">(<a [^>]*href="#\/aprende"[^>]*>[\s\S]*?<\/a>)<\/p>/);
+  assert.ok(link, 'el repaso no tiene «‹ Aprende» en su .build-back');
+  assert.equal(link[1], '<a class="text-link" href="#/aprende"><span aria-hidden="true">‹</span> Aprende</a>');
   // Fuera de los mensajes de vacío y de fin: se ve siempre
   assert.ok(review[1].indexOf(link[0]) < review[1].indexOf('build-review-empty'), 'el enlace va antes de los mensajes');
 });

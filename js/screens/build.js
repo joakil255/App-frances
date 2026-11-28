@@ -1,10 +1,11 @@
-// Pantalla «Construir frases»: ruta de lecciones, lección, práctica de ejercicios cerrados
-// y repaso (#/construir/repaso), que usa la misma tarjeta. La frase libre está en build-free.js.
+// Pantalla «Construir frases»: lección, práctica de ejercicios cerrados y repaso
+// (#/construir/repaso), que usa la misma tarjeta. La lista de lecciones está en Aprende;
+// la frase libre, en build-free.js.
 // Todo el texto de las lecciones y de Claude se pinta con textContent.
 import { checkExercise, createTileBoard } from '../lib/sentence-check.js';
 import { insertAt } from '../lib/exercise-ui.js';
 import { lessonStatus, buildReviewQueue } from '../lib/build-review.js';
-import { routeRows, openableLesson, continueLabel, lessonNumber } from '../lib/lesson-route.js';
+import { openableLesson, lessonNumber } from '../lib/lesson-route.js';
 import { findExercise } from '../lib/lessons.js';
 import { initFreeSentence } from './build-free.js';
 import { localDate } from '../lib/dates.js';
@@ -52,12 +53,7 @@ function ownExercise(card) {
 }
 
 export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnline, hostname, getCode, now = () => new Date(), loadNotice = null }) {
-  const heading = $('#screen-build h1');
   const notice = $('#build-notice');
-  const indexEl = $('#build-index');
-  const continueButton = $('#build-continue');
-  const allDone = $('#build-all-done');
-  const reviewStart = $('#build-review-start');
   const reviewEl = $('#build-review');
   const reviewBack = $('.build-back', reviewEl);
   const reviewEmpty = $('#build-review-empty');
@@ -92,7 +88,6 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
   const nextButton = $('#build-next');
 
   let lesson = null; // la lección abierta
-  let continueHref = null; // a dónde lleva «Continuar»
   // { review, queue: [{ exercise, cardId }], index, requeued, board, expected, checked }; review = repaso
   let practice = null;
   const free = initFreeSentence({ buildStore, studyStore, fetch, isOnline, hostname, getCode, now, focusOn });
@@ -135,55 +130,6 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
     if (utterance) synth.cancel();
     utterance = null;
   }
-
-  // --- Ruta de lecciones: un tramo (A1, A2) por nivel, con una estación por lección ---
-  // Fila (de routeRows): estación (solo dibujo), «Lección N · Título», el estado en texto y, si hace falta, REVISAR
-  function routeItem(row) {
-    const text = el('span', { className: 'build-route-text' }, [
-      el('span', { className: 'build-route-name' }, [el('span', { className: 'build-route-number', text: `Lección ${row.number} · ` }), document.createTextNode(row.title)]),
-      el('span', { className: 'build-route-state', text: row.stateText }),
-    ]);
-    if (row.hasReview) {
-      text.append(el('span', { className: 'build-route-review' }, [document.createTextNode('Tiene partes '), el('span', { className: 'tag-review', text: 'REVISAR' })]));
-    }
-    const children = [el('span', { className: `build-station build-station-${row.kind}`, text: row.kind === 'done' ? '✓' : '', attrs: { 'aria-hidden': 'true' } }), text];
-    // Sin href (planificadas y las que no se cargaron) la fila es texto, no un enlace
-    if (!row.href) {
-      return el('li', { className: row.kind === 'planned' ? 'build-route-planned' : undefined }, [el('p', { className: 'build-route-row' }, children)]);
-    }
-    const attrs = { href: row.href };
-    if (row.current) attrs['aria-current'] = 'step';
-    return el('li', {}, [el('a', { className: 'build-route-row', attrs }, children)]);
-  }
-  function renderList() {
-    const entries = lessons ?? [];
-    const { progress } = buildStore.getState();
-    const rows = routeRows(entries, progress);
-    for (const level of ['A1', 'A2']) {
-      const items = rows.filter((row) => row.level === level).map(routeItem);
-      const routeList = $(`#build-route-${level.toLowerCase()}`);
-      routeList.replaceChildren(...items);
-      // Un tramo sin lecciones no se muestra
-      routeList.hidden = items.length === 0;
-      $(`#build-level-${level.toLowerCase()}`).hidden = items.length === 0;
-    }
-    // Continuar: la siguiente pendiente; sin pendientes (y con alguna lección que se abre), el aviso de fin
-    const label = continueLabel(entries, progress);
-    continueButton.hidden = !label;
-    continueButton.textContent = label ?? 'Continuar';
-    continueHref = rows.find((row) => row.current)?.href ?? null;
-    allDone.hidden = Boolean(label) || !rows.some((row) => row.href);
-    const due = dueQueue().length;
-    reviewStart.textContent = `Repasar (${due})`;
-    if (due === 0) reviewStart.setAttribute('aria-disabled', 'true');
-    else reviewStart.removeAttribute('aria-disabled');
-  }
-  continueButton.addEventListener('click', () => {
-    if (continueHref) location.hash = continueHref;
-  });
-  reviewStart.addEventListener('click', () => {
-    if (reviewStart.getAttribute('aria-disabled') !== 'true') location.hash = '#/construir/repaso';
-  });
 
   // --- Lección ---
   function listenButton(text, describedBy) {
@@ -473,7 +419,7 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
       const exercise = saved.kind === 'own' ? ownExercise(saved) : findExercise(lessons ?? [], saved.lessonId, saved.exerciseId);
       return { exercise, cardId };
     });
-    reviewBack.after(card); // debajo del enlace «Todas las lecciones», como en una lección
+    reviewBack.after(card); // debajo del enlace «‹ Aprende», como en una lección
     reviewDone.hidden = true;
     reviewEmpty.hidden = queue.length > 0;
     if (queue.length === 0) {
@@ -489,8 +435,10 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
   }
 
   return {
-    // param = id de «#/construir/<id>», o null para la lista. moveFocus: llevar el foco al título.
+    // param = id de «#/construir/<id>» o «repaso». moveFocus: llevar el foco al título.
     onShow(param, moveFocus = true) {
+      // Sin id no hay nada que mostrar: «#/construir» se redirige a Aprende antes de llegar aquí
+      if (param === null) return;
       stopVoice();
       clearNotice();
       free.hide();
@@ -503,27 +451,18 @@ export function initBuild({ buildStore, studyStore, lessons, synth, fetch, isOnl
       lesson = null;
       resetPractice();
       if (param === 'repaso') {
-        indexEl.hidden = true;
         lessonEl.hidden = true;
         reviewEl.hidden = false;
         startReview(moveFocus);
         return;
       }
       reviewEl.hidden = true;
-      if (param === null) {
-        lessonEl.hidden = true;
-        indexEl.hidden = false;
-        renderList();
-        if (moveFocus) heading.focus();
-        return;
-      }
       const entry = openableLesson(lessons ?? [], param);
       if (!entry) {
-        location.replace('#/construir'); // id desconocido, planificado o sin cargar: vuelve a la ruta
+        location.replace('#/aprende'); // id desconocido, planificado o sin cargar: vuelve a las lecciones de Aprende
         return;
       }
       lesson = entry.lesson;
-      indexEl.hidden = true;
       lessonEl.hidden = false;
       renderLesson(lessonNumber(lessons, entry.id));
       // Una lección ya terminada muestra sus situaciones sin volver a practicar

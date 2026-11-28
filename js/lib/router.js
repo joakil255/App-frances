@@ -49,3 +49,11 @@ export function routeParam(hash) {
   const { path, param, extra } = splitHash(hash);
   return PARAM_PATHS.includes(path) && param !== '' && extra.length === 0 ? param : null;
 }
+
+// Direcciones viejas que ahora viven en otra: «#/construir» (la lista de lecciones) es parte de Aprende.
+// Devuelve la dirección nueva, o null si no hay que redirigir.
+export function redirectFor(hash) {
+  if (!hash.startsWith('#/')) return null;
+  const { path, param, extra } = splitHash(hash);
+  return path === 'construir' && param === '' && extra.length === 0 ? '#/aprende' : null;
+}
